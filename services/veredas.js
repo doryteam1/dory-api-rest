@@ -5,7 +5,7 @@ const config = require('../config');
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT * FROM veredas LIMIT ?,?`, 
+    `SELECT * FROM VEREDAS LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
   const data = helper.emptyOrRows(rows);
