@@ -36,11 +36,11 @@ const fotosRouter = require('./routes/fotos');
 const mensajesRouter = require('./routes/mensajes');
 const resenasRouter = require('./routes/resenas');
 const eventosRouter = require('./routes/eventos');
-
+const usuariosRouter = require('./routes/usuarios');
 const informesGranjasDepartamentoRouter = require('./routes/informes-granjas-departamento');
 const piscicultoresAsociacionRouter = require('./routes/piscicultores-asociacion');
 const pescadoresAsociacionRouter = require('./routes/pescadores-asociacion');
-
+const granjasMunicipioRouter = require('./routes/granjas-municipio');
 
 app.use(bodyParser.json());
 app.use(
@@ -86,11 +86,14 @@ app.use('/fotos', fotosRouter)
 app.use('/mensajes', mensajesRouter)
 app.use('/resenas', resenasRouter)
 app.use('/eventos', eventosRouter)
-
+app.use('/usuarios', usuariosRouter)
 app.use('/novedades', novedadesRouter)
 app.use('/api/informes/granjas/departamento', informesGranjasDepartamentoRouter)
 app.use('/api/piscicultores/asociacion', piscicultoresAsociacionRouter)
 app.use('/api/pescadores/asociacion', pescadoresAsociacionRouter)
+app.use('/api/granjas/municipio', granjasMunicipioRouter)
+
+
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

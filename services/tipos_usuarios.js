@@ -20,9 +20,9 @@ async function getMultiple(page = 1){
 
 async function create(tipo_usuario){
      const result = await db.query(
-      `INSERT INTO tipos_usuarios(id_usuario,nombre_tipo_usuario) VALUES (?,?)`, 
+      `INSERT INTO tipos_usuarios(id_tipo_usuario,nombre_tipo_usuario) VALUES (?,?)`, 
       [
-        tipo_usuario.id_usuario,
+        tipo_usuario.id_tipo_usuario,
         tipo_usuario.nombre_tipo_usuario,
       ]
     );
@@ -40,7 +40,7 @@ async function create(tipo_usuario){
     const result = await db.query(
       `UPDATE tipos_usuarios 
        SET nombre_tipo_usuario=? 
-       WHERE id_usuario=?`,
+       WHERE id_tipo_usuario=?`,
        [
          tipo_usuario.nombre_tipo_usuario,
          id
@@ -58,7 +58,7 @@ async function create(tipo_usuario){
   
   async function remove(id){
     const result = await db.query(
-      `DELETE FROM tipos_usuarios WHERE id_usuario=?`, 
+      `DELETE FROM tipos_usuarios WHERE id_tipo_usuario=?`, 
       [id]
     );
   

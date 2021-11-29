@@ -17,15 +17,27 @@ LIMIT ?,?`,
     [offset, config.listPerPage]
   );
 
-  for(novedad in rows){
-   console.log(novedad);/*datos del objeto*/
-   console.log(novedad[rows]);/*datos dentro del objeto*/
-  }
- 
-
-
-
-  const data = helper.emptyOrRows(rows);
+  var arraycategorias= new Array();
+  var nuevoRows = new Array();
+  var index= rows[0].id_novedad;
+  nuevoRows.push(rows[0]);
+  
+  rows.forEach((element)=>{ 
+     
+    if((index == element.id_novedad))
+    { 
+      arraycategorias.push(element.nombre_categoria);
+    }else { 
+              index= element.id_novedad;
+              nuevoRows[nuevoRows.length-1].categorias=arraycategorias;/*Arreglo de categorias agregado al final del arreglo de novedades */
+              nuevoRows.push(element);
+              arraycategorias=[];  
+              arraycategorias.push(element.nombre_categoria);
+    }
+  });
+    nuevoRows[nuevoRows.length-1].categorias=arraycategorias;
+    
+  const data = helper.emptyOrRows(nuevoRows);
   const meta = {page};
 
   return {
