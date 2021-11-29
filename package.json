@@ -11,14 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-<<<<<<< HEAD
     "mysql2": "^2.2.5"
-=======
-    "mysql2": "^2.2.5",
-    "nodemon": "^2.0.15"
-  },
+    },
   "engines": {
     "node": "14.17.3"
->>>>>>> 29fcf26998edd60c1e22cb933c8540feba4e387b
   }
 }
