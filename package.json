@@ -4,12 +4,21 @@
   "description": "A REST API with Node.js Express.js and MySQL for Piscícola app",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Luis Alberto Pontón",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+<<<<<<< HEAD
     "mysql2": "^2.2.5"
+=======
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.15"
+  },
+  "engines": {
+    "node": "14.17.3"
+>>>>>>> 29fcf26998edd60c1e22cb933c8540feba4e387b
   }
 }

@@ -49,9 +49,11 @@ app.use(
   })
 );
 
-app.get('/', (req, res) => {
-  res.json({'message': 'ok'});
-})
+app.route('/')
+  .get(function (req, res) {
+    res.sendFile(process.cwd() + '/index.html');
+});
+
 
 app.use('/departamentos', departamentosRouter)
 app.use('/tipos_usuarios', tipos_usuariosRouter)
