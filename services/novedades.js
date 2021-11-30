@@ -49,7 +49,7 @@ LIMIT ?,?`,
 
 async function create(novedad){
     const result = await db.query(
-      `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,imagen_noticia,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,cedula_usuario_fk) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+      `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,cedula_usuario_fk) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
       [
         novedad.id_novedad,
         novedad.titulo,
@@ -57,7 +57,6 @@ async function create(novedad){
         novedad.cuerpo,
         novedad.fecha_creacion,
         novedad.resumen,
-        novedad.imagen_noticia,
         novedad.cant_visitas,
         novedad.url_foto_autor,
         novedad.url_foto_novedad,
@@ -86,7 +85,6 @@ async function create(novedad){
            cuerpo=?,
            fecha_creacion=?,
            resumen=?,
-           imagen_noticia=?,
            cant_visitas=?,
            url_foto_autor=?,
            url_foto_novedad=?,
@@ -102,7 +100,6 @@ async function create(novedad){
         novedad.cuerpo,
         novedad.fecha_creacion,
         novedad.resumen,
-        novedad.imagen_noticia,
         novedad.cant_visitas,
         novedad.url_foto_autor,
         novedad.url_foto_novedad,
