@@ -54,7 +54,6 @@ app.route('/')
     res.sendFile(process.cwd() + '/index.html');
 });
 
-
 app.use('/departamentos', departamentosRouter)
 app.use('/tipos_usuarios', tipos_usuariosRouter)
 app.use('/infraestructuras', infraestructurasRouter)
@@ -94,7 +93,6 @@ app.use('/api/informes/granjas/departamento', informesGranjasDepartamentoRouter)
 app.use('/api/piscicultores/asociacion', piscicultoresAsociacionRouter)
 app.use('/api/pescadores/asociacion', pescadoresAsociacionRouter)
 app.use('/api/granjas/municipio', granjasMunicipioRouter)
-
 
 
 /* Error handler middleware */
