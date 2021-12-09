@@ -41,6 +41,8 @@ const informesGranjasDepartamentoRouter = require('./routes/informes-granjas-dep
 const piscicultoresAsociacionRouter = require('./routes/piscicultores-asociacion');
 const pescadoresAsociacionRouter = require('./routes/pescadores-asociacion');
 const granjasMunicipioRouter = require('./routes/granjas-municipio');
+const granjaRouter = require('./routes/granja');
+
 
 app.use(bodyParser.json());
 app.use(
@@ -102,7 +104,9 @@ app.use('/novedades', novedadesRouter)
 app.use('/api/informes/granjas/departamento', informesGranjasDepartamentoRouter)
 app.use('/api/piscicultores/asociacion', piscicultoresAsociacionRouter)
 app.use('/api/pescadores/asociacion', pescadoresAsociacionRouter)
-app.use('/api/granjas/municipio', granjasMunicipioRouter)
+app.use('/api/granjas/municipio', granjasMunicipioRouter)//error en ejecucion en servidor
+app.use('/api/granja', granjaRouter)
+
 
 
 /* Error handler middleware */
