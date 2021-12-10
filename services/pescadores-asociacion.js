@@ -12,9 +12,9 @@ async function getMultiple(page = 1,nit){
                           (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
                           (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
                           (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
-                          u.latitud,u.longitud, a.nit as nit_asociación, a.nombre as nombre_asociación,
-                          a.legalconstituida, a.fecha_renovacion_camarac, a.foto_camarac, a.id_tipo_asociacion_fk as id_tipo_asociación,
-                          (select ta.nombre from tipos_asociaciones as ta  where ta.id_tipo_asociacion=a.id_tipo_asociacion_fk) as tipo_asociación
+                          u.latitud,u.longitud, a.nit as nit_asociacion, a.nombre as nombre_asociacion,
+                          a.legalconstituida, a.fecha_renovacion_camarac, a.foto_camarac, a.id_tipo_asociacion_fk as id_tipo_asociacion,
+                          (select ta.nombre from tipos_asociaciones as ta  where ta.id_tipo_asociacion=a.id_tipo_asociacion_fk) as tipo_asociacion
      FROM tipos_usuarios tu,usuarios u,asociaciones_usuarios asu,asociaciones a
      WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Pescador') ) and 
      (u.cedula=asu.cedula_usuario_pk_fk) and  (a.nit=asu.nit_asociacion_pk_fk) and a.nit=?
