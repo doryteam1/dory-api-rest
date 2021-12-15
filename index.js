@@ -38,7 +38,7 @@ const mensajesRouter = require('./routes/mensajes');
 const resenasRouter = require('./routes/resenas');
 const eventosRouter = require('./routes/eventos');
 const usuariosRouter = require('./routes/usuarios');
-const informesGranjasDepartamentoRouter = require('./routes/informes-granjas-departamento');
+const granjasDepartamentoRouter = require('./routes/granjas-departamento');
 const piscicultoresAsociacionRouter = require('./routes/piscicultores-asociacion');
 const pescadoresAsociacionRouter = require('./routes/pescadores-asociacion');
 const granjasMunicipioRouter = require('./routes/granjas-municipio');
@@ -104,7 +104,7 @@ app.use('/resenas', resenasRouter)
 app.use('/eventos', eventosRouter)
 app.use('/usuarios', usuariosRouter)
 app.use('/novedades', novedadesRouter)
-app.use('/api/informes/granjas/departamento', informesGranjasDepartamentoRouter)
+app.use('/api/granjas/departamento', granjasDepartamentoRouter)
 app.use('/api/piscicultores/asociacion', piscicultoresAsociacionRouter)
 app.use('/api/pescadores/asociacion', pescadoresAsociacionRouter)
 app.use('/api/granjas/municipio', granjasMunicipioRouter)//error en ejecucion en servidor
