@@ -46,6 +46,8 @@ const granjaRouter = require('./routes/granja');
 const pescadoresMunicipioRouter = require('./routes/pescadores-municipio');
 const piscicultoresMunicipioRouter = require('./routes/piscicultores-municipio');
 const usuarioRouter = require('./routes/usuario');
+const municipiosDepartamentoRouter = require('./routes/municipios-departamento');
+
 
 app.use(bodyParser.json());
 app.use(
@@ -112,6 +114,8 @@ app.use('/api/granja', granjaRouter)
 app.use('/api/pescadores/municipio', pescadoresMunicipioRouter)
 app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
 app.use('/api/usuario', usuarioRouter)
+app.use('/api/municipios/departamento', municipiosDepartamentoRouter)
+
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
