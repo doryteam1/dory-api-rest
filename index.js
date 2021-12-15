@@ -49,7 +49,7 @@ const usuarioRouter = require('./routes/usuario');
 const municipiosDepartamentoRouter = require('./routes/municipios-departamento');
 const corregimientosMunicipioRouter = require('./routes/corregimientos-municipio');
 const veredasMunicipioRouter = require('./routes/veredas-municipio');
-const pescadoresDepartamentoRouter = require('./routes/pescadores-Departamento');
+const pescadoresDepartamentoRouter = require('./routes/pescadores-departamento');
 
 
 app.use(bodyParser.json());
