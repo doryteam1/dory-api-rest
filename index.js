@@ -49,6 +49,8 @@ const usuarioRouter = require('./routes/usuario');
 const municipiosDepartamentoRouter = require('./routes/municipios-departamento');
 const corregimientosMunicipioRouter = require('./routes/corregimientos-municipio');
 const veredasMunicipioRouter = require('./routes/veredas-municipio');
+const pescadoresDepartamentoRouter = require('./routes/pescadores-Departamento');
+
 
 app.use(bodyParser.json());
 app.use(
@@ -105,8 +107,8 @@ app.use('/fotos', fotosRouter)
 app.use('/mensajes', mensajesRouter)
 app.use('/resenas', resenasRouter)
 app.use('/eventos', eventosRouter)
-app.use('/usuarios', usuariosRouter)
-app.use('/novedades', novedadesRouter)
+app.use('/api/usuarios', usuariosRouter)
+app.use('/api/novedades', novedadesRouter)
 app.use('/api/granjas/departamento', granjasDepartamentoRouter)
 app.use('/api/piscicultores/asociacion', piscicultoresAsociacionRouter)
 app.use('/api/pescadores/asociacion', pescadoresAsociacionRouter)
@@ -118,6 +120,8 @@ app.use('/api/usuario', usuarioRouter)
 app.use('/api/municipios/departamento', municipiosDepartamentoRouter)
 app.use('/api/corregimientos/municipio', corregimientosMunicipioRouter)
 app.use('/api/veredas/municipio', veredasMunicipioRouter)
+app.use('/api/pescadores/departamento', pescadoresDepartamentoRouter)
+
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
