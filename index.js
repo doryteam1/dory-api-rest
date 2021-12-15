@@ -47,7 +47,7 @@ const pescadoresMunicipioRouter = require('./routes/pescadores-municipio');
 const piscicultoresMunicipioRouter = require('./routes/piscicultores-municipio');
 const usuarioRouter = require('./routes/usuario');
 const municipiosDepartamentoRouter = require('./routes/municipios-departamento');
-
+const corregimientosMunicipioRouter = require('./routes/corregimientos-municipio');
 
 app.use(bodyParser.json());
 app.use(
@@ -115,7 +115,7 @@ app.use('/api/pescadores/municipio', pescadoresMunicipioRouter)
 app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
 app.use('/api/usuario', usuarioRouter)
 app.use('/api/municipios/departamento', municipiosDepartamentoRouter)
-
+app.use('/api/corregimientos/municipio', corregimientosMunicipioRouter)
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
