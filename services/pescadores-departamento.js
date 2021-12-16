@@ -10,7 +10,7 @@ async function getMultiple(page = 1, id){
             FROM municipios m1, usuarios u1, tipos_usuarios tu 
             WHERE m1.id_municipio=u1.id_municipio and  m1.id_municipio=m.id_municipio and 
             u1.id_tipo_usuario=tu.id_tipo_usuario and tu.nombre_tipo_usuario like('Pescador')) as count_pescadores
-FROM  usuarios u, municipios m, corregimientos c,veredas v, departamentos d
+FROM  usuarios as u, municipios as m, corregimientos as c,veredas as v, departamentos as d
 WHERE ( m.id_departamento_fk=d.id_departamento) and 
 (m.id_municipio=u.id_municipio or c.id_municipio=u.id_municipio or v.id_municipio=u.id_municipio)  and
 d.id_departamento=?

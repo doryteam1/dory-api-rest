@@ -5,14 +5,13 @@ const config = require('../config');
 async function getMultiple(page = 1, id){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT distinctrow  m.id_municipio, m.nombre, m.poblacion,
+`SELECT distinctrow  m.id_municipio, m.nombre, m.poblacion,
     (SELECT count(*) 
-     FROM municipios m1, usuarios u1, tipos_usuarios tu 
-     WHERE m1.id_municipio=u1.id_municipio and  m1.id_municipio=m.id_municipio and 
-     u1.id_tipo_usuario=tu.id_tipo_usuario and tu.nombre_tipo_usuario like('Piscicultor')) as count_piscicultores
-FROM  usuarios as u, municipios as m, corregimientos as c,veredas as v, departamentos as d
+     FROM municipios m1, asociaciones a1
+     WHERE m1.id_municipio=a1.id_municipio and  m1.id_municipio=m.id_municipio ) as count_asociaciones
+FROM  asociaciones as a, municipios as m, corregimientos as c,veredas as v, departamentos as d
 WHERE ( m.id_departamento_fk=d.id_departamento) and 
-(m.id_municipio=u.id_municipio or c.id_municipio=u.id_municipio or v.id_municipio=u.id_municipio)  and
+(m.id_municipio=a.id_municipio or c.id_municipio=a.id_municipio or v.id_municipio=a.id_municipio)  and
 d.id_departamento=?
  LIMIT ?,?`, 
     [id, offset, config.listPerPage]
