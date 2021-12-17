@@ -20,7 +20,7 @@ async function getMultiple(page = 1){
 
 
 async function create(usuario){
-
+  console.log("data ",usuario)
   try {
     const salt= await bcrypt.genSalt(10);//generate a salt
     const passwordHash= await bcrypt.hash( usuario.password , salt);//generate a password Hash (salt+hash)
