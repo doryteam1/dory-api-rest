@@ -20,11 +20,11 @@ console.log('reseñas'+rows);
 
 async function create(reseña){
     const result = await db.query(
-      `INSERT INTO reseñas(id_reseña,cedula_usuario_pk_fk, id_granja_pk_fk, descripcion,fecha) VALUES (?,?,?,?,?)`, 
+      `INSERT INTO reseñas(id_reseña, id_granja_pk_fk, usuarios_id, descripcion, fecha) VALUES (?,?,?,?,?)`, 
       [
         reseña.id_reseña,
-        reseña.cedula_usuario_pk_fk,
         reseña.id_granja_pk_fk,
+        reseña.usuarios_id,
         reseña.descripcion,
         reseña.fecha
       ]
@@ -42,14 +42,14 @@ async function create(reseña){
   async function update(id, reseña){
     const result = await db.query(
       `UPDATE reseñas 
-       SET cedula_usuario_pk_fk=?,
-           id_granja_pk_fk=?,
+       SET id_granja_pk_fk=?,
+           usuarios_id=?,
            descripcion=?,
            fecha=?
        WHERE id_reseña=?`,
        [
-        reseña.cedula_usuario_pk_fk,
         reseña.id_granja_pk_fk,
+        reseña.usuarios_id,
         reseña.descripcion,
         reseña.fecha,
         id

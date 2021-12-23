@@ -50,8 +50,9 @@ LIMIT ?,?`,
 
 
 async function create(novedad){
+     
     const result = await db.query(
-      `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,cedula_usuario_fk) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+      `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,usuarios_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
       [
         novedad.id_novedad,
         novedad.titulo,
@@ -66,16 +67,29 @@ async function create(novedad){
         novedad.canal,
         novedad.email_autor,
         novedad.id_tipo_novedad,
-        novedad.cedula_usuario_fk
+        novedad.usuarios_id
       ]
-    );
-  
+    ); 
+    
     let message = 'Error creando novedad';
   
     if (result.affectedRows) {
       message = {  insertId: result.insertId, message:'novedad creada exitosamente'};
     }
-  
+    
+    const rowsId = await db.query(
+      `SELECT MAX(id_novedad) AS id FROM novedades`
+    ); /*ultimo Id_novedad que se creo con autoincremental*/
+
+    var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/
+   
+   for(var i=0;i<categorias.length;i++){
+      await db.query(
+        `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
+        [categorias[i], rowsId[0].id]
+      );
+   }
+
     return {message};
   }
 
@@ -94,7 +108,7 @@ async function create(novedad){
            canal=?,
            email_autor=?,
            id_tipo_novedad=?,
-           cedula_usuario_fk=? 
+           usuarios_id=? 
        WHERE id_novedad=?`,
        [
         novedad.titulo,
@@ -109,7 +123,7 @@ async function create(novedad){
         novedad.canal,
         novedad.email_autor,
         novedad.id_tipo_novedad,
-        novedad.cedula_usuario_fk,
+        novedad.usuarios_id,
         id
        ] 
     );
@@ -120,6 +134,22 @@ async function create(novedad){
       message = 'Novedad actualizada exitosamente';
     }
   
+
+    var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/
+
+    await db.query(
+      `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
+      [id]
+    );
+   
+   for(var i=0;i<categorias.length;i++){
+      await db.query(
+        `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
+        [categorias[i], id]
+      );
+   }
+
+
     return {message};
   }
   

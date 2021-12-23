@@ -20,10 +20,10 @@ async function getMultiple(page = 1){
 
 async function create(asociacion_usuario){
     const result = await db.query(
-      `INSERT INTO asociaciones_usuarios(cedula_usuario_pk_fk, nit_asociacion_pk_fk) VALUES (?,?)`, 
+      `INSERT INTO asociaciones_usuarios(nit_asociacion_pk_fk,usuarios_id) VALUES (?,?)`, 
       [
-        asociacion_usuario.cedula_usuario_pk_fk,
-        asociacion_usuario.nit_asociacion_pk_fk
+         asociacion_usuario.nit_asociacion_pk_fk,
+         asociacion_usuario.usuarios_id
       ]
     );
   
@@ -39,10 +39,10 @@ async function create(asociacion_usuario){
   async function update(nit, asociacion_usuario){
     const result = await db.query(
       `UPDATE asociaciones_usuarios 
-       SET cedula_usuario_pk_fk=?
+       SET usuarios_id=?
        WHERE nit_asociacion_pk_fk=?`,
        [
-        asociacion_usuario.cedula_usuario_pk_fk,
+        asociacion_usuario.usuarios_id,
         nit
        ] 
     );
