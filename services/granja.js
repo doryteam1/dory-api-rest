@@ -39,7 +39,7 @@ rowsfotos.forEach((element)=>{
    const rows1 = await db.query(
        `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular
         FROM granjas as g, usuarios_granjas as ug, usuarios as u
-        WHERE (u.cedula=ug.cedula_usuario_pk_fk) and
+        WHERE (u.id=ug.usuarios_id) and
          (g.id_granja=ug.id_granja_pk_fk) and
          (ug.espropietario=1) and
          g.id_granja=? LIMIT ?,?`,

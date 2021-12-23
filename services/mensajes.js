@@ -20,12 +20,12 @@ async function getMultiple(page = 1){
 
 async function create(mensaje){
     const result = await db.query(
-      `INSERT INTO mensajes(id_mensaje, contenido,fecha_creacion,cedula_usuario_fk,id_chat_fk) VALUES (?,?,?,?,?)`, 
+      `INSERT INTO mensajes(id_mensaje, contenido,fecha_creacion,usuarios_id,id_chat_fk) VALUES (?,?,?,?,?)`, 
       [
           mensaje.id_mensaje,
           mensaje.contenido,
           mensaje.fecha_creacion,
-          mensaje.cedula_usuario_fk,
+          mensaje.usuarios_id,
           mensaje.id_chat_fk
       ]
     );
@@ -44,13 +44,13 @@ async function create(mensaje){
       `UPDATE mensajes 
        SET contenido=?,
            fecha_creacion=?,
-           cedula_usuario_fk=?,
+           usuarios_id=?,
            id_chat_fk=? 
        WHERE id_mensaje=?`,
        [
            mensaje.contenido,
            mensaje.fecha_creacion,
-           mensaje.cedula_usuario_fk,
+           mensaje.usuarios_id,
            mensaje.id_chat_fk,
            id
        ] 

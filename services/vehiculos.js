@@ -20,13 +20,13 @@ async function getMultiple(page = 1){
 
 async function create(vehiculo){
      const result = await db.query(
-      `INSERT INTO vehiculos (id_vehiculo,capacidad,modelo,transporte_alimento,cedula_usuario) VALUES (?,?,?,?,?)`, 
+      `INSERT INTO vehiculos (id_vehiculo,capacidad,modelo,transporte_alimento,usuarios_id) VALUES (?,?,?,?,?)`, 
       [
         vehiculo.id_vehiculo,
         vehiculo.capacidad,
         vehiculo.modelo,
         vehiculo.transporte_alimento,
-        vehiculo.cedula_usuario
+        vehiculo.usuarios_id
       ]
     );
   
@@ -45,13 +45,13 @@ async function create(vehiculo){
        SET capacidad=?,
            modelo=?,
            transporte_alimento=?,
-           cedula_usuario=?
+           usuarios_id=?
        WHERE id_vehiculo=?`,
        [
             vehiculo.capacidad,
             vehiculo.modelo,
             vehiculo.transporte_alimento,
-            vehiculo.cedula_usuario,
+            vehiculo.usuarios_id,
             id
        ] 
     );

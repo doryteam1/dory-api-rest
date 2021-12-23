@@ -30,8 +30,9 @@ async function create(usuario){
   }
 
     const result = await db.query(
-      `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+      `INSERT INTO usuarios(id,cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
       [
+        usuario.id,
         usuario.cedula,
         usuario.nombres, 
         usuario.apellidos,
@@ -63,10 +64,11 @@ async function create(usuario){
     return {message};
   }
 
-  async function update(cedula, usuario){
+  async function update(id, usuario){
     const result = await db.query(
       `UPDATE usuarios
-       SET  nombres=?, 
+       SET  cedula=?
+            nombres=?, 
             apellidos=?,
             celular=?,
             direccion=?, 
@@ -84,8 +86,9 @@ async function create(usuario){
             id_vereda=?,
             latitud=?,
             longitud=?
-       WHERE cedula=?`,
+       WHERE id=?`,
        [
+        usuario.cedula,
         usuario.nombres, 
         usuario.apellidos,
         usuario.celular,
@@ -104,7 +107,7 @@ async function create(usuario){
         usuario.id_vereda,
         usuario.latitud,
         usuario.longitud,
-        cedula
+        id
        ] 
     );
   
@@ -117,10 +120,10 @@ async function create(usuario){
     return {message};
   }
   
-  async function remove(cedula){
+  async function remove(id){
     const result = await db.query(
-      `DELETE FROM usuarios WHERE cedula=?`, 
-      [cedula]
+      `DELETE FROM usuarios WHERE id=?`, 
+      [id]
     );
   
     let message = 'Error borrando el registro del usuario';

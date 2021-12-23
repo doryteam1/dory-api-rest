@@ -20,9 +20,9 @@ async function getMultiple(page = 1){
 
 async function create(especie_usuario){
     const result = await db.query(
-      `INSERT INTO especies_usuarios(cedula_usuario_pk_fk,id_especie_pk_fk,cantidad_consumo) VALUES (?,?,?)`, 
+      `INSERT INTO especies_usuarios(usuarios_id,id_especie_pk_fk,cantidad_consumo) VALUES (?,?,?)`, 
       [
-        especie_usuario.cedula_usuario_pk_fk,
+        especie_usuario.usuarios_id,
         especie_usuario.id_especie_pk_fk, 
         especie_usuario.cantidad_consumo
       ]
@@ -40,11 +40,11 @@ async function create(especie_usuario){
   async function update(id, especie_usuario){
     const result = await db.query(
       `UPDATE especies_usuarios
-       SET cedula_usuario_pk_fk=?,
+       SET usuarios_id=?,
            cantidad_consumo=? 
        WHERE id_especie_pk_fk=?`,
        [
-         especie_usuario.cedula_usuario_pk_fk,
+         especie_usuario.usuarios_id,
          especie_usuario.cantidad_consumo,
          id
        ] 

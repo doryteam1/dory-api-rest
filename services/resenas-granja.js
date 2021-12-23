@@ -5,7 +5,7 @@ const config = require('../config');
 async function getMultiple(page = 1,id){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT distinct r.id_reseña, r.descripcion, r.fecha, r.cedula_usuario_pk_fk as cedula_usuario, r.id_granja_pk_fk as id_granja, g.nombre as nombre_granja
+    `SELECT distinct r.id_reseña, r.descripcion, r.fecha, r.usuarios_id as id_usuario, r.id_granja_pk_fk as id_granja, g.nombre as nombre_granja
     FROM reseñas as r, granjas as g, usuarios_granjas as ug
     WHERE r.id_granja_pk_fk=g.id_granja and 
           g.id_granja=ug.id_granja_pk_fk and
