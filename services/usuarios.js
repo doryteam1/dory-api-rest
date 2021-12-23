@@ -20,20 +20,17 @@ async function getMultiple(page = 1){
 
 
 async function create(usuario){
-  console.log("data ",usuario)
   try {
     const salt= await bcrypt.genSalt(10);//generate a salt
     const passwordHash= await bcrypt.hash( usuario.password , salt);//generate a password Hash (salt+hash)
     usuario.password=passwordHash;//Re-assign hashed generate a salt version over original, plain text password
-    console.log("data usuario encrypt password ",usuario)
   } catch (error) {
     return (error);
   }
 
     const result = await db.query(
-      `INSERT INTO usuarios(id,cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+      `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
       [
-        usuario.id,
         usuario.cedula,
         usuario.nombres, 
         usuario.apellidos,
