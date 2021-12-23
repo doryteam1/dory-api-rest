@@ -25,6 +25,7 @@ async function create(usuario){
     const salt= await bcrypt.genSalt(10);//generate a salt
     const passwordHash= await bcrypt.hash( usuario.password , salt);//generate a password Hash (salt+hash)
     usuario.password=passwordHash;//Re-assign hashed generate a salt version over original, plain text password
+    console.log("data usuario encrypt password ",usuario)
   } catch (error) {
     return (error);
   }
