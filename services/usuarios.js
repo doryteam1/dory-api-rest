@@ -22,6 +22,7 @@ async function getMultiple(page = 1){
 
 async function create(usuario){
   let message='';
+  console.log("Registrando usuario...");
   console.log(usuario);
   try {
     const salt= await bcrypt.genSalt(10);//generate a salt
