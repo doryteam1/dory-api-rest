@@ -50,114 +50,134 @@ LIMIT ?,?`,
 
 
 async function create(novedad){
-     
-    const result = await db.query(
-      `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,usuarios_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
-      [
-        novedad.id_novedad,
-        novedad.titulo,
-        novedad.autor,
-        novedad.cuerpo,
-        novedad.fecha_creacion,
-        novedad.resumen,
-        novedad.cant_visitas,
-        novedad.url_foto_autor,
-        novedad.url_foto_novedad,
-        novedad.url_novedad,
-        novedad.canal,
-        novedad.email_autor,
-        novedad.id_tipo_novedad,
-        novedad.usuarios_id
-      ]
-    ); 
-    
-    let message = 'Error creando novedad';
+
+    const conection= await db.newConnection(); /*conection of TRANSACTION */
+    await conection.beginTransaction();
+    try {
+      const result = await db.query(
+        `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,usuarios_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+        [
+          novedad.id_novedad,
+          novedad.titulo,
+          novedad.autor,
+          novedad.cuerpo,
+          novedad.fecha_creacion,
+          novedad.resumen,
+          novedad.cant_visitas,
+          novedad.url_foto_autor,
+          novedad.url_foto_novedad,
+          novedad.url_novedad,
+          novedad.canal,
+          novedad.email_autor,
+          novedad.id_tipo_novedad,
+          novedad.usuarios_id
+        ]
+      ); 
+          
+       let message = 'Error creando novedad';
+           
+      if (result.affectedRows) {
+        message = {  insertId: result.insertId, message:'novedad creada exitosamente'};
+      }
+      
+      const rowsId = await db.query(
+        `SELECT MAX(id_novedad) AS id FROM novedades`
+      ); /*ultimo Id_novedad que se creo con autoincremental*/
   
-    if (result.affectedRows) {
-      message = {  insertId: result.insertId, message:'novedad creada exitosamente'};
+      var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/
+     
+     for(var i=0;i<categorias.length;i++){
+        await db.query(
+          `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
+          [categorias[i], rowsId[0].id]
+        );
+     }
+
+     await conection.commit(); 
+     return {message};
+
+    } catch (error) {
+      await conection.rollback(); /*Si hay algún error  */ 
+      return {message:'Error al crear la novedad con transacción'};
     }
-    
-    const rowsId = await db.query(
-      `SELECT MAX(id_novedad) AS id FROM novedades`
-    ); /*ultimo Id_novedad que se creo con autoincremental*/
-
-    var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/
-   
-   for(var i=0;i<categorias.length;i++){
-      await db.query(
-        `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
-        [categorias[i], rowsId[0].id]
-      );
-   }
-
-    return {message};
-  }
+        
+  }//End Function Create
 
   async function update(id, novedad){
-    const result = await db.query(
-      `UPDATE novedades 
-       SET titulo=?,
-           autor=?,
-           cuerpo=?,
-           fecha_creacion=?,
-           resumen=?,
-           cant_visitas=?,
-           url_foto_autor=?,
-           url_foto_novedad=?,
-           url_novedad=?,
-           canal=?,
-           email_autor=?,
-           id_tipo_novedad=?,
-           usuarios_id=? 
-       WHERE id_novedad=?`,
-       [
-        novedad.titulo,
-        novedad.autor,
-        novedad.cuerpo,
-        novedad.fecha_creacion,
-        novedad.resumen,
-        novedad.cant_visitas,
-        novedad.url_foto_autor,
-        novedad.url_foto_novedad,
-        novedad.url_novedad,
-        novedad.canal,
-        novedad.email_autor,
-        novedad.id_tipo_novedad,
-        novedad.usuarios_id,
-        id
-       ] 
-    );
-  
-    let message = 'Error actualizando novedad';
-  
-    if (result.affectedRows) {
-      message = 'Novedad actualizada exitosamente';
-    }
-  
 
-    var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/
+    const conection= await db.newConnection(); /*conection of TRANSACTION */
+    await conection.beginTransaction();
 
-    await db.query(
-      `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
-      [id]
-    );
-   
-   for(var i=0;i<categorias.length;i++){
-      await db.query(
-        `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
-        [categorias[i], id]
+    try {
+      const result = await db.query(
+        `UPDATE novedades 
+         SET titulo=?,
+             autor=?,
+             cuerpo=?,
+             fecha_creacion=?,
+             resumen=?,
+             cant_visitas=?,
+             url_foto_autor=?,
+             url_foto_novedad=?,
+             url_novedad=?,
+             canal=?,
+             email_autor=?,
+             id_tipo_novedad=?,
+             usuarios_id=? 
+         WHERE id_novedad=?`,
+         [
+          novedad.titulo,
+          novedad.autor,
+          novedad.cuerpo,
+          novedad.fecha_creacion,
+          novedad.resumen,
+          novedad.cant_visitas,
+          novedad.url_foto_autor,
+          novedad.url_foto_novedad,
+          novedad.url_novedad,
+          novedad.canal,
+          novedad.email_autor,
+          novedad.id_tipo_novedad,
+          novedad.usuarios_id,
+          id
+         ] 
       );
-   }
+    
+      let message = 'Error actualizando novedad';
+        
+      if (result.affectedRows) {
+        message = 'Novedad actualizada exitosamente';
+       }
+    
+        var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/
+  
+      await db.query(
+        `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
+        [id]
+      );
+     
+     for(var i=0;i<categorias.length;i++){
+        await db.query(
+          `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
+          [categorias[i], id]
+        );
+     }
+  
+     await conection.commit(); 
+     return {message};
 
-
-    return {message};
-  }
+    } catch (error) {
+      await conection.rollback(); /*Si hay algún error  */ 
+      return {message:'Error al actualizar la novedad con transacciones'};
+    }
+   
+  }//End Function update
   
   async function remove(id){
     const result = await db.query(
       `DELETE FROM novedades WHERE id_novedad=?`, 
       [id]
-    );
+    );  
   
     let message = 'Error borrando novedad';
   
