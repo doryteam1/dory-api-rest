@@ -2,6 +2,7 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 const bcrypt= require('bcrypt');
+var createError = require('http-errors')
 
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -20,7 +21,9 @@ async function getMultiple(page = 1){
 
 
 async function create(usuario){
-  console.log("data ",usuario)
+  let message='';
+  console.log("Registrando usuario...");
+  console.log(usuario);
   try {
     const salt= await bcrypt.genSalt(10);//generate a salt
     const passwordHash= await bcrypt.hash( usuario.password , salt);//generate a password Hash (salt+hash)
@@ -29,36 +32,40 @@ async function create(usuario){
     return (error);
   }
 
-    const result = await db.query(
-      `INSERT INTO usuarios(id,cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
-      [
-        usuario.id,
-        usuario.cedula,
-        usuario.nombres, 
-        usuario.apellidos,
-        usuario.celular,
-        usuario.direccion, 
-        usuario.id_tipo_usuario,
-        usuario.email,
-        usuario.password, 
-        usuario.id_area_experticia,
-        usuario.nombre_negocio,
-        usuario.foto, 
-        usuario.fecha_registro,
-        usuario.fecha_nacimiento,
-        usuario.id_departamento,
-        usuario.id_municipio,
-        usuario.id_corregimiento,
-        usuario.id_vereda,
-        usuario.latitud,
-        usuario.longitud
-      ]
-    );
-  
-    let message = 'Error al registrar usuario';
-  
-    if (result.affectedRows) {
-      message = 'Usuario registrado exitosamente';
+    try{
+      const result = await db.query(
+        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+        [
+          usuario.cedula,
+          usuario.nombres, 
+          usuario.apellidos,
+          usuario.celular,
+          usuario.direccion, 
+          usuario.id_tipo_usuario,
+          usuario.email,
+          usuario.password, 
+          usuario.id_area_experticia,
+          usuario.nombre_negocio,
+          usuario.foto, 
+          usuario.fecha_registro,
+          usuario.fecha_nacimiento,
+          usuario.id_departamento,
+          usuario.id_municipio,
+          usuario.id_corregimiento,
+          usuario.id_vereda,
+          usuario.latitud,
+          usuario.longitud
+        ]
+      );
+      if (result.affectedRows) {
+        message = 'Usuario registrado exitosamente';
+      }
+    }catch(err){
+      console.log("err query: ",err);
+      if(err.code == 'ER_DUP_ENTRY'){
+        throw createError(500, 'El email ingresado ya existe');
+      }
+      message = 'Error al registrar usuario';
     }
   
     return {message};
