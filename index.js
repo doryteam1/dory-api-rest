@@ -59,6 +59,7 @@ const buscarPiscicultoresRouter = require('./routes/buscar-piscicultores');
 const usuarioEmailRouter = require('./routes/usuario-email');
 const buscarNormatividadTipoRouter = require('./routes/buscar-normatividad-tipo');
 const buscarNormatividadRouter = require('./routes/buscar-normatividad');
+const buscarEventoTipoRouter = require('./routes/buscar-evento-tipo');
 
 app.use(bodyParser.json());
 app.use(
@@ -139,6 +140,7 @@ app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
 app.use('/api/buscar/usuario/email', usuarioEmailRouter)
 app.use('/api/buscar/normatividad/tipo', buscarNormatividadTipoRouter)
 app.use('/api/buscar/normatividad', buscarNormatividadRouter)
+app.use('/api/buscar/evento/tipo', buscarEventoTipoRouter)
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
