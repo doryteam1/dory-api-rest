@@ -63,6 +63,8 @@ const buscarEventoTipoRouter = require('./routes/buscar-evento-tipo');
 const buscarEventoCursoRouter = require('./routes/buscar-evento-curso');
 const buscarEventoSeminarioRouter = require('./routes/buscar-evento-seminario');
 const buscarEventoTallerRouter = require('./routes/buscar-evento-taller');
+const buscarEventoDiplomadoRouter = require('./routes/buscar-evento-diplomado');
+const buscarEventoCapacitacionRouter = require('./routes/buscar-evento-capacitacion');
 
 app.use(bodyParser.json());
 app.use(
@@ -147,7 +149,8 @@ app.use('/api/buscar/evento/tipo', buscarEventoTipoRouter)
 app.use('/api/buscar/evento/curso', buscarEventoCursoRouter)
 app.use('/api/buscar/evento/seminario', buscarEventoSeminarioRouter)
 app.use('/api/buscar/evento/taller', buscarEventoTallerRouter)
-
+app.use('/api/buscar/evento/diplomado', buscarEventoDiplomadoRouter)
+app.use('/api/buscar/evento/capacitacion', buscarEventoCapacitacionRouter)
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
