@@ -60,6 +60,7 @@ const usuarioEmailRouter = require('./routes/usuario-email');
 const buscarNormatividadTipoRouter = require('./routes/buscar-normatividad-tipo');
 const buscarNormatividadRouter = require('./routes/buscar-normatividad');
 const buscarEventoTipoRouter = require('./routes/buscar-evento-tipo');
+const buscarEventoCursoRouter = require('./routes/buscar-evento-curso');
 
 app.use(bodyParser.json());
 app.use(
@@ -141,6 +142,7 @@ app.use('/api/buscar/usuario/email', usuarioEmailRouter)
 app.use('/api/buscar/normatividad/tipo', buscarNormatividadTipoRouter)
 app.use('/api/buscar/normatividad', buscarNormatividadRouter)
 app.use('/api/buscar/evento/tipo', buscarEventoTipoRouter)
+app.use('/api/buscar/evento/curso', buscarEventoCursoRouter)
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
