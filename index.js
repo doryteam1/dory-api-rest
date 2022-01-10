@@ -61,6 +61,7 @@ const buscarNormatividadTipoRouter = require('./routes/buscar-normatividad-tipo'
 const buscarNormatividadRouter = require('./routes/buscar-normatividad');
 const buscarEventoTipoRouter = require('./routes/buscar-evento-tipo');
 const buscarEventoCursoRouter = require('./routes/buscar-evento-curso');
+const buscarEventoSeminarioRouter = require('./routes/buscar-evento-seminario');
 
 app.use(bodyParser.json());
 app.use(
@@ -143,6 +144,7 @@ app.use('/api/buscar/normatividad/tipo', buscarNormatividadTipoRouter)
 app.use('/api/buscar/normatividad', buscarNormatividadRouter)
 app.use('/api/buscar/evento/tipo', buscarEventoTipoRouter)
 app.use('/api/buscar/evento/curso', buscarEventoCursoRouter)
+app.use('/api/buscar/evento/seminario', buscarEventoSeminarioRouter)
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
