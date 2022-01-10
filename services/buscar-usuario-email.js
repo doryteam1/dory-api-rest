@@ -13,8 +13,8 @@ async function getMultiple(page = 1, email){
     (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
     (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
     u.latitud,u.longitud
- FROM tipos_usuarios as tu, usuarios as u
- WHERE  u.email=?
+    FROM tipos_usuarios as tu inner join usuarios as u on u.id_tipo_usuario=tu.id_tipo_usuario
+    WHERE   u.email=?
     LIMIT ?,?`, 
     [email, offset, config.listPerPage]
   );
