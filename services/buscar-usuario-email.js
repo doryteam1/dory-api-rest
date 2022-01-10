@@ -14,8 +14,7 @@ async function getMultiple(page = 1, email){
     (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
     u.latitud,u.longitud
  FROM tipos_usuarios as tu, usuarios as u
- WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
-       u.email=?
+ WHERE  u.email=?
     LIMIT ?,?`, 
     [email, offset, config.listPerPage]
   );
