@@ -56,12 +56,13 @@ const resenasGranjaRouter = require('./routes/resenas-granja');
 const buscarGranjaRouter = require('./routes/buscar-granja');
 const buscarPescadoresRouter = require('./routes/buscar-pescadores');
 const buscarPiscicultoresRouter = require('./routes/buscar-piscicultores');
-const usuarioEmailRouter = require('./routes/usuario-email');
+const buscarUsuarioEmailRouter = require('./routes/buscar-usuario-email');
 const buscarNormatividadTipoRouter = require('./routes/buscar-normatividad-tipo');
 const buscarNormatividadRouter = require('./routes/buscar-normatividad');
 const buscarEventoTipoRouter = require('./routes/buscar-evento-tipo');
 const buscarEventoCursoRouter = require('./routes/buscar-evento-curso');
 const buscarEventoSeminarioRouter = require('./routes/buscar-evento-seminario');
+const buscarEventoTallerRouter = require('./routes/buscar-evento-taller');
 
 app.use(bodyParser.json());
 app.use(
@@ -139,12 +140,14 @@ app.use('/api/buscar/granja', buscarGranjaRouter)
 app.use('/api/buscar/pescadores', buscarPescadoresRouter)
 app.use('/api/buscar/piscicultores', buscarPiscicultoresRouter)
 app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
-app.use('/api/buscar/usuario/email', usuarioEmailRouter)
+app.use('/api/buscar/usuario/email', buscarUsuarioEmailRouter)
 app.use('/api/buscar/normatividad/tipo', buscarNormatividadTipoRouter)
 app.use('/api/buscar/normatividad', buscarNormatividadRouter)
 app.use('/api/buscar/evento/tipo', buscarEventoTipoRouter)
 app.use('/api/buscar/evento/curso', buscarEventoCursoRouter)
 app.use('/api/buscar/evento/seminario', buscarEventoSeminarioRouter)
+app.use('/api/buscar/evento/taller', buscarEventoTallerRouter)
+
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

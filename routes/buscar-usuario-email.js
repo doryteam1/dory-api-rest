@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const usuarioEmail = require('../services/usuario-email');
+const buscarUsuarioEmail = require('../services/buscar-usuario-email');
 
 
 router.get('/:email', async function(req, res, next) {
   try {
-    res.json(await usuarioEmail.getMultiple(req.query.page,req.params.email));
+    res.json(await buscarUsuarioEmail.getMultiple(req.query.page,req.params.email));
   } catch (err) {
     console.error(`Error al traer el usuario por su email`, err.message);
     next(err);
