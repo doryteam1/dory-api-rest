@@ -5,11 +5,11 @@ const config = require('../config');
 async function getMultiple(page = 1, email){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT distinctrow   u.cedula,concat(u.nombres," ",u.apellidos) as nombre_completo,
+    `SELECT  u.cedula,concat(u.nombres," ",u.apellidos) as nombre_completo,
     u.celular,u.direccion,u.email,u.password,tu.id_tipo_usuario,tu.nombre_tipo_usuario as tipo_usuario,u.id_area_experticia,
     
     u.latitud,u.longitud
-    FROM tipos_usuarios as tu inner join usuarios as u on u.id_tipo_usuario=tu.id_tipo_usuario
+    FROM usuarios as u inner join tipos_usuarios as tu on u.id_tipo_usuario=tu.id_tipo_usuario
     WHERE   u.email=?
     LIMIT ?,?`, 
     [email, offset, config.listPerPage]
