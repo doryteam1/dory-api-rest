@@ -175,7 +175,7 @@ module.exports = {
   create,
   update,
   remove,
-  updateDatosUsuario
+  updateParcialUsuario
 }
 
 
