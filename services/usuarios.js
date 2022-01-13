@@ -2,7 +2,8 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 const bcrypt= require('bcrypt');
-var createError = require('http-errors')
+var createError = require('http-errors');
+const res = require('express/lib/response');
 
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -74,7 +75,7 @@ async function create(usuario){
   async function update(id, usuario){
     const result = await db.query(
       `UPDATE usuarios
-       SET  cedula=?
+       SET  cedula=?,
             nombres=?, 
             apellidos=?,
             celular=?,
@@ -127,6 +128,7 @@ async function create(usuario){
     return {message};
   }
   
+  
   async function remove(id){
     const result = await db.query(
       `DELETE FROM usuarios WHERE id=?`, 
@@ -142,9 +144,40 @@ async function create(usuario){
     return {message};
   }
 
+
+  async function updateDatosUsuario(id, usuario){
+        
+   var atributos=Object.keys(usuario); /*Arreglo de los keys del usuario*/ 
+   var param=Object.values(usuario);
+   var query = "UPDATE usuarios SET ";
+   param.push(id);/*Agrego el id al final de los parametros*/ 
+
+   for(var i=0; i<atributos.length;i++) {
+     query= query+atributos[i]+'=?,';
+   }
+   query= query.substring(0, query.length-1);/*eliminar la coma final*/ 
+   query= query+' '+'WHERE id=?'
+
+   const result = await db.query(query,param);
+  
+   let message = 'Error actualizando el registro del usuario';
+  
+    if (result.affectedRows) {
+      message = 'Usuario actualizado exitosamente';
+    }
+ 
+    return {message};
+
+  }
+
 module.exports = {
   getMultiple,
   create,
   update,
-  remove
+  remove,
+  updateDatosUsuario
 }
+
+
+   
+    
