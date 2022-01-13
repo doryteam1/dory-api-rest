@@ -145,7 +145,7 @@ async function create(usuario){
   }
 
 
-  async function updateDatosUsuario(id, usuario){
+  async function updateParcialUsuario(id, usuario){
         
    var atributos=Object.keys(usuario); /*Arreglo de los keys del usuario*/ 
    var param=Object.values(usuario);

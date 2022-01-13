@@ -44,7 +44,7 @@ router.delete('/:id', async function(req, res, next) {
 
   router.put('/parcial/:id', async function(req, res, next) {
     try {
-      res.json(await usuarios.updateDatosUsuario(req.params.id, req.body));
+      res.json(await usuarios.updateParcialUsuario(req.params.id, req.body));
     } catch (err) {
       console.error(`Error al actualizar el usuario`, err.message);
       next(err);
