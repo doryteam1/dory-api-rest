@@ -22,7 +22,37 @@ async function getMultiple(page = 1, email){
     LIMIT ?,?`, 
     [email, offset, config.listPerPage]
   );
-  const data = helper.emptyOrRows(rows);
+
+  var idUser=rows[0].id;
+
+  const rows2 = await db.query(
+    `SELECT g.nombre as nombre_granja, g.id_granja ,g.descripcion,g.direccion,g.area, g.produccion_estimada_mes,g.numero_trabajadores
+    FROM usuarios  as u 
+             left join usuarios_granjas as ug on u.id=ug.usuarios_id and ug.espropietario=1
+             left join  granjas as g   on  g.id_granja=ug.id_granja_pk_fk
+
+    WHERE  u.id=?
+           LIMIT ?,?`, 
+    [idUser,offset, config.listPerPage]
+  );
+
+  console.log("idUser>>>>>>",idUser);
+  console.log(rows2);
+
+  var arraygranjas= new Array();
+  var nuevoRows = new Array();
+  nuevoRows.push(rows[0]);
+
+rows2.forEach((element)=>{ 
+  arraygranjas.push(element);
+  nuevoRows[nuevoRows.length-1].granjas=arraygranjas;
+});
+
+
+ const data = helper.emptyOrRows(nuevoRows);
+
+
+ /* const data = helper.emptyOrRows(rows);*/
   const meta = {page};
 
   return {
