@@ -146,7 +146,9 @@ async function create(usuario){
 
 
   async function updateParcialUsuario(id, usuario){
-        
+   console.log("user id: ",id);
+   console.log("data user: ",usuario)
+   
    var atributos=Object.keys(usuario); /*Arreglo de los keys del usuario*/ 
    var param=Object.values(usuario);
    var query = "UPDATE usuarios SET ";
