@@ -36,19 +36,23 @@ async function getMultiple(page = 1, email){
     [idUser,offset, config.listPerPage]
   );
 
-  console.log("idUser>>>>>>",idUser);
+  
   console.log(rows2);
 
   var arraygranjas= new Array();
   var nuevoRows = new Array();
   nuevoRows.push(rows[0]);
 
+if((rows2[0].id_granja!=null)){
+
 rows2.forEach((element)=>{ 
   arraygranjas.push(element);
   nuevoRows[nuevoRows.length-1].granjas=arraygranjas;
 });
 
-
+}else{ 
+  nuevoRows[nuevoRows.length-1].granjas=arraygranjas;
+}
  const data = helper.emptyOrRows(nuevoRows);
 
 
