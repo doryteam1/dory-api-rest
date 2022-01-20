@@ -10,8 +10,6 @@ var moment = require('moment');
 async function createLogin(user){
 
   let email=user.email;
-
-  console.log("Logueando usuario...");
   
    const rows = await db.query(
     `SELECT u.password,u.email,u.id,tu.nombre_tipo_usuario
@@ -21,34 +19,31 @@ async function createLogin(user){
     `, 
     [email]
   );
+  console.log(user);
+  let message = "El usuario no esta registrado o la contraseña es inválida";
+  
+  if(rows!=null && rows.length>0){
+ 
+    let pass=rows[0].password;
+    let passUser=user.password;
 
-  let message = '';
-
-  if(rows!=null){
-       createToken(rows);
-      console.log(createToken(rows));
-      message='creacion de token exitoso';
-  }else{
-    message="El usuario no esta registrado o la contraseña es inválida";
+    if(( bcrypt.compareSync(passUser,pass))){
+          var token=createToken(rows[0]);
+         return {token:token};
+    }
   }
+     return{message};
+}//fin método
 
-const data = helper.emptyOrRows(rows);
-
-return {
-  message
-}
-
-}//End of methodo
-
-async function createToken (user) {
-  var payload = {
+ function createToken (user) {
+     var payload = {
+    email:user.email,
     sub: user.id,
     rol: user.nombre_tipo_usuario,
-    email:user.email,
     iat: moment().unix(),
     exp: moment().add(14, "days").unix(),
   };
-  return  jwt.encode(payload, config.TOKEN_SECRET, 'HS512');
+   return  jwt.encode(payload, config.TOKEN_SECRET);
 };
 
 

@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
+const auth= require ('./middelware/auth');
+
 
 const departamentosRouter = require('./routes/departamentos');
 const tipos_usuariosRouter = require('./routes/tipos_usuarios');
@@ -153,7 +155,7 @@ app.use('/api/buscar/evento/seminario', buscarEventoSeminarioRouter)
 app.use('/api/buscar/evento/taller', buscarEventoTallerRouter)
 app.use('/api/buscar/evento/diplomado', buscarEventoDiplomadoRouter)
 app.use('/api/buscar/evento/capacitacion', buscarEventoCapacitacionRouter)
-app.use('/api/buscar/novedad', buscarNovedadRouter)
+app.use('/api/buscar/novedad', auth, buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 
 
