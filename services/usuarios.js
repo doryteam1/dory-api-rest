@@ -26,9 +26,11 @@ async function create(usuario){
   console.log("Registrando usuario...");
   console.log(usuario);
   try {
-    const salt= await bcrypt.genSalt(10);//generate a salt
-    const passwordHash= await bcrypt.hash( usuario.password , salt);//generate a password Hash (salt+hash)
+    const saltRounds= 10;
+    const salt= bcrypt.genSaltSync(saltRounds);//generate a salt
+    const passwordHash= bcrypt.hashSync( usuario.password , salt);//generate a password Hash (salt+hash)
     usuario.password=passwordHash;//Re-assign hashed generate a salt version over original, plain text password
+    console.log("passwordHash:"  +passwordHash);
   } catch (error) {
     return (error);
   }
@@ -70,7 +72,7 @@ async function create(usuario){
       }
       message = 'Error al registrar usuario';
     }
-  
+    console.log("userPassword:"+usuario.password);
     return {message};
   }
 

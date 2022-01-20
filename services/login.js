@@ -1,75 +1,56 @@
 const db = require('./db');
+const helper = require('../helper');
 const config = require('../config');
-const jwt=require('jsonwebtoken');
-const auth= require('../middleware/auth');
-const express = require('express');
-const app = express();
 const bcrypt= require('bcrypt');
-const mysql = require('mysql2/promise');
+const jwt = require('jwt-simple');
+var moment = require('moment');
+//const token= require('crypto').randomBytes(64).toString('hex');
 
-const userSchema= new Schema({
-  email:{
-    type:String,
-    required:true,
-    unique:true
-  },
-  password:{
-    type:String,
-    required:true
+
+async function createLogin(user){
+
+  let email=user.email;
+  
+   const rows = await db.query(
+    `SELECT u.password,u.email,u.id,tu.nombre_tipo_usuario
+     FROM usuarios as u, tipos_usuarios as tu
+     WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
+           u.email=? 
+    `, 
+    [email]
+  );
+  console.log(user);
+  let message = "El usuario no esta registrado o la contraseña es inválida";
+  
+  if(rows!=null && rows.length>0){
+ 
+    let pass=rows[0].password;
+    let passUser=user.password;
+
+    if(( bcrypt.compareSync(passUser,pass))){
+          var token=createToken(rows[0]);
+         return {token:token};
+    }
   }
-});
+     return{message};
+}//fin método
 
-userSchema.pre('save',async function(next){
-  const hash = await bcrypt.hash(this.password,10);
-  this.password=hash;
-  next();
-  console.log("Entraste Luis");
-});
+ function createToken (user) {
+     var payload = {
+    email:user.email,
+    sub: user.id,
+    rol: user.nombre_tipo_usuario,
+    iat: moment().unix(),
+    exp: moment().add(14, "days").unix(),
+  };
+   return  jwt.encode(payload, config.TOKEN_SECRET);
+};
 
 
-userSchema.methods.isValidPassword= async function(password){
- const user= this;
- const compare= await bcrypt.compare(password,user.password);
- return compare;
+module.exports = {
+  createLogin
 }
 
 
-/*
-async function createLogin(user){
-  let message='';
-  console.log("Logueando usuario...",user);
-
-  if(user.email == "juanluis@gmail.com" && user.password == "123") {
-             const payload = {
-                 check:  true
-                            };
+   
     
-                jwt.sign({user},'secretkey',(err,token)=>{
-     
-                  res.json({
-                    message: 'Autenticación correcta',
-                       token:token
-                      });
-                      console.log(" ",message);
-             });
-     }  
-     else {
-          res.json({ message: "Usuario o contraseña incorrectos"});/*  res donde lo recibo??
-      }
-      return {message};
-  }
-
-  
-  jwt.sign({user},'secretkey',(err,token)=>{
-    res.json({
-      token
-    });
-   auth.verifyToken(req,res,next);
-
-  });
- 
-    return {message};
-*/
-  
-
-module.exports =  userSchema;
