@@ -7,8 +7,8 @@ const config = {
     password: env.DB_PASSWORD || '',
     database: env.DB_NAME || 'piscicola',
   },
+  TOKEN_SECRET: env.TOKEN_SECRET || "tokenultrasecreto",
   listPerPage: env.LIST_PER_PAGE || 1000,
 };
-
 
 module.exports = config;
