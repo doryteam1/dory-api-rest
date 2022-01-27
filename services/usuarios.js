@@ -37,7 +37,7 @@ async function create(usuario){
 
     try{
       const result = await db.query(
-        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud,nombre_corregimiento,nombre_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
         [
           usuario.cedula,
           usuario.nombres, 
@@ -57,9 +57,8 @@ async function create(usuario){
           usuario.id_corregimiento,
           usuario.id_vereda,
           usuario.latitud,
-          usuario.longitud,
-          usuario.nombre_corregimiento,
-          usuario.nombre_vereda
+          usuario.longitud
+          
         ]
       );
       if (result.affectedRows) {
@@ -97,9 +96,7 @@ async function create(usuario){
             id_corregimiento=?,
             id_vereda=?,
             latitud=?,
-            longitud=?,
-            nombre_corregimiento=?,
-            nombre_vereda=?
+            longitud=?
        WHERE id=?`,
        [
         usuario.cedula,
@@ -121,8 +118,6 @@ async function create(usuario){
         usuario.id_vereda,
         usuario.latitud,
         usuario.longitud,
-        usuario.nombre_corregimiento,
-        usuario.nombre_vereda,
         id
        ] 
     );
