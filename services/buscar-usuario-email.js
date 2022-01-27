@@ -23,6 +23,8 @@ async function getMultiple(page = 1, email){
     [email, offset, config.listPerPage]
   );
 
+if ((rows.length!=0 )){
+
   var idUser=rows[0].id;
 
   const rows2 = await db.query(
@@ -53,11 +55,11 @@ rows2.forEach((element)=>{
 }else{ 
   nuevoRows[nuevoRows.length-1].granjas=arraygranjas;
 }
+
+}
+
  const data = helper.emptyOrRows(nuevoRows);
-
-
- /* const data = helper.emptyOrRows(rows);*/
-  const meta = {page};
+ const meta = {page};
 
   return {
     data,
