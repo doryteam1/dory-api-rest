@@ -6,7 +6,7 @@ async function getMultiple(page = 1, cadena){
   const offset = helper.getOffset(page, config.listPerPage);
   let cad= '%'+cadena+'%';
   const rows = await db.query(
-    `SELECT  concat(tn.nombre," ",n.nombre) as normatividad, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo_normatividad
+    `SELECT  concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
      FROM tipos_normatividades as tn, normatividades n
      WHERE (n.id_tipo_fk=tn.id_tipo) and 
            (tn.nombre  like ? or n.nombre like ? or n.contenido like ? )
