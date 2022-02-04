@@ -155,7 +155,7 @@ app.use('/api/buscar/evento/seminario', buscarEventoSeminarioRouter)
 app.use('/api/buscar/evento/taller', buscarEventoTallerRouter)
 app.use('/api/buscar/evento/diplomado', buscarEventoDiplomadoRouter)
 app.use('/api/buscar/evento/capacitacion', buscarEventoCapacitacionRouter)
-app.use('/api/buscar/novedad', auth, buscarNovedadRouter)
+app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 
 
