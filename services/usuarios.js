@@ -5,6 +5,7 @@ const bcrypt= require('bcrypt');
 var createError = require('http-errors');
 const res = require('express/lib/response');
 
+
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
@@ -20,19 +21,20 @@ async function getMultiple(page = 1){
   }
 }
 
-
+/* ----------------------------------CREATE-----------------------------*/
 async function create(usuario){
-  let message='';
+  
+  let message='Registro fallido';
   console.log("Registrando usuario...");
-  console.log(usuario);
+  
   try {
     const saltRounds= 10;
     const salt= bcrypt.genSaltSync(saltRounds);//generate a salt
     const passwordHash= bcrypt.hashSync( usuario.password , salt);//generate a password Hash (salt+hash)
     usuario.password=passwordHash;//Re-assign hashed generate a salt version over original, plain text password
-    console.log("passwordHash:"  +passwordHash);
-  } catch (error) {
-    return (error);
+    
+  } catch  {
+    throw createError(500,"Un problema al crear el usuario");
   }
 
     try{
@@ -66,17 +68,40 @@ async function create(usuario){
       }
     }catch(err){
       console.log("err query: ",err);
-      if(err.code == 'ER_DUP_ENTRY'){
-        throw createError(500, 'El email ingresado ya existe');
-      }
-      message = 'Error al registrar usuario';
     }
-    console.log("userPassword:"+usuario.password);
     return {message};
   }
 
+/* ----------------------------------UPDATE-----------------------------*/
+
   async function update(id, usuario){
-    const result = await db.query(
+
+   /* anexado If por error de parcial al no recibir el id
+    if (usuario.id!=undefined) {
+      throw createError(400,"No se puede actualizar usuario sin su identificador");
+    }else {*/
+      
+      if (usuario.cedula!= undefined && 
+        usuario.nombres!= undefined  && 
+        usuario.apellidos!= undefined  &&
+        usuario.celular!= undefined  &&
+        usuario.direccion!= undefined  && 
+        usuario.id_tipo_usuario!= undefined  &&
+        usuario.email!= undefined  &&
+        usuario.password!= undefined  && 
+        usuario.id_area_experticia!= undefined  &&
+        usuario.nombre_negocio!= undefined  &&
+        usuario.foto!= undefined  && 
+        usuario.fecha_registro!= undefined  &&
+        usuario.fecha_nacimiento!= undefined  &&
+        usuario.id_departamento!= undefined &&
+        usuario.id_municipio!= undefined  &&
+        usuario.id_corregimiento!= undefined  &&
+        usuario.id_vereda!= undefined  &&
+        usuario.latitud!= undefined  &&
+        usuario.longitud!= undefined ){
+
+      const result = await db.query(
       `UPDATE usuarios
        SET  cedula=?,
             nombres=?, 
@@ -122,16 +147,23 @@ async function create(usuario){
        ] 
     );
   
-    let message = 'Error actualizando el registro del usuario';
+    let message = 'Usuario no esta registrado';
   
     if (result.affectedRows) {
       message = 'Usuario actualizado exitosamente';
     }
   
     return {message};
-  }
+    }  
+        throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
+ // }
+     
+      
+  }/*fin update*/
+
   
-  
+  /* ----------------------------------REMOVE-----------------------------*/
+
   async function remove(id){
     const result = await db.query(
       `DELETE FROM usuarios WHERE id=?`, 
@@ -147,12 +179,14 @@ async function create(usuario){
     return {message};
   }
 
+/* ----------------------------------UPDATE PARCIAL DEL USUARIO-----------------------------*/
 
   async function updateParcialUsuario(id, usuario){
-   console.log("user id: ",id);
-   console.log("data user: ",usuario)
-   
+  
    var atributos=Object.keys(usuario); /*Arreglo de los keys del usuario*/ 
+
+   if (atributos.length!=0){
+     
    var param=Object.values(usuario);
    var query = "UPDATE usuarios SET ";
    param.push(id);/*Agrego el id al final de los parametros*/ 
@@ -172,6 +206,9 @@ async function create(usuario){
     }
  
     return {message};
+    }
+
+    throw createError(400,"No hay parametros para actualizar");
 
   }
 

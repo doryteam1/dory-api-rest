@@ -3,6 +3,9 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
 const auth= require ('./middelware/auth');
+var createError = require('http-errors');
+
+const router = express.Router();
 
 
 const departamentosRouter = require('./routes/departamentos');
@@ -125,7 +128,7 @@ app.use('/api/fotos', fotosRouter)
 app.use('/api/mensajes', mensajesRouter)
 app.use('/api/resenas', resenasRouter)
 app.use('/api/eventos', eventosRouter)
-app.use('/api/usuarios', usuariosRouter)/**/
+app.use('/api/usuarios', usuariosRouter)/*---------------principal---------*/
 app.use('/api/novedades', novedadesRouter)
 app.use('/api/granjas/departamento', granjasDepartamentoRouter)
 app.use('/api/piscicultores/asociacion', piscicultoresAsociacionRouter)
@@ -134,7 +137,7 @@ app.use('/api/granjas/municipio', granjasMunicipioRouter)
 app.use('/api/granja', granjaRouter)
 app.use('/api/pescadores/municipio', pescadoresMunicipioRouter)
 app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
-app.use('/api/usuario', usuarioRouter)
+app.use('/api/usuario', usuarioRouter)/*----------busqueda de user  x id ---------*/
 app.use('/api/municipios/departamento', municipiosDepartamentoRouter)
 app.use('/api/corregimientos/municipio', corregimientosMunicipioRouter)
 app.use('/api/veredas/municipio', veredasMunicipioRouter)
@@ -146,7 +149,7 @@ app.use('/api/buscar/granja', buscarGranjaRouter)
 app.use('/api/buscar/pescadores', buscarPescadoresRouter)
 app.use('/api/buscar/piscicultores', buscarPiscicultoresRouter)
 app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
-app.use('/api/buscar/usuario/email', buscarUsuarioEmailRouter)
+app.use('/api/buscar/usuario/email', buscarUsuarioEmailRouter) /*----------busqueda de user  x email ---------*/
 app.use('/api/buscar/normatividad/tipo', buscarNormatividadTipoRouter)
 app.use('/api/buscar/normatividad', buscarNormatividadRouter)
 app.use('/api/buscar/evento/tipo', buscarEventoTipoRouter)
@@ -158,9 +161,87 @@ app.use('/api/buscar/evento/capacitacion', buscarEventoCapacitacionRouter)
 app.use('/api/buscar/novedad', auth, buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 
+/* ------------------------------------
+
+app.get('/tipos-usuarios', function(req, res) {
+  if(err){
+    return err;
+  }
+  throw createError(400,"Problema de direccionamiento de Errores"); 
+});
+
+var ruta1=app.route('/:id' ,  'methods:{ put: true }');*/
+/*
+var ruta=app.route('/:id').put(function (req, res) {
+    res.send('Update algo')
+  });
+  console.log("Ruta "+" ",ruta1);
+
+
+app.route('/:id' , function(err) { 
+  if(err) {console.log("Hello LUIS",err);}
+},{ put: true });
+
+*/
+
+/* createError.message="Dirección de endpoint no existe";
+  createError.statusCode=403;
+  throw  createError(401,"Dirección de endpoint no existe");
+
+try{
+
+      if((router.get('/')==createError)||(router.post('/')==createError)||(router.put('/')==createError)||(router.delete('/')==createError))
+      {
+        console.log("ruta de endpoint correcta");
+      }
+}catch{
+  res.status(403).json({'message':"Dirección de Endpoint no existe" });
+  console.log("Error en la ruta de endpoint");
+ 
+}
+*/
+app.use('/api/tipos-usuarios/:id', function(req, res, next) {
+  console.log('Request URL:', req.originalUrl);
+  next();
+}, function (req, res, next) {
+  console.log('Request Type:', req.method);
+  next();
+});
+
+/* --------------------------------------- */
+
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
+
+  console.log("ERROR INGRESADO"+"   "+err);
+
+  if(err.code=='ER_DUP_ENTRY'){/* Clave primaria duplicada al enviar la solicitud */
+    err.message="El registro ya existe";
+    err.statusCode=400;
+ }
+ 
+  if(err.code=='ER_PARSE_ERROR'){
+      err.statusCode=400;
+  }
+           
+ if(err.code=='ER_BAD_FIELD_ERROR'){/* Parametros mal escritos al enviar la solicitud */
+              err.statusCode=400;
+              err.message="No existe parametro en la BD"+" "+err.sqlMessage; 
+  }
+             
+  if(err.code=='ER_WRONG_ARGUMENTS'){
+        err.statusCode=500;
+  }
+                
+  if(err.code=='ERR_INVALID_ARG_TYPE'){
+        err.statusCode=500;
+  }
+                 
+  if(err.code=='EADDRINUSE'){
+         err.statusCode=500;
+    }
+
     const statusCode = err.statusCode || 500;
     console.error(err.message, err.stack);
     res.status(statusCode).json({'message': err.message});

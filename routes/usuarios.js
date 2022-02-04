@@ -12,7 +12,6 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-
 router.post('/', async function(req, res, next) {
     try {
       res.json(await usuarios.create(req.body));
@@ -22,8 +21,7 @@ router.post('/', async function(req, res, next) {
     }
   });
 
-
-router.put('/:id', async function(req, res, next) {
+router.put('/total/:id', async function(req, res, next) {
     try {
       res.json(await usuarios.update(req.params.id, req.body));
     } catch (err) {
@@ -31,7 +29,6 @@ router.put('/:id', async function(req, res, next) {
       next(err);
     }
 });
-
 
 router.delete('/:id', async function(req, res, next) {
     try {
@@ -49,6 +46,7 @@ router.delete('/:id', async function(req, res, next) {
       console.error(`Error al actualizar el usuario`, err.message);
       next(err);
     }
-});
+  });
+ 
 
 module.exports = router;
