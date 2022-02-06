@@ -182,11 +182,11 @@ app.route('/:id' , function(err) {
   if(err) {console.log("Hello LUIS",err);}
 },{ put: true });
 
-*/
+*
 
-/* createError.message="Dirección de endpoint no existe";
+ createError.message="Dirección de endpoint no existe";
   createError.statusCode=403;
-  throw  createError(401,"Dirección de endpoint no existe");
+  throw  createError(401,"Dirección de endpoint no existe");*/
 
 try{
 
@@ -199,14 +199,14 @@ try{
   console.log("Error en la ruta de endpoint");
  
 }
-*/
+/*
 app.use('/api/tipos-usuarios/:id', function(req, res, next) {
   console.log('Request URL:', req.originalUrl);
   next();
 }, function (req, res, next) {
   console.log('Request Type:', req.method);
   next();
-});
+});*/
 
 /* --------------------------------------- */
 
