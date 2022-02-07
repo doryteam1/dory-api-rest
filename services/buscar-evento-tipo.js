@@ -6,7 +6,7 @@ async function getMultiple(page = 1, tipo){
   const offset = helper.getOffset(page, config.listPerPage);
   let tipoEvento= '%'+tipo+'%';
   const rows = await db.query(
-    `SELECT  te.nombre as tipo_evento,e.nombre as nombre_evento, e.resumen, e.fecha, e.dirigidoa, e.organizador, e.costo
+    `SELECT  te.nombre as tipo,e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen
     FROM tipos_eventos as te, eventos as e
     WHERE e.id_tipo_evento_fk=te.id_evento and 
           te.nombre like ?
