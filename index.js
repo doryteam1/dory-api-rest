@@ -161,6 +161,8 @@ app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 
 
+
+
 /* Error handler middleware */
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
