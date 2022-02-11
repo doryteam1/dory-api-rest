@@ -1,10 +1,17 @@
-const mysql = require('mysql2/promise');
+const mysql = require('mysql2');
 const config = require('../config');
+const helper = require('../helper');
 const pool= mysql.createPool(config.db);
+const promisePool = pool.promise();
 
 async function query(sql, params) {
-  const results = await pool.query(sql, params);          
-  return results;
+  if(helper.isProductionEnv()){
+    const [results, ] = await promisePool.execute(sql, params);
+    return results;
+  }else{
+    const [results, ] = await promisePool.query(sql, params);
+    return results;
+  }
 }
 
 async function newConnection(){

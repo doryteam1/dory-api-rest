@@ -8,8 +8,13 @@ function getOffset(currentPage = 1, listPerPage) {
     }
     return rows;
   }
+
+  function isProductionEnv(){
+    return process.env.NODE_ENV == 'production';
+  }
   
   module.exports = {
     getOffset,
-    emptyOrRows
+    emptyOrRows,
+    isProductionEnv
   }
