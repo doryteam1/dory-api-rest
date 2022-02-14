@@ -200,7 +200,7 @@ async function getArticulosColombianos(page = 1, cadena){
      n.url_novedad,n.email_autor,n.canal,n.cuerpo,n.id_tipo_novedad as tipo_novedad,tn.nombre as tipo,
      c.id_categoria,  c.nombre_categoria,c.descripcion_categoria
      
-FROM  novedades as n inner join  tipos_novedades as tn on (n.id_tipo_novedad=tn.id_tipo_novedad and tn.nombre like 'Articulo_Colombiano' )   
+FROM  novedades as n inner join  tipos_novedades as tn on (n.id_tipo_novedad=tn.id_tipo_novedad and tn.nombre like 'Articulo-Colombia' )   
                      left join me_gustas m on (m.id_novedad_pk_fk=n.id_novedad)  
                      left join categorias_novedades as cn on (cn.id_novedad_pk_fk=n.id_novedad)
                      inner join categorias as c on (cn.id_categoria_pk_fk=c.id_categoria)
