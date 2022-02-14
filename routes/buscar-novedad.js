@@ -30,7 +30,7 @@ router.get('/articulo/:cadena', async function(req, res, next) {
   }
 });
 
-router.get('/articulocolombiano/:cadena', async function(req, res, next) {
+router.get('/articulo-colombia/:cadena', async function(req, res, next) {
   try {
     res.json(await buscarNovedad.getArticulosColombianos(req.query.page,req.params.cadena));
   } catch (err) {
