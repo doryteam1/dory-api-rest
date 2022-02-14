@@ -3,10 +3,6 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
 const auth= require ('./middelware/auth');
-var createError = require('http-errors');
-
-const router = express.Router();
-
 
 const departamentosRouter = require('./routes/departamentos');
 const tipos_usuariosRouter = require('./routes/tipos_usuarios');
@@ -89,7 +85,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.route('/')
   .get(function (req, res) {
     res.sendFile(process.cwd() + '/index.html');
@@ -161,61 +156,21 @@ app.use('/api/buscar/evento/capacitacion', buscarEventoCapacitacionRouter)
 app.use('/api/buscar/novedad', auth, buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 
-/* ------------------------------------
-
-app.get('/tipos-usuarios', function(req, res) {
-  if(err){
-    return err;
-  }
-  throw createError(400,"Problema de direccionamiento de Errores"); 
-});
-
-var ruta1=app.route('/:id' ,  'methods:{ put: true }');*/
-/*
-var ruta=app.route('/:id').put(function (req, res) {
-    res.send('Update algo')
-  });
-  console.log("Ruta "+" ",ruta1);
-
-
-app.route('/:id' , function(err) { 
-  if(err) {console.log("Hello LUIS",err);}
-},{ put: true });
-
-*
-
- createError.message="Dirección de endpoint no existe";
-  createError.statusCode=403;
-  throw  createError(401,"Dirección de endpoint no existe");*/
-
-try{
-
-      if((router.get('/')==createError)||(router.post('/')==createError)||(router.put('/')==createError)||(router.delete('/')==createError))
-      {
-        console.log("ruta de endpoint correcta");
-      }
-}catch{
-  res.status(403).json({'message':"Dirección de Endpoint no existe" });
-  console.log("Error en la ruta de endpoint");
- 
-}
-/*
-app.use('/api/tipos-usuarios/:id', function(req, res, next) {
-  console.log('Request URL:', req.originalUrl);
-  next();
-}, function (req, res, next) {
-  console.log('Request Type:', req.method);
-  next();
-});*/
-
-/* --------------------------------------- */
-
+/* Error de direccionamiento  */
+ app.use(( req, res, next) => {
+  const error= new Error('NOT FOUND');
+  error.status=404;
+  next(error);
+ });
 
 /* Error handler middleware */
-app.use((err, req, res, next) => {
-
-  console.log("ERROR INGRESADO"+"   "+err);
-
+app.use((err, req, res, next) => {     
+  
+  res.status(err.status || 500);
+  res.json( {
+   error:{message:err.message}
+  });/*---Error de direccionamiento--- */
+  
   if(err.code=='ER_DUP_ENTRY'){/* Clave primaria duplicada al enviar la solicitud */
     err.message="El registro ya existe";
     err.statusCode=400;
