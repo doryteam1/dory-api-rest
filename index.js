@@ -159,17 +159,13 @@ app.use('/api/login', loginRouter)
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
   const error= new Error('NOT FOUND');
-  error.status=404;
+  error.statusCode=404;
   next(error);
  });
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {     
   
-  res.status(err.status || 500);
-  res.json( {
-   error:{message:err.message}
-  });/*---Error de direccionamiento--- */
   
   if(err.code=='ER_DUP_ENTRY'){/* Clave primaria duplicada al enviar la solicitud */
     err.message="El registro ya existe";
