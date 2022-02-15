@@ -1,6 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+var createError = require('http-errors');
 
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -49,10 +50,28 @@ LIMIT ?,?`,
 }
 
 
+/*--------------------------------CREATE---------------------------------------- */ 
+
 async function create(novedad){
 
     const conection= await db.newConnection(); /*conection of TRANSACTION */
     await conection.beginTransaction();
+
+    if(novedad.titulo!= undefined && 
+      novedad.autor!= undefined && 
+      novedad.cuerpo!= undefined && 
+      novedad.fecha_creacion!= undefined && 
+      novedad.resumen!= undefined && 
+      novedad.cant_visitas!= undefined && 
+      novedad.url_foto_autor!= undefined && 
+      novedad.url_foto_novedad!= undefined && 
+      novedad.url_novedad!= undefined && 
+      novedad.canal!= undefined && 
+      novedad.email_autor!= undefined && 
+      novedad.id_tipo_novedad!= undefined && 
+      novedad.usuarios_id!= undefined 
+    ){
+
     try {
       const result = await db.query(
         `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,usuarios_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
@@ -98,15 +117,37 @@ async function create(novedad){
 
     } catch (error) {
       await conection.rollback(); /*Si hay algún error  */ 
-      return {message:'Error al crear la novedad con transacción'};
+      return {message:'Registro de novedad fallida (transacciónes)'};
     }
+
+  }
+  throw createError(400,"Un problema con los parametros ingresados"); 
         
   }//End Function Create
+
+
+  /*--------------------------------UPDATE---------------------------------------- */ 
 
   async function update(id, novedad){
 
     const conection= await db.newConnection(); /*conection of TRANSACTION */
     await conection.beginTransaction();
+
+
+    if(novedad.titulo!= undefined && 
+      novedad.autor!= undefined && 
+      novedad.cuerpo!= undefined && 
+      novedad.fecha_creacion!= undefined && 
+      novedad.resumen!= undefined && 
+      novedad.cant_visitas!= undefined && 
+      novedad.url_foto_autor!= undefined && 
+      novedad.url_foto_novedad!= undefined && 
+      novedad.url_novedad!= undefined && 
+      novedad.canal!= undefined && 
+      novedad.email_autor!= undefined && 
+      novedad.id_tipo_novedad!= undefined && 
+      novedad.usuarios_id!= undefined 
+    ){
 
     try {
       const result = await db.query(
@@ -170,23 +211,44 @@ async function create(novedad){
       await conection.rollback(); /*Si hay algún error  */ 
       return {message:'Error al actualizar la novedad con transacciones'};
     }
-   
-  }//End Function update
-  
-  async function remove(id){
-    const result = await db.query(
-      `DELETE FROM novedades WHERE id_novedad=?`, 
-      [id]
-    );  
-  
-    let message = 'Error borrando novedad';
-  
-    if (result.affectedRows) {
-      message = 'Novedad borrado exitosamente';
-    }
-  
-    return {message};
   }
+  throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
+
+  }//End Function update
+
+  
+/*--------------------------------REMOVE---------------------------------------- */ 
+
+  async function remove(id){
+
+    const conection= await db.newConnection(); /*conection of TRANSACTION */
+    await conection.beginTransaction();
+    let message = 'Error borrando novedad';
+
+    try {
+             await db.query(
+               `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
+                 [id]
+                 );  /*Elimino la relación de la novedad en la tabla categorias_novedades */
+      
+          const result = await db.query(
+            `DELETE FROM novedades WHERE id_novedad=?`, 
+            [id]
+          );  
+            
+          if (result.affectedRows) {
+            message = 'Novedad borrado exitosamente';
+          }
+            
+         await conection.commit(); 
+         return {message};
+
+    } catch (error) {
+      await conection.rollback(); /*Si hay algún error  */ 
+      return {message:'Error al eliminar la novedad (transacciones)'};
+  }
+
+  }/*fin remove*/
 
 module.exports = {
   getMultiple,

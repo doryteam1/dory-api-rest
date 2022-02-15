@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
 const auth= require ('./middelware/auth');
 
-
 const departamentosRouter = require('./routes/departamentos');
 const tipos_usuariosRouter = require('./routes/tipos_usuarios');
 const infraestructurasRouter = require('./routes/infraestructuras');
@@ -87,7 +86,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.route('/')
   .get(function (req, res) {
     res.sendFile(process.cwd() + '/index.html');
@@ -126,7 +124,7 @@ app.use('/api/fotos', fotosRouter)
 app.use('/api/mensajes', mensajesRouter)
 app.use('/api/resenas', resenasRouter)
 app.use('/api/eventos', eventosRouter)
-app.use('/api/usuarios', usuariosRouter)/**/
+app.use('/api/usuarios', usuariosRouter)/*---------------principal---------*/
 app.use('/api/novedades', novedadesRouter)
 app.use('/api/granjas/departamento', granjasDepartamentoRouter)
 app.use('/api/piscicultores/asociacion', piscicultoresAsociacionRouter)
@@ -135,7 +133,7 @@ app.use('/api/granjas/municipio', granjasMunicipioRouter)
 app.use('/api/granja', granjaRouter)
 app.use('/api/pescadores/municipio', pescadoresMunicipioRouter)
 app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
-app.use('/api/usuario', usuarioRouter)
+app.use('/api/usuario', usuarioRouter)/*----------busqueda de user  x id ---------*/
 app.use('/api/municipios/departamento', municipiosDepartamentoRouter)
 app.use('/api/corregimientos/municipio', corregimientosMunicipioRouter)
 app.use('/api/veredas/municipio', veredasMunicipioRouter)
@@ -147,7 +145,7 @@ app.use('/api/buscar/granja', buscarGranjaRouter)
 app.use('/api/buscar/pescadores', buscarPescadoresRouter)
 app.use('/api/buscar/piscicultores', buscarPiscicultoresRouter)
 app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
-app.use('/api/buscar/usuario/email', buscarUsuarioEmailRouter)
+app.use('/api/buscar/usuario/email', buscarUsuarioEmailRouter) /*----------busqueda de user  x email ---------*/
 app.use('/api/buscar/normatividad/tipo', buscarNormatividadTipoRouter)
 app.use('/api/buscar/normatividad', buscarNormatividadRouter)
 app.use('/api/buscar/evento/tipo', buscarEventoTipoRouter)
@@ -160,11 +158,45 @@ app.use('/api/buscar/evento/congreso', buscarEventoCongresoRouter)
 app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 
+/* Error de direccionamiento  */
+ app.use(( req, res, next) => {
+  const error= new Error('NOT FOUND');
+  error.statusCode=404;
+  next(error);
+ });
 
 
 
 /* Error handler middleware */
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => {     
+  
+  
+  if(err.code=='ER_DUP_ENTRY'){/* Clave primaria duplicada al enviar la solicitud */
+    err.message="El registro ya existe";
+    err.statusCode=400;
+ }
+ 
+  if(err.code=='ER_PARSE_ERROR'){
+      err.statusCode=400;
+  }
+           
+ if(err.code=='ER_BAD_FIELD_ERROR'){/* Parametros mal escritos al enviar la solicitud */
+              err.statusCode=400;
+              err.message="No existe parametro en la BD"+" "+err.sqlMessage; 
+  }
+             
+  if(err.code=='ER_WRONG_ARGUMENTS'){
+        err.statusCode=500;
+  }
+                
+  if(err.code=='ERR_INVALID_ARG_TYPE'){
+        err.statusCode=500;
+  }
+                 
+  if(err.code=='EADDRINUSE'){
+         err.statusCode=500;
+    }
+
     const statusCode = err.statusCode || 500;
     console.error(err.message, err.stack);
     res.status(statusCode).json({'message': err.message});

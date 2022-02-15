@@ -42,4 +42,20 @@ router.delete('/:id', async function(req, res, next) {
     }
   });
 
+  router.delete('/', async function(req, res, next) {
+    try {
+      res.status(400).json({'message':"No se puede emininar usuario sin su identificador" });
+    } catch (err) {    
+        next(err);
+    }
+  });
+
+  router.put('/', async function(req, res, next) {
+    try {
+      res.status(400).json({'message':"No se puede actualizar usuario sin su identificador" });
+    } catch (err) {    
+        next(err);
+    }
+  });
+
 module.exports = router;

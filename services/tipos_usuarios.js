@@ -1,6 +1,8 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+var createError = require('http-errors');
+
 
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -15,28 +17,44 @@ async function getMultiple(page = 1){
     data,
     meta
   }
-}
+}/*--FIN get-*/
 
+
+
+/*-------------------------------------------CREATE----------------------------------*/
 
 async function create(tipo_usuario){
-     const result = await db.query(
-      `INSERT INTO tipos_usuarios(id_tipo_usuario,nombre_tipo_usuario) VALUES (?,?)`, 
-      [
-        tipo_usuario.id_tipo_usuario,
-        tipo_usuario.nombre_tipo_usuario,
-      ]
-    );
-  
-    let message = 'Error creando tipo de usuario';
-  
-    if (result.affectedRows) {
-      message = 'Tipo de usuario creado exitosamente';
-    }
-  
-    return {message};
+
+  let message = 'Error creando tipo de usuario';
+  if(tipo_usuario.id_tipo_usuario != undefined && 
+        tipo_usuario.nombre_tipo_usuario){
+      try{
+        const result = await db.query(
+          `INSERT INTO tipos_usuarios(id_tipo_usuario,nombre_tipo_usuario) VALUES (?,?)`, 
+          [
+            tipo_usuario.id_tipo_usuario,
+            tipo_usuario.nombre_tipo_usuario,
+          ]
+        );
+      
+        if (result.affectedRows) {
+          message = 'Tipo de usuario creado exitosamente';
+        }
+      }catch(err){
+        console.log("err query: ",err);
+      }
+        return {message};
   }
+     throw createError(400,"Un problema con los parametros ingresados"); 
+  
+}/*fin create*/
+
+
+/*-------------------------------------------UPDATE----------------------------------*/
 
   async function update(id, tipo_usuario){
+
+    if (tipo_usuario.nombre_tipo_usuario!=undefined){
     const result = await db.query(
       `UPDATE tipos_usuarios 
        SET nombre_tipo_usuario=? 
@@ -55,7 +73,13 @@ async function create(tipo_usuario){
   
     return {message};
   }
-  
+  throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
+}/*fin update*/
+
+
+/*-------------------------------------------REMOVE----------------------------------*/
+
+
   async function remove(id){
     const result = await db.query(
       `DELETE FROM tipos_usuarios WHERE id_tipo_usuario=?`, 
