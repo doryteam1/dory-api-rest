@@ -70,7 +70,7 @@ const buscarEventoCongresoRouter = require('./routes/buscar-evento-congreso');
 const buscarNovedadRouter = require('./routes/buscar-novedad');
 const loginRouter = require('./routes/login');
 const enviarFormularioRouter = require('./routes/enviarFormulario');
-
+const compartirRouter = require('./routes/compartir');
 
 app.use(bodyParser.json());
 app.use(
@@ -160,7 +160,7 @@ app.use('/api/buscar/evento/congreso', buscarEventoCongresoRouter)
 app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/contactenos',enviarFormularioRouter)
-
+app.use('/api/compartir',compartirRouter)
 
 
 /* Error de direccionamiento  */
