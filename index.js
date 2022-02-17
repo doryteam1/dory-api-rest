@@ -69,6 +69,8 @@ const buscarEventoCapacitacionRouter = require('./routes/buscar-evento-capacitac
 const buscarEventoCongresoRouter = require('./routes/buscar-evento-congreso');
 const buscarNovedadRouter = require('./routes/buscar-novedad');
 const loginRouter = require('./routes/login');
+const enviarFormularioRouter = require('./routes/enviarFormulario');
+
 
 app.use(bodyParser.json());
 app.use(
@@ -117,7 +119,7 @@ app.use('/api/proyectos-subregiones', proyectos_subregionesRouter)
 app.use('/api/proyectos-departamentos', proyectos_departamentosRouter)
 app.use('/api/especies-usuarios', especies_usuariosRouter)
 app.use('/api/tipos-normatividades', tipos_normatividadesRouter)
-app.use('/api/vehiculos', vehiculosRouter)
+app.use('/api/vehiculos',auth, vehiculosRouter)
 app.use('/api/tipos-novedades', tipos_novedadesRouter)
 app.use('/api/normatividades', normatividadesRouter)
 app.use('/api/fotos', fotosRouter)
@@ -157,6 +159,9 @@ app.use('/api/buscar/evento/capacitacion', buscarEventoCapacitacionRouter)
 app.use('/api/buscar/evento/congreso', buscarEventoCongresoRouter)
 app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/contactenos',enviarFormularioRouter)
+
+
 
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
@@ -164,8 +169,6 @@ app.use('/api/login', loginRouter)
   error.statusCode=404;
   next(error);
  });
-
-
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {     

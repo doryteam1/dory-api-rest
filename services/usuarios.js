@@ -75,11 +75,6 @@ async function create(usuario){
 /* ----------------------------------UPDATE-----------------------------*/
 
   async function update(id, usuario){
-
-   /* anexado If por error de parcial al no recibir el id
-    if (usuario.id!=undefined) {
-      throw createError(400,"No se puede actualizar usuario sin su identificador");
-    }else {*/
       
       if (usuario.cedula!= undefined && 
         usuario.nombres!= undefined  && 
