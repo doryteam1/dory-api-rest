@@ -36,7 +36,7 @@ async function compartir(datos){
         let message = 'Se Compartió el enlace con éxito';
         return {message};
   }
-  throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
+  throw createError(400,"Un problema con los parametros ingresados"); 
 } 
 
 module.exports = {

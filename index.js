@@ -69,7 +69,7 @@ const buscarEventoCapacitacionRouter = require('./routes/buscar-evento-capacitac
 const buscarEventoCongresoRouter = require('./routes/buscar-evento-congreso');
 const buscarNovedadRouter = require('./routes/buscar-novedad');
 const loginRouter = require('./routes/login');
-const enviarFormularioRouter = require('./routes/enviarFormulario');
+const contactenosRouter = require('./routes/contactenos');
 const compartirRouter = require('./routes/compartir');
 
 app.use(bodyParser.json());
@@ -159,7 +159,7 @@ app.use('/api/buscar/evento/capacitacion', buscarEventoCapacitacionRouter)
 app.use('/api/buscar/evento/congreso', buscarEventoCongresoRouter)
 app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
-app.use('/api/contactenos',enviarFormularioRouter)
+app.use('/api/contactenos',contactenosRouter)
 app.use('/api/compartir',compartirRouter)
 
 
