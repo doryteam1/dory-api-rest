@@ -9,7 +9,12 @@ const res = require('express/lib/response');
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT * FROM usuarios LIMIT ?,?`, 
+    `SELECT u.id, u.cedula,u.nombres, u.apellidos,u.celular,u.direccion,u.email,u.id_tipo_usuario,u.id_area_experticia,
+            u.nombre_negocio,u.foto,u.fecha_registro,u.fecha_nacimiento,
+            u.id_departamento,u.id_municipio,u.id_corregimiento,u.id_vereda,
+            u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda
+     FROM usuarios as u 
+     LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
   const data = helper.emptyOrRows(rows);
@@ -83,7 +88,6 @@ async function create(usuario){
         usuario.direccion!= undefined  && 
         usuario.id_tipo_usuario!= undefined  &&
         usuario.email!= undefined  &&
-        usuario.password!= undefined  && 
         usuario.id_area_experticia!= undefined  &&
         usuario.nombre_negocio!= undefined  &&
         usuario.foto!= undefined  && 
@@ -105,7 +109,6 @@ async function create(usuario){
             direccion=?, 
             id_tipo_usuario=?,
             email=?,
-            password=?, 
             id_area_experticia=?,
             nombre_negocio=?,
             foto=?, 
@@ -126,7 +129,6 @@ async function create(usuario){
         usuario.direccion, 
         usuario.id_tipo_usuario,
         usuario.email,
-        usuario.password, 
         usuario.id_area_experticia,
         usuario.nombre_negocio,
         usuario.foto, 
@@ -178,8 +180,9 @@ async function create(usuario){
 
   async function updateParcialUsuario(id, usuario){
   
+   delete usuario.password; 
    var atributos=Object.keys(usuario); /*Arreglo de los keys del usuario*/ 
-
+ 
    if (atributos.length!=0){
      
    var param=Object.values(usuario);

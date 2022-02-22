@@ -13,4 +13,14 @@ router.get('/:id', async function(req, res, next) {
 });
 
 
+router.put('/update/password', async function(req, res, next) {
+  try {
+    res.json(await usuario.updatePassword(req.body));
+  } catch (err) {
+    console.error(`Error al actualizar la contraseña del usuario`, err.message);
+    next(err);
+  }
+});
+
+
 module.exports = router;

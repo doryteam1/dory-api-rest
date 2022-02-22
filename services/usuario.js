@@ -1,6 +1,10 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+var createError = require('http-errors');
+const bcrypt= require('bcrypt');
+const jwt = require("jwt-simple");
+var moment = require("moment");
 
 async function getMultiple(page = 1, id){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -28,7 +32,70 @@ async function getMultiple(page = 1, id){
   }
 }
 
+async function updatePassword(datos){
+
+  const{email,newPassword,}=datos;
+  let message = 'Error al actualizar Password de usuario';
+  
+  if(email!=undefined && newPassword!=undefined)
+   {   
+
+     try { 
+      const saltRounds= 10;
+      const salt= bcrypt.genSaltSync(saltRounds);//generate a salt 
+      const passwordHash= bcrypt.hashSync( newPassword , salt);//generate a password Hash (salt+hash)
+      
+      const result = await db.query(
+        `UPDATE usuarios
+         SET password=?
+         WHERE email=?`,
+         [
+          passwordHash,
+          email
+         ] 
+      );
+       
+      if (result.affectedRows) {
+        message = 'Contraseña de Usuario actualizado exitosamente';
+      }
+
+      /*--------verificación <---payload del token tenga el mismo email del usuario--------*/
+        
+      const userbd = await db.query(
+        `SELECT *
+         FROM usuarios
+         WHERE email=?`,
+         [
+          email
+         ] 
+      );
+
+      
+      /*-----------------------------------------------------------------------------------*/
+
+        var payload = {
+        email:userbd[0].email,
+        sub: userbd[0].id,
+        rol: userbd[0].id_tipo_usuario,
+        iat: moment().unix(),
+        exp: moment().add(14, "days").unix(),
+      };
+      console.log('payload'+' ',payload);
+
+
+      /*-----------------------------------------------------------------------------------*/
+
+      } catch {
+               throw createError(500,"Problema al actualizar password del usuario");
+             }
+         
+         return {message};
+   }     
+      throw createError(400,"Email y Password requeridos!"); 
+}
+
 
 module.exports = {
-  getMultiple
+  getMultiple,
+  updatePassword
 }

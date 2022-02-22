@@ -4,7 +4,6 @@ const config = require('../config');
 const bcrypt= require('bcrypt');
 const jwt = require('jwt-simple');
 var moment = require('moment');
-//const token= require('crypto').randomBytes(64).toString('hex');
 
 
 async function createLogin(user){
