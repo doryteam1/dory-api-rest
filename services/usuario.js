@@ -40,56 +40,60 @@ async function updatePassword(datos){
   if(email!=undefined && newPassword!=undefined)
    {   
 
-     try { 
-      const saltRounds= 10;
-      const salt= bcrypt.genSaltSync(saltRounds);//generate a salt 
-      const passwordHash= bcrypt.hashSync( newPassword , salt);//generate a password Hash (salt+hash)
-      
-      const result = await db.query(
-        `UPDATE usuarios
-         SET password=?
-         WHERE email=?`,
-         [
-          passwordHash,
-          email
-         ] 
-      );
-       
-      if (result.affectedRows) {
-        message = 'Contraseña de Usuario actualizado exitosamente';
-      }
-
-      /*--------verificación <---payload del token tenga el mismo email del usuario--------*/
-        
-      const userbd = await db.query(
-        `SELECT *
-         FROM usuarios
-         WHERE email=?`,
-         [
-          email
-         ] 
-      );
-
-      
-      /*-----------------------------------------------------------------------------------*/
-
-        var payload = {
-        email:userbd[0].email,
-        sub: userbd[0].id,
-        rol: userbd[0].id_tipo_usuario,
-        iat: moment().unix(),
-        exp: moment().add(14, "days").unix(),
-      };
-      console.log('payload'+' ',payload);
-
-
-      /*-----------------------------------------------------------------------------------*/
-
-      } catch {
-               throw createError(500,"Problema al actualizar password del usuario");
-             }
+     try{ 
+          const saltRounds= 10;
+          const salt= bcrypt.genSaltSync(saltRounds);//generate a salt 
+          const passwordHash= bcrypt.hashSync( newPassword , salt);//generate a password Hash (salt+hash)
+          
+           /*--------verificación de existencia de usuario--------*/                  
+            const userbd = await db.query(
+              `SELECT u.password,u.email,u.id,tu.nombre_tipo_usuario
+              FROM usuarios as u, tipos_usuarios as tu
+              WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
+                    u.email=? 
+              `, 
+              [email]
+            );
          
-         return {message};
+          if((userbd[0].email==undefined))
+          {
+              return {message};
+          }
+
+        /*--------Actualización del password de usuario--------*/
+            const result = await db.query(
+              `UPDATE usuarios
+              SET password=?
+              WHERE email=?`,
+              [
+                passwordHash,
+                email
+              ] 
+            );
+            
+            /*-----¿¿¿¿¿¿verificar que en el payload del token tenga el mismo email del usuario a actualizar??????------*/
+
+                    var payload = {/*-creación de payload-*/
+                      email:userbd[0].email,
+                      sub: userbd[0].id,
+                      rol: userbd[0].nombre_tipo_usuario,
+                      iat: moment().unix(),
+                      exp: moment().add(14, "days").unix(),
+                    };
+                    
+                    token = jwt.encode(payload, config.TOKEN_SECRET);/*-creación de token-*/
+                      
+            /*-----------------------------------------------------------------------------------*/
+                      
+                    if (result.affectedRows) {
+                      message = 'Contraseña de Usuario actualizado exitosamente';
+                    }
+          
+     } catch {
+                  throw createError(500,"Actualización de password de usuario fallída");
+             }
+            
+            return {message};
    }     
       throw createError(400,"Email y Password requeridos!"); 
 }

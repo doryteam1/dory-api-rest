@@ -161,6 +161,7 @@ app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/contactenos',contactenosRouter)
 app.use('/api/compartir',compartirRouter)
+app.use('/api/compartir',compartirRouter)
 
 
 /* Error de direccionamiento  */
