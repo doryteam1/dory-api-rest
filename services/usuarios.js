@@ -142,20 +142,18 @@ async function create(usuario){
         usuario.longitud,
         id
        ] 
-    );
-  
-    let message = 'Usuario no esta registrado';
-  
-    if (result.affectedRows) {
-      message = 'Usuario actualizado exitosamente';
-    }
-  
-    return {message};
+      );
+    
+      let message = 'Usuario no esta registrado';
+    
+      if (result.affectedRows) {
+        message = 'Usuario actualizado exitosamente';
+      }
+    
+      return {message};
     }  
         throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
- // }
-     
-      
+       
   }/*fin update*/
 
   

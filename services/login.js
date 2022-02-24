@@ -27,23 +27,12 @@ async function createLogin(user){
     let passUser=user.password;
 
     if(( bcrypt.compareSync(passUser,pass))){
-          var token=createToken(rows[0]);
+          var token=helper.createToken(rows[0]);
          return {token:token};
     }
   }
      return{message};
 }//fin método
-
- function createToken (user) {
-     var payload = {
-    email:user.email,
-    sub: user.id,
-    rol: user.nombre_tipo_usuario,
-    iat: moment().unix(),
-    exp: moment().add(14, "days").unix(),
-  };
-   return  jwt.encode(payload, config.TOKEN_SECRET);
-};
 
 
 module.exports = {

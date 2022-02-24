@@ -22,5 +22,13 @@ router.put('/update/password', async function(req, res, next) {
   }
 });
 
+router.post('/recover/password', async function(req, res, next) {
+  try {
+    res.json(await usuario.recoverPassword(req.body));
+  } catch (err) {
+    console.error(`Error al recuperar la contraseña del usuario`, err.message);
+    next(err);
+  }
+});
 
 module.exports = router;
