@@ -131,7 +131,7 @@ async function create(novedad){
   async function update(id, novedad){
 
     const conection= await db.newConnection(); /*conection of TRANSACTION */
-    await conection.beginTransaction();
+     conection.beginTransaction();
 
 
     if(novedad.titulo!= undefined && 
@@ -204,11 +204,11 @@ async function create(novedad){
         );
      }
   
-     await conection.commit(); 
+      conection.commit(); 
      return {message};
 
     } catch (error) {
-      await conection.rollback(); /*Si hay algún error  */ 
+       conection.rollback(); /*Si hay algún error  */ 
       return {message:'Error al actualizar la novedad con transacciones'};
     }
   }
@@ -222,7 +222,7 @@ async function create(novedad){
   async function remove(id){
 
     const conection= await db.newConnection(); /*conection of TRANSACTION */
-    await conection.beginTransaction();
+     conection.beginTransaction();
     let message = 'Error borrando novedad';
 
     try {
@@ -240,11 +240,11 @@ async function create(novedad){
             message = 'Novedad borrado exitosamente';
           }
             
-         await conection.commit(); 
+          conection.commit(); 
          return {message};
 
     } catch (error) {
-      await conection.rollback(); /*Si hay algún error  */ 
+       conection.rollback(); /*Si hay algún error  */ 
       return {message:'Error al eliminar la novedad (transacciones)'};
   }
 

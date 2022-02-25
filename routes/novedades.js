@@ -42,25 +42,5 @@ router.delete('/:id', async function(req, res, next) {
     }
   });
 
-  /* Solución de errores por no ingresar el identificador de busqueda*/
-
-  router.put('/', async function(req, res, next) {
-    try {
-      res.status(400).json({'message':"No se puede actualizar la novedad sin su identificador" });
-    } catch (err) {  
-      console.error(`Error de la novedad por falta del identificador`, err);  
-        next(err);
-    }
-});
-
-  router.delete('/', async function(req, res, next) {
-    try {
-      res.status(400).json({'message':"No se puede eliminar la novedad sin su identificador" });
-    } catch (err) {  
-      console.error(`Error de la novedad por falta del identificador`, err);  
-        next(err);
-    }
-});
-
-
+  
 module.exports = router;
