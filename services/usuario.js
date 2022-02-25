@@ -132,7 +132,7 @@ async function recoverPassword(datos){
           // send mail with defined transport object
           let info = await transporter.sendMail({
           from: '"Remitente 👻" <plataforma.piscicola@gmail.com>', // user
-          to: "luis0130@gmail.com", //ginelect@unisucre.edu.co 
+          to: email, //ginelect@unisucre.edu.co 
           subject: "Recuperar Contraseña", // Subject line
           html: contentHtml, // html body
           });
