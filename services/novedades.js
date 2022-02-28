@@ -296,11 +296,75 @@ async function create(novedad){
 }//End Function update visitas
 
 
+/*--------------------------------AGREGAR--LIKE-------------------------------------- */ 
+
+async function agregarLikes(datos){
+
+        const{id_novedad,id_user,}=datos;
+        let message = 'Error ingresando like a novedad';
+        
+      if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
+
+            try {
+  
+                  const result = await db.query(
+                    `INSERT INTO me_gustas(id_novedad_pk_fk,usuarios_id) VALUES (?,?)`, 
+                    [
+                      id_novedad,
+                      id_user
+                    ]
+                  );
+      
+                  if (result.affectedRows) { 
+                    message = 'Like de novedad agregado exitosamente';
+                  }
+                  return {message};
+
+            } catch {
+                       return {message:'Error por parámetros'};
+                   }
+     }
+      throw createError(400,"Error por parámetros ingresados"); 
+      
+}//End Function Create
+
+/*--------------------------------REMOVE--LIKE-------------------------------------- */ 
+
+async function eliminarLikes(datos){
+
+       const{id_novedad,id_user,}=datos;
+       let message = 'Error al eliminar like a novedad';
+  
+      if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
+
+              try {
+
+                const result= await db.query(
+                  `DELETE from me_gustas where id_novedad_pk_fk=? and usuarios_id=?`,
+                    [id_novedad,id_user]
+                    ); 
+         
+                     if (result.affectedRows) {
+                      message = 'Like de novedad eliminado exitosamente';
+                    }
+                    return {message};
+
+              } catch {
+                        message = 'Eliminación fallida de likes a novedad';
+                        return {message};
+                      }
+      }
+        throw createError(400,"Parámetros ingresados erroneamente"); 
+  
+}/*fin remove like*/
+
 
 module.exports = {
   getMultiple,
   create,
   update,
   remove,
-  updateVisitas
+  updateVisitas,
+  agregarLikes,
+  eliminarLikes
 }

@@ -33,7 +33,7 @@ router.put('/total/:id', async function(req, res, next) {
 });
 
 
-router.delete('/:id', async function(req, res, next) {
+router.delete('/general/:id', async function(req, res, next) {
     try {
       res.json(await novedades.remove(req.params.id));
     } catch (err) {
@@ -51,5 +51,24 @@ router.delete('/:id', async function(req, res, next) {
       next(err);
     }
 });
+
+router.post('/like/', async function(req, res, next) {
+  try {
+    res.json(await novedades.agregarLikes(req.body));
+  } catch (err) {
+    console.error(`Error al agregar like a la novedad.`, err.message);
+    next(err);
+  }
+});
+
+router.delete('/dislike/', async function(req, res, next) {
+  try {
+    res.json(await novedades.eliminarLikes(req.body));
+  } catch (err) {
+    console.error(`Error al eliminar like a novedad.`, err.message);
+    next(err);
+  }
+});
+
 
 module.exports = router;
