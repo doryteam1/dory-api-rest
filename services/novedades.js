@@ -250,9 +250,57 @@ async function create(novedad){
 
   }/*fin remove*/
 
+
+  /*--------------------------------UPDATE Visitas---------------------------------------- */ 
+
+  async function updateVisitas(id){
+
+          let contador;
+          const rows = await db.query(
+            `SELECT  *       
+            FROM  novedades as n 
+            WHERE  n.id_novedad=?
+            `, 
+            [id]
+          );
+
+      if(rows!=null && rows.length>0){
+
+        contador=rows[0].cant_visitas+1;
+        
+          try {
+                const result = await db.query(
+                  `UPDATE novedades 
+                  SET cant_visitas=?
+                  WHERE id_novedad=?`,
+                  [
+                    contador,
+                    id
+                  ] 
+                );
+              
+                let message = 'Error actualizando la visita en la novedad';
+                  
+                if (result.affectedRows) {
+                  message = 'Visita de la novedad actualizada exitosamente';
+                }
+              
+              return {message};
+
+          } catch (error) {
+                return {message:'Error al actualizar la visita de la novedad'};
+              }
+      }
+      throw createError(404,"La Novedad No existe"); 
+
+}//End Function update visitas
+
+
+
 module.exports = {
   getMultiple,
   create,
   update,
-  remove
+  remove,
+  updateVisitas
 }
