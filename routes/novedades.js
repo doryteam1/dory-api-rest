@@ -5,7 +5,8 @@ const novedades = require('../services/novedades');
 
 router.get('/', async function(req, res, next) {
   try {
-    res.json(await novedades.getMultiple(req.query.page));
+       var token = req.headers.authorization.split(" ")[1];
+        res.json(await novedades.getMultiple(req.query.page,token));
   } catch (err) {
     console.error(`Error al traer las novedades.`, err.message);
     next(err);
