@@ -323,8 +323,8 @@ async function agregarLikes(datos){
                   }
                   return {message};
 
-            } catch {
-                       return {message:'Error por parámetros'};
+            } catch(err) {
+                throw createError(400,err.message);
                    }
      }
       throw createError(400,"Error por parámetros ingresados"); 
