@@ -320,63 +320,75 @@ async function create(novedad){
 
 /*--------------------------------AGREGAR--LIKE-------------------------------------- */ 
 
-async function agregarLikes(datos){
+async function agregarLikes(id_novedad,token){
 
-        const{id_novedad,id_user,}=datos;
-        let message = 'Error ingresando like a novedad';
-        
-      if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
+        let id_user=null;
 
-            try {
-  
-                  const result = await db.query(
-                    `INSERT INTO me_gustas(id_novedad_pk_fk,usuarios_id) VALUES (?,?)`, 
-                    [
-                      id_novedad,
-                      id_user
-                    ]
-                  );
-      
-                  if (result.affectedRows) { 
-                    message = 'Like de novedad agregado exitosamente';
-                  }
-                  throw createError(400,message);
+        if(token){
+          let payload=helper.parseJwt(token);
+          id_user= payload.sub;
+            
+                    let message = 'Error ingresando like a novedad';
+                 
+                  if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
 
-            } catch(err) {
-                throw createError(400,err.message);
-                   }
-     }else{
-             throw createError(400,"Error por parámetros ingresados"); 
-        }
+                        try {
+              
+                              const result = await db.query(
+                                `INSERT INTO me_gustas(id_novedad_pk_fk,usuarios_id) VALUES (?,?)`, 
+                                [
+                                  id_novedad,
+                                  id_user
+                                ]
+                              );
+                  
+                              if (result.affectedRows) { 
+                                message = 'Like de novedad agregado exitosamente';
+                              }
+                              throw createError(400,message);
+
+                        } catch(err) {
+                            throw createError(400,err.message);
+                              }
+                }else{
+                        throw createError(400,"Error por parámetros ingresados"); 
+                    }
+
+      }
+
 }//End Function Create
 
 /*--------------------------------REMOVE--LIKE-------------------------------------- */ 
 
-async function eliminarLikes(datos){
+async function eliminarLikes(id_novedad,token){
 
-       const{id_novedad,id_user,}=datos;
+       let id_user=null;
        let message = 'Error al eliminar like a novedad';
-       
-      if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
 
-              try {
+       if(token){
+             let payload=helper.parseJwt(token);
+              id_user= payload.sub;
+                
+                if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
+                    try {
 
-                const result= await db.query(
-                  `DELETE from me_gustas where id_novedad_pk_fk=? and usuarios_id=?`,
-                    [id_novedad,id_user]
-                    ); 
-         
-                     if (result.affectedRows) {
-                      message = 'Like de novedad eliminado exitosamente';
-                    }
-                    throw createError(400,message);
-                   
-              } catch(err) {
-                throw createError(400,err.message);
-                   }
-      }else{
-         throw createError(400,"Parámetros ingresados erroneamente"); 
-        }
+                          const result= await db.query(
+                            `DELETE from me_gustas where id_novedad_pk_fk=? and usuarios_id=?`,
+                              [id_novedad,id_user]
+                              ); 
+                  
+                              if (result.affectedRows) {
+                                message = 'Like de novedad eliminado exitosamente';
+                              }
+                              throw createError(400,message);
+                            
+                        } catch(err) {
+                                      throw createError(400,err.message);
+                                     }
+                }else{
+                      throw createError(400,"Parámetros ingresados erroneamente"); 
+                     }
+      }
 }/*fin remove like*/
 
 

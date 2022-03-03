@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const novedades = require('../services/novedades');
 
-
 router.get('/', async function(req, res, next) {
   try {
        var token=undefined;
@@ -55,24 +54,6 @@ router.delete('/general/:id', async function(req, res, next) {
       console.error(`Error al actualizar la visita de la novedad.`, err.message);
       next(err);
     }
-});
-
-router.post('/like/', async function(req, res, next) {
-  try {
-    res.json(await novedades.agregarLikes(req.body));
-  } catch (err) {
-    console.error(`Error al agregar like a la novedad.`, err.message);
-    next(err);
-  }
-});
-
-router.delete('/dislike/', async function(req, res, next) {
-  try {
-    res.json(await novedades.eliminarLikes(req.body));
-  } catch (err) {
-    console.error(`Error al eliminar like a novedad.`, err.message);
-    next(err);
-  }
 });
 
 

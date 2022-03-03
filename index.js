@@ -71,6 +71,8 @@ const buscarNovedadRouter = require('./routes/buscar-novedad');
 const loginRouter = require('./routes/login');
 const contactenosRouter = require('./routes/contactenos');
 const compartirRouter = require('./routes/compartir');
+const novedadesLikesRouter = require('./routes/novedades-likes');
+
 
 app.use(bodyParser.json());
 app.use(
@@ -162,7 +164,7 @@ app.use('/api/login', loginRouter)
 app.use('/api/contactenos',contactenosRouter)
 app.use('/api/compartir',compartirRouter)
 app.use('/api/compartir',compartirRouter)
-
+app.use('/api/novedades/auth',auth,novedadesLikesRouter)
 
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
