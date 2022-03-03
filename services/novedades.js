@@ -340,14 +340,14 @@ async function agregarLikes(datos){
                   if (result.affectedRows) { 
                     message = 'Like de novedad agregado exitosamente';
                   }
-                  return {message};
+                  throw createError(400,message);
 
             } catch(err) {
                 throw createError(400,err.message);
                    }
-     }
-      throw createError(400,"Error por parámetros ingresados"); 
-      
+     }else{
+             throw createError(400,"Error por parámetros ingresados"); 
+        }
 }//End Function Create
 
 /*--------------------------------REMOVE--LIKE-------------------------------------- */ 
@@ -356,7 +356,7 @@ async function eliminarLikes(datos){
 
        const{id_novedad,id_user,}=datos;
        let message = 'Error al eliminar like a novedad';
-  
+       
       if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
 
               try {
@@ -369,15 +369,14 @@ async function eliminarLikes(datos){
                      if (result.affectedRows) {
                       message = 'Like de novedad eliminado exitosamente';
                     }
-                    return {message};
-
-              } catch {
-                        message = 'Eliminación fallida de likes a novedad';
-                        return {message};
-                      }
-      }
-        throw createError(400,"Parámetros ingresados erroneamente"); 
-  
+                    throw createError(400,message);
+                   
+              } catch(err) {
+                throw createError(400,err.message);
+                   }
+      }else{
+         throw createError(400,"Parámetros ingresados erroneamente"); 
+        }
 }/*fin remove like*/
 
 
