@@ -12,7 +12,7 @@ async function getMultiple(page = 1, cadena, token){
     }
             const rows = await db.query(
             `SELECT distinctrow   n.id_novedad, n.titulo, n.autor,n.url_foto_autor,n.url_foto_novedad,n.resumen,n.fecha_creacion,n.cant_visitas ,
-                                    (select count(*) from me_gustas m1 where m1.id_novedad_pk_fk=n1.id_novedad and m1.id_novedad_pk_fk= n.id_novedad) as likes ,
+                                    (select count(*) from me_gustas m1 where  m1.id_novedad_pk_fk= n.id_novedad) as likes ,
                                     n.url_novedad,n.email_autor,n.canal,n.cuerpo,n.id_tipo_novedad as tipo_novedad,tn.nombre as tipo,
                                     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria,
                                    (select count(*) from me_gustas as m2 where m2.id_novedad_pk_fk=n.id_novedad and m2.usuarios_id=?) as me_gusta
