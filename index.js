@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
-const auth= require ('./middelware/auth');
+const auth = require ('./middelware/auth');
 
 const departamentosRouter = require('./routes/departamentos');
 const tipos_usuariosRouter = require('./routes/tipos_usuarios');
