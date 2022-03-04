@@ -72,7 +72,7 @@ const loginRouter = require('./routes/login');
 const contactenosRouter = require('./routes/contactenos');
 const compartirRouter = require('./routes/compartir');
 const novedadesLikesRouter = require('./routes/novedades-likes');
-var cors = require('cors')
+var cors = require('cors');
 
 app.use(bodyParser.json());
 app.use(
