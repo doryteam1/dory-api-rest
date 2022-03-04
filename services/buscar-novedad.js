@@ -74,8 +74,8 @@ async function getTipo(page = 1, tipo){
     `SELECT  n.id_novedad, n.titulo, n.autor,n.url_foto_autor,n.url_foto_novedad,n.resumen,n.fecha_creacion,n.cant_visitas ,
     (select count(*) from me_gustas m1,novedades n1 where m1.id_novedad_pk_fk=n1.id_novedad and m1.id_novedad_pk_fk= n.id_novedad) as likes ,
      n.url_novedad,n.email_autor,n.canal,n.cuerpo,n.id_tipo_novedad as tipo_novedad,tn.nombre as tipo,
-     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria,
-     (select count(*) from me_gustas as m2,novedades as n2, usuarios as u where m2.id_novedad_pk_fk=n2.id_novedad and m2.usuarios_id=? and m2.id_novedad_pk_fk=n2.id_novedad and n2.id_novedad=n.id_novedad and u.id=?) as me_gusta
+     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria
+     
 FROM  novedades as n left join me_gustas m on (m.id_novedad_pk_fk=n.id_novedad)
                      left join tipos_novedades as tn on (n.id_tipo_novedad=tn.id_tipo_novedad)
                      left join categorias_novedades as cn on (cn.id_novedad_pk_fk=n.id_novedad)
@@ -138,8 +138,8 @@ async function getArticulos(page = 1, cadena){
     `SELECT DISTINCT  n.id_novedad,   n.titulo,  n.autor,  n.url_foto_autor,  n.url_foto_novedad,  n.resumen,  n.fecha_creacion,  n.cant_visitas ,
     (select count(*) from me_gustas m1,novedades n1 where m1.id_novedad_pk_fk=n1.id_novedad and m1.id_novedad_pk_fk= n.id_novedad) as likes ,
      n.url_novedad,n.email_autor,n.canal,n.cuerpo,n.id_tipo_novedad as tipo_novedad,tn.nombre as tipo,
-     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria,
-     (select count(*) from me_gustas as m2,novedades as n2, usuarios as u where m2.id_novedad_pk_fk=n2.id_novedad and m2.usuarios_id=? and m2.id_novedad_pk_fk=n2.id_novedad and n2.id_novedad=n.id_novedad and u.id=?) as me_gusta
+     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria
+     
 FROM  novedades as n inner join  tipos_novedades as tn on (n.id_tipo_novedad=tn.id_tipo_novedad and tn.nombre like 'Articulo' )   
                      left join me_gustas m on (m.id_novedad_pk_fk=n.id_novedad)  
                      left join categorias_novedades as cn on (cn.id_novedad_pk_fk=n.id_novedad)
@@ -198,8 +198,8 @@ async function getArticulosColombianos(page = 1, cadena){
     `SELECT DISTINCT  n.id_novedad,   n.titulo,  n.autor,  n.url_foto_autor,  n.url_foto_novedad,  n.resumen,  n.fecha_creacion,  n.cant_visitas ,
     (select count(*) from me_gustas m1,novedades n1 where m1.id_novedad_pk_fk=n1.id_novedad and m1.id_novedad_pk_fk= n.id_novedad) as likes ,
      n.url_novedad,n.email_autor,n.canal,n.cuerpo,n.id_tipo_novedad as tipo_novedad,tn.nombre as tipo,
-     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria,
-     (select count(*) from me_gustas as m2,novedades as n2, usuarios as u where m2.id_novedad_pk_fk=n2.id_novedad and m2.usuarios_id=? and m2.id_novedad_pk_fk=n2.id_novedad and n2.id_novedad=n.id_novedad and u.id=?) as me_gusta
+     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria
+     
 FROM  novedades as n inner join  tipos_novedades as tn on (n.id_tipo_novedad=tn.id_tipo_novedad and tn.nombre like 'Articulo-Colombia' )   
                      left join me_gustas m on (m.id_novedad_pk_fk=n.id_novedad)  
                      left join categorias_novedades as cn on (cn.id_novedad_pk_fk=n.id_novedad)
@@ -259,8 +259,8 @@ async function getRevistas(page = 1, cadena){
     `SELECT DISTINCT  n.id_novedad,   n.titulo,  n.autor,  n.url_foto_autor,  n.url_foto_novedad,  n.resumen,  n.fecha_creacion,  n.cant_visitas ,
     (select count(*) from me_gustas m1,novedades n1 where m1.id_novedad_pk_fk=n1.id_novedad and m1.id_novedad_pk_fk= n.id_novedad) as likes ,
      n.url_novedad,n.email_autor,n.canal,n.cuerpo,n.id_tipo_novedad as tipo_novedad,tn.nombre as tipo,
-     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria,
-     (select count(*) from me_gustas as m2,novedades as n2, usuarios as u where m2.id_novedad_pk_fk=n2.id_novedad and m2.usuarios_id=? and m2.id_novedad_pk_fk=n2.id_novedad and n2.id_novedad=n.id_novedad and u.id=?) as me_gusta
+     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria
+     
 FROM  novedades as n inner join  tipos_novedades as tn on (n.id_tipo_novedad=tn.id_tipo_novedad and tn.nombre like 'Revista' )   
                      left join me_gustas m on (m.id_novedad_pk_fk=n.id_novedad)  
                      left join categorias_novedades as cn on (cn.id_novedad_pk_fk=n.id_novedad)
@@ -319,8 +319,8 @@ async function getNoticias(page = 1, cadena){
     `SELECT DISTINCT  n.id_novedad,   n.titulo,  n.autor,  n.url_foto_autor,  n.url_foto_novedad,  n.resumen,  n.fecha_creacion,  n.cant_visitas ,
     (select count(*) from me_gustas m1,novedades n1 where m1.id_novedad_pk_fk=n1.id_novedad and m1.id_novedad_pk_fk= n.id_novedad) as likes ,
      n.url_novedad,n.email_autor,n.canal,n.cuerpo,n.id_tipo_novedad as tipo_novedad,tn.nombre as tipo,
-     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria,
-     (select count(*) from me_gustas as m2,novedades as n2, usuarios as u where m2.id_novedad_pk_fk=n2.id_novedad and m2.usuarios_id=? and m2.id_novedad_pk_fk=n2.id_novedad and n2.id_novedad=n.id_novedad and u.id=?) as me_gusta
+     c.id_categoria,  c.nombre_categoria,c.descripcion_categoria
+     
 FROM  novedades as n inner join  tipos_novedades as tn on (n.id_tipo_novedad=tn.id_tipo_novedad and tn.nombre like 'Noticia' )   
                      left join me_gustas m on (m.id_novedad_pk_fk=n.id_novedad)  
                      left join categorias_novedades as cn on (cn.id_novedad_pk_fk=n.id_novedad)
