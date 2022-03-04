@@ -208,7 +208,7 @@ async function getArticulos(page = 1, cadena,token){
 /*------------------------------------buscar novedad por articulo colombiano----------------------------*/
 
 
-async function getArticulosColombianos(page = 1, cadena){
+async function getArticulosColombianos(page = 1, cadena,token){
   const offset = helper.getOffset(page, config.listPerPage);
   let cad= '%'+cadena+'%';
   let user=-1;
