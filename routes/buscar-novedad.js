@@ -31,9 +31,7 @@ router.get('/:cadena', async function(req, res, next) {/*Modificar para que trai
 
 router.get('/articulo/:cadena', async function(req, res, next) {
   try {
-        if(req.headers.authorization){
-          token = req.headers.authorization.split(" ")[1];
-        }
+        token = req.headers.authorization;
         res.json(await buscarNovedad.getArticulos(req.query.page,req.params.cadena,token));
   } catch (err) {
     console.error(`Error al traer las novedades de tipo Articulos`, err.message);

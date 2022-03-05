@@ -78,12 +78,12 @@ async function getTipo(page = 1, tipo, token){
     let user=-1;
 
       console.log("token antes if ", token);
-      if(token===null || token===undefined){
+      if(token){
         console.log("token--> 1",token)
-      }else{
-        console.log("token--> 2",token)
         const payload=helper.parseJwt(token);
         user=payload.sub;
+      }else{
+        console.log("token--> 2",token)
       }
 
       const rows = await db.query(
