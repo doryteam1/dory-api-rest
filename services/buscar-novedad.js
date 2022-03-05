@@ -77,9 +77,7 @@ async function getTipo(page = 1, tipo, token){
     let cad= tipo;
     let user=-1;
 
-      console.log("token antes if ", token);
-      if(token){
-        console.log("token--> ",token)
+      if(token!=null && token!=undefined){
         const payload=helper.parseJwt(token);
         user=payload.sub;
       }
