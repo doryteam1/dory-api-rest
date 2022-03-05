@@ -31,7 +31,6 @@ router.get('/:cadena', async function(req, res, next) {/*Modificar para que trai
 
 router.get('/articulo/:cadena', async function(req, res, next) {
   try {
-        var token=undefined;
         if(req.headers.authorization){
           token = req.headers.authorization.split(" ")[1];
         }
