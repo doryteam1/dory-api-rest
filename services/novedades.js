@@ -366,7 +366,6 @@ async function eliminarLikes(id_novedad,token){
        let message = 'Error al eliminar like a novedad';
 
        if(token){
-             console.log("token 1==> ",token)
              let payload=helper.parseJwt(token);
               id_user= payload.sub;
                 
@@ -390,7 +389,6 @@ async function eliminarLikes(id_novedad,token){
                       throw createError(400,"Parámetros ingresados erroneamente"); 
                      }
       }
-      console.log("token 2==> ",token)
 }/*fin remove like*/
 
 
