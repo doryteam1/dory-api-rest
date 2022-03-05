@@ -1,6 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+const {validarToken} = require ('../middelware/auth');
 
 async function getMultiple(page = 1, cadena, token){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -67,8 +68,6 @@ async function getMultiple(page = 1, cadena, token){
 }/*Fin getMultiple*/
 
 
-
-
 /*------------------------------------buscar novedad por su tipo-----------------------------*/
 
 async function getTipo(page = 1, tipo, token){
@@ -76,9 +75,8 @@ async function getTipo(page = 1, tipo, token){
     const offset = helper.getOffset(page, config.listPerPage);
     let cad= tipo;
     let user=-1;
-
-      
-      if(token!='null'){
+    
+      if(token!='null' && validarToken(token)){ 
         const payload=helper.parseJwt(token);
         user=payload.sub;
       }
@@ -147,12 +145,11 @@ async function getArticulos(page = 1, cadena,token){
   const offset = helper.getOffset(page, config.listPerPage);
   let cad= '%'+cadena+'%';
   let user=-1;
-
-      
-      if(token){
-        const payload=helper.parseJwt(token);
-        user=payload.sub;
-      }
+    
+  if(token!='null' && validarToken(token)){ 
+    const payload=helper.parseJwt(token);
+    user=payload.sub;
+  }
 
   const rows = await db.query(
     `SELECT DISTINCT  n.id_novedad,   n.titulo,  n.autor,  n.url_foto_autor,  n.url_foto_novedad,  n.resumen,  n.fecha_creacion,  n.cant_visitas ,
@@ -215,10 +212,10 @@ async function getArticulosColombianos(page = 1, cadena,token){
   let cad= '%'+cadena+'%';
   let user=-1;
 
-      if(token){
-        const payload=helper.parseJwt(token);
-        user=payload.sub;
-      }
+  if(token!='null' && validarToken(token)){ 
+    const payload=helper.parseJwt(token);
+    user=payload.sub;
+  }
 
   const rows = await db.query(
     `SELECT DISTINCT  n.id_novedad,   n.titulo,  n.autor,  n.url_foto_autor,  n.url_foto_novedad,  n.resumen,  n.fecha_creacion,  n.cant_visitas ,
@@ -282,10 +279,10 @@ async function getRevistas(page = 1, cadena,token){
   let cad= '%'+cadena+'%';
   let user=-1;
 
-      if(token){
-        const payload=helper.parseJwt(token);
-        user=payload.sub;
-      }
+        if(token!='null' && validarToken(token)){ 
+          const payload=helper.parseJwt(token);
+          user=payload.sub;
+        }
 
   const rows = await db.query(
     `SELECT DISTINCT  n.id_novedad,   n.titulo,  n.autor,  n.url_foto_autor,  n.url_foto_novedad,  n.resumen,  n.fecha_creacion,  n.cant_visitas ,
@@ -348,10 +345,10 @@ async function getNoticias(page = 1, cadena,token){
   let cad= '%'+cadena+'%';
   let user=-1;
 
-      if(token){
-        const payload=helper.parseJwt(token);
-        user=payload.sub;
-      }
+        if(token!='null' && validarToken(token)){ 
+          const payload=helper.parseJwt(token);
+          user=payload.sub;
+        }
 
    const rows = await db.query(
     `SELECT DISTINCT  n.id_novedad,   n.titulo,  n.autor,  n.url_foto_autor,  n.url_foto_novedad,  n.resumen,  n.fecha_creacion,  n.cant_visitas ,
@@ -405,8 +402,6 @@ async function getNoticias(page = 1, cadena,token){
   }
 
 }//fin getNoticias
-
-
 
 module.exports = {
   getMultiple,

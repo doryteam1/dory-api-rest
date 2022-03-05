@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
-const auth = require ('./middelware/auth');
+const {verifyToken} = require ('./middelware/auth');
 
 const departamentosRouter = require('./routes/departamentos');
 const tipos_usuariosRouter = require('./routes/tipos_usuarios');
@@ -123,7 +123,7 @@ app.use('/api/proyectos-subregiones', proyectos_subregionesRouter)
 app.use('/api/proyectos-departamentos', proyectos_departamentosRouter)
 app.use('/api/especies-usuarios', especies_usuariosRouter)
 app.use('/api/tipos-normatividades', tipos_normatividadesRouter)
-app.use('/api/vehiculos',auth, vehiculosRouter)
+app.use('/api/vehiculos',verifyToken, vehiculosRouter)
 app.use('/api/tipos-novedades', tipos_novedadesRouter)
 app.use('/api/normatividades', normatividadesRouter)
 app.use('/api/fotos', fotosRouter)
@@ -166,7 +166,7 @@ app.use('/api/login', loginRouter)
 app.use('/api/contactenos',contactenosRouter)
 app.use('/api/compartir',compartirRouter)
 app.use('/api/compartir',compartirRouter)
-app.use('/api/novedades/auth',auth,novedadesLikesRouter)
+app.use('/api/novedades/auth',verifyToken,novedadesLikesRouter)
 
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {

@@ -2,14 +2,15 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 var createError = require('http-errors');
+const {validarToken} = require ('../middelware/auth');
 
 async function getMultiple(page = 1,token){
 
       const offset = helper.getOffset(page, config.listPerPage);
       let rows=[];
-
-      if(token){
-        const payload=helper.parseJwt(token);
+      
+      if(token && validarToken(token)){
+          const payload=helper.parseJwt(token);
         
          rows = await db.query(
         `SELECT distinctrow  n.id_novedad,  n.autor,n.url_foto_autor,n.url_foto_novedad,n.titulo,n.resumen,n.fecha_creacion,n.cant_visitas ,
@@ -324,11 +325,11 @@ async function agregarLikes(id_novedad,token){
 
         let id_user=null;
 
-        if(token){
-          let payload=helper.parseJwt(token);
-          id_user= payload.sub;
-            
-                    let message = 'Error ingresando like a novedad';
+        if(token && validarToken(token)){
+
+                let payload=helper.parseJwt(token);
+                id_user= payload.sub;
+                let message = 'Error ingresando like a novedad';
                  
                   if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
 
@@ -344,6 +345,7 @@ async function agregarLikes(id_novedad,token){
                   
                               if (result.affectedRows) { 
                                 message = 'Like de novedad agregado exitosamente';
+                                return {message};
                               }
                               throw createError(400,message);
 
@@ -353,7 +355,6 @@ async function agregarLikes(id_novedad,token){
                 }else{
                         throw createError(400,"Error por parámetros ingresados"); 
                     }
-
       }
 
 }//End Function Create
@@ -365,9 +366,9 @@ async function eliminarLikes(id_novedad,token){
        let id_user=null;
        let message = 'Error al eliminar like a novedad';
 
-       if(token){
+       if(token && validarToken(token)){
              let payload=helper.parseJwt(token);
-              id_user= payload.sub;
+             id_user= payload.sub;
                 
                 if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
                     try {
@@ -379,6 +380,7 @@ async function eliminarLikes(id_novedad,token){
                   
                               if (result.affectedRows) {
                                 message = 'Like de novedad eliminado exitosamente';
+                                return {message};
                               }
                               throw createError(400,message);
                             
