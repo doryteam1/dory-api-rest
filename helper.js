@@ -30,6 +30,7 @@ function getOffset(currentPage = 1, listPerPage) {
   
   function parseJwt(token) {
     var base64Payload = token.split('.')[1];
+    console.log("base64Payload",base64Payload)
     var payload = Buffer.from(base64Payload, 'base64');
     return JSON.parse(payload.toString());
   };
