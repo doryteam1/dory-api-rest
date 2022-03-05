@@ -78,7 +78,7 @@ async function getTipo(page = 1, tipo, token){
     let user=-1;
 
       console.log("token antes if ", token);
-      if(token){
+      if(token=='null'){
         console.log("token--> 1",token)
       }else{
         console.log("token--> 2",token)
