@@ -148,6 +148,7 @@ async function getArticulos(page = 1, cadena,token){
   let user=-1;
 
       if(token){
+        console.log("token--> ",token)
         const payload=helper.parseJwt(token);
         user=payload.sub;
       }
