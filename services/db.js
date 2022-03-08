@@ -15,8 +15,8 @@ async function query(sql, params) {
 }
 
 async function newConnection(){
-  const connection = await mysql.createConnection(config.db);
-  return connection;
+ // const connection = await mysql.createConnection(config.db);return connection;
+  return promisePool.getConnection();
 }
 
 module.exports = {

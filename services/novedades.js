@@ -140,7 +140,7 @@ async function create(novedad){
 
     } catch (error) {
       await conection.rollback(); /*Si hay algún error  */ 
-      return {message:'Registro de novedad fallida (transacciónes)'};
+      throw createError(500,"Falla en el registro de novedad"); 
     }
 
   }
@@ -232,7 +232,7 @@ async function create(novedad){
 
     } catch (error) {
        conection.rollback(); /*Si hay algún error  */ 
-      return {message:'Error al actualizar la novedad con transacciones'};
+       throw createError(500,"Error al actualizar la novedad");        
     }
   }
   throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
@@ -268,8 +268,8 @@ async function create(novedad){
 
     } catch (error) {
        conection.rollback(); /*Si hay algún error  */ 
-      return {message:'Error al eliminar la novedad (transacciones)'};
-  }
+       throw createError(500,"Error al eliminar la novedad");
+    }
 
   }/*fin remove*/
 
