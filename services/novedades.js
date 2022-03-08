@@ -136,10 +136,12 @@ async function create(novedad){
      }
 
      await conection.commit(); 
+           conection.release();
      return {message};
 
     } catch (error) {
       await conection.rollback(); /*Si hay algún error  */ 
+            conection.release();
       throw createError(500,"Falla en el registro de novedad"); 
     }
 
@@ -228,10 +230,12 @@ async function create(novedad){
      }
   
       conection.commit(); 
+      conection.release();
      return {message};
 
     } catch (error) {
        conection.rollback(); /*Si hay algún error  */ 
+       conection.release();
        throw createError(500,"Error al actualizar la novedad");        
     }
   }
@@ -264,10 +268,12 @@ async function create(novedad){
           }
             
           conection.commit(); 
+          conection.release();
          return {message};
 
     } catch (error) {
        conection.rollback(); /*Si hay algún error  */ 
+       conection.release();
        throw createError(500,"Error al eliminar la novedad");
     }
 
