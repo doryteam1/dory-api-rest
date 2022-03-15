@@ -64,7 +64,7 @@ async function create(producto,token){
                       throw createError(500,"Un problema registrando el producto del usuario");
                     }else{
                       throw createError(401,"tipo de usuario no autorizado"); 
-                    }    console.log(error.statusCode,'<<<<<<<<<<<<401');
+                    }    
             }
          
     } else {
@@ -81,32 +81,44 @@ async function create(producto,token){
     if(token && validarToken(token)){
 
           try{
-                const result = await db.query(
-                  `UPDATE productos 
-                  SET nombreProducto=?,
-                      precio=?,
-                      descripcion=?,
-                      imagen=? 
-                  WHERE codigo=?`,
-                  [
-                    producto.nombreProducto,
-                    producto.precio,
-                    producto.descripcion, 
-                    producto.imagen,
-                    codigo
-                  ] 
-                );
-              
-                let message = 'Error actualizando producto';
-              
-                if (result.affectedRows) {
-                  message = 'producto actualizado exitosamente';
-                }
-              
-                return {message};
 
+            let payload=helper.parseJwt(token);
+            let rol= payload.rol;
+         
+                  if (rol=='Proveedor') {
+
+                      const result = await db.query(
+                        `UPDATE productos 
+                        SET nombreProducto=?,
+                            precio=?,
+                            descripcion=?,
+                            imagen=? 
+                        WHERE codigo=?`,
+                        [
+                          producto.nombreProducto,
+                          producto.precio,
+                          producto.descripcion, 
+                          producto.imagen,
+                          codigo
+                        ] 
+                      );
+                    
+                      let message = 'Error actualizando producto';
+                    
+                      if (result.affectedRows) {
+                        message = 'producto actualizado exitosamente';
+                      }
+                    
+                      return {message};
+                  }else {
+                    throw createError(401,"tipo de usuario no autorizado");
+                  }
              } catch (error) {
-                    throw createError(500,"No se pudo actualizar el producto del usuario");
+                    if(!(error.statusCode=='401')){
+                      throw createError(500,"Un problema actualizando el producto del usuario");
+                    }else{
+                      throw createError(401,"tipo de usuario no autorizado"); 
+                    }    
                 }
    } else {
             throw createError(401,"Usted no tiene autorización"); 
@@ -120,26 +132,38 @@ async function create(producto,token){
     if(token && validarToken(token)){
 
         try{
+              let payload=helper.parseJwt(token);
+              let rol= payload.rol;
+          
+                    if (rol=='Proveedor') {
 
-            const result = await db.query(
-              `DELETE FROM productos WHERE codigo=?`, 
-              [codigo]
-            );
-          
-            let message = 'Error borrando producto';
-          
-            if (result.affectedRows) {
-              message = 'producto borrado exitosamente';
-            }
-          
-         return {message};
+                        const result = await db.query(
+                          `DELETE FROM productos WHERE codigo=?`, 
+                          [codigo]
+                        );
+                      
+                        let message = 'Error borrando producto';
+                      
+                        if (result.affectedRows) {
+                          message = 'producto borrado exitosamente';
+                        }
+                      
+                       return {message};
+                    }else {
+                        throw createError(401,"tipo de usuario no autorizado");
+                    }
 
          } catch (error) {
-                     throw createError(500,"No se pudo Eliminar producto de usuario");
-              }
+               
+                  if(!(error.statusCode=='401')){
+                          throw createError(500,"Un problema actualizando el producto del usuario");
+                   }else{
+                          throw createError(401,"tipo de usuario no autorizado"); 
+                        }
+                  }
    } else {
-              throw createError(401,"Usted no tiene autorización"); 
-          }
+           throw createError(401,"Usted no tiene autorización"); 
+        }
 
   }/*--End Remove productos----*/
 
