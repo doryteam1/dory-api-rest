@@ -70,9 +70,12 @@ async function create(usuario){
       );
       if (result.affectedRows) {
         message = 'Usuario registrado exitosamente';
+      }else {
+        throw createError(500,"Ocurrió un problema al registrar un usuario");
       }
+
     }catch(err){
-      console.log("err query: ",err);
+        throw err;
     }
     return {message};
   }

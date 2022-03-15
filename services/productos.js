@@ -1,12 +1,19 @@
-const db = require('./db');
+ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+var createError = require('http-errors');
+const {validarToken} = require ('../middelware/auth');
 
-async function getMultiple(page = 1){
+
+async function getMultiple(page = 1,id_user){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT * FROM productos LIMIT ?,?`, 
-    [offset, config.listPerPage]
+    `SELECT p.nombreProducto,p.precio, p.descripcion, p.imagen
+     FROM productos p inner join productos_usuarios pu
+                      on (p.codigo = pu.codigo_producto_pk_fk) and
+                         (pu.usuarios_id = ?)
+     LIMIT ?,?`, 
+    [id_user, offset, config.listPerPage]
   );
   const data = helper.emptyOrRows(rows);
   const meta = {page};
@@ -17,68 +24,124 @@ async function getMultiple(page = 1){
   }
 }
 
+/*-----------------------------------create de productos---------------------------------------------------*/
 
-async function create(producto){
-    const result = await db.query(
-      `INSERT INTO productos(codigo, nombreProducto,precio,descripcion,imagen) VALUES (?,?,?,?,?)`, 
-      [
-        producto.codigo,
-        producto.nombreProducto,
-        producto.precio,
-        producto.descripcion,
-        producto.imagen
-      ]
-    );
-  
-    let message = 'Error creando producto';
-  
-    if (result.affectedRows) {
-      message = {  insertId: result.insertId, message:'producto creada exitosamente'};
-    }
-  
-    return {message};
-  }
 
-  async function update(codigo, producto){
-    const result = await db.query(
-      `UPDATE productos 
-       SET nombreProducto=?,
-           precio=?,
-           descripcion=?,
-           imagen=? 
-       WHERE codigo=?`,
-       [
-         producto.nombreProducto,
-         producto.precio,
-         producto.descripcion, 
-         producto.imagen,
-         codigo
-       ] 
-    );
+async function create(producto,token){
+
+   if(token && validarToken(token)){
+
+       try {
+            let payload=helper.parseJwt(token);
+            let rol= payload.rol;
+         
+                if (rol=='Proveedor') {
+                                      
+                      const result = await db.query(
+                        `INSERT INTO productos(codigo, nombreProducto,precio,descripcion,imagen) VALUES (?,?,?,?,?)`, 
+                        [
+                          producto.codigo,
+                          producto.nombreProducto,
+                          producto.precio,
+                          producto.descripcion,
+                          producto.imagen
+                        ]
+                      );
+                  
+                    let message = 'Error al registrar el producto';
+                  
+                    if (result.affectedRows) {
+                      message = {  insertId: result.insertId, message:'producto creada exitosamente'};
+                    }
+                    
+                    return {message};
+                }else {
+                  throw createError(401,"tipo de usuario no autorizado");
+                }
+
+            } catch (error) {
+                if(!(error.statusCode=='401')){
+                      throw createError(500,"Un problema registrando el producto del usuario");
+                    }else{
+                      throw createError(401,"tipo de usuario no autorizado"); 
+                    }    console.log(error.statusCode,'<<<<<<<<<<<<401');
+            }
+         
+    } else {
+           throw createError(401,"Usted no tiene autorización"); 
+        }
+}/*--End create productos-------*/
+ 
+
+
+/*-----------------------------------updte de productos---------------------------------------------------*/
+
+  async function update(codigo, producto, token){
+
+    if(token && validarToken(token)){
+
+          try{
+                const result = await db.query(
+                  `UPDATE productos 
+                  SET nombreProducto=?,
+                      precio=?,
+                      descripcion=?,
+                      imagen=? 
+                  WHERE codigo=?`,
+                  [
+                    producto.nombreProducto,
+                    producto.precio,
+                    producto.descripcion, 
+                    producto.imagen,
+                    codigo
+                  ] 
+                );
+              
+                let message = 'Error actualizando producto';
+              
+                if (result.affectedRows) {
+                  message = 'producto actualizado exitosamente';
+                }
+              
+                return {message};
+
+             } catch (error) {
+                    throw createError(500,"No se pudo actualizar el producto del usuario");
+                }
+   } else {
+            throw createError(401,"Usted no tiene autorización"); 
+        }
+  }/*--End update productos----*/
+
+  /*-----------------------------------remove de productos---------------------------------------------------*/
   
-    let message = 'Error actualizando producto';
-  
-    if (result.affectedRows) {
-      message = 'producto actualizado exitosamente';
-    }
-  
-    return {message};
-  }
-  
-  async function remove(codigo){
-    const result = await db.query(
-      `DELETE FROM productos WHERE codigo=?`, 
-      [codigo]
-    );
-  
-    let message = 'Error borrando producto';
-  
-    if (result.affectedRows) {
-      message = 'producto borrado exitosamente';
-    }
-  
-    return {message};
-  }
+  async function remove(codigo,token){
+
+    if(token && validarToken(token)){
+
+        try{
+
+            const result = await db.query(
+              `DELETE FROM productos WHERE codigo=?`, 
+              [codigo]
+            );
+          
+            let message = 'Error borrando producto';
+          
+            if (result.affectedRows) {
+              message = 'producto borrado exitosamente';
+            }
+          
+         return {message};
+
+         } catch (error) {
+                     throw createError(500,"No se pudo Eliminar producto de usuario");
+              }
+   } else {
+              throw createError(401,"Usted no tiene autorización"); 
+          }
+
+  }/*--End Remove productos----*/
 
 module.exports = {
   getMultiple,
