@@ -51,7 +51,7 @@ async function create(producto,token){
                     let message = 'Error al registrar el producto';
                   
                     if (result.affectedRows) {
-                      message = {  insertId: result.insertId, message:'producto creada exitosamente'};
+                      message = {  insertId: result.insertId, message:'producto creado exitosamente'};
                     }
                     
                     return {message};

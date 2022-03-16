@@ -31,4 +31,14 @@ router.post('/recover/password', async function(req, res, next) {
   }
 });
 
+router.put('/change/password', async function(req, res, next) {
+  try {
+        var token=req.headers.authorization;
+        res.json(await usuario.changePassword(req.body,token));
+  } catch (err) {
+        console.error(`Error al modificar la contraseña del usuario`, err.message);
+        next(err);
+  }
+});
+
 module.exports = router;

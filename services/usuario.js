@@ -6,6 +6,7 @@ const bcrypt= require('bcrypt');
 const jwt = require("jwt-simple");
 var moment = require("moment");
 const nodemailer = require('nodemailer');
+const {validarToken} = require ('../middelware/auth');
 
 async function getMultiple(page = 1, id){
 
@@ -150,8 +151,89 @@ async function recoverPassword(datos){
 }
 
 
+async function changePassword(datos,token){
+
+  const{antiguoPassword,newPassword,}=datos;
+  let message = 'Error al cambiar Password de usuario';
+ 
+    if(token && validarToken(token)){
+        const payload=helper.parseJwt(token);/*--saco la carga útil del token para averiguar el email del usuario----*/  
+        const email=payload.email;
+        
+        if(email!=undefined && newPassword!=undefined && antiguoPassword!=undefined)
+        {   
+            try{
+            
+                const saltRounds= 10;
+                const salt= bcrypt.genSaltSync(saltRounds);//generate a salt 
+                const passwordHash= bcrypt.hashSync( newPassword , salt);//generate a password Hash (salt+hash)
+                
+                /*--------verificación de existencia de usuario--------*/                  
+                  const userbd = await db.query(
+                    `SELECT u.password,u.email,u.id,tu.nombre_tipo_usuario
+                    FROM usuarios as u, tipos_usuarios as tu
+                    WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
+                          u.email=? 
+                    `, 
+                    [email]
+                  );
+              
+                  if((userbd[0].email==undefined))
+                  {
+                      return {message};
+                  }
+
+                  const existbd = await db.query(
+                    `SELECT u.password,u.email,u.id,tu.nombre_tipo_usuario
+                    FROM usuarios as u, tipos_usuarios as tu
+                    WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
+                          u.password=? and
+                          u.email=? 
+                    `, 
+                    [antiguoPassword, email]
+                  );
+
+                  if((existbd[0].password!=undefined))
+                  {
+                          /*------Modificación del password al usuario--------*/
+                            const result = await db.query(
+                              `UPDATE usuarios
+                              SET password=?
+                              WHERE email=?`,
+                              [
+                                passwordHash,
+                                email
+                              ] 
+                            );
+                                  if (result.affectedRows) {
+                                      message = 'Contraseña de Usuario cambiado exitosamente';
+                                    }
+
+                  }else{
+                      throw createError(400,"El usuario no existe ó el password antiguo es incorrecto");
+                  }
+                
+              } catch (error) {
+                        
+                    if(!(error.statusCode=='400')){
+                            throw createError(500,"Un problema al cambiar el password del usuario");
+                    }else{
+                            throw createError(400,"El usuario no existe ó el password antiguo es incorrecto"); 
+                          }
+                    }
+                  
+                  return {message};
+        }     
+            throw createError(400,"Email, password antiguo y nuevo password requeridos!"); 
+      }else {
+             throw createError(401,"Usted no tiene autorización"); 
+            }
+
+}//End updatePassword
+
 module.exports = {
   getMultiple,
   updatePassword,
-  recoverPassword
+  recoverPassword,
+  changePassword
 }
