@@ -153,7 +153,7 @@ async function recoverPassword(datos){
 async function changePassword(datos,token){
 
   const{antiguoPassword,newPassword,}=datos;
-  let message = 'Error al cambiar Password de usuario';
+  let message = 'Error al cambiar la contraseña de usuario';
   let iguales= false;
 
     if(token && validarToken(token)){
@@ -184,7 +184,7 @@ async function changePassword(datos,token){
                   let pass = existbd[0].password;
                               
                   if(!( bcrypt.compareSync(antiguoPassword,pass))){
-                      throw createError(401,"El usuario no existe ó el password antiguo es incorrecto"); 
+                      throw createError(401,"El usuario no existe ó la contraseña antigua es incorrecto"); 
                   }
                                     
                   const result = await db.query(
@@ -200,18 +200,18 @@ async function changePassword(datos,token){
                   if (result.affectedRows) {
                       return{message : 'Contraseña de Usuario cambiada exitosamente'};
                   }else{
-                      throw createError(500,"Un problema al cambiar el password del usuario");
+                      throw createError(500,"Un problema al cambiar la contraseña del usuario");
                   }
                
            } catch (error) {
                   if(!(error.statusCode==401)){
-                        throw createError(500,"Un problema al cambiar el password del usuario");
+                        throw createError(500,"Ocurrio un problema al cambiar la contraseña del usuario");
                   }else{
                         throw error; 
                    }
              }
         }else{
-            throw createError(400,"Email, password antiguo y nuevo password requeridos!"); 
+            throw createError(400,"Email, contraseña antigua y nuevo contraseña requeridos!"); 
         }     
           
     }else {
