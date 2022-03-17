@@ -23,7 +23,7 @@ function getOffset(currentPage = 1, listPerPage) {
    sub: user.id,
    rol: user.nombre_tipo_usuario,
    iat: moment().unix(),
-   exp: moment().add(14, "minutes").unix(),
+   exp: moment().add(30, "minutes").unix(),
   };
   return  jwt.encode(payload, config.TOKEN_SECRET);
   };

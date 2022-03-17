@@ -3,8 +3,6 @@ const helper = require('../helper');
 const config = require('../config');
 var createError = require('http-errors');
 const bcrypt= require('bcrypt');
-const jwt = require("jwt-simple");
-var moment = require("moment");
 const nodemailer = require('nodemailer');
 const {validarToken} = require ('../middelware/auth');
 
@@ -150,12 +148,14 @@ async function recoverPassword(datos){
        throw createError(400,"Un problema con los parametros ingresados"); 
 }
 
+/*-------------------------------------changePassword---------------------------------*/  
 
 async function changePassword(datos,token){
 
   const{antiguoPassword,newPassword,}=datos;
   let message = 'Error al cambiar Password de usuario';
- 
+  let iguales= false;
+
     if(token && validarToken(token)){
         const payload=helper.parseJwt(token);/*--saco la carga útil del token para averiguar el email del usuario----*/  
         const email=payload.email;
@@ -163,72 +163,60 @@ async function changePassword(datos,token){
         if(email!=undefined && newPassword!=undefined && antiguoPassword!=undefined)
         {   
             try{
-            
                 const saltRounds= 10;
-                const salt= bcrypt.genSaltSync(saltRounds);//generate a salt 
-                const passwordHash= bcrypt.hashSync( newPassword , salt);//generate a password Hash (salt+hash)
+                const salt= bcrypt.genSaltSync(saltRounds);
+                const passwordHash= bcrypt.hashSync( newPassword , salt);
                 
                 /*--------verificación de existencia de usuario--------*/                  
-                  const userbd = await db.query(
-                    `SELECT u.password,u.email,u.id,tu.nombre_tipo_usuario
-                    FROM usuarios as u, tipos_usuarios as tu
-                    WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
-                          u.email=? 
+                  
+                  const existbd = await db.query(
+                    `SELECT u.password
+                    FROM usuarios as u
+                    WHERE u.email=? 
                     `, 
                     [email]
                   );
-              
-                  if((userbd[0].email==undefined))
-                  {
-                      return {message};
+
+                  if(existbd.length<1){
+                    throw createError(401,"Usuario no existe ó contraseña antigua incorrecta"); 
                   }
 
-                  const existbd = await db.query(
-                    `SELECT u.password,u.email,u.id,tu.nombre_tipo_usuario
-                    FROM usuarios as u, tipos_usuarios as tu
-                    WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
-                          u.password=? and
-                          u.email=? 
-                    `, 
-                    [antiguoPassword, email]
+                  let pass = existbd[0].password;
+                              
+                  if(!( bcrypt.compareSync(antiguoPassword,pass))){
+                      throw createError(401,"El usuario no existe ó el password antiguo es incorrecto"); 
+                  }
+                                    
+                  const result = await db.query(
+                     `UPDATE usuarios
+                      SET password=?
+                      WHERE email=?`,
+                      [
+                        passwordHash,
+                        email
+                      ] 
                   );
 
-                  if((existbd[0].password!=undefined))
-                  {
-                          /*------Modificación del password al usuario--------*/
-                            const result = await db.query(
-                              `UPDATE usuarios
-                              SET password=?
-                              WHERE email=?`,
-                              [
-                                passwordHash,
-                                email
-                              ] 
-                            );
-                                  if (result.affectedRows) {
-                                      message = 'Contraseña de Usuario cambiado exitosamente';
-                                    }
-
+                  if (result.affectedRows) {
+                      return{message : 'Contraseña de Usuario cambiada exitosamente'};
                   }else{
-                      throw createError(400,"El usuario no existe ó el password antiguo es incorrecto");
+                      throw createError(500,"Un problema al cambiar el password del usuario");
                   }
-                
-              } catch (error) {
-                        
-                    if(!(error.statusCode=='400')){
-                            throw createError(500,"Un problema al cambiar el password del usuario");
-                    }else{
-                            throw createError(400,"El usuario no existe ó el password antiguo es incorrecto"); 
-                          }
-                    }
-                  
-                  return {message};
-        }     
+               
+           } catch (error) {
+                  if(!(error.statusCode==401)){
+                        throw createError(500,"Un problema al cambiar el password del usuario");
+                  }else{
+                        throw error; 
+                   }
+             }
+        }else{
             throw createError(400,"Email, password antiguo y nuevo password requeridos!"); 
-      }else {
-             throw createError(401,"Usted no tiene autorización"); 
-            }
-
+        }     
+          
+    }else {
+        throw createError(401,"Usted no tiene autorización"); 
+     }
 }//End updatePassword
 
 module.exports = {
