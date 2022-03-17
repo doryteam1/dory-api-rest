@@ -184,7 +184,7 @@ async function changePassword(datos,token){
                   let pass = existbd[0].password;
                               
                   if(!( bcrypt.compareSync(antiguoPassword,pass))){
-                      throw createError(401,"El usuario no existe ó la contraseña antigua es incorrecto"); 
+                      throw createError(401,"El usuario no existe ó la contraseña antigua es incorrecta"); 
                   }
                                     
                   const result = await db.query(
