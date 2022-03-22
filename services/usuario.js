@@ -148,14 +148,9 @@ async function changePassword(datos,token){
                   }
                   let pass = existbd[0].password;                              
                   if(!( bcrypt.compareSync(antiguoPassword,pass))){
-<<<<<<< HEAD
-                      throw createError(401,"El usuario no existe ó el password antiguo es incorrecto"); 
-                  }                                    
-=======
                       throw createError(401,"El usuario no existe ó la contraseña antigua es incorrecta"); 
                   }
                                     
->>>>>>> 827e1e7da87e81348a42480ffc97cf0aaf13a211
                   const result = await db.query(
                      `UPDATE usuarios
                       SET password=?
@@ -168,14 +163,9 @@ async function changePassword(datos,token){
                   if (result.affectedRows) {
                       return{message : 'Contraseña de Usuario cambiada exitosamente'};
                   }else{
-<<<<<<< HEAD
-                      throw createError(500,"Un problema al cambiar el password del usuario");
-                  }               
-=======
                       throw createError(500,"Un problema al cambiar la contraseña del usuario");
                   }
                
->>>>>>> 827e1e7da87e81348a42480ffc97cf0aaf13a211
            } catch (error) {
                   if(!(error.statusCode==401)){
                         throw createError(500,"Ocurrio un problema al cambiar la contraseña del usuario");
@@ -184,14 +174,9 @@ async function changePassword(datos,token){
                    }
              }
         }else{
-<<<<<<< HEAD
-            throw createError(400,"Email, password antiguo y nuevo password requeridos!"); 
-        } 
-=======
             throw createError(400,"Email, contraseña antigua y nuevo contraseña requeridos!"); 
         }     
           
->>>>>>> 827e1e7da87e81348a42480ffc97cf0aaf13a211
     }else {
         throw createError(401,"Usted no tiene autorización"); 
      }
