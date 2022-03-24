@@ -18,13 +18,13 @@ function getOffset(currentPage = 1, listPerPage) {
     return process.env.NODE_ENV == 'production';
   }
 
-  function createToken (user) {
+  function createToken (user,minutes) {
     var payload = {
     email:user.email,
     sub: user.id,
     rol: user.nombre_tipo_usuario,
     iat: moment().unix(),
-    exp: moment().add(30, "minutes").unix(),
+    exp: moment().add(minutes, "minutes").unix(),
   };
   return  jwt.encode(payload, config.TOKEN_SECRET);
   };

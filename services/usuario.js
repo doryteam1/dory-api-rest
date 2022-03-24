@@ -99,7 +99,7 @@ async function recoverPassword(datos){
             [email]
           );             
           if(userbd[0]){
-                  const token=helper.createToken(userbd[0]);
+                  const token=helper.createToken(userbd[0],15);
                   const mensaje="Hola, Nos acabas de informar que no recuerdas tu contraseña. Para volver a acceder a tu cuenta, haz click en actualizar contraseña.";
                   let tema="Recuperar Contraseña";
                   contentHtml = `<center> 

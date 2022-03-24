@@ -41,7 +41,7 @@ async function createLogin(user){
                         let passUser=user.password;
 
                         if(( bcrypt.compareSync(passUser,pass))){
-                              var token=helper.createToken(rows[0]);
+                              var token=helper.createToken(rows[0],525600);/*token de un año*/
                             return {token:token};
                         }
                       }
