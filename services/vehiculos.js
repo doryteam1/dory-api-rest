@@ -17,7 +17,6 @@ async function getMultiple(page = 1){
   }
 }
 
-
 async function create(vehiculo){
      const result = await db.query(
       `INSERT INTO vehiculos (id_vehiculo,capacidad,modelo,transporte_alimento,usuarios_id) VALUES (?,?,?,?,?)`, 
@@ -39,7 +38,8 @@ async function create(vehiculo){
     return message;
   }
 
-  async function update(id, vehiculo){
+  async function update(token, vehiculo){
+     let id;
     const result = await db.query(
       `UPDATE vehiculos 
        SET capacidad=?,
@@ -65,10 +65,11 @@ async function create(vehiculo){
     return {message};
   }
   
-  async function remove(id){
+  async function remove(id_vehiculo,token){
+    let id_user;
     const result = await db.query(
-      `DELETE FROM vehiculos WHERE id_vehiculo=?`, 
-      [id]
+      `DELETE FROM vehiculos WHERE id_vehiculo=? and usuarios_id=id_user`, 
+      [id_vehiculo]
     );
   
     let message = 'Error borrando vehiculo';

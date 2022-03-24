@@ -19,7 +19,11 @@ async function createLogin(user){
               `, 
               [email]
             );
-            console.log("estaVerificado=",verificar[0].estaVerificado);
+            
+            if(verificar.length<1){
+              throw createError(404,"Usuario no esta verificado ó no existe");
+            }
+
         if(verificar[0].estaVerificado!=null && verificar[0].estaVerificado!=0 && verificar[0].estaVerificado!=undefined){
                 try {
                       const rows = await db.query(

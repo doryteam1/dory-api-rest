@@ -13,7 +13,7 @@ const tipos_eventosRouter = require('./routes/tipos_eventos');
 const modalidadesRouter = require('./routes/modalidades');
 const chatsRouter = require('./routes/chats');
 const categoriasRouter = require('./routes/categorias');
-const productosRouter = require('./routes/productos');
+const proveedoresRouter = require('./routes/proveedores');
 const tipos_asociacionesRouter = require('./routes/tipos_asociaciones');
 const municipiosRouter = require('./routes/municipios');
 const corregimientosRouter = require('./routes/corregimientos');
@@ -106,7 +106,7 @@ app.use('/api/tipos-eventos', tipos_eventosRouter)
 app.use('/api/modalidades', modalidadesRouter)
 app.use('/api/chats', chatsRouter)
 app.use('/api/categorias', categoriasRouter)
-app.use('/api/productos', productosRouter)
+app.use('/api/proveedores', proveedoresRouter)
 app.use('/api/tipos-asociaciones', tipos_asociacionesRouter)
 app.use('/api/municipios', municipiosRouter)
 app.use('/api/corregimientos', corregimientosRouter)
