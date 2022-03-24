@@ -22,17 +22,16 @@ const verifyToken =  function (req, res, next) {
 };
 
 const validarToken= function(token2){
-  try {
-    var token =token2.split(" ")[1];/Obtenemos el token del string/
-    var payload = jwt.decode(token, config.TOKEN_SECRET);
-  
-    if (payload.exp <= moment().unix()) {
-      return false;
-    }
+  try {    
+      var token =token2.split(" ")[1];/Obtenemos el token del string/   
+      var payload = jwt.decode(token, config.TOKEN_SECRET);
+      if (payload.exp <= moment().unix()) {
+        return false; 
+      }
        return true;
   } catch (error) {
-    console.log('Error:',error);
-    return false;
+      console.log('Error:',error);
+      return false;
   }
 };
 

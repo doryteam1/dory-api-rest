@@ -12,7 +12,7 @@ async function getMultiple(page = 1){
     `SELECT u.id, u.cedula,u.nombres, u.apellidos,u.celular,u.direccion,u.email,u.id_tipo_usuario,u.id_area_experticia,
             u.nombre_negocio,u.foto,u.fecha_registro,u.fecha_nacimiento,
             u.id_departamento,u.id_municipio,u.id_corregimiento,u.id_vereda,
-            u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda
+            u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado
      FROM usuarios as u 
      LIMIT ?,?`, 
     [offset, config.listPerPage]
@@ -34,13 +34,14 @@ async function create(usuario){
     const saltRounds= 10;
     const salt= bcrypt.genSaltSync(saltRounds);//generate a salt
     const passwordHash= bcrypt.hashSync( usuario.password , salt);//generate a password Hash (salt+hash)
-    usuario.password=passwordHash;//Re-assign hashed generate a salt version over original, plain text password    
+    usuario.password=passwordHash;//Re-assign hashed generate a salt version over original, plain text password 
+    usuario.estaVerificado=0;   
   } catch  {
     throw createError(500,"Un problema al crear el usuario");
   }
     try{
       const result = await db.query(
-        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud,estaVerificado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
         [
           usuario.cedula,
           usuario.nombres, 
@@ -60,7 +61,8 @@ async function create(usuario){
           usuario.id_corregimiento,
           usuario.id_vereda,
           usuario.latitud,
-          usuario.longitud          
+          usuario.longitud,
+          usuario.estaVerificado         
         ]
       );
       if (result.affectedRows) {

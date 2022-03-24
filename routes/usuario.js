@@ -41,4 +41,13 @@ router.put('/change/password', async function(req, res, next) {
   }
 });
 
+router.put('/verify/account', async function(req, res, next) {
+  try {
+        res.json(await usuario.verifyAccount(req.body));
+  } catch (err) {
+        console.error(`Error al verificar el usuario por el email`, err.message);
+        next(err);
+  }
+});
+
 module.exports = router;

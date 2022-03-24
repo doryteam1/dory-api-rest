@@ -182,9 +182,42 @@ async function changePassword(datos,token){
         }
 }//End updatePassword
 
+async function verifyAccount(body){
+
+    var token ="bearer"+" "+body.token;  
+    if(token && validarToken(token)){
+        const payload=helper.parseJwt(token);/*--saco la carga útil del token para averiguar el email del usuario----*/  
+        const email=payload.email; 
+        let estaVerificado=1;       
+        if(email!=undefined)
+        {     
+              const result = await db.query(
+                `UPDATE usuarios
+                  SET estaVerificado=?
+                  WHERE email=?`,
+                  [
+                    estaVerificado,
+                    email
+                  ] 
+              );
+              if (result.affectedRows) {
+                  return{message : 'Usuario verificado por email con éxito'};
+              }else{
+                  throw createError(500,"Un problema al verificar el usuario por su email");
+              }
+        }else{
+            throw createError(400,"Email requerido!"); 
+        }
+    }else{
+        throw createError(401,"Usted no tiene autorización"); 
+    }
+}//End verifyEmail
+
+
 module.exports = {
   getMultiple,
   updatePassword,
   recoverPassword,
-  changePassword
+  changePassword,
+  verifyAccount
 }
