@@ -12,7 +12,7 @@ async function getMultiple(page = 1){
     `SELECT u.id, u.cedula,u.nombres, u.apellidos,u.celular,u.direccion,u.email,u.id_tipo_usuario,u.id_area_experticia,
             u.nombre_negocio,u.foto,u.fecha_registro,u.fecha_nacimiento,
             u.id_departamento,u.id_municipio,u.id_corregimiento,u.id_vereda,
-            u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado
+            u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi
      FROM usuarios as u 
      LIMIT ?,?`, 
     [offset, config.listPerPage]

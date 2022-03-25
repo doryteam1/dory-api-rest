@@ -1,85 +1,128 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+const {validarToken} = require ('../middelware/auth');
+var createError = require('http-errors');
 
 async function getMultiple(page = 1){
-  const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
-    `SELECT * FROM vehiculos LIMIT ?,?`, 
-    [offset, config.listPerPage]
-  );
-  const data = helper.emptyOrRows(rows);
-  const meta = {page};
+        const offset = helper.getOffset(page, config.listPerPage);
+        const rows = await db.query(
+          `SELECT * FROM vehiculos LIMIT ?,?`, 
+          [offset, config.listPerPage]
+        );
+        const data = helper.emptyOrRows(rows);
+        const meta = {page};
+        return {
+          data,
+          meta
+        }
+}/*End getMultiple*/
 
-  return {
-    data,
-    meta
-  }
-}
+/*----------------------------------create-vehículo-------------------------------------------------- */
 
-async function create(vehiculo){
-     const result = await db.query(
-      `INSERT INTO vehiculos (id_vehiculo,capacidad,modelo,transporte_alimento,usuarios_id) VALUES (?,?,?,?,?)`, 
-      [
-        vehiculo.id_vehiculo,
-        vehiculo.capacidad,
-        vehiculo.modelo,
-        vehiculo.transporte_alimento,
-        vehiculo.usuarios_id
-      ]
-    );
-  
-    let message = {message: 'Error creando vehiculo'};
-  
-    if (result.affectedRows) {
-      message = {  insertId: result.insertId, message:'vehiculo creado exitosamente'};
-    }
-  
-    return message;
-  }
+async function create(vehiculo,token){
 
-  async function update(token, vehiculo){
-     let id;
-    const result = await db.query(
-      `UPDATE vehiculos 
-       SET capacidad=?,
-           modelo=?,
-           transporte_alimento=?,
-           usuarios_id=?
-       WHERE id_vehiculo=?`,
-       [
-            vehiculo.capacidad,
-            vehiculo.modelo,
-            vehiculo.transporte_alimento,
-            vehiculo.usuarios_id,
-            id
-       ] 
-    );
-  
-    let message = 'Error actualizando vehiculo';
-  
-    if (result.affectedRows) {
-      message = 'vehiculo actualizado exitosamente';
-    }
-  
-    return {message};
-  }
+               if(token && validarToken(token)){
+                 try {                   
+                    const payload=helper.parseJwt(token);  
+                    const id_user=payload.sub;
+                    vehiculo.usuarios_id=id_user; 
+                    if(vehiculo.id_vehiculo==undefined || vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined)
+                    {
+                      throw createError(400,"Se requieren todos los parámetros!");
+                    }                   
+                    const result = await db.query(
+                      `INSERT INTO vehiculos (id_vehiculo,capacidad,modelo,transporte_alimento,usuarios_id) VALUES (?,?,?,?,?)`, 
+                      [
+                        vehiculo.id_vehiculo,
+                        vehiculo.capacidad,
+                        vehiculo.modelo,
+                        vehiculo.transporte_alimento,
+                        id_user
+                      ]
+                    );                  
+                    let message = {message: 'Error creando vehiculo'};                  
+                    if (result.affectedRows) {
+                      message = {message:'Vehículo creado exitosamente'};
+                      return message;
+                    }else{
+                      throw createError(500,"ocurrió un problema al registrar el vehículo");
+                    }                    
+                 }catch (error) {
+                           throw error;
+                 }    
+              }else{
+                throw createError(401,"Usted no tiene autorización"); 
+            }
+
+  }/*End Create*/
+
+  /*----------------------------------update-vehículo-------------------------------------------------- */
+
+  async function update(id_veh,vehiculo,token){
+
+              if(token && validarToken(token)){
+                  try {
+                      const payload=helper.parseJwt(token);  
+                      vehiculo.usuarios_id=payload.sub;
+                      const result = await db.query(
+                        `UPDATE vehiculos 
+                        SET capacidad=?,
+                            modelo=?,
+                            transporte_alimento=?,
+                            usuarios_id=?
+                        WHERE id_vehiculo=?`,
+                        [
+                          vehiculo.capacidad,
+                          vehiculo.modelo,
+                          vehiculo.transporte_alimento,
+                          vehiculo.usuarios_id,
+                          id_veh
+                        ] 
+                      );  
+                      let message = 'Error actualizando vehículo';  
+                      if (result.affectedRows) {
+                        message = 'vehículo actualizado exitosamente';
+                        return {message};
+                      } 
+                      else{
+                        throw createError(500,"ocurrió un problema al actualizar el vehículo");
+                      }                       
+                }catch (error) {
+                        throw error;
+                } 
+              }else{
+                throw createError(401,"Usted no tiene autorización"); 
+              }
+  }/*End Update*/
+
+  /*----------------------------------remove-vehículo-------------------------------------------------- */
   
   async function remove(id_vehiculo,token){
-    let id_user;
-    const result = await db.query(
-      `DELETE FROM vehiculos WHERE id_vehiculo=? and usuarios_id=id_user`, 
-      [id_vehiculo]
-    );
-  
-    let message = 'Error borrando vehiculo';
-  
-    if (result.affectedRows) {
-      message = 'vehiculo borrada exitosamente';
-    }
-  
-    return {message};
-  }
+
+            if(token && validarToken(token)){
+                  try {
+                      const payload=helper.parseJwt(token);  
+                      const id_user=payload.sub;
+                      const result = await db.query(
+                        `DELETE FROM vehiculos WHERE id_vehiculo=? and usuarios_id=?`, 
+                        [id_vehiculo,id_user]
+                      );                    
+                      let message = 'Error borrando vehiculo';                    
+                      if (result.affectedRows) {
+                        message = 'vehiculo borrada exitosamente';
+                        return {message};
+                      }else{
+                        throw createError(500,"ocurrió un problema al eliminar el vehículo");
+                      }   
+                     
+                  }catch (error) {
+                      throw error;
+                  }
+           }else{
+              throw createError(401,"Usted no tiene autorización"); 
+           }
+  }/*End remove*/
 
 module.exports = {
   getMultiple,

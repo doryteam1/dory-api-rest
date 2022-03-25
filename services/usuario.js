@@ -186,7 +186,7 @@ async function verifyAccount(body){
 
     var token ="bearer"+" "+body.token;  
     if(token && validarToken(token)){
-        const payload=helper.parseJwt(token);/*--saco la carga útil del token para averiguar el email del usuario----*/  
+        const payload=helper.parseJwt(token);
         const email=payload.email; 
         let estaVerificado=1;       
         if(email!=undefined)
