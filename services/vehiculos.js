@@ -26,7 +26,12 @@ async function create(vehiculo,token){
                  try {                   
                     const payload=helper.parseJwt(token);  
                     const id_user=payload.sub;
-                    vehiculo.usuarios_id=id_user; 
+                    const rol=payload.rol;
+                    vehiculo.usuarios_id=id_user;
+                    
+                    if(rol!="Transportador"){
+                      throw createError(401,"tipo de usuario no autorizado");
+                    }
                     if(vehiculo.id_vehiculo==undefined || vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined)
                     {
                       throw createError(400,"Se requieren todos los parámetros!");
@@ -65,6 +70,11 @@ async function create(vehiculo,token){
                   try {
                       const payload=helper.parseJwt(token);  
                       vehiculo.usuarios_id=payload.sub;
+                      const rol=payload.rol;
+                                        
+                    if(rol!="Transportador"){
+                      throw createError(401,"tipo de usuario no autorizado");
+                    }
                       const result = await db.query(
                         `UPDATE vehiculos 
                         SET capacidad=?,
@@ -104,6 +114,11 @@ async function create(vehiculo,token){
                   try {
                       const payload=helper.parseJwt(token);  
                       const id_user=payload.sub;
+                      const rol=payload.rol;
+                                        
+                      if(rol!="Transportador"){
+                        throw createError(401,"tipo de usuario no autorizado");
+                      }
                       const result = await db.query(
                         `DELETE FROM vehiculos WHERE id_vehiculo=? and usuarios_id=?`, 
                         [id_vehiculo,id_user]
