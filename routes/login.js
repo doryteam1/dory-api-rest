@@ -11,4 +11,14 @@ router.post('/', async function(req, res, next) {
     }
   });
 
+router.post('/google', async function(req, res, next) {
+  try {
+    res.json(await login.loginWithGoogle(req));
+  } catch (err) {
+    console.error(`Error al loguear el usuario con google`, err.message);
+    next(err);
+  }
+});
+
+    
 module.exports = router;

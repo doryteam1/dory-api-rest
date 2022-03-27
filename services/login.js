@@ -2,9 +2,12 @@ const db = require('./db');
 const helper = require('../helper');
 const bcrypt= require('bcrypt');
 var createError = require('http-errors');
+const {OAuth2Client} = require('google-auth-library');
+const CLIENT_ID = '482318580198-co5iamkudku3b4e0p2k83okrvk9dh9os.apps.googleusercontent.com';
+const client = new OAuth2Client(CLIENT_ID);
+const ONE_YEAR_MILLISECONDS = 525600;
 
 async function createLogin(user){
-
   let email=user.email;
   let message = "El usuario no esta registrado o la contraseña es inválida";
   
@@ -41,7 +44,7 @@ async function createLogin(user){
                         let passUser=user.password;
 
                         if(( bcrypt.compareSync(passUser,pass))){
-                              var token=helper.createToken(rows[0],525600);/*token de un año*/
+                              var token=helper.createToken(rows[0],ONE_YEAR_MILLISECONDS);/*token de un año*/
                             return {token:token};
                         }
                       }
@@ -58,9 +61,41 @@ async function createLogin(user){
         
 }//fin método
 
+async function loginWithGoogle(req){
+  if(!req.body.token){
+    throw createError(400,'Debe proporcionar un token.');
+  }
+  const token = req.body.token;
+  const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+      // Or, if multiple clients access the backend:
+      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+  });
+  const payload = ticket.getPayload();
+  let email = payload.email;
+
+  const rows = await db.query('select * from usuarios as u left join tipos_usuarios as tu on u.id_tipo_usuario = tu.id_tipo_usuario');
+  console.log(rows)
+  if(rows.length < 1){
+    throw createError(400,'El usuario no esta registrado.');
+  }
+
+  try{
+    const newToken = await helper.createToken(rows[0],ONE_YEAR_MILLISECONDS);  
+    return {
+      token: newToken,
+      authenticated:true
+    };
+  }catch(err){
+    console.log(err);
+    throw err;
+  }
+}
 
 module.exports = {
-  createLogin
+  createLogin,
+  loginWithGoogle
 }
 
 
