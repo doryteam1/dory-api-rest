@@ -77,7 +77,7 @@ async function create(usuario){
         <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
         <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje2}</p> 
         <form>
-        <a href="https://dory-web-app-tests.herokuapp.com/verify-account=?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Verificar cuenta de usuario </a></form>
+        <a href="https://dory-web-app-tests.herokuapp.com/verify-account?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Verificar cuenta de usuario </a></form>
         </center>
         </br>
         `;
