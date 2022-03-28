@@ -24,7 +24,7 @@ async function createLogin(user){
             );
             
             if(verificar.length<1){
-              throw createError(404,"Usuario no esta verificado ó no existe");
+              throw createError(404,"Usuario no esta verificado ó no existe. Revise su correo electronico y siga las instrucciones.");
             }
 
         if(verificar[0].estaVerificado!=null && verificar[0].estaVerificado!=0 && verificar[0].estaVerificado!=undefined){
