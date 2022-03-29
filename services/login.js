@@ -24,7 +24,7 @@ async function createLogin(user){
             );
             
             if(verificar.length<1){
-              throw createError(404,"Usuario no esta verificado ó no existe");
+              throw createError(404,"Usuario no esta verificado ó no existe. Revise su correo electronico y siga las instrucciones.");
             }
 
         if(verificar[0].estaVerificado!=null && verificar[0].estaVerificado!=0 && verificar[0].estaVerificado!=undefined){
@@ -75,10 +75,30 @@ async function loginWithGoogle(req){
   const payload = ticket.getPayload();
   let email = payload.email;
 
-  const rows = await db.query('select * from usuarios as u left join tipos_usuarios as tu on u.id_tipo_usuario = tu.id_tipo_usuario');
+  const rows = await db.query('select * from usuarios as u left join tipos_usuarios as tu on u.id_tipo_usuario = tu.id_tipo_usuario where u.email = ?',[email]);
   console.log(rows)
   if(rows.length < 1){
     throw createError(400,'El usuario no esta registrado.');
+  }
+
+  if(payload.email_verified){
+    if(!rows[0].estaVerificado){
+      const result = await db.query(
+        `UPDATE usuarios
+          SET estaVerificado=?
+          WHERE email=?`,
+          [
+            1,
+            email
+          ] 
+      );
+      console.log(result.affectedRows)
+      if (result.affectedRows<1) {
+        throw createError(500,"Ocurrio un problema al autenticar el usuario. Intentelo nuevamente");
+      }
+    }
+  }else{
+    throw createError(403,"Este usuario tiene un correo que aun no ha sido verificado por google. Verifique primero su correo y luego intente la operación nuevamente.");
   }
 
   try{
