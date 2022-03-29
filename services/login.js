@@ -75,7 +75,7 @@ async function loginWithGoogle(req){
   const payload = ticket.getPayload();
   let email = payload.email;
 
-  const rows = await db.query('select * from usuarios as u left join tipos_usuarios as tu on u.id_tipo_usuario = tu.id_tipo_usuario');
+  const rows = await db.query('select * from usuarios as u left join tipos_usuarios as tu on u.id_tipo_usuario = tu.id_tipo_usuario where u.email = ?',[email]);
   console.log(rows)
   if(rows.length < 1){
     throw createError(400,'El usuario no esta registrado.');
