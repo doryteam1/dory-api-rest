@@ -74,7 +74,7 @@ async function create(producto,token){
  
 
 
-/*-----------------------------------updte de productos---------------------------------------------------*/
+/*-----------------------------------update de productos---------------------------------------------------*/
 
   async function update(codigo, producto, token){
 
