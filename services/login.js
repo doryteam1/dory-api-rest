@@ -81,6 +81,22 @@ async function loginWithGoogle(req){
     throw createError(400,'El usuario no esta registrado.');
   }
 
+  if(payload.email_verified){
+    const result = await db.query(
+      `UPDATE usuarios
+        SET estaVerificado=?
+        WHERE email=?`,
+        [
+          1,
+          email
+        ] 
+    );
+    console.log(result.affectedRows)
+    if (result.affectedRows) {
+      throw createError(500,"Ocurrio un problema al autenticar el usuario");
+    }
+  }
+
   try{
     const newToken = await helper.createToken(rows[0],ONE_YEAR_MILLISECONDS);  
     return {
