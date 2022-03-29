@@ -82,19 +82,23 @@ async function loginWithGoogle(req){
   }
 
   if(payload.email_verified){
-    const result = await db.query(
-      `UPDATE usuarios
-        SET estaVerificado=?
-        WHERE email=?`,
-        [
-          1,
-          email
-        ] 
-    );
-    console.log(result.affectedRows)
-    if (result.affectedRows) {
-      throw createError(500,"Ocurrio un problema al autenticar el usuario");
+    if(!rows[0].estaVerificado){
+      const result = await db.query(
+        `UPDATE usuarios
+          SET estaVerificado=?
+          WHERE email=?`,
+          [
+            1,
+            email
+          ] 
+      );
+      console.log(result.affectedRows)
+      if (result.affectedRows<1) {
+        throw createError(500,"Ocurrio un problema al autenticar el usuario. Intentelo nuevamente");
+      }
     }
+  }else{
+    throw createError(403,"Este usuario tiene un correo que aun no ha sido verificado por google. Verifique primero su correo y luego intente la operación nuevamente.");
   }
 
   try{
