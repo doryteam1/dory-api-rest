@@ -27,10 +27,35 @@ async function getMultiple(page = 1){
 }
 
 /* ----------------------------------CREATE-----------------------------*/
-async function create(usuario,google){
-  
-    if(!google){
-        let message='Registro fallido';
+async function create(usuario){
+   
+        let contentHtml=""; 
+        let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del Departamento de Sucre, en alianza con los grupos de investigación, Gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
+        
+        if(usuario.creadoCon && usuario.creadoCon=="google"){
+              contentHtml = `<center>
+              <img src="http://sharpyads.com/wp-content/uploads/2022/03/logo-no-name-320x320.png" width="100" height="100" />
+              <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
+              <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
+              <form>
+              </center>
+              </br>
+              `;
+        }else{              
+              let mensaje2="Solo falta que verifiques tu cuenta.   Haz click en el siguiente enlace para verificar tu correo electrónico";
+              let token=helper.createToken(usuario,4320);/*token de 3 días*/
+              contentHtml = `<center>
+              <img src="http://sharpyads.com/wp-content/uploads/2022/03/logo-no-name-320x320.png" width="100" height="100" />
+              <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
+              <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
+              <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje2}</p> 
+              <form>
+              <a href="https://dory-web-app-tests.herokuapp.com/verify-account?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Verificar cuenta de usuario </a></form>
+              </center>
+              </br>
+              `;
+       }
+      let message='Registro fallido';
         try {
           const saltRounds= 10;
           const salt= bcrypt.genSaltSync(saltRounds);//generate a salt
@@ -71,17 +96,7 @@ async function create(usuario,google){
               let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del Departamento de Sucre, en alianza con los grupos de investigación, Gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
               let mensaje2="Solo falta que verifiques tu cuenta.   Haz click en el siguiente enlace para verificar tu correo electrónico";
               let token=helper.createToken(usuario,4320);/*token de 3 días*/
-              let tema="Bienvenido a Dory";
-              contentHtml = `<center>
-              <img src="http://sharpyads.com/wp-content/uploads/2022/03/logo-no-name-320x320.png" width="100" height="100" />
-              <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
-              <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
-              <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje2}</p> 
-              <form>
-              <a href="https://dory-web-app-tests.herokuapp.com/verify-account?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Verificar cuenta de usuario </a></form>
-              </center>
-              </br>
-              `;
+              let tema="Bienvenido a Dory";             
               helper.sendEmail(usuario.email,tema,contentHtml);
             }else {
               throw createError(500,"Ocurrió un problema al registrar un usuario");
@@ -91,9 +106,7 @@ async function create(usuario,google){
               throw err;
           }
           return {message};
-        }else{
-           return "Usuario registrado con google";
-        }
+        
   }/*End create*/
 
 /* ----------------------------------UPDATE-----------------------------*/

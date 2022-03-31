@@ -19,7 +19,6 @@ const municipiosRouter = require('./routes/municipios');
 const corregimientosRouter = require('./routes/corregimientos');
 const veredasRouter = require('./routes/veredas');
 const asociacionesRouter = require('./routes/asociaciones');
-const infraestructuras_granjasRouter = require('./routes/infraestructuras_granjas');
 const asociaciones_usuariosRouter = require('./routes/asociaciones_usuarios');
 const granjasRouter = require('./routes/granjas');
 const subregionesRouter = require('./routes/subregiones');
@@ -112,7 +111,6 @@ app.use('/api/municipios', municipiosRouter)
 app.use('/api/corregimientos', corregimientosRouter)
 app.use('/api/veredas', veredasRouter)
 app.use('/api/asociaciones', asociacionesRouter)
-app.use('/api/infraestructuras-granjas', infraestructuras_granjasRouter)
 app.use('/api/asociaciones_usuarios', asociaciones_usuariosRouter)
 app.use('/api/granjas', granjasRouter)
 app.use('/api/subregiones', subregionesRouter)

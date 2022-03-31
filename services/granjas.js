@@ -1,6 +1,9 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+/*id del usuario- retornar todas las granjas de un usuario */
+
+
 
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -17,7 +20,7 @@ async function getMultiple(page = 1){
   }
 }
 
-
+/* granja, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas  */
 async function create(granja){
      const result = await db.query(
       `INSERT INTO granjas (id_granja,nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
@@ -46,7 +49,7 @@ async function create(granja){
   
     return message;
   }
-
+  /*granja,id-granja a modificar, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas*/
   async function update(id, granja){
     const result = await db.query(
       `UPDATE granjas 
@@ -89,6 +92,7 @@ async function create(granja){
     return {message};
   }
   
+  /*token de usuario recibirlo*/
   async function remove(id){
     const result = await db.query(
       `DELETE FROM granjas WHERE id_granja=?`, 
