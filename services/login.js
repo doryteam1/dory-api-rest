@@ -3,7 +3,8 @@ const helper = require('../helper');
 const bcrypt= require('bcrypt');
 var createError = require('http-errors');
 const {OAuth2Client} = require('google-auth-library');
-const CLIENT_ID = '482318580198-co5iamkudku3b4e0p2k83okrvk9dh9os.apps.googleusercontent.com';
+const CLIENT_ID_1 = '482318580198-co5iamkudku3b4e0p2k83okrvk9dh9os.apps.googleusercontent.com';
+const CLIENT_ID_2 = '170816600260-esagcgasnv4kkfdtl8ejftb5kiar6pkj.apps.googleusercontent.com';
 const client = new OAuth2Client(CLIENT_ID);
 const ONE_YEAR_MILLISECONDS = 525600;
 
@@ -68,7 +69,7 @@ async function loginWithGoogle(req){
   const token = req.body.token;
   const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+      audience: [CLIENT_ID_1, CLIENT_ID_2]  // Specify the CLIENT_ID of the app that accesses the backend
       // Or, if multiple clients access the backend:
       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
   });
