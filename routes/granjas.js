@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const granjas = require('../services/granjas');
 
+router.get('/:id', async function(req, res, next) {
+  try {
+    res.json(await granjas.getGranjaUsuario(req.query.page, req.params.id));
+  } catch (err) {
+    console.error(`Error al traer las granjas de éste usuario`, err.message);
+    next(err);
+  }
+});
 
 router.get('/', async function(req, res, next) {
   try {
@@ -12,7 +20,6 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-
 router.post('/', async function(req, res, next) {
     try {
       res.json(await granjas.create(req.body));
@@ -22,7 +29,6 @@ router.post('/', async function(req, res, next) {
     }
   });
 
-
 router.put('/:id', async function(req, res, next) {
     try {
       res.json(await granjas.update(req.params.id, req.body));
@@ -31,7 +37,6 @@ router.put('/:id', async function(req, res, next) {
       next(err);
     }
 });
-
 
 router.delete('/:id', async function(req, res, next) {
     try {

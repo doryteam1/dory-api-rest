@@ -1,8 +1,24 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
-/*id del usuario- retornar todas las granjas de un usuario */
 
+async function getGranjaUsuario(page = 1,id_user){
+  const offset = helper.getOffset(page, config.listPerPage);
+  const rows = await db.query(
+    `SELECT * 
+     FROM granjas as g, usuarios as u, usuarios_granjas as ug
+     WHERE u.id=? and ug.usuarios_id=? and ug.espropietario=1 and g.id_granja=ug.id_granja_pk_fk
+     LIMIT ?,?`, 
+    [id_user, id_user, offset, config.listPerPage]
+  );
+  const data = helper.emptyOrRows(rows);
+  const meta = {page};
+
+  return {
+    data,
+    meta
+  }
+}/*End getGranjaUsuario*/
 
 
 async function getMultiple(page = 1){
@@ -18,7 +34,7 @@ async function getMultiple(page = 1){
     data,
     meta
   }
-}
+}/*End GetMultiple*/
 
 /* granja, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas  */
 async function create(granja){
@@ -48,9 +64,9 @@ async function create(granja){
     }
   
     return message;
-  }
+  }/*End Create*/
   /*granja,id-granja a modificar, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas*/
-  async function update(id, granja){
+  async function update(idGranja, granja){
     const result = await db.query(
       `UPDATE granjas 
        SET nombre=?,
@@ -79,7 +95,7 @@ async function create(granja){
           granja.id_municipio,
           granja.id_corregimiento,
           granja.id_vereda,
-          id
+          idGranja
        ] 
     );
   
@@ -90,7 +106,7 @@ async function create(granja){
     }
   
     return {message};
-  }
+  }/*End Update*/
   
   /*token de usuario recibirlo*/
   async function remove(id){
@@ -106,11 +122,12 @@ async function create(granja){
     }
   
     return {message};
-  }
+  }/*End Remove*/
 
 module.exports = {
   getMultiple,
   create,
   update,
-  remove
+  remove,
+  getGranjaUsuario
 }
