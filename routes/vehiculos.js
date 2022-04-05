@@ -12,6 +12,15 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+router.get('/:id', async function(req, res, next) {
+  try {
+    res.json(await vehiculos.getVehiculoUser(req.query.page,req.params.id));
+  } catch (err) {
+    console.error(`Error al traer los vehiculos `, err.message);
+    next(err);
+  }
+});
+
 router.post('/', async function(req, res, next) {
     try {
       var token=req.headers.authorization;

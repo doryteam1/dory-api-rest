@@ -18,6 +18,23 @@ async function getMultiple(page = 1){
         }
 }/*End getMultiple*/
 
+async function getVehiculoUser(page = 1, id_user){
+  const offset = helper.getOffset(page, config.listPerPage);
+  const rows = await db.query(
+    `SELECT * 
+     FROM vehiculos as v
+     WHERE  v.usuarios_id=?
+     LIMIT ?,?`, 
+    [id_user, offset, config.listPerPage]
+  );
+  const data = helper.emptyOrRows(rows);
+  const meta = {page};
+  return {
+    data,
+    meta
+  }
+}/*End getVehiculoUser*/
+
 /*----------------------------------create-vehículo-------------------------------------------------- */
 
 async function create(vehiculo,token){
@@ -141,6 +158,7 @@ async function create(vehiculo,token){
 
 module.exports = {
   getMultiple,
+  getVehiculoUser,
   create,
   update,
   remove
