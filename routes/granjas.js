@@ -30,7 +30,7 @@ router.post('/', async function(req, res, next) {
     }
   });
 
-router.put('/:id', async function(req, res, next) {
+router.put('/general/:id', async function(req, res, next) {
     try {
          var token=req.headers.authorization;
          res.json(await granjas.update(req.params.id, req.body,token));
@@ -40,8 +40,8 @@ router.put('/:id', async function(req, res, next) {
     }
 });
 
-router.delete('/:id', async function(req, res, next) {
-    try {
+router.put('/anular/:id', async function(req, res, next) {
+    try { 
          var token=req.headers.authorization;
          res.json(await granjas.anularGranja(req.params.id,token));
     } catch (err) {

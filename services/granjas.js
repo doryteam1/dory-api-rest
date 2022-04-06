@@ -37,7 +37,7 @@ async function getMultiple(page = 1){
 
 async function create(body,token){
 
-      const conection= await db.newConnection(); /*conection of TRANSACTION */
+      const conection= await db.newConnection(); 
       await conection.beginTransaction();
     if(token && validarToken(token)){
           try {                   
@@ -80,7 +80,7 @@ async function create(body,token){
                   }
                   const rowsId = await db.query(
                     `SELECT MAX(id_granja) AS id FROM granjas`
-                  ); /*ultimo Id_granja que se creo con autoincremental*/
+                  ); 
               
                 var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/
                  
@@ -91,7 +91,7 @@ async function create(body,token){
                     );
                  }
 
-                 var especies=JSON.parse(body.arrayEspecies);/*Pasar el string a vector*/
+                 var especies=JSON.parse(body.arrayEspecies);
                  
                  for(var j=0;j<especies.length;j++){
                     await db.query(
@@ -116,7 +116,7 @@ async function create(body,token){
                 conection.release();
                 return message;
           }catch (error) {
-                await conection.rollback(); /*Si hay algún error  */ 
+                await conection.rollback(); 
                 conection.release();
                 throw error;
           } 
@@ -128,7 +128,7 @@ async function create(body,token){
   /*granja,id-granja a modificar, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas*/
   async function update(idGranja, body, token){
 
-    const conection= await db.newConnection(); /*conection of TRANSACTION */
+    const conection= await db.newConnection(); 
     await conection.beginTransaction();
     if(token && validarToken(token)){
       try {                   
@@ -161,7 +161,7 @@ async function create(body,token){
                   id_vereda=? 
               WHERE id_granja=?`,
               [
-                  body.nombre,
+                  body.nombre_granja,
                   body.area,
                   body.numero_trabajadores,
                   body.produccion_estimada_mes,
@@ -180,7 +180,7 @@ async function create(body,token){
             if (result.affectedRows) {
               message = 'Granja actualizada exitosamente';
             }             
-                 var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/                 
+                 var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);               
                  for(var i=0;i<tiposInfraestructuras.length;i++){
                     await db.query(
                       `UPDATE infraestructuras_granjas
@@ -190,7 +190,7 @@ async function create(body,token){
                     );
                  }
 
-                 var especies=JSON.parse(body.arrayEspecies);/*Pasar el string a vector*/                 
+                 var especies=JSON.parse(body.arrayEspecies);                 
                  for(var j=0;j<especies.length;j++){
                     await db.query(
                       `UPDATE especies_granjas 
@@ -200,11 +200,27 @@ async function create(body,token){
                     );
                  }
 
+                 await db.query(
+                  `UPDATE usuarios_granjas  
+                  SET  usuarios_id=?,
+                       puntuacion=?,
+                       esfavorita=?,
+                       espropietario=?
+                  WHERE id_granja_pk_fk=?`, 
+                  [                    
+                    id_user,
+                    0,
+                    0,
+                    1,
+                    rowsId[0].id
+                  ]
+                ); 
+
             await conection.commit(); 
             conection.release();
             return message;
       }catch (error) {
-            await conection.rollback(); /*Si hay algún error  */ 
+            await conection.rollback();  
             conection.release();
             throw error;
       } 
@@ -214,16 +230,15 @@ async function create(body,token){
   }/*End Update*/
   
   async function anularGranja(id_granja,token){
-    let id_user=null;
+    let id_user=null; 
     let message = 'Error anulando la granja';
     if(token && validarToken(token)){
           let payload=helper.parseJwt(token);
-          id_user= payload.sub;
-             
-             if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){
+          id_user= payload.sub;            
+             if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
                 try {
                     const result = await db.query(
-                    `UPDATE FROM granjas SET anulado = 'anulada' WHERE id_granja=?`, 
+                    `UPDATE granjas SET anulado = 'anulada' WHERE id_granja=?`, 
                     [id_granja]
                     );             
                     if (result.affectedRows) {
@@ -238,7 +253,7 @@ async function create(body,token){
                 throw createError(400,"Parámetros ingresados erroneamente"); 
              }
     }
-  }/*End Remove*/
+  }/*End anularGranja*/
 
 module.exports = {
   getMultiple,
