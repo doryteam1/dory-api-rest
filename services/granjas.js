@@ -180,41 +180,35 @@ async function create(body,token){
             if (result.affectedRows) {
               message = 'Granja actualizada exitosamente';
             }             
-                 var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);               
+                await db.query(
+                  `DELETE FROM infraestructuras_granjas
+                   WHERE id_granja_pk_fk=?`,
+                  [idGranja]
+                );/*Borrado de infraestructuras granjas para luego agregarlas nuevamente*/
+
+                var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);
                  for(var i=0;i<tiposInfraestructuras.length;i++){
                     await db.query(
-                      `UPDATE infraestructuras_granjas
-                       SET id_infraestructura_pk_fk=?
-                       WHERE id_granja_pk_fk=?`,
-                      [tiposInfraestructuras[i], idGranja]
+                      `INSERT INTO infraestructuras_granjas
+                       (id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
+                      [idGranja, tiposInfraestructuras[i]]
                     );
                  }
+                        
+                 await db.query(
+                  `DELETE FROM especies_granjas
+                   WHERE id_granja_pk_fk=?`,
+                  [idGranja]
+                );/*Borrado de especies de granjas para luego agregarlas nuevamente*/
 
                  var especies=JSON.parse(body.arrayEspecies);                 
                  for(var j=0;j<especies.length;j++){
                     await db.query(
-                      `UPDATE especies_granjas 
-                       SET id_especie_pk_fk=?
-                       WHERE id_granja_pk_fk=?`,
+                      `INSERT INTO especies_granjas 
+                       (id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
                       [especies[j], idGranja]
                     );
                  }
-
-                 await db.query(
-                  `UPDATE usuarios_granjas  
-                  SET  usuarios_id=?,
-                       puntuacion=?,
-                       esfavorita=?,
-                       espropietario=?
-                  WHERE id_granja_pk_fk=?`, 
-                  [                    
-                    id_user,
-                    0,
-                    0,
-                    1,
-                    rowsId[0].id
-                  ]
-                ); 
 
             await conection.commit(); 
             conection.release();
