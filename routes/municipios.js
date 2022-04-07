@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const municipios = require('../services/municipios');
 
+router.get('/:id_municipio', async function(req, res, next) {
+  try {
+    res.json(await municipios.getMunicipio(req.query.page, req.params.id_municipio));
+  } catch (err) {
+    console.error(`Error al traer los detalles de ese municipio `, err.message);
+    next(err);
+  }
+});
 
 router.get('/', async function(req, res, next) {
   try {
