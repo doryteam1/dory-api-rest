@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const granjas = require('../services/granjas');
 
-router.get('/:id', async function(req, res, next) {
-  try {
+router.get('/user/:id', async function(req, res, next) {
+  try {  
     res.json(await granjas.getGranjaUsuario(req.query.page, req.params.id));
   } catch (err) {
     console.error(`Error al traer las granjas de éste usuario`, err.message);
@@ -47,6 +47,33 @@ router.put('/anular/:id', async function(req, res, next) {
     } catch (err) {
          console.error(`Error al borrar la granja`, err.message);
          next(err);
+    }
+  });
+
+  router.get('/departamento', async function(req, res, next) { 
+    try { 
+         res.json(await granjas.getGranjasDepartamento(req.query.page));
+    } catch (err) {
+          console.error(`Error al traer las Granjas por Departamento `, err.message);
+          next(err);
+    }
+  });
+
+  router.get('/municipio/:id', async function(req, res, next) {
+    try {
+      res.json(await granjas.getGranjasMunicipio(req.query.page,req.params.id));
+    } catch (err) {
+      console.error(`Error al traer las granjas del municipio ingresado `, err.message);
+      next(err);
+    }
+  });
+
+  router.get('/detailed/:idGranja', async function(req, res, next) {
+    try {
+      res.json(await granjas.getDetail(req.query.page,req.params.idGranja));
+    } catch (err) {
+      console.error(`Error al traer la granja `, err.message);
+      next(err);
     }
   });
 

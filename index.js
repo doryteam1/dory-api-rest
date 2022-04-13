@@ -38,11 +38,8 @@ const mensajesRouter = require('./routes/mensajes');
 const resenasRouter = require('./routes/resenas');
 const eventosRouter = require('./routes/eventos');
 const usuariosRouter = require('./routes/usuarios');
-const granjasDepartamentoRouter = require('./routes/granjas-departamento');
 const piscicultoresAsociacionRouter = require('./routes/piscicultores-asociacion');
 const pescadoresAsociacionRouter = require('./routes/pescadores-asociacion');
-const granjasMunicipioRouter = require('./routes/granjas-municipio');
-const granjaRouter = require('./routes/granja');
 const pescadoresMunicipioRouter = require('./routes/pescadores-municipio');
 const piscicultoresMunicipioRouter = require('./routes/piscicultores-municipio');
 const usuarioRouter = require('./routes/usuario');
@@ -129,15 +126,12 @@ app.use('/api/mensajes', mensajesRouter)
 app.use('/api/resenas', resenasRouter)
 app.use('/api/eventos', eventosRouter)
 app.use('/api/usuarios', usuariosRouter)/*---------------principal---------*/
+app.use('/api/usuario', usuarioRouter)/*----------busqueda de user  x id ---------*/
 app.use('/api/novedades', novedadesRouter)
-app.use('/api/granjas/departamento', granjasDepartamentoRouter)
 app.use('/api/piscicultores/asociacion', piscicultoresAsociacionRouter)
 app.use('/api/pescadores/asociacion', pescadoresAsociacionRouter)
-app.use('/api/granjas/municipio', granjasMunicipioRouter)
-app.use('/api/granja', granjaRouter)
 app.use('/api/pescadores/municipio', pescadoresMunicipioRouter)
 app.use('/api/piscicultores/municipio', piscicultoresMunicipioRouter)
-app.use('/api/usuario', usuarioRouter)/*----------busqueda de user  x id ---------*/
 app.use('/api/municipios/departamento', municipiosDepartamentoRouter)
 app.use('/api/corregimientos/municipio', corregimientosMunicipioRouter)
 app.use('/api/veredas/municipio', veredasMunicipioRouter)

@@ -249,10 +249,165 @@ async function create(body,token){
     }
   }/*End anularGranja*/
 
+  async function getGranjasDepartamento(page = 1){ 
+    const offset = helper.getOffset(page, config.listPerPage);
+    const rows = await db.query(
+      `SELECT distinctrow  m.id_municipio, m.nombre, m.poblacion,(SELECT count(*) FROM municipios as m1, granjas as g1 where m1.id_municipio=g1.id_municipio and m1.id_municipio=m.id_municipio) as count_granjas
+       FROM  granjas as g, municipios as m, corregimientos as c,veredas as v
+       WHERE  m.id_municipio=g.id_municipio or
+        c.id_municipio=g.id_corregimiento or
+        v.id_municipio=g.id_municipio LIMIT ?,?`, 
+      [offset, config.listPerPage]
+    );
+    const data = helper.emptyOrRows(rows);
+    const meta = {page};
+  
+    return {
+      data,
+      meta
+    }
+  }/*End getGranjasDepartamento*/
+
+  async function getGranjasMunicipio(page = 1,id){
+    const offset = helper.getOffset(page, config.listPerPage);
+    const rows = await db.query(
+      `SELECT DISTINCT  g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_reseñas,
+                        (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion
+      FROM fotos as f, granjas as g, usuarios_granjas as ug
+      WHERE (f.id_granja_fk = g.id_granja) and
+             g.id_granja  in( select ug2.id_granja_pk_fk  from usuarios_granjas AS ug2,  granjas AS g2
+                              where g2.id_granja=ug2.id_granja_pk_fk and ug.id_granja_pk_fk=ug2.id_granja_pk_fk) and
+             g.id_municipio=?
+             LIMIT ?,?`, 
+      [id,offset, config.listPerPage]
+    );
+    var arrayfotos= new Array();
+    var nuevoRows = new Array();
+    var index= rows[0].id_granja;
+    nuevoRows.push(rows[0]);
+    
+    rows.forEach((element)=>{ 
+       
+      if((index == element.id_granja))
+      { 
+        arrayfotos.push(element.imagen);
+      }else { 
+                index= element.id_granja;
+                nuevoRows[nuevoRows.length-1].fotos=arrayfotos;/*Arreglo de fotos agregado al final del arreglo de granjas */
+                nuevoRows.push(element);
+                arrayfotos=[];  
+                arrayfotos.push(element.imagen);
+      }
+    });
+      nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+      
+    const data = helper.emptyOrRows(nuevoRows);
+    const meta = {page};
+  
+    return {
+      data,
+      meta
+    }
+  }/*End getGranjasMunicipio*/
+
+  async function getDetail(page = 1,idGranja){
+    const offset = helper.getOffset(page, config.listPerPage);
+  
+    const rows = await db.query(
+      `SELECT g.id_granja, g.nombre, g.descripcion, g.area, g.numero_trabajadores, 
+              g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
+              g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda,
+             (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
+             (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion
+       FROM granjas as g
+       WHERE  g.id_granja=?
+             LIMIT ?,?`, 
+      [idGranja,offset, config.listPerPage]
+    );
+  
+    const rowsfotos = await db.query(
+      `SELECT f.id_foto,f.imagen
+       FROM  fotos as f
+       WHERE f.id_granja_fk =?
+        LIMIT ?,?`, 
+     [idGranja,offset, config.listPerPage]
+    );
+  
+  var arrayfotos= new Array();
+  
+  rowsfotos.forEach((element)=>{ 
+    arrayfotos.push(element.imagen);
+  });
+  
+    var nuevoRows = new Array();
+    nuevoRows.push(rows[0]);
+    nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+  
+     const rows1 = await db.query(
+         `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular
+          FROM granjas as g, usuarios_granjas as ug, usuarios as u
+          WHERE (u.id=ug.usuarios_id) and
+           (g.id_granja=ug.id_granja_pk_fk) and
+           (ug.espropietario=1) and
+           g.id_granja=? LIMIT ?,?`,
+           [idGranja,offset, config.listPerPage]
+           );
+  
+           var arraypropietarios= new Array();
+           rows1.forEach((element)=>{ 
+            arraypropietarios.push(element);
+            nuevoRows[nuevoRows.length-1].propietarios=arraypropietarios;/*Arreglo de propietarios agregado al final del arreglo de granjas */
+     });
+  
+      const rows2 = await db.query(
+        `select e.nombre 
+         from granjas as g, especies_granjas as eg, especies as e
+         where (e.id_especie=eg.id_especie_pk_fk) and 
+               (eg.id_granja_pk_fk=g.id_granja) and 
+                g.id_granja=? LIMIT ?,?`, 
+        [idGranja,offset, config.listPerPage]
+      );
+  
+      var arrayespecies= new Array();
+  
+      rows2.forEach((element)=>{ 
+             arrayespecies.push(element.nombre);
+             nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
+      });
+  
+      const rows3 = await db.query(
+        `select i.nombre 
+         from granjas as g, infraestructuras_granjas as ig, infraestructuras as i
+         where (i.id_infraestructura=ig.id_infraestructura_pk_fk) and 
+               (ig.id_granja_pk_fk=g.id_granja) and 
+               g.id_granja=? LIMIT ?,?`, 
+        [idGranja,offset, config.listPerPage]
+      );
+  
+      var arrayinfraestructuras= new Array();
+  
+      rows3.forEach((element)=>{ 
+             arrayinfraestructuras.push(element.nombre);
+             nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
+      });
+  
+  
+    const data = helper.emptyOrRows(nuevoRows);
+    const meta = {page};
+  
+    return {
+      data,
+      meta
+    }
+  }/*getDetail*/
+  
 module.exports = {
   getMultiple,
   create,
   update,
   anularGranja,
-  getGranjaUsuario
+  getGranjaUsuario,
+  getGranjasDepartamento,
+  getGranjasMunicipio,
+  getDetail
 }
