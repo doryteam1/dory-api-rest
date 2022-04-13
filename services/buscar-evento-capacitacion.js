@@ -15,13 +15,11 @@ async function getMultiple(page = 1, cadena){
   );  
   const data = helper.emptyOrRows(rows);
   const meta = {page};
-
   return {
     data,
     meta
   }
 }
-
 
 module.exports = {
   getMultiple
