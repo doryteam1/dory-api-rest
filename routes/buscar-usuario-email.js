@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const buscarUsuarioEmail = require('../services/buscar-usuario-email');
 
-
 router.get('/:email', async function(req, res, next) {
   try {
     res.json(await buscarUsuarioEmail.getMultiple(req.query.page,req.params.email));
@@ -11,6 +10,5 @@ router.get('/:email', async function(req, res, next) {
     next(err);
   }
 });
-
 
 module.exports = router;

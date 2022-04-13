@@ -31,7 +31,6 @@ const fotosRouter = require('./routes/fotos');
 const mensajesRouter = require('./routes/mensajes');
 const resenasRouter = require('./routes/resenas');
 const eventosRouter = require('./routes/eventos');
-const usuariosRouter = require('./routes/usuarios');
 const pescadoresRouter = require('./routes/pescadores');
 const piscicultoresRouter = require('./routes/piscicultores');
 const usuarioRouter = require('./routes/usuario');
@@ -104,8 +103,7 @@ app.use('/api/fotos', fotosRouter)
 app.use('/api/mensajes', mensajesRouter)
 app.use('/api/resenas', resenasRouter)
 app.use('/api/eventos', eventosRouter)
-app.use('/api/usuarios', usuariosRouter)/*---------------principal---------*/
-app.use('/api/usuario', usuarioRouter)/*----------busqueda de user  x id ---------*/
+app.use('/api/usuario', usuarioRouter)
 app.use('/api/novedades', novedadesRouter)
 app.use('/api/pescadores', pescadoresRouter)
 app.use('/api/piscicultores', piscicultoresRouter)
