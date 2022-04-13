@@ -15,8 +15,26 @@ async function getMultiple(page = 1){
     data,
     meta
   }
-}
+}/*End getMultiple*/
 
+async function getCorregimientosMunicipio(page = 1,idMunicipio){
+  const offset = helper.getOffset(page, config.listPerPage);
+  const rows = await db.query(
+    `SELECT c.id_corregimiento, c.nombre, c.descripcion
+    FROM municipios as m, corregimientos as c
+    WHERE (m.id_municipio=c.id_municipio)  and
+          c.id_municipio=? 
+          LIMIT ?,?`, 
+    [idMunicipio, offset, config.listPerPage]
+  );
+  const data = helper.emptyOrRows(rows);
+  const meta = {page};
+
+  return {
+    data,
+    meta
+  }
+}/* End getCorregimientosMunicipio*/
 
 async function create(corregimiento){
     const result = await db.query(
@@ -79,6 +97,7 @@ async function create(corregimiento){
 
 module.exports = {
   getMultiple,
+  getCorregimientosMunicipio,
   create,
   update,
   remove

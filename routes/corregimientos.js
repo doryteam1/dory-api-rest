@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const corregimientos = require('../services/corregimientos');
 
+router.get('/municipio/:idMunicipio', async function(req, res, next) {
+  try {
+    res.json(await corregimientos.getCorregimientosMunicipio(req.query.page,req.params.idMunicipio));
+  } catch (err) {
+    console.error(`Error al traer los corregimientos del Municipio `, err.message);
+    next(err);
+  }
+});
 
 router.get('/', async function(req, res, next) {
   try {
@@ -12,7 +20,6 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-
 router.post('/', async function(req, res, next) {
     try {
       res.json(await corregimientos.create(req.body));
@@ -22,7 +29,6 @@ router.post('/', async function(req, res, next) {
     }
   });
 
-
 router.put('/:id', async function(req, res, next) {
     try {
       res.json(await corregimientos.update(req.params.id, req.body));
@@ -31,7 +37,6 @@ router.put('/:id', async function(req, res, next) {
       next(err);
     }
 });
-
 
 router.delete('/:id', async function(req, res, next) {
     try {

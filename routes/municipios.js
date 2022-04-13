@@ -11,6 +11,15 @@ router.get('/:id_municipio', async function(req, res, next) {
   }
 });
 
+router.get('/departamento/:idDepartamento', async function(req, res, next) {
+  try {
+    res.json(await municipios.GetMunicipioDelDepartamento(req.query.page,req.params.idDepartamento));
+  } catch (err) {
+    console.error(`Error al traer los municipios del departamento `, err.message);
+    next(err);
+  }
+});
+
 router.get('/', async function(req, res, next) {
   try {
     res.json(await municipios.getMultiple(req.query.page));

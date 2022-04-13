@@ -22,6 +22,24 @@ async function getMunicipio(page = 1,id_municipio){
   }
 }/*End GetMunicipio*/
 
+async function GetMunicipioDelDepartamento(page = 1,idDepartamento){
+  const offset = helper.getOffset(page, config.listPerPage);
+  const rows = await db.query(
+    `SELECT m.id_municipio, m.nombre
+    FROM municipios as m, departamentos as d
+    WHERE (m.id_departamento_fk=d.id_departamento)  and
+          d.id_departamento=? LIMIT ?,?`, 
+    [idDepartamento, offset, config.listPerPage]
+  );
+  const data = helper.emptyOrRows(rows);
+  const meta = {page};
+
+  return {
+    data,
+    meta
+  }
+}/*End GetMunicipioDelDepartamento*/
+
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
@@ -100,6 +118,7 @@ async function create(municipio){
 
 module.exports = {
   getMunicipio,
+  GetMunicipioDelDepartamento,
   getMultiple,
   create,
   update,
