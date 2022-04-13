@@ -2,11 +2,15 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
-async function getMultiple(page = 1){
+async function getVeredasMunicipio(page = 1,idMunicipio){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT * FROM veredas LIMIT ?,?`, 
-    [offset, config.listPerPage]
+    `SELECT v.id_vereda, v.nombre, v.descripcion
+    FROM municipios as m, veredas as v
+    WHERE (m.id_municipio=v.id_municipio)  and
+          v.id_municipio=? 
+          LIMIT ?,?`, 
+    [idMunicipio, offset, config.listPerPage]
   );
   const data = helper.emptyOrRows(rows);
   const meta = {page};
@@ -15,8 +19,21 @@ async function getMultiple(page = 1){
     data,
     meta
   }
-}
+}/*End getVeredasMunicipio*/
 
+async function getMultiple(page = 1){
+  const offset = helper.getOffset(page, config.listPerPage);
+  const rows = await db.query(
+    `SELECT * FROM veredas LIMIT ?,?`, 
+    [offset, config.listPerPage]
+  );
+  const data = helper.emptyOrRows(rows);
+  const meta = {page};
+  return {
+    data,
+    meta
+  }
+}
 
 async function create(vereda){
     const result = await db.query(
@@ -35,8 +52,7 @@ async function create(vereda){
     if (result.affectedRows) {
       message = {  insertId: result.insertId, message:'vereda creada exitosamente'};
     }
-  
-    return {message};
+      return {message};
   }
 
   async function update(id, vereda){
@@ -76,11 +92,11 @@ async function create(vereda){
     if (result.affectedRows) {
       message = 'Vereda borrada exitosamente';
     }
-  
-    return {message};
+      return {message};
   }
 
 module.exports = {
+  getVeredasMunicipio,
   getMultiple,
   create,
   update,

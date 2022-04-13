@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const veredas = require('../services/veredas');
 
+router.get('/municipio/:idMunicipio', async function(req, res, next) {
+  try {
+    res.json(await veredas.getVeredasMunicipio(req.query.page,req.params.idMunicipio));
+  } catch (err) {
+    console.error(`Error al traer las veredas del Municipio `, err.message);
+    next(err);
+  }
+});
 
 router.get('/', async function(req, res, next) {
   try {

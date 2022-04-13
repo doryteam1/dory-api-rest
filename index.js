@@ -35,7 +35,6 @@ const usuariosRouter = require('./routes/usuarios');
 const pescadoresRouter = require('./routes/pescadores');
 const piscicultoresRouter = require('./routes/piscicultores');
 const usuarioRouter = require('./routes/usuario');
-const veredasMunicipioRouter = require('./routes/veredas-municipio');
 const buscarGranjaRouter = require('./routes/buscar-granja');
 const buscarPescadoresRouter = require('./routes/buscar-pescadores');
 const buscarPiscicultoresRouter = require('./routes/buscar-piscicultores');
@@ -110,7 +109,6 @@ app.use('/api/usuario', usuarioRouter)/*----------busqueda de user  x id -------
 app.use('/api/novedades', novedadesRouter)
 app.use('/api/pescadores', pescadoresRouter)
 app.use('/api/piscicultores', piscicultoresRouter)
-app.use('/api/veredas/municipio', veredasMunicipioRouter)
 app.use('/api/buscar/granja', buscarGranjaRouter)
 app.use('/api/buscar/pescadores', buscarPescadoresRouter)
 app.use('/api/buscar/piscicultores', buscarPiscicultoresRouter)
