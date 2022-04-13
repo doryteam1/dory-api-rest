@@ -399,7 +399,7 @@ async function changePassword(datos,token){
                         }else{
                               throw error; 
                         }
-                  }
+                }
             }else{
                 throw createError(400,"Email, contraseña antigua y nuevo contraseña requeridos!"); 
             }  
