@@ -3,7 +3,7 @@ const router = express.Router();
 const usuario = require('../services/usuario');
 
 
-router.get('/identificador/:idUser', async function(req, res, next) {
+router.get('/id/:idUser', async function(req, res, next) {
   try {
     res.json(await usuario.getUserId(req.query.page,req.params.idUser));
   } catch (err) {
