@@ -20,6 +20,15 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+router.get('/mayorcalificacion/:idMunicipio', async function(req, res, next) {
+  try {
+    res.json(await granjas.getGranjasMayorCalificacion(req.query.page,req.params.idMunicipio));
+  } catch (err) {
+    console.error(`Error al traer las granjas ordenadas por mayor calificacion`, err.message);
+    next(err);
+  }
+});
+
 router.post('/', async function(req, res, next) {
     try {
           var token=req.headers.authorization;

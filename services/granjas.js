@@ -35,6 +35,34 @@ async function getMultiple(page = 1){
   }
 }/*End GetMultiple*/
 
+async function getGranjasMayorCalificacion(page = 1,idMunicipio){
+  const offset = helper.getOffset(page, config.listPerPage);
+  try{
+     if(idMunicipio){    
+          const rows = await db.query(
+            `SELECT distinctrow g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda,
+                                (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion
+             FROM granjas as g left join  usuarios_granjas as ug on (g.id_granja=ug.id_granja_pk_fk)
+             WHERE g.id_municipio=? and g.anulado="creada"
+             order by ug.puntuacion desc
+            LIMIT ?,?`, 
+            [idMunicipio, offset, config.listPerPage]
+          );
+          const data = helper.emptyOrRows(rows);
+          const meta = {page};
+          return {
+            data,
+            meta
+          }
+     }else{ 
+       throw createError(400,"Se requiere el Id del Municipio");
+     }
+  }catch{
+    throw error;
+  }
+}/*End getGranjasMayorCalificacion*/
+
+
 async function create(body,token){
 
       const conection= await db.newConnection(); 
@@ -405,6 +433,7 @@ async function create(body,token){
   
 module.exports = {
   getMultiple,
+  getGranjasMayorCalificacion,
   create,
   update,
   anularGranja,
