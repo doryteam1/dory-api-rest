@@ -38,6 +38,15 @@ router.get('/mayorArea/:idMunicipio', async function(req, res, next) {
   }
 });
 
+router.get('/menorArea/:idMunicipio', async function(req, res, next) {
+  try {
+    res.json(await granjas.getGranjasMenorArea(req.query.page,req.params.idMunicipio));
+  } catch (err) {
+    console.error(`Error al traer las granjas ordenadas por menor area`, err.message);
+    next(err);
+  }
+});
+
 router.post('/', async function(req, res, next) {
     try {
           var token=req.headers.authorization;
