@@ -29,6 +29,15 @@ router.get('/mayorcalificacion/:idMunicipio', async function(req, res, next) {
   }
 });
 
+router.get('/mayorArea/:idMunicipio', async function(req, res, next) {
+  try {
+    res.json(await granjas.getGranjasMayorArea(req.query.page,req.params.idMunicipio));
+  } catch (err) {
+    console.error(`Error al traer las granjas ordenadas por mayor area`, err.message);
+    next(err);
+  }
+});
+
 router.post('/', async function(req, res, next) {
     try {
           var token=req.headers.authorization;
