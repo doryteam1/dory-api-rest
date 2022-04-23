@@ -13,7 +13,7 @@ router.get('/productos/userId/:id', async function(req, res, next) {
 });
 
 
-router.post('/producto/', async function(req, res, next) {
+router.post('/producto', async function(req, res, next) {
     try {
               var token=req.headers.authorization;
               res.json(await proveedores.create(req.body,token));
