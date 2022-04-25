@@ -135,9 +135,8 @@ async function create(body,token){
                   throw createError(400,"Se requieren todos los parámetros!");
                 }                 
                  const result = await db.query(
-                    `INSERT INTO granjas (id_granja,nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                     [
-                      body.id_granja,
                       body.nombre_granja,
                       body.area,
                       body.numero_trabajadores,
