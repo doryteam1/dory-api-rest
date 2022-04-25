@@ -159,7 +159,7 @@ async function create(body,token){
                   const rowsId = await db.query(
                     `SELECT MAX(id_granja) AS id FROM granjas`
                   ); 
-              
+                console.log("paso query 1")
                 var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/
                  
                  for(var i=0;i<tiposInfraestructuras.length;i++){
@@ -169,6 +169,7 @@ async function create(body,token){
                     );
                  }
 
+                 console.log("paso query 2")
                  var especies=JSON.parse(body.arrayEspecies);
                  
                  for(var j=0;j<especies.length;j++){
@@ -177,6 +178,7 @@ async function create(body,token){
                       [especies[j], rowsId[0].id]
                     );
                  }
+                 console.log("paso query 3")
                   let puntuacion=0; 
                   let esfavorita=0; 
                   let espropietario=1;
@@ -190,6 +192,7 @@ async function create(body,token){
                     espropietario
                   ]
                 ); 
+                console.log("paso query 4")
                 await conection.commit(); 
                 conection.release();
                 return message;
