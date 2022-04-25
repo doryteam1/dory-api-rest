@@ -153,15 +153,17 @@ async function create(body,token){
                       body.id_vereda,
                       "creada"
                     ]
-                );                
+                );          
+                console.log("paso query 1")      
                   let message = {message: 'Error creando la granja'};                
                   if (result.affectedRows) {
                     message = {message:'Granja creada exitosamente'};
                   }
+                  console.log("inicio query 1.a")
                   const rowsId = await db.query(
                     `SELECT MAX(id_granja) AS id FROM granjas`
                   ); 
-                console.log("paso query 1")
+                  console.log("paso query 1.a")
                 var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/
                  
                  for(var i=0;i<tiposInfraestructuras.length;i++){
