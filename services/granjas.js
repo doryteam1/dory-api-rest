@@ -137,7 +137,7 @@ async function create(body,token){
                 }                 
                 console.log("inicio query 1")
                  const result = await db.query(
-                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_granja,
                       body.area,
