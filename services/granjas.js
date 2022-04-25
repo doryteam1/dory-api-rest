@@ -115,9 +115,10 @@ async function getGranjasMenorArea(page = 1,idMunicipio){
 }/*End getGranjasMenorArea*/
 
 async function create(body,token){
-
+      console.log("inicio create")
       const conection= await db.newConnection(); 
       await conection.beginTransaction();
+      console.log("inicio begin transaction")
     if(token && validarToken(token)){
           try {                   
                 const payload=helper.parseJwt(token);  
