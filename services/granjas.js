@@ -121,7 +121,7 @@ async function create(body,token){
       console.log("inicio begin transaction")
     if(token && validarToken(token)){
           try {                   
-                const payload=helper.parseJwt(token);  
+                const payload=helper.parseJwt(token);
                 const id_user=payload.sub;
                 
                 if(body.nombre_granja==undefined || 
