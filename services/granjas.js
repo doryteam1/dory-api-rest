@@ -115,15 +115,13 @@ async function getGranjasMenorArea(page = 1,idMunicipio){
 }/*End getGranjasMenorArea*/
 
 async function create(body,token){
-      console.log("inicio create")
+      
       const conection= await db.newConnection(); 
-      await conection.beginTransaction();
-      console.log("inicio begin transaction")
+      await conection.beginTransaction();      
     if(token && validarToken(token)){
           try {                   
                 const payload=helper.parseJwt(token);  
-                const id_user=payload.sub;
-                
+                const id_user=payload.sub;                
                 if(body.nombre_granja==undefined || 
                    body.area==undefined || 
                    body.numero_trabajadores==undefined ||
@@ -134,8 +132,7 @@ async function create(body,token){
                    body.id_municipio==undefined)
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
-                }                 
-                console.log("inicio query 1",body)
+                }
                  const result = await db.query(
                     `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                     [
@@ -153,36 +150,28 @@ async function create(body,token){
                       body.id_vereda,
                       "creada"
                     ]
-                );          
-                console.log("paso query 1")      
+                );
                   let message = {message: 'Error creando la granja'};                
                   if (result.affectedRows) {
                     message = {message:'Granja creada exitosamente'};
-                  }
-                  console.log("inicio query 1.a")
+                  }                  
                   const rowsId = await db.query(
                     `SELECT MAX(id_granja) AS id FROM granjas`
-                  ); 
-                  console.log("paso query 1.a")
-                var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/
-                 
+                  );                   
+                var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/                 
                  for(var i=0;i<tiposInfraestructuras.length;i++){
                     await db.query(
                       `INSERT INTO infraestructuras_granjas(id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
                       [rowsId[0].id, tiposInfraestructuras[i]]
                     );
-                 }
-
-                 console.log("paso query 2")
-                 var especies=JSON.parse(body.arrayEspecies);
-                 
+                 }                 
+                 var especies=JSON.parse(body.arrayEspecies);                 
                  for(var j=0;j<especies.length;j++){
                     await db.query(
                       `INSERT INTO especies_granjas(id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
                       [especies[j], rowsId[0].id]
                     );
-                 }
-                 console.log("paso query 3")
+                 }                 
                   let puntuacion=0; 
                   let esfavorita=0; 
                   let espropietario=1;
@@ -195,8 +184,7 @@ async function create(body,token){
                     esfavorita,
                     espropietario
                   ]
-                ); 
-                console.log("paso query 4")
+                );                 
                 await conection.commit(); 
                 conection.release();
                 return message;
