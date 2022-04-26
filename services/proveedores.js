@@ -38,9 +38,8 @@ async function create(producto,token){
                 if (rol=='Proveedor') {
                                       
                       const result = await db.query(
-                        `INSERT INTO productos(codigo,nombreProducto,precio,descripcion,imagen) VALUES (?,?,?,?,?)`, 
+                        `INSERT INTO productos(nombreProducto,precio,descripcion,imagen) VALUES (?,?,?,?)`, 
                         [
-                          producto.codigo,
                           producto.nombreProducto,
                           producto.precio,
                           producto.descripcion,
