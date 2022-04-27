@@ -120,8 +120,9 @@ async function create(body,token){
       await conection.beginTransaction();      
     if(token && validarToken(token)){
           try {                   
-                const payload=helper.parseJwt(token);  
-                const id_user=payload.sub;                
+                const payload=helper.parseJwt(token);
+                const id_user=payload.sub;
+                
                 if(body.nombre_granja==undefined || 
                    body.area==undefined || 
                    body.numero_trabajadores==undefined ||
