@@ -54,9 +54,8 @@ async function create(vehiculo,token){
                       throw createError(400,"Se requieren todos los parámetros!");
                     }                   
                     const result = await db.query(
-                      `INSERT INTO vehiculos (id_vehiculo,capacidad,modelo,transporte_alimento,usuarios_id) VALUES (?,?,?,?,?)`, 
+                      `INSERT INTO vehiculos (capacidad,modelo,transporte_alimento,usuarios_id) VALUES (?,?,?,?)`, 
                       [
-                        vehiculo.id_vehiculo,
                         vehiculo.capacidad,
                         vehiculo.modelo,
                         vehiculo.transporte_alimento,
@@ -82,7 +81,10 @@ async function create(vehiculo,token){
   /*----------------------------------update-vehículo-------------------------------------------------- */
 
   async function update(id_veh,vehiculo,token){
-
+            if(vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined)
+            {
+              throw createError(400,"Se requieren todos los parámetros!");
+            }
               if(token && validarToken(token)){
                   try {
                       const payload=helper.parseJwt(token);  
