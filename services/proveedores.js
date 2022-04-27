@@ -8,9 +8,8 @@ const {validarToken} = require ('../middelware/auth');
 async function getMultiple(id_user){
    const rows = await db.query(
     `SELECT p.nombreProducto,p.precio, p.descripcion, p.imagen
-     FROM productos p inner join productos_usuarios pu
-                      on p.codigo = pu.codigo_producto_pk_fk and
-                         pu.usuarios_id = ?`, 
+     FROM productos p 
+     WHERE p.usuarios_id = ?`, 
     [id_user]
   );
   const data = helper.emptyOrRows(rows);
@@ -27,8 +26,7 @@ async function create(producto,token){
    if(token && validarToken(token)){
        try {
             let payload=helper.parseJwt(token);
-            let rol= payload.rol;
-         
+            let rol= payload.rol;         
                 if (rol=='Proveedor') {                                      
                       const result = await db.query(
                         `INSERT INTO productos(nombreProducto,precio,descripcion,imagen,usuarios_id) VALUES (?,?,?,?,?)`, 
