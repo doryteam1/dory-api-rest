@@ -6,8 +6,7 @@ const {validarToken} = require ('../middelware/auth');
 
 
 async function getMultiple(id_user){
-  const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
+   const rows = await db.query(
     `SELECT p.nombreProducto,p.precio, p.descripcion, p.imagen
      FROM productos p inner join productos_usuarios pu
                       on p.codigo = pu.codigo_producto_pk_fk and
@@ -15,7 +14,6 @@ async function getMultiple(id_user){
     [id_user]
   );
   const data = helper.emptyOrRows(rows);
-
   return {
     data
   }
@@ -25,44 +23,38 @@ async function getMultiple(id_user){
 
 
 async function create(producto,token){
-    console.log("producto ",producto)
+    
    if(token && validarToken(token)){
-
        try {
             let payload=helper.parseJwt(token);
             let rol= payload.rol;
          
-                if (rol=='Proveedor') {
-                                      
+                if (rol=='Proveedor') {                                      
                       const result = await db.query(
-                        `INSERT INTO productos(nombreProducto,precio,descripcion,imagen) VALUES (?,?,?,?)`, 
+                        `INSERT INTO productos(nombreProducto,precio,descripcion,imagen,usuarios_id) VALUES (?,?,?,?,?)`, 
                         [
                           producto.nombreProducto,
                           producto.precio,
                           producto.descripcion,
-                          producto.imagen
+                          producto.imagen,
+                          payload.sub
                         ]
-                      );
-                  
-                    let message = 'Error al registrar el producto';
-                  
+                      );                  
+                    let message = 'Error al registrar el producto';                  
                     if (result.affectedRows) {
                       message = {  insertId: result.insertId, message:'producto creado exitosamente'};
-                    }
-                    
+                    }                    
                     return {message};
                 }else {
                   throw createError(401,"tipo de usuario no autorizado");
                 }
-
             } catch (error) {
                 if(!(error.statusCode=='401')){
                       throw createError(500,"Un problema registrando el producto del usuario");
                     }else{
                       throw createError(401,"tipo de usuario no autorizado"); 
                     }    
-            }
-         
+            }         
     } else {
            throw createError(401,"Usted no tiene autorización"); 
         }
@@ -75,18 +67,24 @@ async function create(producto,token){
   async function update(codigo, producto, token){
 
     if(token && validarToken(token)){
-
           try{
-
             let payload=helper.parseJwt(token);
             let rol= payload.rol;
-         
+            let id_user= payload.sub;
                   if (rol=='Proveedor') {
-
                     if(producto.nombreProducto==undefined || producto.precio==undefined || producto.descripcion==undefined || producto.imagen==undefined){
                          throw createError(400,"Se requieren todos los parámetros!");
                     }
+                    const rows = await db.query(
+                      `SELECT *
+                      FROM productos as p
+                      Where p.codigo=? and usuarios_id=?`, 
+                      [codigo,id_user]
+                    );
 
+                    if(rows.length<1){
+                      throw createError(401,"Usted no esta autorizado para modificar éste producto");
+                    }
                       const result = await db.query(
                         `UPDATE productos 
                         SET nombreProducto=?,
@@ -101,19 +99,16 @@ async function create(producto,token){
                           producto.imagen,
                           codigo
                         ] 
-                      );
-                    
-                      let message = 'Error actualizando producto';
-                    
+                      );                    
+                      let message = 'Error actualizando producto';                    
                       if (result.affectedRows) {
                         message = 'producto actualizado exitosamente';
-                      }
-                    
+                      }                    
                       return {message};
                   }else {
                     throw createError(401,"tipo de usuario no autorizado");
                   }
-             } catch (error) {
+          } catch (error) {
                         if((error.statusCode!='500')){
                               throw error;  
                         }else{
