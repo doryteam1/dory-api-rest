@@ -5,22 +5,19 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
 
-async function getMultiple(page = 1,id_user){
+async function getMultiple(id_user){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT p.nombreProducto,p.precio, p.descripcion, p.imagen
      FROM productos p inner join productos_usuarios pu
-                      on (p.codigo = pu.codigo_producto_pk_fk) and
-                         (pu.usuarios_id = ?)
-     LIMIT ?,?`, 
-    [id_user, offset, config.listPerPage]
+                      on p.codigo = pu.codigo_producto_pk_fk and
+                         pu.usuarios_id = ?`, 
+    [id_user]
   );
   const data = helper.emptyOrRows(rows);
-  const meta = {page};
 
   return {
-    data,
-    meta
+    data
   }
 }
 

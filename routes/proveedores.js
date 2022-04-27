@@ -5,7 +5,7 @@ const proveedores = require('../services/proveedores');
 
 router.get('/productos/userId/:id', async function(req, res, next) {
   try {
-    res.json(await proveedores.getMultiple(req.query.page, req.params.id));
+    res.json(await proveedores.getMultiple(req.params.id));
   } catch (err) {
     console.error(`Error al traer los productos del usuario proveedor ingresado`, err.message);
     next(err);
