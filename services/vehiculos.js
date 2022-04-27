@@ -49,7 +49,7 @@ async function create(vehiculo,token){
                     if(rol!="Transportador"){
                       throw createError(401,"tipo de usuario no autorizado");
                     }
-                    if(vehiculo.id_vehiculo==undefined || vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined)
+                    if(vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined)
                     {
                       throw createError(400,"Se requieren todos los parámetros!");
                     }                   
