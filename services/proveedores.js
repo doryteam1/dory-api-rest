@@ -7,7 +7,7 @@ const {validarToken} = require ('../middelware/auth');
 
 async function getMultiple(id_user){
    const rows = await db.query(
-    `SELECT p.nombreProducto,p.precio, p.descripcion, p.imagen
+    `SELECT p.codigo,p.nombreProducto,p.precio, p.descripcion, p.imagen
      FROM productos p 
      WHERE p.usuarios_id = ?`, 
     [id_user]
