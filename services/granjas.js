@@ -14,6 +14,7 @@ async function getGranjaUsuario(page = 1,id_user){
         [id_user, id_user, offset, config.listPerPage]
       );
 
+      console.log(rows)
       if(rows.length>0){
         rows[0].propietario.cedula = rows[0].cedula;
         rows[0].propietario.nombres = rows[0].nombres;
