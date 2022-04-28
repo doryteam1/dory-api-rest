@@ -15,7 +15,7 @@ async function getGranjaUsuario(page = 1,id_user){
       );
 
       console.log(rows)
-      let granja = rows[0];
+      let granja = JSON.parse(JSON.stringify(rows[0]));
       console.log(granja);
 
       if(rows.length>0){
