@@ -15,20 +15,23 @@ async function getGranjaUsuario(page = 1,id_user){
       );
 
       console.log(rows)
+      let granja = rows[0];
+      console.log(granja);
+
       if(rows.length>0){
-        rows[0].propietario.cedula = rows[0].cedula;
-        rows[0].propietario.nombres = rows[0].nombres;
-        rows[0].propietario.apellidos = rows[0].apellidos;
-        rows[0].propietario.celular = rows[0].celular;
-        rows[0].cedula = undefined;
-        rows[0].nombres = undefined;
-        rows[0].apellidos = undefined;
-        rows[0].celular = undefined;
+        granja.propietario.cedula = granja.cedula;
+        granja.propietario.nombres = granja.nombres;
+        granja.propietario.apellidos = granja.apellidos;
+        granja.propietario.celular = granja.celular;
+        granja.cedula = undefined;
+        granja.nombres = undefined;
+        granja.apellidos = undefined;
+        granja.celular = undefined;
       }
       const data = helper.emptyOrRows(rows);
       const meta = {page};
       return {
-        data,
+        granja,
         meta
       }
 }/*End getGranjaUsuario*/
