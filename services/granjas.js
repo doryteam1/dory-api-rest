@@ -14,10 +14,9 @@ async function getGranjaUsuario(page = 1,id_user){
         [id_user, id_user, offset, config.listPerPage]
       );
 
-      console.log(rows)
       let granja = JSON.parse(JSON.stringify(rows[0]));
       granja.propietario = {};
-      console.log(granja);
+      const data = [];
       if(rows.length>0){
         granja.propietario.cedula = granja.cedula;
         granja.propietario.nombres = granja.nombres;
@@ -27,11 +26,11 @@ async function getGranjaUsuario(page = 1,id_user){
         granja.nombres = undefined;
         granja.apellidos = undefined;
         granja.celular = undefined;
+        data.push(granja)
       }
-      const data = helper.emptyOrRows(rows);
+      
       const meta = {page};
       return {
-        granja,
         data,
         meta
       }
