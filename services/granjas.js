@@ -16,8 +16,8 @@ async function getGranjaUsuario(page = 1,id_user){
 
       console.log(rows)
       let granja = JSON.parse(JSON.stringify(rows[0]));
+      granja.propietario = {};
       console.log(granja);
-
       if(rows.length>0){
         granja.propietario.cedula = granja.cedula;
         granja.propietario.nombres = granja.nombres;
