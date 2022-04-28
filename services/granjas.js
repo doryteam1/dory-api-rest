@@ -13,6 +13,17 @@ async function getGranjaUsuario(page = 1,id_user){
         LIMIT ?,?`, 
         [id_user, id_user, offset, config.listPerPage]
       );
+
+      if(rows.length>0){
+        rows[0].propietario.cedula = rows[0].cedula;
+        rows[0].propietario.nombres = rows[0].nombres;
+        rows[0].propietario.apellidos = rows[0].apellidos;
+        rows[0].propietario.celular = rows[0].celular;
+        rows[0].cedula = undefined;
+        rows[0].nombres = undefined;
+        rows[0].apellidos = undefined;
+        rows[0].celular = undefined;
+      }
       const data = helper.emptyOrRows(rows);
       const meta = {page};
       return {
