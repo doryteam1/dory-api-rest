@@ -32,6 +32,7 @@ async function getGranjaUsuario(page = 1,id_user){
       const meta = {page};
       return {
         granja,
+        data,
         meta
       }
 }/*End getGranjaUsuario*/
