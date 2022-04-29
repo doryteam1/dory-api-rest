@@ -14,6 +14,7 @@ async function getGranjaUsuario(page = 1,id_user){
         [id_user, id_user, offset, config.listPerPage]
       );
 
+      console.log(rows)
       let granja = JSON.parse(JSON.stringify(rows[0]));
       granja.propietario = {};
       const data = [];
