@@ -14,8 +14,6 @@ async function getGranjaUsuario(page = 1,id_user){
         [id_user, id_user, offset, config.listPerPage]
       );
 
-      console.log(rows)
-
       const data = [];
       if(rows.length>0){
         rows.forEach(
