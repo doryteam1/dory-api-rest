@@ -15,10 +15,11 @@ async function getGranjaUsuario(page = 1,id_user){
       );
 
       console.log(rows)
-      let granja = JSON.parse(JSON.stringify(rows[0]));
-      granja.propietario = {};
+
       const data = [];
       if(rows.length>0){
+        let granja = JSON.parse(JSON.stringify(rows[0]));
+        granja.propietario = {};
         granja.propietario.cedula = granja.cedula;
         granja.propietario.nombres = granja.nombres;
         granja.propietario.apellidos = granja.apellidos;
