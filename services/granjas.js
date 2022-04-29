@@ -13,7 +13,24 @@ async function getGranjaUsuario(page = 1,id_user){
         LIMIT ?,?`, 
         [id_user, id_user, offset, config.listPerPage]
       );
-      const data = helper.emptyOrRows(rows);
+
+      console.log(rows)
+
+      const data = [];
+      if(rows.length>0){
+        let granja = JSON.parse(JSON.stringify(rows[0]));
+        granja.propietario = {};
+        granja.propietario.cedula = granja.cedula;
+        granja.propietario.nombres = granja.nombres;
+        granja.propietario.apellidos = granja.apellidos;
+        granja.propietario.celular = granja.celular;
+        granja.cedula = undefined;
+        granja.nombres = undefined;
+        granja.apellidos = undefined;
+        granja.celular = undefined;
+        data.push(granja)
+      }
+      
       const meta = {page};
       return {
         data,
