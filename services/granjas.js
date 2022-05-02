@@ -224,7 +224,7 @@ async function create(body,token){
     const conection= await db.newConnection(); 
     await conection.beginTransaction();
     if(token && validarToken(token)){
-      try {                   
+      try {                 
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
             if(body.nombre_granja==undefined || 
@@ -234,7 +234,17 @@ async function create(body,token){
                body.direccion==undefined ||
                body.descripcion==undefined || 
                body.id_departamento==undefined || 
-               body.id_municipio==undefined)
+               body.id_municipio==undefined ||
+               body.latitud == undefined ||
+               body.longitud == undefined ||
+               body.descripcion == undefined ||
+               body.id_departamento == undefined ||
+               body.id_municipio == undefined ||
+               body.id_corregimiento == undefined ||
+               body.id_vereda == undefined ||
+               idGranja == undefined ||
+               body.arrayTiposInfraestructuras == undefined ||
+               body.arrayEspecies == undefined)
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
