@@ -280,7 +280,8 @@ async function create(body,token){
             let message = 'Error actualizando la granja';          
             if (result.affectedRows) {
               message = 'Granja actualizada exitosamente';
-            }             
+            }       
+              if(body.arrayTiposInfraestructuras != undefined){      
                 await db.query(
                   `DELETE FROM infraestructuras_granjas
                    WHERE id_granja_pk_fk=?`,
@@ -295,8 +296,10 @@ async function create(body,token){
                       [idGranja, tiposInfraestructuras[i]]
                     );
                  }
-                        
-                 await db.query(
+              }
+
+              if(body.arrayEspecies != undefined){
+                await db.query(
                   `DELETE FROM especies_granjas
                    WHERE id_granja_pk_fk=?`,
                   [idGranja]
@@ -310,6 +313,8 @@ async function create(body,token){
                       [especies[j], idGranja]
                     );
                  }
+              }
+                
 
             await conection.commit(); 
             conection.release();
