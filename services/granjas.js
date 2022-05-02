@@ -242,9 +242,7 @@ async function create(body,token){
                body.id_municipio == undefined ||
                body.id_corregimiento == undefined ||
                body.id_vereda == undefined ||
-               idGranja == undefined ||
-               body.arrayTiposInfraestructuras == undefined ||
-               body.arrayEspecies == undefined)
+               idGranja == undefined)
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
