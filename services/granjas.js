@@ -177,33 +177,47 @@ async function create(body,token){
                   }                  
                   const rowsId = await db.query(
                     `SELECT MAX(id_granja) AS id FROM granjas`
-                  );                   
-                var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/                 
-                 for(var i=0;i<tiposInfraestructuras.length;i++){
-                    await db.query(
-                      `INSERT INTO infraestructuras_granjas(id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
-                      [rowsId[0].id, tiposInfraestructuras[i]]
-                    );
-                 }                 
-                 var especies=JSON.parse(body.arrayEspecies);                 
-                 for(var j=0;j<especies.length;j++){
-                    await db.query(
-                      `INSERT INTO especies_granjas(id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
-                      [especies[j], rowsId[0].id]
-                    );
-                 }                 
-                  let puntuacion=0; 
-                  let esfavorita=0; 
-                  let espropietario=1;
-                  await db.query(
-                  `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`, 
-                  [
-                    rowsId[0].id,
-                    id_user,
-                    puntuacion,
-                    esfavorita,
-                    espropietario
-                  ]
+                  );        
+                
+                if(body.arrayTiposInfraestructuras != undefined 
+                  && body.arrayTiposInfraestructuras != null 
+                  && body.arrayTiposInfraestructuras != 'null' 
+                  && body.arrayTiposInfraestructuras != '')
+                {  
+                    var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/                 
+                    for(var i=0;i<tiposInfraestructuras.length;i++){
+                        await db.query(
+                          `INSERT INTO infraestructuras_granjas(id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
+                          [rowsId[0].id, tiposInfraestructuras[i]]
+                        );
+                    }
+                }
+                
+                if(body.arrayEspecies != undefined 
+                  && body.arrayEspecies != null
+                  && body.arrayEspecies != 'null'
+                  && body.arrayEspecies != '')
+                {
+                  var especies=JSON.parse(body.arrayEspecies);                 
+                  for(var j=0;j<especies.length;j++){
+                      await db.query(
+                        `INSERT INTO especies_granjas(id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
+                        [especies[j], rowsId[0].id]
+                      );
+                  }
+                }           
+                let puntuacion=0; 
+                let esfavorita=0; 
+                let espropietario=1;
+                await db.query(
+                `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`, 
+                [
+                  rowsId[0].id,
+                  id_user,
+                  puntuacion,
+                  esfavorita,
+                  espropietario
+                ]
                 );                 
                 await conection.commit(); 
                 conection.release();
