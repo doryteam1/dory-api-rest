@@ -281,7 +281,10 @@ async function create(body,token){
             if (result.affectedRows) {
               message = 'Granja actualizada exitosamente';
             }       
-              if(body.arrayTiposInfraestructuras != undefined){      
+              if(body.arrayTiposInfraestructuras != undefined 
+                && body.arrayTiposInfraestructuras != null 
+                && body.arrayTiposInfraestructuras != 'null' 
+                && body.arrayTiposInfraestructuras != ''){      
                 await db.query(
                   `DELETE FROM infraestructuras_granjas
                    WHERE id_granja_pk_fk=?`,
@@ -298,7 +301,10 @@ async function create(body,token){
                  }
               }
 
-              if(body.arrayEspecies != undefined){
+              if(body.arrayEspecies != undefined 
+                && body.arrayEspecies != null
+                && body.arrayEspecies != 'null'
+                && body.arrayEspecies != ''){
                 await db.query(
                   `DELETE FROM especies_granjas
                    WHERE id_granja_pk_fk=?`,
