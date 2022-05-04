@@ -49,17 +49,18 @@ async function create(vehiculo,token){
                     if(rol!="Transportador"){
                       throw createError(401,"tipo de usuario no autorizado");
                     }
-                    if(vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined)
+                    if(vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined || vehiculo.imagen==undefined)
                     {
                       throw createError(400,"Se requieren todos los parámetros!");
                     }                   
                     const result = await db.query(
-                      `INSERT INTO vehiculos (capacidad,modelo,transporte_alimento,usuarios_id) VALUES (?,?,?,?)`, 
+                      `INSERT INTO vehiculos (capacidad,modelo,transporte_alimento,usuarios_id,imagen) VALUES (?,?,?,?,?)`, 
                       [
                         vehiculo.capacidad,
                         vehiculo.modelo,
                         vehiculo.transporte_alimento,
-                        id_user
+                        id_user,
+                        vehiculo.imagen
                       ]
                     );                  
                     let message = {message: 'Error creando vehiculo'};                  
@@ -81,7 +82,7 @@ async function create(vehiculo,token){
   /*----------------------------------update-vehículo-------------------------------------------------- */
 
   async function update(id_veh,vehiculo,token){
-            if(vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined)
+            if(vehiculo.capacidad==undefined || vehiculo.modelo==undefined || vehiculo.transporte_alimento==undefined || vehiculo.imagen==undefined)
             {
               throw createError(400,"Se requieren todos los parámetros!");
             }
@@ -99,13 +100,15 @@ async function create(vehiculo,token){
                         SET capacidad=?,
                             modelo=?,
                             transporte_alimento=?,
-                            usuarios_id=?
+                            usuarios_id=?,
+                            imagen=?
                         WHERE id_vehiculo=?`,
                         [
                           vehiculo.capacidad,
                           vehiculo.modelo,
                           vehiculo.transporte_alimento,
                           vehiculo.usuarios_id,
+                          imagen,
                           id_veh
                         ] 
                       );  
