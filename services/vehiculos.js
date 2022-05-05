@@ -108,7 +108,7 @@ async function create(vehiculo,token){
                           vehiculo.modelo,
                           vehiculo.transporte_alimento,
                           vehiculo.usuarios_id,
-                          imagen,
+                          vehiculo.imagen,
                           id_veh
                         ] 
                       );  
