@@ -545,7 +545,7 @@ async function create(body,token){
                         await db.query(
                         `DELETE from fotos where id_granja_fk=?`,
                          [idGranja]
-                        );       console.log('ENtre al baile'); 
+                        );       
                         for(var i=0;i<arrayfotos.length;i++){
                             await db.query(
                               `INSERT INTO fotos(imagen,id_granja_fk) VALUES (?,?)`,
