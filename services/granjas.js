@@ -528,6 +528,38 @@ async function create(body,token){
       meta
     }
   }/*getDetail*/
+
+
+  async function updatePhoto(arrayfotos,token){
+    let tipo_user=null; 
+    let message = 'Error actualizando fotos de la granja';
+    if(token && validarToken(token)){
+          let payload=helper.parseJwt(token);
+          tipo_user= payload.rol; 
+          if(tipo_user!="Piscicultor"){ 
+              console.log("El usuario No es piscicultor"+" ",tipo_user);
+          }
+             /*if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
+                try {
+                    const result = await db.query(
+                    `UPDATE granjas SET anulado = 'anulada' WHERE id_granja=?`, 
+                    [id_granja]
+                    );             
+                    if (result.affectedRows) {
+                      message = 'granja anulada exitosamente';
+                      return {message};
+                    }              
+                    throw createError(400,message);                            
+                } catch(err) {
+                     throw createError(400,err.message);
+                }
+             }else{
+                throw createError(400,"Parámetros ingresados erroneamente"); 
+             }*/
+          
+    }
+
+  } //* updatePhoto */
   
 module.exports = {
   getMultiple,
@@ -540,5 +572,6 @@ module.exports = {
   getGranjaUsuario,
   getGranjasDepartamento,
   getGranjasMunicipio,
-  getDetail
+  getDetail,
+  updatePhoto
 }

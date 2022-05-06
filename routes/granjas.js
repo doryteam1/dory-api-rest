@@ -104,4 +104,14 @@ router.put('/anular/:id', async function(req, res, next) {
     }
   });
 
+  router.put('/update/photos', async function(req, res, next) {
+    try { 
+         var token=req.headers.authorization;
+         res.json(await granjas.updatePhoto(req.body,token));
+    } catch (err) {
+         console.error(`Error al actualizar las fotos de la granja`, err.message);
+         next(err);
+    }
+  });
+
 module.exports = router;
