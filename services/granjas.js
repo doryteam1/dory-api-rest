@@ -142,20 +142,20 @@ async function create(body,token){
                 const payload=helper.parseJwt(token);
                 const id_user=payload.sub;
                 
-                if(body.nombre_granja==undefined || 
-                   body.area==undefined || 
-                   body.numero_trabajadores==undefined ||
-                   body.produccion_estimada_mes==undefined || 
-                   body.direccion==undefined ||
-                   body.latitud==undefined ||
-                   body.longitud==undefined ||
-                   body.descripcion==undefined || 
-                   body.id_departamento==undefined || 
-                   body.id_municipio==undefined ||
-                   body.id_corregimiento==undefined ||
-                   body.id_vereda == undefined ||
-                   body.corregimiento == undefined ||
-                   body.vereda == undefined
+                if(body.nombre_granja===undefined || 
+                   body.area===undefined || 
+                   body.numero_trabajadores===undefined ||
+                   body.produccion_estimada_mes===undefined || 
+                   body.direccion===undefined ||
+                   body.latitud===undefined ||
+                   body.longitud===undefined ||
+                   body.descripcion===undefined || 
+                   body.id_departamento===undefined || 
+                   body.id_municipio===undefined ||
+                   body.id_corregimiento===undefined ||
+                   body.id_vereda === undefined ||
+                   body.corregimiento === undefined ||
+                   body.vereda === undefined
                    )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
@@ -251,21 +251,21 @@ async function create(body,token){
       try {                 
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
-            if(body.nombre_granja==undefined || 
-               body.area==undefined || 
-               body.numero_trabajadores==undefined ||
-               body.produccion_estimada_mes==undefined || 
-               body.direccion==undefined ||
-               body.descripcion==undefined || 
-               body.id_departamento==undefined || 
-               body.id_municipio==undefined ||
-               body.latitud == undefined ||
-               body.longitud == undefined ||
-               body.id_corregimiento == undefined ||
-               body.id_vereda == undefined ||
-               idGranja == undefined ||
-               body.corregimiento == undefined ||
-               body.vereda == undefined)
+            if(body.nombre_granja===undefined || 
+               body.area===undefined || 
+               body.numero_trabajadores===undefined ||
+               body.produccion_estimada_mes===undefined || 
+               body.direccion===undefined ||
+               body.descripcion===undefined || 
+               body.id_departamento===undefined || 
+               body.id_municipio===undefined ||
+               body.latitud === undefined ||
+               body.longitud === undefined ||
+               body.id_corregimiento === undefined ||
+               body.id_vereda === undefined ||
+               idGranja === undefined ||
+               body.corregimiento === undefined ||
+               body.vereda === undefined)
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
