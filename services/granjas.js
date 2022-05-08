@@ -260,12 +260,11 @@ async function create(body,token){
                body.id_municipio==undefined ||
                body.latitud == undefined ||
                body.longitud == undefined ||
-               body.descripcion == undefined ||
-               body.id_departamento == undefined ||
-               body.id_municipio == undefined ||
                body.id_corregimiento == undefined ||
                body.id_vereda == undefined ||
-               idGranja == undefined)
+               idGranja == undefined ||
+               body.corregimiento == undefined ||
+               body.vereda == undefined)
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
@@ -282,7 +281,9 @@ async function create(body,token){
                   id_departamento=? ,
                   id_municipio=? ,
                   id_corregimiento=? ,
-                  id_vereda=? 
+                  id_vereda=?,
+                  corregimiento=?,
+                  vereda=?  
               WHERE id_granja=?`,
               [
                   body.nombre_granja,
@@ -297,6 +298,8 @@ async function create(body,token){
                   body.id_municipio,
                   body.id_corregimiento,
                   body.id_vereda,
+                  body.corregimiento,
+                  body.vereda,
                   idGranja
               ] 
             );          
