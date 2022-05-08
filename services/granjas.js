@@ -147,14 +147,21 @@ async function create(body,token){
                    body.numero_trabajadores==undefined ||
                    body.produccion_estimada_mes==undefined || 
                    body.direccion==undefined ||
+                   body.latitud==undefined ||
+                   body.longitud==undefined ||
                    body.descripcion==undefined || 
                    body.id_departamento==undefined || 
-                   body.id_municipio==undefined)
+                   body.id_municipio==undefined ||
+                   body.id_corregimiento==undefined ||
+                   body.id_vereda == undefined ||
+                   body.corregimiento == undefined ||
+                   body.vereda == undefined
+                   )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado,corregimiento,vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_granja,
                       body.area,
@@ -168,7 +175,9 @@ async function create(body,token){
                       body.id_municipio,
                       body.id_corregimiento,
                       body.id_vereda,
-                      "creada"
+                      "creada",
+                      body.corregimiento,
+                      body.vereda
                     ]
                 );
                   let message = {message: 'Error creando la granja'};                
