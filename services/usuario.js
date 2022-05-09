@@ -17,7 +17,7 @@ async function getUserId(page = 1, idUser){
                           (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
                           (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
                           (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
-                          u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda
+                          u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVericado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi
       FROM tipos_usuarios as tu, usuarios as u
       WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
             u.id=?

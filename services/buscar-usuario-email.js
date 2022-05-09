@@ -20,17 +20,14 @@ async function getMultiple(page = 1, email){
           (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
           u.id_vereda,
           (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
-          u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda
+          u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVericado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi
           FROM usuarios as u left join tipos_usuarios as tu  on u.id_tipo_usuario=tu.id_tipo_usuario
           WHERE   u.email=?
           LIMIT ?,?`, 
           [email, offset, config.listPerPage]
         );
-
       if ((rows.length!=0 )){
-
             var idUser=rows[0].id;
-
             const rows2 = await db.query(
               `SELECT g.nombre as nombre_granja, g.id_granja ,g.descripcion,g.direccion,g.area, g.produccion_estimada_mes,g.numero_trabajadores
               FROM usuarios  as u 
@@ -41,35 +38,27 @@ async function getMultiple(page = 1, email){
                     LIMIT ?,?`, 
               [idUser,offset, config.listPerPage]
             );
-
             var arraygranjas= new Array();
             var nuevoRows = new Array();
             nuevoRows.push(rows[0]);
-
           if((rows2[0].id_granja!=null)){
 
               rows2.forEach((element)=>{ 
                 arraygranjas.push(element);
                 nuevoRows[nuevoRows.length-1].granjas=arraygranjas;
               });
-
           }else{ 
             nuevoRows[nuevoRows.length-1].granjas=arraygranjas;
           }
-
           const data = helper.emptyOrRows(nuevoRows);
           const meta = {page};
-
             return {
               data,
               meta
             }
-
       }
         throw createError(404,message);
-
 }
-
 
 module.exports = {
   getMultiple
