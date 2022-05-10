@@ -542,7 +542,7 @@ async function create(body,token){
 
 
   async function updatePhotos(idGranja,body,token){
-    var arrayfotos= JSON.parse(body.arrayfotos);
+    var arrayfotos= body.arrayfotos;
     let tipo_user=null; 
     let message = 'Error actualizando fotos de la granja';
       if(token && validarToken(token)){
