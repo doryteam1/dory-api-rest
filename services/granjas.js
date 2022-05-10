@@ -192,8 +192,7 @@ async function create(body,token){
                   && body.arrayTiposInfraestructuras != null 
                   && body.arrayTiposInfraestructuras != 'null' 
                   && body.arrayTiposInfraestructuras != '')
-                {  
-                    var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);/*Pasar el string a vector*/                 
+                {                  
                     for(var i=0;i<tiposInfraestructuras.length;i++){
                         await db.query(
                           `INSERT INTO infraestructuras_granjas(id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
@@ -206,8 +205,7 @@ async function create(body,token){
                   && body.arrayEspecies != null
                   && body.arrayEspecies != 'null'
                   && body.arrayEspecies != '')
-                {
-                  var especies=JSON.parse(body.arrayEspecies);                 
+                {             
                   for(var j=0;j<especies.length;j++){
                       await db.query(
                         `INSERT INTO especies_granjas(id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
