@@ -510,7 +510,7 @@ async function create(body,token){
       var arrayespecies= new Array();
   
       rows2.forEach((element)=>{ 
-             arrayespecies.push(element.nombre);
+             arrayespecies.push(element);
              nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
       });
   
@@ -526,7 +526,7 @@ async function create(body,token){
       var arrayinfraestructuras= new Array();
   
       rows3.forEach((element)=>{ 
-             arrayinfraestructuras.push(element.nombre);
+             arrayinfraestructuras.push(element);
              nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
       });
   
