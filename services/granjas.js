@@ -404,7 +404,7 @@ async function create(body,token){
      try{
         const offset = helper.getOffset(page, config.listPerPage);
         const rows = await db.query(
-          `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud,f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
+          `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
                             (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion
           FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
                             left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk)      
@@ -450,7 +450,7 @@ async function create(body,token){
     const rows = await db.query(
       `SELECT g.id_granja, g.nombre, g.descripcion, g.area, g.numero_trabajadores, 
               g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
-              g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda,
+              g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
              (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
              (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion
        FROM granjas as g
