@@ -154,14 +154,13 @@ async function create(body,token){
                    body.id_municipio===undefined ||
                    body.id_corregimiento===undefined ||
                    body.id_vereda === undefined ||
-                   body.corregimiento === undefined ||
-                   body.vereda === undefined
+                   body.corregimiento_vereda === undefined
                    )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado,corregimiento,vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado,corregimiento_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_granja,
                       body.area,
@@ -176,8 +175,7 @@ async function create(body,token){
                       body.id_corregimiento,
                       body.id_vereda,
                       "creada",
-                      body.corregimiento,
-                      body.vereda
+                      body.corregimiento_vereda
                     ]
                 );
                   let message = {message: 'Error creando la granja'};                
@@ -264,8 +262,7 @@ async function create(body,token){
                body.id_corregimiento === undefined ||
                body.id_vereda === undefined ||
                idGranja === undefined ||
-               body.corregimiento === undefined ||
-               body.vereda === undefined)
+               body.corregimiento_vereda === undefined)
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
@@ -283,8 +280,7 @@ async function create(body,token){
                   id_municipio=? ,
                   id_corregimiento=? ,
                   id_vereda=?,
-                  corregimiento=?,
-                  vereda=?  
+                  corregimiento_vereda=?
               WHERE id_granja=?`,
               [
                   body.nombre_granja,
@@ -299,8 +295,7 @@ async function create(body,token){
                   body.id_municipio,
                   body.id_corregimiento,
                   body.id_vereda,
-                  body.corregimiento,
-                  body.vereda,
+                  body.corregimiento_vereda,
                   idGranja
               ] 
             );          
