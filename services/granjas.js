@@ -192,7 +192,8 @@ async function create(body,token){
                   && body.arrayTiposInfraestructuras != null 
                   && body.arrayTiposInfraestructuras != 'null' 
                   && body.arrayTiposInfraestructuras != '')
-                {                  
+                {                
+                    let tiposInfraestructuras = body.arrayTiposInfraestructuras;  
                     for(var i=0;i<tiposInfraestructuras.length;i++){
                         await db.query(
                           `INSERT INTO infraestructuras_granjas(id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
@@ -205,7 +206,8 @@ async function create(body,token){
                   && body.arrayEspecies != null
                   && body.arrayEspecies != 'null'
                   && body.arrayEspecies != '')
-                {             
+                {        
+                  let especies = body.arrayEspecies;     
                   for(var j=0;j<especies.length;j++){
                       await db.query(
                         `INSERT INTO especies_granjas(id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
@@ -315,7 +317,7 @@ async function create(body,token){
                    WHERE id_granja_pk_fk=?`,
                   [idGranja]
                 );/*Borrado de infraestructuras granjas para luego agregarlas nuevamente*/
-
+                 let tiposInfraestructuras = body.arrayTiposInfraestructuras;
                  for(var i=0;i<tiposInfraestructuras.length;i++){
                     await db.query(
                       `INSERT INTO infraestructuras_granjas
@@ -334,7 +336,7 @@ async function create(body,token){
                    WHERE id_granja_pk_fk=?`,
                   [idGranja]
                 );/*Borrado de especies de granjas para luego agregarlas nuevamente*/
-               
+                  let especies = body.arrayEspecies;
                  for(var j=0;j<especies.length;j++){
                     await db.query(
                       `INSERT INTO especies_granjas 
