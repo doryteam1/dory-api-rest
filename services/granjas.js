@@ -59,7 +59,7 @@ async function getGranjasMayorCalificacion(page = 1,idMunicipio){
   try{
      if(idMunicipio){    
           const rows = await db.query(
-            `SELECT distinctrow g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda,
+            `SELECT distinctrow g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
                                 (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion
              FROM granjas as g left join  usuarios_granjas as ug on (g.id_granja=ug.id_granja_pk_fk)
              WHERE g.id_municipio=? and g.anulado="creada"
@@ -86,7 +86,7 @@ async function getGranjasMayorArea(page = 1,idMunicipio){
   try{
      if(idMunicipio){    
           const rows = await db.query(
-            `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda
+            `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda
             FROM granjas as g 
             WHERE g.id_municipio=? and g.anulado="creada"
             order by g.area desc
@@ -112,7 +112,7 @@ async function getGranjasMenorArea(page = 1,idMunicipio){
   try{
      if(idMunicipio){    
           const rows = await db.query(
-            `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda
+            `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda
             FROM granjas as g 
             WHERE g.id_municipio=? and g.anulado="creada"
             order by g.area asc
