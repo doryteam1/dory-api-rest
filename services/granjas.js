@@ -316,7 +316,6 @@ async function create(body,token){
                   [idGranja]
                 );/*Borrado de infraestructuras granjas para luego agregarlas nuevamente*/
 
-                var tiposInfraestructuras=JSON.parse(body.arrayTiposInfraestructuras);
                  for(var i=0;i<tiposInfraestructuras.length;i++){
                     await db.query(
                       `INSERT INTO infraestructuras_granjas
@@ -335,8 +334,7 @@ async function create(body,token){
                    WHERE id_granja_pk_fk=?`,
                   [idGranja]
                 );/*Borrado de especies de granjas para luego agregarlas nuevamente*/
-
-                 var especies=JSON.parse(body.arrayEspecies);                 
+               
                  for(var j=0;j<especies.length;j++){
                     await db.query(
                       `INSERT INTO especies_granjas 
