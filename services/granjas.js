@@ -499,7 +499,7 @@ async function create(body,token){
      });
   
       const rows2 = await db.query(
-        `select e.nombre 
+        `select e.nombre, e.id_especie
          from granjas as g, especies_granjas as eg, especies as e
          where (e.id_especie=eg.id_especie_pk_fk) and 
                (eg.id_granja_pk_fk=g.id_granja) and 
@@ -515,7 +515,7 @@ async function create(body,token){
       });
   
       const rows3 = await db.query(
-        `select i.nombre 
+        `select i.nombre, i.id_infraestructura
          from granjas as g, infraestructuras_granjas as ig, infraestructuras as i
          where (i.id_infraestructura=ig.id_infraestructura_pk_fk) and 
                (ig.id_granja_pk_fk=g.id_granja) and 
