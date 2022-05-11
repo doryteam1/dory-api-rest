@@ -539,18 +539,21 @@ async function create(body,token){
   async function updatePhotos(idGranja,body,token){
     var arrayfotos= body.arrayfotos;
     let tipo_user=null; 
-    let message = 'Error actualizando fotos de la granja';
-      if(token && validarToken(token)){
-          let payload=helper.parseJwt(token);
-          tipo_user= payload.rol; 
-          if(tipo_user!="Piscicultor"){ 
-             throw createError(401,"Usted no tiene autorización");
-          }else{
+
+    const conection= await db.newConnection();
+    await conection.beginTransaction();
+    if(token && validarToken(token)){
+        let payload=helper.parseJwt(token);
+        tipo_user= payload.rol;
+        try{
+            if(tipo_user!="Piscicultor"){ 
+              throw createError(401,"Usted no tiene autorización");
+            }else{
                 if(arrayfotos){ 
                   try{
                         await db.query(
                         `DELETE from fotos where id_granja_fk=?`,
-                         [idGranja]
+                          [idGranja]
                         );       
                         for(var i=0;i<arrayfotos.length;i++){
                             await db.query(
@@ -563,9 +566,20 @@ async function create(body,token){
                   }
                 }else{
                   throw createError(400,"Usted no agrego las fotos para actualizarlas"); 
-               }
-          }                     
-    }/*validación de Token*/
+                }
+          } 
+          await conection.commit(); 
+          conection.release();
+          message = "Fotos actualizadas correctamente";
+          return message;
+        }catch (error) {
+          await conection.rollback(); 
+          conection.release();
+          throw error;
+      } 
+    }else{
+      throw createError(401,"Usuario no autorizado");
+    }
   } //* updatePhoto */
   
 module.exports = {
