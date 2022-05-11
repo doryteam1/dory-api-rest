@@ -77,6 +77,16 @@ router.put('/anular/:id', async function(req, res, next) {
     }
   });
 
+  router.delete('/eliminar/:idGranja', async function(req, res, next) {
+    try { 
+         var token=req.headers.authorization;  
+         res.json(await granjas.eliminarGranja(req.params.idGranja,token));
+    } catch (err) {
+         console.error(`Error al borrar la granja`, err.message);
+         next(err);
+    }
+  });
+
   router.get('/departamento', async function(req, res, next) { 
     try { 
          res.json(await granjas.getGranjasDepartamento(req.query.page));

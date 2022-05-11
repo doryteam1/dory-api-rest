@@ -142,19 +142,19 @@ async function create(body,token){
                 const payload=helper.parseJwt(token);
                 const id_user=payload.sub;
                 
-                if(body.nombre_granja===undefined || 
-                   body.area===undefined || 
-                   body.numero_trabajadores===undefined ||
-                   body.produccion_estimada_mes===undefined || 
-                   body.direccion===undefined ||
-                   body.latitud===undefined ||
-                   body.longitud===undefined ||
-                   body.descripcion===undefined || 
-                   body.id_departamento===undefined || 
-                   body.id_municipio===undefined ||
-                   body.id_corregimiento===undefined ||
-                   body.id_vereda === undefined ||
-                   body.corregimiento_vereda === undefined
+                if(body.nombre_granja==undefined || 
+                   body.area==undefined || 
+                   body.numero_trabajadores==undefined ||
+                   body.produccion_estimada_mes==undefined || 
+                   body.direccion==undefined ||
+                   body.latitud==undefined ||
+                   body.longitud==undefined ||
+                   body.descripcion==undefined || 
+                   body.id_departamento==undefined || 
+                   body.id_municipio==undefined ||
+                   body.id_corregimiento==undefined ||
+                   body.id_vereda == undefined ||
+                   body.corregimiento_vereda == undefined
                    )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
@@ -240,9 +240,7 @@ async function create(body,token){
   }/*End Create*/
 
   /*granja,id-granja a modificar, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas*/
-  async function update(idGranja, body, token){
-    console.log("idGranja ",idGranja)
-    console.log("granja ",body)
+  async function update(idGranja, body, token){   
     const conection= await db.newConnection(); 
     await conection.beginTransaction();
     if(token && validarToken(token)){
@@ -321,7 +319,6 @@ async function create(body,token){
                     );
                  }
               }
-
               if(body.arrayEspecies !== undefined 
                 && body.arrayEspecies !== null
                 && body.arrayEspecies !== 'null'
@@ -339,9 +336,7 @@ async function create(body,token){
                       [especies[j], idGranja]
                     );
                  }
-              }
-                
-
+              }              
             await conection.commit(); 
             conection.release();
             return message;
@@ -381,6 +376,64 @@ async function create(body,token){
     }
   }/*End anularGranja*/
 
+  async function eliminarGranja(id_granja,token){
+    const conection= await db.newConnection(); /*conection of TRANSACTION */
+    conection.beginTransaction();
+    let id_user=null; 
+    let message = 'Error eliminando la granja';
+       try{
+            if(token && validarToken(token)){
+                  let payload=helper.parseJwt(token);
+                  id_user= payload.sub;                 
+                         if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
+                              const propiedad = await db.query(
+                                `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario='1' and ug.id_granja_pk_fk=?`,
+                                [id_user,id_granja]
+                                );
+                              if(propiedad.length>0){
+                                  try {
+                                          await db.query(
+                                                `DELETE from especies_granjas where id_granja_pk_fk=?`,
+                                                [id_granja]
+                                          );  
+                                          await db.query(
+                                                `DELETE from usuarios_granjas where id_granja_pk_fk=?`,
+                                                  [id_granja]
+                                          );
+                                            await db.query(
+                                                `DELETE from infraestructuras_granjas where id_granja_pk_fk=?`,
+                                                  [id_granja]
+                                          );                      
+                                          const result = await db.query(
+                                            `DELETE from granjas WHERE id_granja=?`, 
+                                            [id_granja]
+                                            );             
+                                          if (result.affectedRows) {
+                                              message = 'granja eliminada exitosamente';
+                                          }
+                                          conection.commit(); 
+                                          conection.release();
+                                          return {message};                                       
+                                      } catch(err) {
+                                              throw createError(400,err.message);
+                                      }                          
+                              }else{
+                                throw createError(404,"Granja no encontrada ó el usuario no es el propietario");
+                              }
+                         }else{
+                                throw createError(402,"Parámetros ingresados erroneamente"); 
+                         }
+             }else{
+              throw createError(401,"Usuario no autorizado"); 
+            }
+          }catch (error) {
+            conection.rollback(); /*Si hay algún error  */ 
+            conection.release(); console.log(error);
+            throw error;
+          }
+
+  }/*End eliminarGranja*/
+
   async function getGranjasDepartamento(page = 1){ 
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
@@ -392,8 +445,7 @@ async function create(body,token){
       [offset, config.listPerPage]
     );
     const data = helper.emptyOrRows(rows);
-    const meta = {page};
-  
+    const meta = {page};  
     return {
       data,
       meta
@@ -415,10 +467,8 @@ async function create(body,token){
         var arrayfotos= new Array();
         var nuevoRows = new Array();
         var index= rows[0].id_granja;
-        nuevoRows.push(rows[0]);
-        
-        rows.forEach((element)=>{ 
-          
+        nuevoRows.push(rows[0]);        
+        rows.forEach((element)=>{           
           if((index == element.id_granja))
           { 
             arrayfotos.push(element.imagen);
@@ -430,11 +480,9 @@ async function create(body,token){
                     arrayfotos.push(element.imagen);
           }
         });
-          nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
-          
+          nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
         const data = helper.emptyOrRows(nuevoRows);
-        const meta = {page};
-      
+        const meta = {page};      
         return {
           data,
           meta
@@ -445,94 +493,78 @@ async function create(body,token){
   }/*End getGranjasMunicipio*/
 
   async function getDetail(page = 1,idGranja){
-    const offset = helper.getOffset(page, config.listPerPage);
-  
-    const rows = await db.query(
-      `SELECT g.id_granja, g.nombre, g.descripcion, g.area, g.numero_trabajadores, 
-              g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
-              g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
-             (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
-             (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion
-       FROM granjas as g
-       WHERE  g.id_granja=?
-             LIMIT ?,?`, 
-      [idGranja,offset, config.listPerPage]
-    );
-  
-    const rowsfotos = await db.query(
-      `SELECT f.id_foto,f.imagen
-       FROM  fotos as f
-       WHERE f.id_granja_fk =?
-        LIMIT ?,?`, 
-     [idGranja,offset, config.listPerPage]
-    );
-  
-  var arrayfotos= new Array();
-  
-  rowsfotos.forEach((element)=>{ 
-    arrayfotos.push(element.imagen);
-  });
-  
-    var nuevoRows = new Array();
-    nuevoRows.push(rows[0]);
-    nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
-  
-     const rows1 = await db.query(
-         `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular
-          FROM granjas as g, usuarios_granjas as ug, usuarios as u
-          WHERE (u.id=ug.usuarios_id) and
-           (g.id_granja=ug.id_granja_pk_fk) and
-           (ug.espropietario=1) and
-           g.id_granja=? LIMIT ?,?`,
-           [idGranja,offset, config.listPerPage]
-           );
-  
-           var arraypropietarios= new Array();
-           rows1.forEach((element)=>{ 
-            arraypropietarios.push(element);
-            nuevoRows[nuevoRows.length-1].propietarios=arraypropietarios;/*Arreglo de propietarios agregado al final del arreglo de granjas */
-     });
-  
-      const rows2 = await db.query(
-        `select e.nombre, e.id_especie
-         from granjas as g, especies_granjas as eg, especies as e
-         where (e.id_especie=eg.id_especie_pk_fk) and 
-               (eg.id_granja_pk_fk=g.id_granja) and 
-                g.id_granja=? LIMIT ?,?`, 
+        const offset = helper.getOffset(page, config.listPerPage);  
+        const rows = await db.query(
+          `SELECT g.id_granja, g.nombre, g.descripcion, g.area, g.numero_trabajadores, 
+                  g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
+                  g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
+                (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
+                (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion
+          FROM granjas as g
+          WHERE  g.id_granja=?
+                LIMIT ?,?`, 
+          [idGranja,offset, config.listPerPage]
+        );  
+        const rowsfotos = await db.query(
+          `SELECT f.id_foto,f.imagen
+          FROM  fotos as f
+          WHERE f.id_granja_fk =?
+            LIMIT ?,?`, 
         [idGranja,offset, config.listPerPage]
-      );
-  
-      var arrayespecies= new Array();
-  
-      rows2.forEach((element)=>{ 
-             arrayespecies.push(element);
-             nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
-      });
-  
-      const rows3 = await db.query(
-        `select i.nombre, i.id_infraestructura
-         from granjas as g, infraestructuras_granjas as ig, infraestructuras as i
-         where (i.id_infraestructura=ig.id_infraestructura_pk_fk) and 
-               (ig.id_granja_pk_fk=g.id_granja) and 
-               g.id_granja=? LIMIT ?,?`, 
-        [idGranja,offset, config.listPerPage]
-      );
-  
-      var arrayinfraestructuras= new Array();
-  
-      rows3.forEach((element)=>{ 
-             arrayinfraestructuras.push(element);
-             nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
-      });
-  
-  
-    const data = helper.emptyOrRows(nuevoRows);
-    const meta = {page};
-  
-    return {
-      data,
-      meta
-    }
+        );  
+        var arrayfotos= new Array();  
+        rowsfotos.forEach((element)=>{ 
+            arrayfotos.push(element.imagen);
+        });      
+        var nuevoRows = new Array();
+        nuevoRows.push(rows[0]);
+        nuevoRows[nuevoRows.length-1].fotos=arrayfotos;      
+           const rows1 = await db.query(
+              `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular
+                FROM granjas as g, usuarios_granjas as ug, usuarios as u
+                WHERE (u.id=ug.usuarios_id) and
+                (g.id_granja=ug.id_granja_pk_fk) and
+                (ug.espropietario=1) and
+                g.id_granja=? LIMIT ?,?`,
+                [idGranja,offset, config.listPerPage]
+           );        
+                var arraypropietarios= new Array();
+                rows1.forEach((element)=>{ 
+                          arraypropietarios.push(element);
+                          nuevoRows[nuevoRows.length-1].propietarios=arraypropietarios;/*Arreglo de propietarios agregado al final del arreglo de granjas */
+                });  
+            const rows2 = await db.query(
+              `select e.nombre, e.id_especie
+               from granjas as g, especies_granjas as eg, especies as e
+               where (e.id_especie=eg.id_especie_pk_fk) and 
+                    (eg.id_granja_pk_fk=g.id_granja) and 
+                      g.id_granja=? LIMIT ?,?`, 
+              [idGranja,offset, config.listPerPage]
+            );  
+            var arrayespecies= new Array();  
+            rows2.forEach((element)=>{ 
+                  arrayespecies.push(element);
+                  nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
+            });  
+            const rows3 = await db.query(
+              `select i.nombre, i.id_infraestructura
+              from granjas as g, infraestructuras_granjas as ig, infraestructuras as i
+              where (i.id_infraestructura=ig.id_infraestructura_pk_fk) and 
+                    (ig.id_granja_pk_fk=g.id_granja) and 
+                    g.id_granja=? LIMIT ?,?`, 
+              [idGranja,offset, config.listPerPage]
+            );  
+            var arrayinfraestructuras= new Array();        
+            rows3.forEach((element)=>{ 
+                  arrayinfraestructuras.push(element);
+                  nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
+            });  
+            const data = helper.emptyOrRows(nuevoRows);
+            const meta = {page};          
+            return {
+              data,
+              meta
+            }
   }/*getDetail*/
 
 
@@ -576,6 +608,7 @@ module.exports = {
   create,
   update,
   anularGranja,
+  eliminarGranja,
   getGranjaUsuario,
   getGranjasDepartamento,
   getGranjasMunicipio,
