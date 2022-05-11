@@ -1,6 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+const createError = require('http-errors');
 
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -38,25 +39,29 @@ async function create(foto){
   }
 
   async function update(id, foto){
-    const result = await db.query(
-      `UPDATE fotos 
-       SET imagen=?,
-           id_granja_fk=? 
-       WHERE id_foto=?`,
-       [
-          foto.imagen,
-          foto.id_granja_fk,
-          id
-       ] 
-    );
-  
-    let message = 'Error actualizando la foto';
-  
-    if (result.affectedRows) {
-      message = 'foto actualizada exitosamente';
+    try{
+      const result = await db.query(
+        `UPDATE fotos 
+         SET imagen=?,
+             id_granja_fk=? 
+         WHERE id_foto=?`,
+         [
+            foto.imagen,
+            foto.id_granja_fk,
+            id
+         ] 
+      );
+    
+      if (result.affectedRows) {
+        message = 'foto actualizada exitosamente';
+      }else{
+        throw createError(500,"Error actualizando la foto")
+      }
+    
+      return {message};
+    }catch(err){
+      throw err;
     }
-  
-    return {message};
   }
   
   async function remove(id){
