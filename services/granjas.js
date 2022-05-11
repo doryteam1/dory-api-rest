@@ -571,7 +571,7 @@ async function create(body,token){
           await conection.commit(); 
           conection.release();
           message = "Fotos actualizadas correctamente";
-          return message;
+          return { message };
         }catch (error) {
           await conection.rollback(); 
           conection.release();
