@@ -660,7 +660,7 @@ async function create(body,token){
           query = query + atributos[i] + '=?,';
         }
         query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
-        query = query +' '+'where id=?'
+        query = query +' '+'where id_granja=?'
 
         const result = await db.query(query,params);
       
