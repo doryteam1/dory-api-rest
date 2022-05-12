@@ -234,8 +234,9 @@ async function create(body,token){
      }
   }/*End Create*/
 
-  /*_____________Update Granja*________________________________*/
-  async function update(idGranja, body, token){   
+  /*granja,id-granja a modificar, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas*/
+  async function update(idGranja, body, token){  
+    console.log(body)
     const conection= await db.newConnection(); 
     await conection.beginTransaction();
     if(token && validarToken(token)){
