@@ -666,7 +666,7 @@ async function create(body,token){
       
         let message = '';
         if (result.affectedRows) {
-          message = 'Usuario actualizado exitosamente';
+          message = 'Granja actualizado exitosamente';
         }else{
           throw createError(500,"No se pudo actualizar el registro de la granja");    
         }
