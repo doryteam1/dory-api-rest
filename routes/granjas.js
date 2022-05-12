@@ -67,6 +67,16 @@ router.put('/general/:id', async function(req, res, next) {
     }
 });
 
+router.put('/parcial/:id', async function(req, res, next) {
+  try {
+       var token=req.headers.authorization;
+       res.json(await granjas.updateParcial(req.params.id, req.body,token));
+  } catch (err) {
+       console.error(`Error al actualizar la granja`, err.message);
+       next(err);
+  }
+});
+
 router.put('/anular/:id', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;

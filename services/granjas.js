@@ -618,7 +618,67 @@ async function create(body,token){
       throw createError(401,"Usuario no autorizado");
     }
   } //* updatePhoto */
+
+
+  async function updateParcial(id, granja, token){
   
+    if(token && validarToken(token))
+    {
+      const payload=helper.parseJwt(token);  
+      const id_user=payload.sub;
+      const rol = payload.rol;
+
+      if(rol != "Piscicultor"){
+        throw createError('401', "Usted no es un usuario piscicultor. No esta autorizado para actualizar esta granja.")
+      }
+
+      /*verificar si es propietario*/
+      const rows2 = await db.query(
+        `select *
+         from usuarios_granjas as ug
+         where ug.usuarios_id = ? and ug.id_granja_pk_fk = ? and espropietario = ?`, 
+        [
+          id_user,
+          id,
+          1
+        ]
+      );  
+
+      if(rows2.length < 1 ){
+        throw createError('401', 'El usuario no es propietario de esta granja y no esta autorizado para actualizarla.')
+      }
+
+      delete granja.password; 
+      var atributos = Object.keys(granja);
+      if(atributos.length!=0)
+      {    
+        var params = Object.values(granja);
+        var query = "update granjas set ";
+        params.push(id);
+
+        for(var i=0; i < atributos.length; i++) {
+          query = query + atributos[i] + '=?,';
+        }
+        query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+        query = query +' '+'where id=?'
+
+        const result = await db.query(query,params);
+      
+        let message = '';
+        if (result.affectedRows) {
+          message = 'Usuario actualizado exitosamente';
+        }else{
+          throw createError(500,"No se pudo actualizar el registro de la granja");    
+        }
+        return {message};
+      }
+      throw createError(400,"No hay parametros para actualizar");
+  }else{
+    throw createError(401,"Usuario no autorizado");
+  }
+}
+
+
 module.exports = {
   getMultiple,
   getGranjasMayorCalificacion,
@@ -632,5 +692,6 @@ module.exports = {
   getGranjasDepartamento,
   getGranjasMunicipio,
   getDetail,
-  updatePhotos
+  updatePhotos,
+  updateParcial
 }
