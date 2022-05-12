@@ -4,6 +4,7 @@ const config = require('../config');
 var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
+/*_____________getGranjaUsuario ________________________________*/
 async function getGranjaUsuario(page = 1,id_user){
       const offset = helper.getOffset(page, config.listPerPage);
       const rows = await db.query(
@@ -40,6 +41,7 @@ async function getGranjaUsuario(page = 1,id_user){
       }
 }/*End getGranjaUsuario*/
 
+/*_____________getMultiple ________________________________*/
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
@@ -54,6 +56,7 @@ async function getMultiple(page = 1){
   }
 }/*End GetMultiple*/
 
+/*_____________getGranjasMayorCalificacion ________________________________*/
 async function getGranjasMayorCalificacion(page = 1,idMunicipio){
   const offset = helper.getOffset(page, config.listPerPage);
   try{
@@ -81,6 +84,7 @@ async function getGranjasMayorCalificacion(page = 1,idMunicipio){
   }
 }/*End getGranjasMayorCalificacion*/
 
+/*_____________getGranjaMayorArea ________________________________*/
 async function getGranjasMayorArea(page = 1,idMunicipio){
   const offset = helper.getOffset(page, config.listPerPage);
   try{
@@ -107,6 +111,7 @@ async function getGranjasMayorArea(page = 1,idMunicipio){
   }
 }/*End getGranjasMayorArea*/
 
+/*_____________getGranjaMenorArea ________________________________*/
 async function getGranjasMenorArea(page = 1,idMunicipio){
   const offset = helper.getOffset(page, config.listPerPage);
   try{
@@ -133,6 +138,7 @@ async function getGranjasMenorArea(page = 1,idMunicipio){
   }
 }/*End getGranjasMenorArea*/
 
+/*_____________Create Granja*________________________________*/
 async function create(body,token){
       const conection= await db.newConnection(); console.log(body);
       await conection.beginTransaction();      
@@ -228,7 +234,7 @@ async function create(body,token){
      }
   }/*End Create*/
 
-  /*granja,id-granja a modificar, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas*/
+  /*_____________Update Granja*________________________________*/
   async function update(idGranja, body, token){   
     const conection= await db.newConnection(); 
     await conection.beginTransaction();
@@ -339,6 +345,7 @@ async function create(body,token){
     }
   }/*End Update*/
   
+  /*_____________anularGranja ________________________________*/
   async function anularGranja(id_granja,token){
     let id_user=null; 
     let message = 'Error anulando la granja';
@@ -365,6 +372,7 @@ async function create(body,token){
     }
   }/*End anularGranja*/
 
+  /*_____________eliminarGranja ________________________________*/
   async function eliminarGranja(id_granja,token){
     const conection= await db.newConnection(); /*conection of TRANSACTION */
     conection.beginTransaction();
@@ -424,9 +432,9 @@ async function create(body,token){
             conection.release(); console.log(error);
             throw error;
           }
-
   }/*End eliminarGranja*/
 
+  /*_____________getGranjaDepartamento ________________________________*/
   async function getGranjasDepartamento(page = 1){ 
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
@@ -450,7 +458,9 @@ async function create(body,token){
         const offset = helper.getOffset(page, config.listPerPage);
         const rows = await db.query(
           `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
-                            (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion
+                            (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion,
+                            (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
+                             WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario 
           FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
                             left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk)      
           WHERE   g.id_municipio=? 
@@ -485,6 +495,7 @@ async function create(body,token){
     }
   }/*End getGranjasMunicipio*/
 
+  /*_____________getDetail ________________________________*/
   async function getDetail(page = 1,idGranja){
         const offset = helper.getOffset(page, config.listPerPage);  
         const rows = await db.query(
@@ -560,7 +571,7 @@ async function create(body,token){
             }
   }/*getDetail*/
 
-
+/*_____________updatePhotos ________________________________*/
   async function updatePhotos(idGranja,body,token){
     var arrayfotos= body.arrayfotos;
     let tipo_user=null; 
