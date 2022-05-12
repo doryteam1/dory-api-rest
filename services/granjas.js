@@ -134,32 +134,30 @@ async function getGranjasMenorArea(page = 1,idMunicipio){
 }/*End getGranjasMenorArea*/
 
 async function create(body,token){
-      
-      const conection= await db.newConnection(); 
+      const conection= await db.newConnection(); console.log(body);
       await conection.beginTransaction();      
     if(token && validarToken(token)){
           try {                   
                 const payload=helper.parseJwt(token);
-                const id_user=payload.sub;
-                
-                if(body.nombre_granja==undefined || 
-                   body.area==undefined || 
-                   body.numero_trabajadores==undefined ||
-                   body.produccion_estimada_mes==undefined || 
-                   body.direccion==undefined ||
-                   body.latitud==undefined ||
-                   body.longitud==undefined ||
-                   body.descripcion==undefined || 
-                   body.id_departamento==undefined || 
-                   body.id_municipio==undefined ||
-                   body.id_corregimiento==undefined ||
-                   body.id_vereda == undefined ||
-                   body.corregimiento_vereda == undefined
+                const id_user=payload.sub;                
+                if(body.nombre_granja===undefined || 
+                   body.area===undefined || 
+                   body.numero_trabajadores===undefined ||
+                   body.produccion_estimada_mes===undefined || 
+                   body.direccion===undefined ||
+                   body.latitud===undefined ||
+                   body.longitud===undefined ||
+                   body.descripcion===undefined || 
+                   body.id_departamento===undefined || 
+                   body.id_municipio===undefined ||
+                   body.id_corregimiento===undefined ||
+                   body.id_vereda === undefined ||
+                   body.corregimiento_vereda === undefined
                    )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
-                 const result = await db.query(
+                 const result = await conection.execute(
                     `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado,corregimiento_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_granja,
@@ -177,15 +175,7 @@ async function create(body,token){
                       "creada",
                       body.corregimiento_vereda
                     ]
-                );
-                  let message = {message: 'Error creando la granja'};                
-                  if (result.affectedRows) {
-                    message = {message:'Granja creada exitosamente'};
-                  }                  
-                  const rowsId = await db.query(
-                    `SELECT MAX(id_granja) AS id FROM granjas`
-                  );        
-                
+                );               
                 if(body.arrayTiposInfraestructuras != undefined 
                   && body.arrayTiposInfraestructuras != null 
                   && body.arrayTiposInfraestructuras != 'null' 
@@ -193,13 +183,12 @@ async function create(body,token){
                 {                
                     let tiposInfraestructuras = body.arrayTiposInfraestructuras;  
                     for(var i=0;i<tiposInfraestructuras.length;i++){
-                        await db.query(
+                        await conection.execute(
                           `INSERT INTO infraestructuras_granjas(id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
-                          [rowsId[0].id, tiposInfraestructuras[i]]
+                          [result[0]['insertId'], tiposInfraestructuras[i]]
                         );
                     }
-                }
-                
+                }                
                 if(body.arrayEspecies != undefined 
                   && body.arrayEspecies != null
                   && body.arrayEspecies != 'null'
@@ -207,19 +196,19 @@ async function create(body,token){
                 {        
                   let especies = body.arrayEspecies;     
                   for(var j=0;j<especies.length;j++){
-                      await db.query(
+                      await conection.execute(
                         `INSERT INTO especies_granjas(id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
-                        [especies[j], rowsId[0].id]
+                        [especies[j], result[0]['insertId']]
                       );
                   }
                 }           
                 let puntuacion=0; 
                 let esfavorita=0; 
                 let espropietario=1;
-                await db.query(
+                await conection.execute(
                 `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`, 
                 [
-                  rowsId[0].id,
+                  result[0]['insertId'],
                   id_user,
                   puntuacion,
                   esfavorita,
@@ -227,8 +216,8 @@ async function create(body,token){
                 ]
                 );                 
                 await conection.commit(); 
-                conection.release();
-                return message;
+                conection.release();                
+                return {message:'Granja creada exitosamente'};
           }catch (error) {
                 await conection.rollback(); 
                 conection.release();
@@ -264,7 +253,7 @@ async function create(body,token){
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
-            const result = await db.query(
+            const result = await conection.execute(
               `UPDATE granjas 
               SET nombre=?,
                   area=? ,
@@ -305,14 +294,14 @@ async function create(body,token){
                 && body.arrayTiposInfraestructuras !== null 
                 && body.arrayTiposInfraestructuras !== 'null' 
                 && body.arrayTiposInfraestructuras !== ''){      
-                await db.query(
+                await conection.execute(
                   `DELETE FROM infraestructuras_granjas
                    WHERE id_granja_pk_fk=?`,
                   [idGranja]
                 );/*Borrado de infraestructuras granjas para luego agregarlas nuevamente*/
                  let tiposInfraestructuras = body.arrayTiposInfraestructuras;
                  for(var i=0;i<tiposInfraestructuras.length;i++){
-                    await db.query(
+                    await conection.execute(
                       `INSERT INTO infraestructuras_granjas
                        (id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
                       [idGranja, tiposInfraestructuras[i]]
@@ -323,14 +312,14 @@ async function create(body,token){
                 && body.arrayEspecies !== null
                 && body.arrayEspecies !== 'null'
                 && body.arrayEspecies !== ''){
-                await db.query(
+                await conection.execute(
                   `DELETE FROM especies_granjas
                    WHERE id_granja_pk_fk=?`,
                   [idGranja]
                 );/*Borrado de especies de granjas para luego agregarlas nuevamente*/
                   let especies = body.arrayEspecies;
                  for(var j=0;j<especies.length;j++){
-                    await db.query(
+                    await conection.execute(
                       `INSERT INTO especies_granjas 
                        (id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
                       [especies[j], idGranja]
@@ -386,25 +375,25 @@ async function create(body,token){
                   let payload=helper.parseJwt(token);
                   id_user= payload.sub;                 
                          if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
-                              const propiedad = await db.query(
+                              const propiedad = await conection.execute(
                                 `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario='1' and ug.id_granja_pk_fk=?`,
                                 [id_user,id_granja]
                                 );
                               if(propiedad.length>0){
                                   try {
-                                          await db.query(
+                                          await conection.execute(
                                                 `DELETE from especies_granjas where id_granja_pk_fk=?`,
                                                 [id_granja]
                                           );  
-                                          await db.query(
+                                          await conection.execute(
                                                 `DELETE from usuarios_granjas where id_granja_pk_fk=?`,
                                                   [id_granja]
                                           );
-                                            await db.query(
+                                            await conection.execute(
                                                 `DELETE from infraestructuras_granjas where id_granja_pk_fk=?`,
                                                   [id_granja]
                                           );                      
-                                          const result = await db.query(
+                                          const result = conection.execute(
                                             `DELETE from granjas WHERE id_granja=?`, 
                                             [id_granja]
                                             );             

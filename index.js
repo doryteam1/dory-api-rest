@@ -166,7 +166,7 @@ app.use((err, req, res, next) => {
 
   if(err.code == 'ER_NO_REFERENCED_ROW_2'){
     err.statusCode = 400;
-    err.message = "El recurso al que intenta adicionar el registro no existe" 
+   // err.message = "La primary key referenciada no existe" 
   }
 
   const statusCode = err.statusCode || 500;
