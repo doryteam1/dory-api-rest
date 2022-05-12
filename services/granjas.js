@@ -392,7 +392,11 @@ async function create(body,token){
                                             await conection.execute(
                                                 `DELETE from infraestructuras_granjas where id_granja_pk_fk=?`,
                                                   [id_granja]
-                                          );                      
+                                          );   
+                                          await conection.execute(
+                                            `DELETE from fotos where id_granja_fk=?`,
+                                              [id_granja]
+                                          );                   
                                           const result = conection.execute(
                                             `DELETE from granjas WHERE id_granja=?`, 
                                             [id_granja]
