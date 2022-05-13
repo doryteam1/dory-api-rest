@@ -346,7 +346,7 @@ async function create(body,token){
     }
   }/*End Update*/
   
-  /*_____________anularGranja ________________________________*/
+  /*_____________anularGranja ________________________________
   async function anularGranja(id_granja,token){
     let id_user=null; 
     let message = 'Error anulando la granja';
@@ -371,14 +371,13 @@ async function create(body,token){
                 throw createError(400,"Parámetros ingresados erroneamente"); 
              }
     }
-  }/*End anularGranja*/
+  }End anularGranja*/
 
   /*_____________eliminarGranja ________________________________*/
   async function eliminarGranja(id_granja,token){
     const conection= await db.newConnection(); /*conection of TRANSACTION */
     conection.beginTransaction();
-    let id_user=null; 
-    let message = 'Error eliminando la granja';
+    let id_user=null;     
        try{
             if(token && validarToken(token)){
                   let payload=helper.parseJwt(token);
@@ -411,11 +410,14 @@ async function create(body,token){
                                             [id_granja]
                                             );             
                                           if (result.affectedRows) {
-                                              message = 'granja eliminada exitosamente';
+                                              let  message = 'granja eliminada exitosamente';
+                                              return {message}; 
+                                          }else{
+                                            throw createError(400,'Error al eliminar la granja');
                                           }
                                           conection.commit(); 
                                           conection.release();
-                                          return {message};                                       
+                                                                                
                                       } catch(err) {
                                               throw createError(400,err.message);
                                       }                          
@@ -686,7 +688,6 @@ module.exports = {
   getGranjasMenorArea,
   create,
   update,
-  anularGranja,
   eliminarGranja,
   getGranjaUsuario,
   getGranjasDepartamento,
