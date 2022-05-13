@@ -52,6 +52,7 @@ const loginRouter = require('./routes/login');
 const contactenosRouter = require('./routes/contactenos');
 const compartirRouter = require('./routes/compartir');
 const novedadesLikesRouter = require('./routes/novedades-likes');
+const negociosRouter = require('./routes/negocios');
 var cors = require('cors');
 
 app.use(bodyParser.json());
@@ -125,7 +126,7 @@ app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/contactenos',contactenosRouter)
 app.use('/api/compartir',compartirRouter)
-app.use('/api/compartir',compartirRouter)
+app.use('/api/negocios',negociosRouter)
 app.use('/api/novedades/auth',verifyToken,novedadesLikesRouter)
 
 /* Error de direccionamiento  */
