@@ -112,7 +112,7 @@ async function createNegocio(body,token){
                 body.nombre_negocio,
                 body.descripcion_negocio,
                 body.imagen,
-                body.usuarios_id,
+                id_user,
                 body.id_departamento,
                 body.id_municipio,
                 idNegocio
