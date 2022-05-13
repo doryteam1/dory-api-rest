@@ -41,8 +41,8 @@ async function getMultiple(page = 1){
 async function createNegocio(body,token){          
     if(token && validarToken(token)){
           try {                   
-                /*const payload=helper.parseJwt(token);
-                const id_user=payload.sub; */              
+                const payload=helper.parseJwt(token);
+                const id_user=payload.sub;              
                 if(body.nombre_negocio===undefined || 
                    body.descripcion_negocio===undefined ||
                    body.imagen===undefined || 
@@ -53,13 +53,12 @@ async function createNegocio(body,token){
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO negocios (id_negocio,nombre_negocio,descripcion_negocio,imagen,usuarios_id,id_departamento,id_municipio) VALUES (?,?,?,?,?,?,?)`, 
+                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,imagen,usuarios_id,id_departamento,id_municipio) VALUES (?,?,?,?,?,?)`, 
                     [
-                      body.id_negocio,
                       body.nombre_negocio,
                       body.descripcion_negocio,
                       body.imagen,
-                      body.usuarios_id,
+                      id_user,
                       body.id_departamento,
                       body.id_municipio
                     ]
@@ -113,7 +112,7 @@ async function createNegocio(body,token){
                 body.nombre_negocio,
                 body.descripcion_negocio,
                 body.imagen,
-                body.usuarios_id,
+                id_user,
                 body.id_departamento,
                 body.id_municipio,
                 idNegocio
