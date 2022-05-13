@@ -223,7 +223,10 @@ async function create(body,token){
                 );                 
                 await conection.commit(); 
                 conection.release();                
-                return {message:'Granja creada exitosamente'};
+                return {
+                  message:'Granja creada exitosamente',
+                  insertId:result[0]['insertId']
+                };
           }catch (error) {
                 await conection.rollback(); 
                 conection.release();
