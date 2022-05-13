@@ -167,7 +167,7 @@ app.use((err, req, res, next) => {
 
   if(err.code == 'ER_NO_REFERENCED_ROW_2'){
     err.statusCode = 400;
-   // err.message = "La primary key referenciada no existe" 
+    err.message = "No se pudo realizar la operación. Revise la información enviada" 
   }
 
   const statusCode = err.statusCode || 500;
