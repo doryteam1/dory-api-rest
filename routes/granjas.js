@@ -77,7 +77,7 @@ router.put('/parcial/:id', async function(req, res, next) {
   }
 });
 
-router.put('/anular/:id', async function(req, res, next) {
+/*router.put('/anular/:id', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
          res.json(await granjas.anularGranja(req.params.id,token));
@@ -86,7 +86,7 @@ router.put('/anular/:id', async function(req, res, next) {
          next(err);
     }
   });
-
+*/
   router.delete('/eliminar/:idGranja', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;  
