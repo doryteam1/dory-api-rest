@@ -384,51 +384,47 @@ async function create(body,token){
             if(token && validarToken(token)){
                   let payload=helper.parseJwt(token);
                   id_user= payload.sub;                 
-                         if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
-                              const propiedad = await conection.execute(
-                                `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario='1' and ug.id_granja_pk_fk=?`,
-                                [id_user,id_granja]
-                                );
-                              if(propiedad.length>0){
-                                  try {
-                                          await conection.execute(
-                                                `DELETE from especies_granjas where id_granja_pk_fk=?`,
-                                                [id_granja]
-                                          );  
-                                          await conection.execute(
-                                                `DELETE from usuarios_granjas where id_granja_pk_fk=?`,
-                                                  [id_granja]
-                                          );
-                                            await conection.execute(
-                                                `DELETE from infraestructuras_granjas where id_granja_pk_fk=?`,
-                                                  [id_granja]
-                                          );   
-                                          await conection.execute(
-                                            `DELETE from fotos where id_granja_fk=?`,
-                                              [id_granja]
-                                          );                   
-                                          const result = conection.execute(
-                                            `DELETE from granjas WHERE id_granja=?`, 
-                                            [id_granja]
-                                            );             
-                                          if (result.affectedRows) {
-                                              let  message = 'granja eliminada exitosamente';
-                                              return {message}; 
-                                          }else{
-                                            throw createError(400,'Error al eliminar la granja');
-                                          }
-                                          conection.commit(); 
-                                          conection.release();
-                                                                                
-                                      } catch(err) {
-                                              throw createError(400,err.message);
-                                      }                          
-                              }else{
-                                throw createError(404,"Granja no encontrada ó el usuario no es el propietario");
-                              }
-                         }else{
-                                throw createError(402,"Parámetros ingresados erroneamente"); 
-                         }
+                  if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
+                      const propiedad = await conection.execute(
+                        `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario='1' and ug.id_granja_pk_fk=?`,
+                        [id_user,id_granja]
+                        );
+                      if(propiedad.length>0){
+                          await conection.execute(
+                                `DELETE from especies_granjas where id_granja_pk_fk=?`,
+                                [id_granja]
+                          );  
+                          await conection.execute(
+                                `DELETE from usuarios_granjas where id_granja_pk_fk=?`,
+                                  [id_granja]
+                          );
+                            await conection.execute(
+                                `DELETE from infraestructuras_granjas where id_granja_pk_fk=?`,
+                                  [id_granja]
+                          );   
+                          await conection.execute(
+                            `DELETE from fotos where id_granja_fk=?`,
+                              [id_granja]
+                          );                   
+                          const result = conection.execute(
+                            `DELETE from granjas WHERE id_granja=?`, 
+                            [id_granja]
+                            );    
+                          let message = '';         
+                          if (result.affectedRows) {
+                            message = 'granja eliminada exitosamente';
+                          }else{
+                            throw createError(400,'Error al eliminar la granja');
+                          }
+                          conection.commit(); 
+                          conection.release();
+                          return {message}; 
+                      }else{
+                        throw createError(404,"Granja no encontrada ó el usuario no es el propietario");
+                      }
+                  }else{
+                        throw createError(402,"Parámetros ingresados erroneamente"); 
+                  }
              }else{
               throw createError(401,"Usuario no autorizado"); 
             }
