@@ -164,7 +164,7 @@ async function create(body,token){
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await conection.execute(
-                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,anulado,corregimiento_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,corregimiento_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_granja,
                       body.area,
@@ -178,7 +178,6 @@ async function create(body,token){
                       body.id_municipio,
                       body.id_corregimiento,
                       body.id_vereda,
-                      "creada",
                       body.corregimiento_vereda
                     ]
                 );               
