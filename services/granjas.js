@@ -418,7 +418,7 @@ async function create(body,token){
                             );    
                           let message = '';     
                           console.log('result ',result)    
-                          if (result.affectedRows) {
+                          if (result[0]['affectedRows'] > 0) {
                             message = 'granja eliminada exitosamente';
                           }else{
                             throw createError(400,'Error al eliminar la granja');
