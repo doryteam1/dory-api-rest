@@ -412,7 +412,7 @@ async function create(body,token){
                               [id_granja]
                           );  
 
-                          const result = conection.execute(
+                          const result = await conection.execute(
                             `DELETE from granjas WHERE id_granja=?`, 
                             [id_granja]
                             );    
