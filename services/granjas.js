@@ -405,12 +405,19 @@ async function create(body,token){
                           await conection.execute(
                             `DELETE from fotos where id_granja_fk=?`,
                               [id_granja]
-                          );                   
+                          );   
+                          
+                          await conection.execute(
+                            `DELETE from reseñas where id_granja_pk_fk=?`,
+                              [id_granja]
+                          );  
+
                           const result = conection.execute(
                             `DELETE from granjas WHERE id_granja=?`, 
                             [id_granja]
                             );    
-                          let message = '';         
+                          let message = '';     
+                          console.log('result ',result)    
                           if (result.affectedRows) {
                             message = 'granja eliminada exitosamente';
                           }else{
@@ -430,7 +437,8 @@ async function create(body,token){
             }
           }catch (error) {
             conection.rollback(); /*Si hay algún error  */ 
-            conection.release(); console.log(error);
+            conection.release(); 
+            console.log(error);
             throw error;
           }
   }/*End eliminarGranja*/
