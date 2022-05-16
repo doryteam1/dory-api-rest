@@ -539,7 +539,7 @@ async function create(body,token){
         nuevoRows.push(rows[0]);
         nuevoRows[nuevoRows.length-1].fotos=arrayfotos;      
            const rows1 = await db.query(
-              `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular
+              `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular, u.foto
                 FROM granjas as g, usuarios_granjas as ug, usuarios as u
                 WHERE (u.id=ug.usuarios_id) and
                 (g.id_granja=ug.id_granja_pk_fk) and
