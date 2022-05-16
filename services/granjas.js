@@ -447,11 +447,12 @@ async function create(body,token){
   async function getGranjasDepartamento(page = 1){ 
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-      `SELECT distinctrow  m.id_municipio, m.nombre, m.poblacion,(SELECT count(*) FROM municipios as m1, granjas as g1 where m1.id_municipio=g1.id_municipio and m1.id_municipio=m.id_municipio) as count_granjas
-       FROM  granjas as g, municipios as m, corregimientos as c,veredas as v
-       WHERE  m.id_municipio=g.id_municipio or
-        c.id_municipio=g.id_corregimiento or
-        v.id_municipio=g.id_municipio LIMIT ?,?`, 
+      `SELECT distinct  m.id_municipio, m.nombre, m.poblacion,
+                       (SELECT count(*) FROM municipios as m1, granjas as g1 WHERE m1.id_municipio=g1.id_municipio and m1.id_municipio=m.id_municipio) as count_granjas
+       FROM  municipios as m left join   granjas as g on (m.id_municipio=g.id_municipio)
+                left join corregimientos as c on (c.id_municipio=g.id_municipio)
+                left join veredas as v  on  (v.id_municipio=g.id_municipio) 
+               LIMIT ?,?`, 
       [offset, config.listPerPage]
     );
     const data = helper.emptyOrRows(rows);
