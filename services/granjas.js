@@ -587,7 +587,7 @@ async function create(body,token){
 
 /*_____________updatePhotos ________________________________*/
   async function updatePhotos(idGranja,body,token){
-    var arrayfotos= body.arrayfotos;
+    var arrayfotos= body.arrayFotos;
     let tipo_user=null; 
 
     const conection= await db.newConnection();
