@@ -499,7 +499,8 @@ async function create(body,token){
           data,
           meta
         }
-    } catch{        
+    } catch(err){        
+          console.log(err);
           throw createError(404,"No hay granjas en el municipio ingresado");
     }
   }/*End getGranjasMunicipio*/
