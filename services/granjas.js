@@ -514,7 +514,8 @@ async function create(body,token){
                   g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
                   g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
                 (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
-                (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion
+                (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion,
+                (select nombre from municipios as m inner join g on g.id_municipio = m.id_municipio) as nombre_municipio
           FROM granjas as g
           WHERE  g.id_granja=?
                 LIMIT ?,?`, 
