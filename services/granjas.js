@@ -563,8 +563,8 @@ async function create(body,token){
             var arrayespecies= new Array();  
             rows2.forEach((element)=>{ 
                   arrayespecies.push(element);
-                  nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
-            });  
+            }); 
+            nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
             const rows3 = await db.query(
               `select i.nombre, i.id_infraestructura
               from granjas as g, infraestructuras_granjas as ig, infraestructuras as i
@@ -576,8 +576,8 @@ async function create(body,token){
             var arrayinfraestructuras= new Array();        
             rows3.forEach((element)=>{ 
                   arrayinfraestructuras.push(element);
-                  nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
             });  
+            nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
             const data = helper.emptyOrRows(nuevoRows);
             const meta = {page};          
             return {
