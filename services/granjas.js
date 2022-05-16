@@ -520,6 +520,9 @@ async function create(body,token){
                 LIMIT ?,?`, 
           [idGranja,offset, config.listPerPage]
         );  
+        if(rows.length < 1){
+          throw new createError('404', "La granja con id "+idGranja+" no existe.")
+        }
         const rowsfotos = await db.query(
           `SELECT f.id_foto,f.imagen
           FROM  fotos as f
