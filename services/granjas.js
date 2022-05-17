@@ -236,7 +236,7 @@ async function create(body,token){
      }
   }/*End Create*/
 
-  /*granja,id-granja a modificar, token de usuario,array de id de tipos de infraestructuras de la granja actualizarlos, array de id de especies cultivadas actualizarlas*/
+  /*__________________________update granja____________________________*/
   async function update(idGranja, body, token){  
     console.log(body)
     const conection= await db.newConnection(); 
@@ -685,7 +685,41 @@ async function create(body,token){
   }else{
     throw createError(401,"Usuario no autorizado");
   }
-}
+}/*End UpdateParcial*/
+
+/*__________________--End esFavorita______________________________________________________*/
+async function esFavorita(id_granja, token){
+  
+  if(token && validarToken(token))
+  {
+    const payload=helper.parseJwt(token);  
+    const id_user=payload.sub;
+    /*try{*/
+              const rows2 = await db.query(
+                `select *
+                from usuarios_granjas as ug
+                where ug.usuarios_id = ? and ug.id_granja_pk_fk = ?`, 
+                [ id_user, id_granja]
+              );                 
+              if(rows2.length > 0 && rows2 != undefined &&  rows2 != null){/*Usuario relacionado con la granja*/
+                   await db.query(
+                  `UPDATE usuarios_granjas as ug SET esfavorita=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
+                  [0, id_granja, id_user]
+                ); 
+              }else{      
+                    await db.query(
+                    `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
+                    [id_granja,id_user,null,1,0]
+                  );   
+              } 
+     /* }catch{
+        throw createError(500,"Error al agregar granja como favorita");
+      }*/
+  }else{
+        throw createError(401,"Usuario no autorizado");
+       }
+
+}/*End esFavorita*/
 
 
 module.exports = {
@@ -701,5 +735,6 @@ module.exports = {
   getGranjasMunicipio,
   getDetail,
   updatePhotos,
-  updateParcial
+  updateParcial,
+  esFavorita
 }

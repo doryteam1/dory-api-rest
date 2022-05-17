@@ -134,4 +134,26 @@ router.put('/parcial/:id', async function(req, res, next) {
     }
   });
 
+  router.post('/esfavorita/:idGranja', async function(req, res, next) {
+    try { 
+         var token=req.headers.authorization;
+         res.json(await granjas.esFavorita(req.params.idGranja,token));
+    } catch (err) {
+         console.error(`Error al agregar granja a favoritas`, err.message);
+         next(err);
+    }
+  });
+
+  router.post('/calificar/:idGranja', async function(req, res, next) {
+    try { 
+         var token=req.headers.authorization;
+         res.json(await granjas.esFavorita(req.params.idGranja,token,req.params.query));
+    } catch (err) {
+         console.error(`Error al calificar la granja`, err.message);
+         next(err);
+    }
+  });
+
+
+
 module.exports = router;
