@@ -691,6 +691,7 @@ async function esFavorita(id_granja, token){
     const payload=helper.parseJwt(token);  
     const id_user=payload.sub;
     try{
+             let message='';
               const rows2 = await db.query(
                 `select *
                 from usuarios_granjas as ug
@@ -703,19 +704,21 @@ async function esFavorita(id_granja, token){
                    `UPDATE usuarios_granjas as ug SET esfavorita=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
                    [0, id_granja, id_user]
                    ); 
+                      message='Éxito en remover la granja de favoritas';
                   }else{
                     await db.query(
                       `UPDATE usuarios_granjas as ug SET esfavorita=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
                       [1, id_granja, id_user]
                       ); 
+                      message='Éxito en agregar la granja a favoritas';
                   }
               }else{      
                     await db.query(
                     `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
                     [id_granja,id_user,null,1,0]
-                  );   
-              }
-              let message='Éxito en agregar granja a favoritas';
+                  ); 
+                  message='Éxito en Registrar la granja a favoritas';  
+              }              
               return {message}; 
       }catch(err){
         console.log(err)
