@@ -715,6 +715,8 @@ async function esFavorita(id_granja, token){
                     [id_granja,id_user,null,1,0]
                   );   
               } 
+              let message='Granja añadida a favoritas con éxito';
+              return{message};
       }catch{
         throw createError(500,"Error al agregar granja como favorita");
       }
