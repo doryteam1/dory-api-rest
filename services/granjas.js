@@ -500,7 +500,8 @@ async function create(body,token){
           data,
           meta
         }
-    } catch{        
+    } catch(err){        
+          console.log(err);
           throw createError(404,"No hay granjas en el municipio ingresado");
     }
   }/*End getGranjasMunicipio*/
@@ -513,12 +514,16 @@ async function create(body,token){
                   g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
                   g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
                 (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
-                (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion
+                (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion,
+                (select m.nombre from municipios as m inner join granjas as gr on m.id_municipio = gr.id_municipio where gr.id_granja = g.id_granja) as nombre_municipio
           FROM granjas as g
           WHERE  g.id_granja=?
                 LIMIT ?,?`, 
           [idGranja,offset, config.listPerPage]
         );  
+        if(rows.length < 1){
+          throw createError(404, "La granja con id "+idGranja+" no existe.")
+        }
         const rowsfotos = await db.query(
           `SELECT f.id_foto,f.imagen
           FROM  fotos as f
@@ -534,7 +539,7 @@ async function create(body,token){
         nuevoRows.push(rows[0]);
         nuevoRows[nuevoRows.length-1].fotos=arrayfotos;      
            const rows1 = await db.query(
-              `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular
+              `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular, u.foto
                 FROM granjas as g, usuarios_granjas as ug, usuarios as u
                 WHERE (u.id=ug.usuarios_id) and
                 (g.id_granja=ug.id_granja_pk_fk) and
@@ -558,8 +563,8 @@ async function create(body,token){
             var arrayespecies= new Array();  
             rows2.forEach((element)=>{ 
                   arrayespecies.push(element);
-                  nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
-            });  
+            }); 
+            nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
             const rows3 = await db.query(
               `select i.nombre, i.id_infraestructura
               from granjas as g, infraestructuras_granjas as ig, infraestructuras as i
@@ -571,8 +576,8 @@ async function create(body,token){
             var arrayinfraestructuras= new Array();        
             rows3.forEach((element)=>{ 
                   arrayinfraestructuras.push(element);
-                  nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
             });  
+            nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
             const data = helper.emptyOrRows(nuevoRows);
             const meta = {page};          
             return {
@@ -583,7 +588,7 @@ async function create(body,token){
 
 /*_____________updatePhotos ________________________________*/
   async function updatePhotos(idGranja,body,token){
-    var arrayfotos= body.arrayfotos;
+    var arrayfotos= body.arrayFotos;
     let tipo_user=null; 
 
     const conection= await db.newConnection();
