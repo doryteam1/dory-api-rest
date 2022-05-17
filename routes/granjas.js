@@ -144,7 +144,7 @@ router.put('/parcial/:id', async function(req, res, next) {
     }
   });
 
-  router.post('/calificar/:idGranja', async function(req, res, next) {
+  router.put('/calificar/:idGranja', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
          res.json(await granjas.esFavorita(req.params.idGranja,token,req.params.query));
