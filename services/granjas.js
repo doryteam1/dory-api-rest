@@ -715,13 +715,13 @@ async function esFavorita(id_granja, token){
                     [id_granja,id_user,null,1,0]
                   );   
               } 
-      }catch{
+      }catch(err){
+        console.log(err)
         throw createError(500,"Error al agregar granja como favorita");
       }
   }else{
         throw createError(401,"Usuario no autorizado");
-       }
-
+  }
 }/*End esFavorita*/
 
 /*__________________--End esFavorita______________________________________________________*/
