@@ -699,7 +699,7 @@ async function esFavorita(id_granja, token){
   {
     const payload=helper.parseJwt(token);  
     const id_user=payload.sub;
-    /*try{*/
+    try{
               const rows2 = await db.query(
                 `select *
                 from usuarios_granjas as ug
@@ -717,9 +717,9 @@ async function esFavorita(id_granja, token){
                     [id_granja,id_user,null,1,0]
                   );   
               } 
-     /* }catch{
+      }catch{
         throw createError(500,"Error al agregar granja como favorita");
-      }*/
+      }
   }else{
         throw createError(401,"Usuario no autorizado");
        }
