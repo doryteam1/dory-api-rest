@@ -705,6 +705,47 @@ async function esFavorita(id_granja, token){
                 from usuarios_granjas as ug
                 where ug.usuarios_id = ? and ug.id_granja_pk_fk = ?`, 
                 [ id_user, id_granja]
+              );    console.log('EsFavorita >>>',' '+ rows2[0].esfavorita) ;            
+              if(rows2.length > 0 && rows2 != undefined &&  rows2 != null){/*Usuario relacionado con la granja*/
+                  if(rows2[0].esfavorita==1){
+                   await db.query(
+                   `UPDATE usuarios_granjas as ug SET esfavorita=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
+                   [0, id_granja, id_user]
+                   ); 
+                  }else{
+                    await db.query(
+                      `UPDATE usuarios_granjas as ug SET esfavorita=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
+                      [1, id_granja, id_user]
+                      ); 
+                  }
+              }else{      
+                    await db.query(
+                    `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
+                    [id_granja,id_user,null,1,0]
+                  );   
+              } 
+      }catch{
+        throw createError(500,"Error al agregar granja como favorita");
+      }
+  }else{
+        throw createError(401,"Usuario no autorizado");
+       }
+
+}/*End esFavorita*/
+
+/*__________________--End esFavorita______________________________________________________*/
+async function calificar(id_granja, token){
+  
+  if(token && validarToken(token))
+  {
+    const payload=helper.parseJwt(token);  
+    const id_user=payload.sub;
+    try{
+              const rows2 = await db.query(
+                `select *
+                from usuarios_granjas as ug
+                where ug.usuarios_id = ? and ug.id_granja_pk_fk = ?`, 
+                [ id_user, id_granja]
               );                 
               if(rows2.length > 0 && rows2 != undefined &&  rows2 != null){/*Usuario relacionado con la granja*/
                    await db.query(
@@ -741,5 +782,6 @@ module.exports = {
   getDetail,
   updatePhotos,
   updateParcial,
-  esFavorita
+  esFavorita,
+  calificar
 }
