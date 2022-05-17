@@ -714,16 +714,16 @@ async function esFavorita(id_granja, token){
                     `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
                     [id_granja,id_user,null,1,0]
                   );   
-              } 
-              let message='Granja añadida a favoritas con éxito';
-              return{message};
-      }catch{
+              }
+              let message='Éxito en agregar granja a favoritas';
+              return {message}; 
+      }catch(err){
+        console.log(err)
         throw createError(500,"Error al agregar granja como favorita");
       }
   }else{
         throw createError(401,"Usuario no autorizado");
-       }
-
+  }
 }/*End esFavorita*/
 
 /*__________________--End esFavorita______________________________________________________*/
