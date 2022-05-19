@@ -683,7 +683,7 @@ async function create(body,token){
   }
 }/*End UpdateParcial*/
 
-/*__________________--End esFavorita______________________________________________________*/
+/*__________________esFavorita______________________________________________________*/
 async function esFavorita(id_granja, token){
   
   if(token && validarToken(token))
@@ -729,7 +729,7 @@ async function esFavorita(id_granja, token){
   }
 }/*End esFavorita*/
 
-/*__________________--End esFavorita______________________________________________________*/
+/*__________________Calificar______________________________________________________*/
 async function calificar(id_granja, token, calificacion){  
   if(token && validarToken(token))
   {
@@ -759,8 +759,41 @@ async function calificar(id_granja, token, calificacion){
   }else{
         throw createError(401,"Usuario no autorizado");
        }
-}/*End esFavorita*/
+}/*End calificar*/
 
+/*__________________getResenasGranja______________________________________________________*/
+async function getResenasGranja(idGranja){  
+  const rows = await db.query(
+    `SELECT distinct r.id_reseña, r.descripcion, r.fecha, r.usuarios_id as id_usuario, r.id_granja_pk_fk as id_granja, g.nombre as nombre_granja
+    FROM reseñas as r, granjas as g, usuarios_granjas as ug
+    WHERE r.id_granja_pk_fk=g.id_granja and 
+          g.id_granja=ug.id_granja_pk_fk and
+          g.id_granja=?
+           `, 
+    [idGranja]
+  );
+
+  const rowspuntajes = await db.query(
+    `SELECT distinct   avg(ug.puntuacion) as puntaje
+    FROM  granjas as g, usuarios_granjas as ug
+    WHERE g.id_granja=ug.id_granja_pk_fk and
+          g.id_granja=?
+          `, 
+    [idGranja]
+  );
+
+  let obj={resenas:rows, puntaje:rowspuntajes[0]};
+/*
+  var nuevoRows = new Array();
+  nuevoRows.push(rows,rowspuntajes[0]);*/
+  
+  const data = helper.emptyOrRows(obj);
+  
+  return {
+    data
+  }
+   
+}/*End getResenasGranja*/
 
 module.exports = {
   getMultiple,
@@ -777,5 +810,6 @@ module.exports = {
   updatePhotos,
   updateParcial,
   esFavorita,
-  calificar
+  calificar,
+  getResenasGranja
 }

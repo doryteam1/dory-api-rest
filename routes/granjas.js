@@ -154,6 +154,13 @@ router.put('/parcial/:id', async function(req, res, next) {
     }
   });
 
-
+  router.get('/resenas/:idGranja', async function(req, res, next) {
+    try { 
+         res.json(await granjas.getResenasGranja(req.params.idGranja));
+    } catch (err) {
+         console.error(`Error al calificar la granja`, err.message);
+         next(err);
+    }
+  });
 
 module.exports = router;
