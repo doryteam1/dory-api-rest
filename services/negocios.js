@@ -47,20 +47,22 @@ async function createNegocio(body,token){
                    body.descripcion_negocio===undefined ||
                    body.imagen===undefined || 
                    body.id_departamento===undefined || 
-                   body.id_municipio===undefined 
+                   body.id_municipio===undefined || 
+                   body.direccion===undefined 
                   )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,imagen,usuarios_id,id_departamento,id_municipio) VALUES (?,?,?,?,?,?)`, 
+                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,imagen,usuarios_id,id_departamento,id_municipio,direccion) VALUES (?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_negocio,
                       body.descripcion_negocio,
                       body.imagen,
                       id_user,
                       body.id_departamento,
-                      body.id_municipio
+                      body.id_municipio,
+                      body.direccion
                     ]
                 ); 
                 if (result.affectedRows) {              
@@ -94,7 +96,8 @@ async function createNegocio(body,token){
               body.descripcion_negocio===undefined ||
               body.imagen===undefined || 
               body.id_departamento===undefined || 
-              body.id_municipio===undefined 
+              body.id_municipio===undefined || 
+              body.direccion===undefined 
              )
             {
               throw createError(400,"Se requieren todos los parámetros!");
@@ -106,7 +109,8 @@ async function createNegocio(body,token){
                    imagen=?,
                    usuarios_id=?,
                    id_departamento=?,
-                   id_municipio=?
+                   id_municipio=?,
+                   direccion=?
                WHERE id_negocio=?`,
                [
                 body.nombre_negocio,
@@ -115,6 +119,7 @@ async function createNegocio(body,token){
                 id_user,
                 body.id_departamento,
                 body.id_municipio,
+                body.direccion,
                 idNegocio
                ] 
             );          
