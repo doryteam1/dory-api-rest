@@ -139,6 +139,7 @@ router.put('/parcial/:id', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
          console.log("Token ",token)
+         console.log("req ",req)
          res.json(await granjas.esFavorita(req.params.idGranja,token));
     } catch (err) {
          console.error(`Error al agregar granja a favoritas`, err.message);
