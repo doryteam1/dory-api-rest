@@ -108,10 +108,11 @@ router.put('/parcial/:id', async function(req, res, next) {
 
   router.get('/municipio/:id', async function(req, res, next) {
     try {
-      res.json(await granjas.getGranjasMunicipio(req.query.page,req.params.id));
+          var token=req.headers.authorization;
+          res.json(await granjas.getGranjasMunicipio(req.query.page,req.params.id,token));
     } catch (err) {
-      console.error(`Error al traer las granjas del municipio ingresado `, err.message);
-      next(err);
+          console.error(`Error al traer las granjas del municipio ingresado `, err.message);
+          next(err);
     }
   });
 

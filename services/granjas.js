@@ -459,47 +459,67 @@ async function create(body,token){
     }
   }/*End getGranjasDepartamento*/
 
-  async function getGranjasMunicipio(page = 1,idMunicipio){
+  async function getGranjasMunicipio(page = 1,idMunicipio, token){
      try{
-        const offset = helper.getOffset(page, config.listPerPage);
-        const rows = await db.query(
-          `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
-                            (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion,
-                            (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
-                             WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario 
-          FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
-                            left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk)      
-          WHERE   g.id_municipio=? 
-                LIMIT ?,?`, 
-          [idMunicipio,offset, config.listPerPage]
-        );
-        var arrayfotos= new Array();
-        var nuevoRows = new Array();
-        var index= rows[0].id_granja;
-        nuevoRows.push(rows[0]);        
-        rows.forEach((element)=>{           
-          if((index == element.id_granja))
-          { 
-            arrayfotos.push(element.imagen);
-          }else { 
-                    index= element.id_granja;
-                    nuevoRows[nuevoRows.length-1].fotos=arrayfotos;/*Arreglo de fotos agregado al final del arreglo de granjas */
-                    nuevoRows.push(element);
-                    arrayfotos=[];  
-                    arrayfotos.push(element.imagen);
+          let rows=[];
+          if(token && validarToken(token)){
+                  let payload=helper.parseJwt(token);
+                  id_user= payload.sub; 
+                const offset = helper.getOffset(page, config.listPerPage);
+                rows = await db.query(
+                  `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
+                                    (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion,
+                                    (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
+                                    WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
+                                    (select count(*) from usuarios_granjas as ug2 where ug2.id_granja_pk_fk=g.id_granja and ug2.usuarios_id=?) as favorita
+                  FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
+                                    left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk)      
+                  WHERE   g.id_municipio=? 
+                        LIMIT ?,?`, 
+                  [id_user,idMunicipio,offset, config.listPerPage]
+                );
+          }else{
+            const offset = helper.getOffset(page, config.listPerPage);
+            rows = await db.query(
+              `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
+                                (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion,
+                                (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
+                                WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
+                                0 as favorita
+              FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
+                                left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk)      
+              WHERE   g.id_municipio=? 
+                    LIMIT ?,?`, 
+              [idMunicipio,offset, config.listPerPage]
+            );
           }
-        });
-          nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
-        const data = helper.emptyOrRows(nuevoRows);
-        const meta = {page};      
-        return {
-          data,
-          meta
-        }
-    } catch(err){        
-          console.log(err);
-          throw createError(404,"No hay granjas en el municipio ingresado");
-    }
+                var arrayfotos= new Array();
+                var nuevoRows = new Array();
+                var index= rows[0].id_granja;
+                nuevoRows.push(rows[0]);        
+                rows.forEach((element)=>{           
+                  if((index == element.id_granja))
+                  { 
+                    arrayfotos.push(element.imagen);
+                  }else { 
+                            index= element.id_granja;
+                            nuevoRows[nuevoRows.length-1].fotos=arrayfotos;/*Arreglo de fotos agregado al final del arreglo de granjas */
+                            nuevoRows.push(element);
+                            arrayfotos=[];  
+                            arrayfotos.push(element.imagen);
+                  }
+                });
+                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
+                const data = helper.emptyOrRows(nuevoRows);
+                const meta = {page};      
+                return {
+                  data,
+                  meta
+                }
+            } catch(err){        
+                  console.log(err);
+                  throw createError(404,"No hay granjas en el municipio ingresado");
+            }
   }/*End getGranjasMunicipio*/
 
   /*_____________getDetail ________________________________*/
