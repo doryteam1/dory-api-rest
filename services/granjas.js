@@ -818,7 +818,6 @@ async function getResenasGranja(idGranja){
            `, 
     [idGranja]
   );
-
   const rowspuntajes = await db.query(
     `SELECT distinct   avg(ug.puntuacion) as puntaje
     FROM  granjas as g, usuarios_granjas as ug
@@ -827,19 +826,40 @@ async function getResenasGranja(idGranja){
           `, 
     [idGranja]
   );
-
-  let obj={resenas:rows, puntaje:rowspuntajes[0]};
-/*
-  var nuevoRows = new Array();
-  nuevoRows.push(rows,rowspuntajes[0]);*/
-  
-  const data = helper.emptyOrRows(obj);
-  
+  let obj={resenas:rows, puntaje:rowspuntajes[0]}; 
+  const data = helper.emptyOrRows(obj);  
   return {
     data
-  }
-   
+  }   
 }/*End getResenasGranja*/
+
+/*__________________misFavoritas______________________________________________________*/
+async function misFavoritas(token){  
+  if(token && validarToken(token))
+  {
+        const payload=helper.parseJwt(token);  
+        const id_user=payload.sub;
+        try{
+                  const rows2 = await db.query(
+                    `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,
+                             g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, 
+                             g.id_vereda, g.corregimiento_vereda,ug.usuarios_id,ug.puntuacion, ug.esfavorita, ug.espropietario
+                    FROM granjas as g, usuarios_granjas as ug
+                    WHERE ug.usuarios_id=? and g.id_granja=ug.id_granja_pk_fk  and ug.esfavorita=1`, 
+                    [ id_user]
+                  );               
+                  if(rows2.length < 1 && rows2 != undefined &&  rows2 != null){ 
+                    return {message:"Granjas de usuario no encontradas"} ; 
+                  }                        
+                  const data = helper.emptyOrRows(rows2);      
+                  return { data } ;         
+          }catch{
+            throw createError(404,"Granjas de usuario no encontradas");
+          }             
+    }else{
+        throw createError(401,"Usuario no autorizado");
+    }
+}/*End misFavoritas*/
 
 module.exports = {
   getMultiple,
@@ -857,5 +877,6 @@ module.exports = {
   updateParcial,
   esFavorita,
   calificar,
-  getResenasGranja
+  getResenasGranja,
+  misFavoritas
 }

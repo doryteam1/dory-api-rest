@@ -168,4 +168,15 @@ router.put('/parcial/:id', async function(req, res, next) {
     }
   });
 
+  router.get('/misfavoritas', async function(req, res, next) {
+    try { 
+         var token=req.headers.authorization;
+         res.json(await granjas.misFavoritas(token));
+    } catch (err) {
+         console.error(`Error al mostrar las granjas favoritas del usuario`, err.message);
+         next(err);
+    }
+  });
+
+
 module.exports = router;
