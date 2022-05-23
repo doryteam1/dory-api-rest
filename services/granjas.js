@@ -847,12 +847,14 @@ async function misFavoritas(token){
                     FROM granjas as g, usuarios_granjas as ug
                     WHERE ug.usuarios_id=? and g.id_granja=ug.id_granja_pk_fk  and ug.esfavorita=1`, 
                     [ id_user]
-                  );               
+                  );  
+                  let data =[];             
                   if(rows2.length < 1 && rows2 != undefined &&  rows2 != null){ 
-                    return {message:"Granjas de usuario no encontradas"} ; 
-                  }                        
-                  const data = helper.emptyOrRows(rows2);      
-                  return { data } ;         
+                    return{data};
+                  } else{
+                       data = helper.emptyOrRows(rows2);      
+                       return { data } ;
+                  }       
           }catch{
             throw createError(404,"Granjas de usuario no encontradas");
           }             
