@@ -118,7 +118,8 @@ router.put('/parcial/:id', async function(req, res, next) {
 
   router.get('/detailed/:idGranja', async function(req, res, next) {
     try {
-      res.json(await granjas.getDetail(req.query.page,req.params.idGranja));
+      var token=req.headers.authorization;
+      res.json(await granjas.getDetail(req.query.page,req.params.idGranja,token));
     } catch (err) {
       console.error(`Error al traer la granja `, err.message);
       next(err);
