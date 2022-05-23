@@ -128,6 +128,7 @@ router.put('/parcial/:id', async function(req, res, next) {
   router.put('/update/photos/:idGranja', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
+         console.log("token ", token)
          res.json(await granjas.updatePhotos(req.params.idGranja,req.body,token));
     } catch (err) {
          console.error(`Error al actualizar las fotos de la granja`, err.message);
@@ -138,6 +139,8 @@ router.put('/parcial/:id', async function(req, res, next) {
   router.put('/esfavorita/:idGranja', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
+         console.log("Token ",token)
+         console.log("req headers",req.headers)
          res.json(await granjas.esFavorita(req.params.idGranja,token));
     } catch (err) {
          console.error(`Error al agregar granja a favoritas`, err.message);
