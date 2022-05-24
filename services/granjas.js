@@ -471,7 +471,7 @@ async function create(body,token){
                                     (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion,
                                     (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
                                     WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
-                                    (select *.esfavorita from usuarios_granjas as ug2 where ug2.id_granja_pk_fk=g.id_granja and ug2.usuarios_id=?) as favorita
+                                    (select count(*) from usuarios_granjas as ug2 where ug2.id_granja_pk_fk=g.id_granja and ug2.usuarios_id=?) as favorita
                   FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
                                     left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk)      
                   WHERE   g.id_municipio=? 
