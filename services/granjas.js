@@ -751,13 +751,14 @@ async function esFavorita(id_granja, token){
                    [0, id_granja, id_user]
                    ); 
                       message='Éxito en remover la granja de favoritas';
-                  }else{
+                  }
+                  /*else{
                     await db.query(
                       `UPDATE usuarios_granjas as ug SET esfavorita=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
                       [1, id_granja, id_user]
                       ); 
                       message='Éxito en agregar la granja a favoritas';
-                  }
+                  }*/
               }else{      
                     await db.query(
                     `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
