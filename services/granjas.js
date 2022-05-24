@@ -743,7 +743,8 @@ async function esFavorita(id_granja, token){
                 from usuarios_granjas as ug
                 where ug.usuarios_id = ? and ug.id_granja_pk_fk = ?`, 
                 [ id_user, id_granja]
-              );               
+              );
+              console.log(rows2)  
               if(rows2.length > 0 && rows2 != undefined &&  rows2 != null){/*Usuario relacionado con la granja*/
                   if(rows2[0].esfavorita==1){
                    await db.query(
@@ -752,13 +753,13 @@ async function esFavorita(id_granja, token){
                    ); 
                       message='Éxito en remover la granja de favoritas';
                   }
-                  /*else{
+                  else{
                     await db.query(
                       `UPDATE usuarios_granjas as ug SET esfavorita=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
                       [1, id_granja, id_user]
                       ); 
                       message='Éxito en agregar la granja a favoritas';
-                  }*/
+                  }
               }else{      
                     await db.query(
                     `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
