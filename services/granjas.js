@@ -743,8 +743,7 @@ async function esFavorita(id_granja, token){
                 from usuarios_granjas as ug
                 where ug.usuarios_id = ? and ug.id_granja_pk_fk = ?`, 
                 [ id_user, id_granja]
-              );
-              console.log(rows2)  
+              ); 
               if(rows2.length > 0 && rows2 != undefined &&  rows2 != null){/*Usuario relacionado con la granja*/
                   if(rows2[0].esfavorita==1){
                    await db.query(
