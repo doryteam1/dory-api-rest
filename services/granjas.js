@@ -852,10 +852,30 @@ async function misFavoritas(token){
                   let data =[];             
                   if(rows2.length < 1 && rows2 != undefined &&  rows2 != null){ 
                     return{data};
-                  } else{
-                       data = helper.emptyOrRows(rows2);      
+                  }                   
+                   var arrayfotos= new Array();
+                   var arrayfotos2;
+                   var index= rows2[0].id_granja;                   
+                   var nuevoRows = new Array();
+                   nuevoRows.push(rows2[0]); 
+
+                rows2.forEach((element)=>{           
+                  if((index == element.id_granja))
+                  { 
+                    arrayfotos.push(await obtenerFotosGranja(element.id_granja));
+                  }else { 
+                            index= element.id_granja;
+                            nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+                            nuevoRows.push(element);
+                            arrayfotos=[];
+                            arrayfotos.push(await obtenerFotosGranja(element.id_granja));
+                  }
+                });
+                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos; 
+                  console.log("NuevoRows"+" ",nuevoRows);
+                       data = helper.emptyOrRows(nuevoRows);      
                        return { data } ;
-                  }       
+                        
           }catch{
             throw createError(404,"Granjas de usuario no encontradas");
           }             
@@ -863,6 +883,37 @@ async function misFavoritas(token){
         throw createError(401,"Usuario no autorizado");
     }
 }/*End misFavoritas*/
+
+async function obtenerFotosGranja(idGranja) {
+  try {
+    const rows = db.query(
+      `SELECT f.imagen 
+            FROM fotos as f
+            WHERE id_granja_fk=?`,
+      [idGranja]
+    );
+    let data = [];
+    if (rows.length < 0) {
+      return { data };
+    } else {
+      var arrayfotos = new Array();
+      var index = rows[0].id_granja;
+      rows.forEach((element) => {
+        if ((index == element.id_granja)) {
+          arrayfotos.push(element.imagen);
+        } else {
+          index = element.id_granja;
+          arrayfotos = [];
+          arrayfotos.push(element.imagen);
+        }
+      });
+      return { arrayfotos };
+    }
+  } catch {
+    throw createError(404, "Fotos de la granja no encontradas");
+  }
+}/*End obtenerFotosGranja*/
+
 
 module.exports = {
   getMultiple,
