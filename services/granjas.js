@@ -854,7 +854,6 @@ async function misFavoritas(token){
                     return{data};
                   }                   
                    var arrayfotos= new Array();
-                   var arrayfotos2;
                    var index= rows2[0].id_granja;                   
                    var nuevoRows = new Array();
                    nuevoRows.push(rows2[0]); 
@@ -862,18 +861,18 @@ async function misFavoritas(token){
                 rows2.forEach((element)=>{           
                   if((index == element.id_granja))
                   { 
-                    arrayfotos.push(await obtenerFotosGranja(element.id_granja));
+                    arrayfotos= obtenerFotosGranja(element.id_granja);    console.log(arrayfotos,"------>"+"en for parte 1"); 
+                    nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
                   }else { 
                             index= element.id_granja;
+                            arrayfotos=[];
+                            arrayfotos=  obtenerFotosGranja(element.id_granja); console.log(arrayfotos,"------>"+"en for parte 2"); 
                             nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
                             nuevoRows.push(element);
-                            arrayfotos=[];
-                            arrayfotos.push(await obtenerFotosGranja(element.id_granja));
                   }
                 });
-                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos; 
-                  console.log("NuevoRows"+" ",nuevoRows);
-                       data = helper.emptyOrRows(nuevoRows);      
+                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos;  console.log(arrayfotos,"------>"+"en for parte 3"); console.log("NuevoRows>>>>>",nuevoRows);
+                  data = helper.emptyOrRows(nuevoRows);      
                        return { data } ;
                         
           }catch{
@@ -886,32 +885,32 @@ async function misFavoritas(token){
 
 async function obtenerFotosGranja(idGranja) {
   try {
-    const rows = db.query(
-      `SELECT f.imagen 
+          const rows = await db.query(
+            `SELECT f.imagen , f.id_granja_fk
             FROM fotos as f
-            WHERE id_granja_fk=?`,
-      [idGranja]
-    );
-    let data = [];
-    if (rows.length < 0) {
-      return { data };
-    } else {
-      var arrayfotos = new Array();
-      var index = rows[0].id_granja;
-      rows.forEach((element) => {
-        if ((index == element.id_granja)) {
-          arrayfotos.push(element.imagen);
-        } else {
-          index = element.id_granja;
-          arrayfotos = [];
-          arrayfotos.push(element.imagen);
-        }
-      });
-      return { arrayfotos };
-    }
-  } catch {
-    throw createError(404, "Fotos de la granja no encontradas");
-  }
+            WHERE f.id_granja_fk=?`,
+            [idGranja]
+          );
+          let data = [];
+          var index= rows[0].id_granja_fk;
+          if (rows.length < 0) {   
+            return { data }; 
+          } else {
+                  var arrayfotos = new Array();
+                  rows.forEach((element) => {
+                    if ((index == element.id_granja)) {
+                      arrayfotos.push(element.imagen);
+                    } else {
+                      index = element.id_granja;
+                      arrayfotos = [];
+                      arrayfotos.push(element.imagen);
+                    }
+                  });  console.log(arrayfotos,"------>"+"en ObtenerFotosGranja"); 
+              return { arrayfotos };
+          }
+      } catch {
+            throw createError(404, "Fotos de la granja no encontradas");
+      }
 }/*End obtenerFotosGranja*/
 
 
