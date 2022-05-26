@@ -841,7 +841,7 @@ async function misFavoritas(token){
         const payload=helper.parseJwt(token);  
         const id_user=payload.sub;
         try{
-                const rows2 = await db.query(
+                const rows = await db.query(
                   `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,
                             g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, 
                             g.id_vereda, g.corregimiento_vereda,ug.usuarios_id,ug.puntuacion, ug.esfavorita, ug.espropietario
@@ -850,13 +850,13 @@ async function misFavoritas(token){
                   [ id_user]
                 );  
                 let data =[];             
-                if(rows2.length < 1 && rows2 != undefined &&  rows2 != null){ 
+                if(rows.length < 1 && rows != undefined &&  rows != null){ 
                   return{data};
                 }                   
                 var arrayfotos= new Array();             
                 var nuevoRows = new Array();;
 
-                rows2.forEach(async (element)=>{           
+                for(let i = 0; i < rows.length; i++ ){
                     arrayfotos = [];
                     arrayfotos =  await obtenerFotosGranja(element.id_granja); 
                     console.log("arrayFotos--> ",arrayfotos)
@@ -864,8 +864,7 @@ async function misFavoritas(token){
                     elementClone.fotos = arrayfotos;
                     console.log("elementClone--> ",elementClone)
                     nuevoRows.push(elementClone);
-                  }
-                );
+                }
                 data = helper.emptyOrRows(nuevoRows);      
                 return { data } ;
                         
