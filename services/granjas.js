@@ -858,7 +858,8 @@ async function misFavoritas(token){
 
                 rows2.forEach((element)=>{           
                     arrayfotos = [];
-                    arrayfotos =  await obtenerFotosGranja(element.id_granja); 
+                    arrayfotos =  obtenerFotosGranja(element.id_granja); 
+                    console.log("arrayFotos--> ",arrayfotos)
                     let elementClone = { ...element};
                     elementClone.fotos = arrayfotos;
                     console.log("elementClone--> ",elementClone)
@@ -891,7 +892,6 @@ async function obtenerFotosGranja(idGranja) {
             arrayFotos.push(element['imagen'])
           });
           
-          console.log("arrayFotos--> ",arrayFotos)
           return arrayFotos;
       } catch {
             throw createError(404, "Fotos de la granja no encontradas");
