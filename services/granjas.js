@@ -862,7 +862,7 @@ async function misFavoritas(token){
                     let elementClone = { ...element};
                     elementClone.fotos = arrayfotos;
                     console.log("elementClone--> ",elementClone)
-                    nuevoRows.push(element);
+                    nuevoRows.push(elementClone);
                   }
                 );
                 data = helper.emptyOrRows(nuevoRows);      
