@@ -886,9 +886,9 @@ async function obtenerFotosGranja(idGranja) {
           );
           
           let arrayFotos = [];
-          console.log("rows ",rows)
+          console.log("rows ",)
           rows.forEach(element => {
-            arrayFotos.push(element.imagen)
+            arrayFotos.push(element['imagen'])
           });
           
           return arrayFotos;
