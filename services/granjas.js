@@ -841,39 +841,31 @@ async function misFavoritas(token){
         const payload=helper.parseJwt(token);  
         const id_user=payload.sub;
         try{
-                  const rows2 = await db.query(
-                    `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,
-                             g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, 
-                             g.id_vereda, g.corregimiento_vereda,ug.usuarios_id,ug.puntuacion, ug.esfavorita, ug.espropietario
-                    FROM granjas as g, usuarios_granjas as ug
-                    WHERE ug.usuarios_id=? and g.id_granja=ug.id_granja_pk_fk  and ug.esfavorita=1`, 
-                    [ id_user]
-                  );  
-                  let data =[];             
-                  if(rows2.length < 1 && rows2 != undefined &&  rows2 != null){ 
-                    return{data};
-                  }                   
-                   var arrayfotos= new Array();
-                   var index= rows2[0].id_granja;                   
-                   var nuevoRows = new Array();
-                   nuevoRows.push(rows2[0]); 
+                const rows2 = await db.query(
+                  `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,
+                            g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, 
+                            g.id_vereda, g.corregimiento_vereda,ug.usuarios_id,ug.puntuacion, ug.esfavorita, ug.espropietario
+                  FROM granjas as g, usuarios_granjas as ug
+                  WHERE ug.usuarios_id=? and g.id_granja=ug.id_granja_pk_fk  and ug.esfavorita=1`, 
+                  [ id_user]
+                );  
+                let data =[];             
+                if(rows2.length < 1 && rows2 != undefined &&  rows2 != null){ 
+                  return{data};
+                }                   
+                var arrayfotos= new Array();             
+                var nuevoRows = new Array();;
 
                 rows2.forEach((element)=>{           
-                  if((index == element.id_granja))
-                  { 
-                    arrayfotos= obtenerFotosGranja(element.id_granja);    console.log(arrayfotos,"------>"+"en for parte 1"); 
-                    nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
-                  }else { 
-                            index= element.id_granja;
-                            arrayfotos=[];
-                            arrayfotos=  obtenerFotosGranja(element.id_granja); console.log(arrayfotos,"------>"+"en for parte 2"); 
-                            nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
-                            nuevoRows.push(element);
+                    arrayfotos = [];
+                    arrayfotos =  obtenerFotosGranja(element.id_granja); 
+                    console.log(arrayfotos,"------>"); 
+                    element.fotos = arrayfotos;
+                    nuevoRows.push(element);
                   }
-                });
-                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos;  console.log(arrayfotos,"------>"+"en for parte 3"); console.log("NuevoRows>>>>>",nuevoRows);
-                  data = helper.emptyOrRows(nuevoRows);      
-                       return { data } ;
+                );
+                data = helper.emptyOrRows(nuevoRows);      
+                return { data } ;
                         
           }catch{
             throw createError(404,"Granjas de usuario no encontradas");
