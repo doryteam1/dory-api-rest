@@ -860,7 +860,7 @@ async function misFavoritas(token){
                     arrayfotos = [];
                     arrayfotos =  obtenerFotosGranja(element.id_granja); 
                     let elementClone = { ...element};
-                    elementClone.fotos = arrayfotos.slice(0)
+                    elementClone.fotos = arrayfotos;
                     console.log("elementClone--> ",elementClone)
                     nuevoRows.push(element);
                   }
