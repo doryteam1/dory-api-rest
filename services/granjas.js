@@ -860,7 +860,7 @@ async function misFavoritas(token){
                     arrayfotos = [];
                     arrayfotos =  obtenerFotosGranja(element.id_granja); 
                     console.log(arrayfotos,"------>"); 
-                    element.fotos = arrayfotos.slice(0);
+                    element.fotos = arrayfotos;
                     nuevoRows.push(element);
                   }
                 );
