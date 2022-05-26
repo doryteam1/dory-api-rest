@@ -891,6 +891,7 @@ async function obtenerFotosGranja(idGranja) {
             arrayFotos.push(element['imagen'])
           });
           
+          console.log("arrayFotos--> ",arrayFotos)
           return arrayFotos;
       } catch {
             throw createError(404, "Fotos de la granja no encontradas");
