@@ -22,11 +22,10 @@ async function getResenasGranja(page = 1,idGranja){
     [idGranja,offset, config.listPerPage]
   );
 
-  var data = [];
-  data[0] = {}; 
-  data[0].resenas = helper.emptyOrRows(rows);
-  data[0].puntaje = rowspuntajes[0];
-  data[0].id_granja = idGranja;
+  var data = {};
+  data.resenas = helper.emptyOrRows(rows);
+  data.puntaje = rowspuntajes[0];
+  data.id_granja = idGranja;
   const meta = {page};
 
   return {
