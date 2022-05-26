@@ -858,7 +858,7 @@ async function misFavoritas(token){
 
                 for(let i = 0; i < rows.length; i++ ){
                     arrayfotos = [];
-                    arrayfotos =  await obtenerFotosGranja(element.id_granja); 
+                    arrayfotos =  await obtenerFotosGranja(rows[i].id_granja); 
                     console.log("arrayFotos--> ",arrayfotos)
                     let elementClone = { ...rows[i]};
                     elementClone.fotos = arrayfotos;
