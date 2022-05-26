@@ -879,28 +879,18 @@ async function misFavoritas(token){
 async function obtenerFotosGranja(idGranja) {
   try {
           const rows = await db.query(
-            `SELECT f.imagen , f.id_granja_fk
+            `SELECT f.imagen
             FROM fotos as f
             WHERE f.id_granja_fk=?`,
             [idGranja]
           );
-          let data = [];
-          var index= rows[0].id_granja_fk;
-          if (rows.length < 0) {   
-            return { data }; 
-          } else {
-                  var arrayfotos = new Array();
-                  rows.forEach((element) => {
-                    if ((index == element.id_granja)) {
-                      arrayfotos.push(element.imagen);
-                    } else {
-                      index = element.id_granja;
-                      arrayfotos = [];
-                      arrayfotos.push(element.imagen);
-                    }
-                  });  console.log(arrayfotos,"------>"+"en ObtenerFotosGranja"); 
-              return { arrayfotos };
-          }
+          
+          let arrayFotos = [];
+          rows.forEach(element => {
+            arrayFotos.push(element.imagen)
+          });
+          
+          return arrayFotos;
       } catch {
             throw createError(404, "Fotos de la granja no encontradas");
       }
