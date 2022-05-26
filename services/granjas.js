@@ -859,8 +859,9 @@ async function misFavoritas(token){
                 rows2.forEach((element)=>{           
                     arrayfotos = [];
                     arrayfotos =  obtenerFotosGranja(element.id_granja); 
-                    console.log(arrayfotos,"------>"); 
-                    element.fotos = arrayfotos;
+                    let elementClone = { ...element};
+                    elementClone.fotos = arrayfotos.slice(0)
+                    console.log("elementClone--> ",elementClone)
                     nuevoRows.push(element);
                   }
                 );
