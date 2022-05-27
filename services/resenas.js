@@ -25,7 +25,7 @@ async function getResenasGranja(page = 1,idGranja){
   const rowspuntajes = await db.query(
     `SELECT avg(ug.puntuacion) as puntaje
     FROM  usuarios_granjas as ug
-    WHERE ug.id_granja_pk_fk`
+    WHERE ug.id_granja_pk_fk = ?`
     [idGranja]
   );
 
