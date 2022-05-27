@@ -1,6 +1,8 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+var createError = require('http-errors');
+const {validarToken} = require ('../middelware/auth');
 
 async function getResenasGranja(page = 1,idGranja){
   const offset = helper.getOffset(page, config.listPerPage);
@@ -56,67 +58,108 @@ console.log('reseñas'+rows);
 }
 
 
-async function create(reseña){
-    const result = await db.query(
-      `INSERT INTO reseñas(id_reseña, id_granja_pk_fk, usuarios_id, descripcion, fecha) VALUES (?,?,?,?,?)`, 
-      [
-        reseña.id_reseña,
-        reseña.id_granja_pk_fk,
-        reseña.usuarios_id,
-        reseña.descripcion,
-        reseña.fecha
-      ]
-    );
-  
-    let message = 'Error creando la reseña';
-  
-    if (result.affectedRows) {
-      message = {  insertId: result.insertId, message:'Reseña creada exitosamente'};
-    }
-  
-    return {message};
-  }
+async function create(resena, token){
+      if(token && validarToken(token))
+      {
+            const payload=helper.parseJwt(token);  
+            const id_user=payload.sub;
+          try{
+                const result = await db.query(
+                  `INSERT INTO reseñas( id_granja_pk_fk, usuarios_id, descripcion, fecha) VALUES (?,?,?,?)`, 
+                  [
+                    resena.id_granja,
+                    id_user,
+                    resena.descripcion,
+                    resena.fecha
+                  ]
+                );              
+                let message = 'Error creando la reseña';              
+                if (result.affectedRows) {
+                  message = {  insertId: result.insertId, message:'Reseña creada exitosamente'};
+                }              
+                return {message};
+              }catch{
+                throw createError(500,"Error Registrando la Reseña");
+              }             
+      }else{
+            throw createError(401,"Usuario no autorizado");
+      }
+  }/*End create*/
 
-  async function update(id, reseña){
-    const result = await db.query(
-      `UPDATE reseñas 
-       SET id_granja_pk_fk=?,
-           usuarios_id=?,
-           descripcion=?,
-           fecha=?
-       WHERE id_reseña=?`,
-       [
-        reseña.id_granja_pk_fk,
-        reseña.usuarios_id,
-        reseña.descripcion,
-        reseña.fecha,
-        id
-       ] 
-    );
+  async function update(idResena, reseña,token){
+        if(token && validarToken(token))
+        {
+           try{
+                  const payload=helper.parseJwt(token);  
+                  const id_user=payload.sub;
+                  const rows = await db.query(
+                    `SELECT r.usuarios_id
+                    FROM reseñas as r
+                    WHERE r.usuarios_id=?`, 
+                    [id_user]
+                  );
+                  if(rows.length<=0){
+                    return {message:'Usted no tiene autorización para éste proceso'};
+                  }
+                   const result = await db.query(
+                    `UPDATE reseñas 
+                    SET id_granja_pk_fk=?,
+                        usuarios_id=?,
+                        descripcion=?,
+                        fecha=?
+                    WHERE id_reseña=?`,
+                    [
+                      reseña.id_granja,
+                      id_user,
+                      reseña.descripcion,
+                      reseña.fecha,
+                      idResena
+                    ] 
+                  );  
+                  let message = 'Error actualizando la reseña';  
+                  if (result.affectedRows) {
+                    message = 'Reseña actualizada exitosamente';
+                  }  
+                  return {message};
+               }catch{
+                    throw createError(500,"Error Registrando la Reseña");
+               }             
+        }else{
+              throw createError(401,"Usuario no autorizado");
+        }
+  }/*End Udate*/
   
-    let message = 'Error actualizando la reseña';
-  
-    if (result.affectedRows) {
-      message = 'Reseña actualizada exitosamente';
-    }
-  
-    return {message};
-  }
-  
-  async function remove(id){
-    const result = await db.query(
-      `DELETE FROM reseñas WHERE id_reseña=?`, 
-      [id]
-    );
-  
-    let message = 'Error borrando la reseña';
-  
-    if (result.affectedRows) {
-      message = 'Reseña borrada exitosamente';
-    }
-  
-    return {message};
-  }
+  async function remove(idResena,token){
+      if(token && validarToken(token))
+      { 
+            const payload=helper.parseJwt(token);  
+            const id_user=payload.sub;
+          try{
+                  const rows = await db.query(
+                    `SELECT r.usuarios_id
+                    FROM reseñas as r
+                    WHERE r.usuarios_id=?`, 
+                    [id_user]
+                  );
+                  if(rows.length<=0){
+                    return {message:'Usted no tiene autorización para éste proceso'};
+                  }
+                  const result = await db.query(
+                    `DELETE FROM reseñas WHERE id_reseña=?`, 
+                    [idResena]
+                  );  
+                  let message = 'Error borrando la reseña';  
+                  if (result.affectedRows) {
+                    message = 'Reseña borrada exitosamente';
+                  }  
+                  return {message};
+             }catch{
+               throw createError(500,"Error Eliminando la Reseña");
+             }
+      }else{
+        throw createError(401,"Usuario no autorizado");
+      }
+  }/*End Remove*/
 
 module.exports = {
   getResenasGranja,

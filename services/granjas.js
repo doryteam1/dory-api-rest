@@ -854,8 +854,7 @@ async function misFavoritas(token){
                   return{data};
                 }                   
                 var arrayfotos= new Array();             
-                var nuevoRows = new Array();;
-
+                var nuevoRows = new Array();
                 for(let i = 0; i < rows.length; i++ ){
                     arrayfotos = [];
                     arrayfotos =  await obtenerFotosGranja(rows[i].id_granja); 
@@ -866,8 +865,7 @@ async function misFavoritas(token){
                     nuevoRows.push(elementClone);
                 }
                 data = helper.emptyOrRows(nuevoRows);      
-                return { data } ;
-                        
+                return { data } ;                        
           }catch{
             throw createError(404,"Granjas de usuario no encontradas");
           }             
