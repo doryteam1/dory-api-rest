@@ -7,7 +7,13 @@ const {validarToken} = require ('../middelware/auth');
 async function getResenasGranja(page = 1,idGranja){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT distinct r.id_reseña, r.descripcion, r.fecha, r.usuarios_id as id_usuario, r.id_granja_pk_fk as id_granja, g.nombre as nombre_granja
+    `SELECT distinct r.id_reseña as id,
+    r.descripcion,
+    r.fecha, 
+    r.usuarios_id as id_usuario, 
+    r.id_granja_pk_fk as id_granja, 
+    g.nombre as nombre_granja,
+    (select contcat_ws(u.nombres,u.apellidos) from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as nombre_usuario
     FROM reseñas as r, granjas as g, usuarios_granjas as ug
     WHERE r.id_granja_pk_fk=g.id_granja and 
           g.id_granja=ug.id_granja_pk_fk and
