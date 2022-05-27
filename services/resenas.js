@@ -32,7 +32,7 @@ async function getResenasGranja(page = 1,idGranja){
 
   var data = {};
   data.resenas = helper.emptyOrRows(rows);
-  data.puntaje = rowspuntajes[0];
+  data.puntaje = rowspuntajes[0].puntaje;
   data.id_granja = idGranja;
   const meta = {page};
 
