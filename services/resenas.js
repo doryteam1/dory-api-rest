@@ -23,11 +23,10 @@ async function getResenasGranja(page = 1,idGranja){
   );
 
   const rowspuntajes = await db.query(
-    `SELECT distinct   avg(ug.puntuacion) as puntaje
-    FROM  granjas as g, usuarios_granjas as ug
-    WHERE g.id_granja=ug.id_granja_pk_fk and
-          g.id_granja=?`, 
-    [idGranja,offset, config.listPerPage]
+    `SELECT avg(ug.puntuacion) as puntaje
+    FROM  usuarios_granjas as ug
+    WHERE ug.id_granja_pk_fk`
+    [idGranja]
   );
 
   var data = {};
