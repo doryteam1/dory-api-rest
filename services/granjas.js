@@ -777,7 +777,8 @@ async function esFavorita(id_granja, token){
 }/*End esFavorita*/
 
 /*__________________Calificar______________________________________________________*/
-async function calificar(id_granja, token, calificacion){  
+async function calificar(id_granja, token, puntuacion){  
+  let calificacion= puntuacion.calificacion;
   if(token && validarToken(token))
   {
     const payload=helper.parseJwt(token);  
@@ -794,11 +795,13 @@ async function calificar(id_granja, token, calificacion){
                   `UPDATE usuarios_granjas as ug SET puntuacion=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
                   [calificacion, id_granja, id_user]
                 ); 
+                return{message:"Calificación Agregada a la granja con éxito"};
               }else{      
                     await db.query(
                     `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
                     [id_granja,id_user,calificacion,null,null]
-                  );   
+                  );
+                  return{message:"Calificación de usuario agregada a la granja con éxito"};   
               } 
       }catch{
         throw createError(500,"Error al dar puntuación a la granja");
