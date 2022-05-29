@@ -13,7 +13,8 @@ async function getResenasGranja(page = 1,idGranja){
     r.usuarios_id as id_usuario, 
     r.id_granja_pk_fk as id_granja, 
     g.nombre as nombre_granja,
-    (select concat(u.nombres,u.apellidos) from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as nombre_usuario
+    (select concat(u.nombres,' ',u.apellidos) from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as nombre_usuario,
+    (select u.foto from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as foto_usuario
     FROM reseñas as r, granjas as g, usuarios_granjas as ug
     WHERE r.id_granja_pk_fk=g.id_granja and 
           g.id_granja=ug.id_granja_pk_fk and
@@ -23,16 +24,15 @@ async function getResenasGranja(page = 1,idGranja){
   );
 
   const rowspuntajes = await db.query(
-    `SELECT distinct   avg(ug.puntuacion) as puntaje
-    FROM  granjas as g, usuarios_granjas as ug
-    WHERE g.id_granja=ug.id_granja_pk_fk and
-          g.id_granja=?`, 
-    [idGranja,offset, config.listPerPage]
+    `SELECT avg(ug.puntuacion) as puntaje
+    FROM  usuarios_granjas as ug
+    WHERE ug.id_granja_pk_fk = ?`,
+    [idGranja]
   );
 
   var data = {};
   data.resenas = helper.emptyOrRows(rows);
-  data.puntaje = rowspuntajes[0];
+  data.puntaje = rowspuntajes[0].puntaje;
   data.id_granja = idGranja;
   const meta = {page};
 
