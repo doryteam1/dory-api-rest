@@ -149,7 +149,7 @@ router.put('/parcial/:id', async function(req, res, next) {
   router.put('/calificar/:idGranja', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
-         res.json(await granjas.esFavorita(req.params.idGranja,token,req.params.query));
+         res.json(await granjas.calificar(req.params.idGranja,token,req.params.query));
     } catch (err) {
          console.error(`Error al calificar la granja`, err.message);
          next(err);
