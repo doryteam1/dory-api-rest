@@ -777,8 +777,11 @@ async function esFavorita(id_granja, token){
 }/*End esFavorita*/
 
 /*__________________Calificar______________________________________________________*/
-async function calificar(id_granja, token, puntuacion){  
+async function calificar(id_granja, token, puntuacion){    
   let calificacion= puntuacion.calificacion;
+  if(puntuacion!=undefined && puntuacion!='null' && puntuacion!=null){ 
+    throw createError(400,"Se requiere la calificación a la granja");
+  }
   if(token && validarToken(token))
   {
     const payload=helper.parseJwt(token);  
