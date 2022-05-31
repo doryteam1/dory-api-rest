@@ -777,13 +777,13 @@ async function esFavorita(id_granja, token){
 }/*End esFavorita*/
 
 /*__________________Calificar______________________________________________________*/
-async function calificar(id_granja, token, puntuacion){    
-  let calificacion= puntuacion.calificacion;
-  if(puntuacion!=undefined && puntuacion!='null' && puntuacion!=null){ 
-    throw createError(400,"Se requiere la calificación a la granja");
-  }
+async function calificar(id_granja, token, body){    
+  let calificacion= body.calificacion;
   if(token && validarToken(token))
   {
+    if(calificacion===undefined || calificacion==='null' || calificacion===null || calificacion==='undefined' || calificacion === ''){ 
+      throw createError(400,"Se requiere la calificación a la granja");
+    }
     const payload=helper.parseJwt(token);  
     const id_user=payload.sub;
     try{
