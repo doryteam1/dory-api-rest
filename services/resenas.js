@@ -41,7 +41,7 @@ async function getResenasGranja(page = 1,idGranja, token){
             g.id_granja=ug.id_granja_pk_fk and
             g.id_granja=?
             LIMIT ?,?`, 
-      [idGranja,offset, config.listPerPage]
+      [idGranja,idGranja,offset, config.listPerPage]
     );
   }
       const rowspuntajes = await db.query(
