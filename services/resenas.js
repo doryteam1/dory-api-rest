@@ -36,7 +36,8 @@ async function getResenasGranja(page = 1,idGranja, token){
       r.id_granja_pk_fk as id_granja, 
       g.nombre as nombre_granja,
       (select concat(u.nombres,' ',u.apellidos) from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as nombre_usuario,
-      (select u.foto from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as foto_usuario
+      (select u.foto from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as foto_usuario, 
+      (select ug2.puntuacion  from usuarios_granjas as ug2  where  ug2.id_granja_pk_fk=? and ug2.usuarios_id=u.id) as puntuacion
       FROM reseñas as r, granjas as g, usuarios_granjas as ug
       WHERE r.id_granja_pk_fk=g.id_granja and 
             g.id_granja=ug.id_granja_pk_fk and
