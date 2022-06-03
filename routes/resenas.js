@@ -4,7 +4,7 @@ const resenas = require('../services/resenas');
 
 router.get('/granja/:idGranja', async function(req, res, next) {
   try {
-        res.json(await resenas.getResenasGranja(req.query.page,req.params.idGranja, token));
+        res.json(await resenas.getResenasGranja(req.query.page,req.params.idGranja));
   } catch (err) {
         console.error(`Error al traer las reseñas de la granja `, err.message);
         next(err);
