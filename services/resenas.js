@@ -25,8 +25,6 @@ async function getResenasGranja(page = 1,idGranja, token){
               LIMIT ?,?`, 
         [idGranja,idGranja,offset, config.listPerPage]
       );
-
-
   }else{
       rows = await db.query(
       `SELECT distinct r.id_reseña as id,
