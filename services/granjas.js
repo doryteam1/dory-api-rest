@@ -459,7 +459,7 @@ async function create(body,token){
     }
   }/*End getGranjasDepartamento*/
 
-  async function getGranjasMunicipio(page = 1,idMunicipio, token){
+  async function getGranjasMunicipio(page = 1,idMunicipio, token){/*Error ---> Subconsulta de propietarios arroja más de una fila*/
      try{
           let rows=[];
           if(token && validarToken(token)){

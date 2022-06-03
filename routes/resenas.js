@@ -47,7 +47,8 @@ router.put('/:idResena', async function(req, res, next) {
 
 router.delete('/:id', async function(req, res, next) {
     try {
-      res.json(await resenas.remove(req.params.id));
+      var token=req.headers.authorization;
+      res.json(await resenas.remove(req.params.id, token));
     } catch (err) {
       console.error(`Error al borrar la reseña del usuario`, err.message);
       next(err);
