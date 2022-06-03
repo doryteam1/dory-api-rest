@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const resenas = require('../services/resenas');
 
-
 router.get('/granja/:idGranja', async function(req, res, next) {
   try {
         res.json(await resenas.getResenasGranja(req.query.page,req.params.idGranja, token));
