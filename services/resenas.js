@@ -138,6 +138,15 @@ async function create(resena, token){
       { 
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
+            const resena = await db.query(
+              `SELECT r.usuarios_id
+              FROM reseñas as r
+              WHERE r.usuarios_id=? and r.id_reseña=?`, 
+              [id_user, idResena]
+            );
+            if(resena.length<=0){
+                    throw createError(401,"usted no esta Autorizado");
+            }
           try{
                   const rows = await db.query(
                     `SELECT r.usuarios_id
