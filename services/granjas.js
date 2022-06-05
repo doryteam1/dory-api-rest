@@ -816,7 +816,7 @@ async function calificar(id_granja, token, body){
 /*__________________getResenasGranja______________________________________________________*/
 async function getResenasGranja(idGranja){  
   const rows = await db.query(
-    `SELECT distinct r.id_reseña, r.descripcion, r.fecha, r.usuarios_id as id_usuario, r.id_granja_pk_fk as id_granja, g.nombre as nombre_granja
+    `SELECT distinct r.id_reseña, r.descripcion, r.fecha, r.usuarios_id as id_usuario, r.id_granja_pk_fk as id_granja, r.calificacion, g.nombre as nombre_granja
     FROM reseñas as r, granjas as g, usuarios_granjas as ug
     WHERE r.id_granja_pk_fk=g.id_granja and 
           g.id_granja=ug.id_granja_pk_fk and
@@ -825,9 +825,9 @@ async function getResenasGranja(idGranja){
     [idGranja]
   );
   const rowspuntajes = await db.query(
-    `SELECT distinct   avg(ug.puntuacion) as puntaje
-    FROM  granjas as g, usuarios_granjas as ug
-    WHERE g.id_granja=ug.id_granja_pk_fk and
+    `SELECT distinct   avg(r.calificacion) as puntaje
+    FROM  granjas as g, reseñas as r
+    WHERE g.id_granja=r.id_granja_pk_fk and
           g.id_granja=?
           `, 
     [idGranja]
