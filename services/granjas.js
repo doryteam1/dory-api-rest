@@ -205,16 +205,14 @@ async function create(body,token){
                         [especies[j], result[0]['insertId']]
                       );
                   }
-                }           
-                let puntuacion=0; 
+                }  
                 let esfavorita=0; 
                 let espropietario=1;
                 await conection.execute(
-                `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`, 
+                `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,esfavorita,espropietario) VALUES (?,?,?,?,?)`, 
                 [
                   result[0]['insertId'],
                   id_user,
-                  puntuacion,
                   esfavorita,
                   espropietario
                 ]
