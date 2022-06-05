@@ -535,13 +535,13 @@ async function create(body,token){
                             g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
                             g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
                           (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
-                          (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion,
                           (select ug2.esfavorita from usuarios_granjas as ug2 where ug2.id_granja_pk_fk=g.id_granja and ug2.usuarios_id=?) as favorita,
+                          (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = ?) as puntuacion,
                           (select m.nombre from municipios as m inner join granjas as gr on m.id_municipio = gr.id_municipio where gr.id_granja = g.id_granja) as nombre_municipio
                     FROM granjas as g
                     WHERE  g.id_granja=?
                           LIMIT ?,?`, 
-                    [id_user,idGranja,offset, config.listPerPage]
+                    [id_user,idGranja,idGranja,offset, config.listPerPage]
                   );                   
           }else{
                 offset = helper.getOffset(page, config.listPerPage);  
@@ -550,13 +550,13 @@ async function create(body,token){
                           g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
                           g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
                         (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
-                        (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion,
                         0 as favorita,
+                        (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = ?) as puntuacion,
                         (select m.nombre from municipios as m inner join granjas as gr on m.id_municipio = gr.id_municipio where gr.id_granja = g.id_granja) as nombre_municipio
                   FROM granjas as g
                   WHERE  g.id_granja=?
                         LIMIT ?,?`, 
-                  [idGranja,offset, config.listPerPage]
+                  [idGranja,idGranja,offset, config.listPerPage]
                 );
           }
               if(rows.length < 1){
