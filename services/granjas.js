@@ -9,11 +9,11 @@ async function getGranjaUsuario(page = 1,id_user){
       const offset = helper.getOffset(page, config.listPerPage);
       const rows = await db.query(
         `SELECT g.*, u.cedula, u.nombres, u.apellidos, u.celular,
-                (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = ?) as puntuacion 
+                (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion 
         FROM granjas as g, usuarios as u, usuarios_granjas as ug
         WHERE u.id=? and ug.usuarios_id=? and ug.espropietario=1 and g.id_granja=ug.id_granja_pk_fk
         LIMIT ?,?`, 
-        [id_user,id_user, id_user, offset, config.listPerPage]
+        [id_user, id_user, offset, config.listPerPage]
       );
       const data = [];
       if(rows.length>0){
