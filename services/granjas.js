@@ -775,7 +775,7 @@ async function esFavorita(id_granja, token){
   }
 }/*End esFavorita*/
 
-/*__________________Calificar______________________________________________________*/
+/*__________________Calificar_____________________ Sin acceso____________
 async function calificar(id_granja, token, body){    
   let calificacion= body.calificacion;
   if(token && validarToken(token))
@@ -792,7 +792,7 @@ async function calificar(id_granja, token, body){
                 where ug.usuarios_id = ? and ug.id_granja_pk_fk = ?`, 
                 [ id_user, id_granja]
               );                 
-              if(rows2.length > 0 && rows2 != undefined &&  rows2 != null){/*Usuario relacionado con la granja*/
+              if(rows2.length > 0 && rows2 != undefined &&  rows2 != null){/*Usuario relacionado con la granja/
                    await db.query(
                   `UPDATE usuarios_granjas as ug SET puntuacion=? where ug.id_granja_pk_fk = ? and ug.usuarios_id = ?`,
                   [calificacion, id_granja, id_user]
@@ -811,7 +811,7 @@ async function calificar(id_granja, token, body){
   }else{
         throw createError(401,"Usuario no autorizado");
        }
-}/*End calificar*/
+}End calificar*/
 
 /*__________________getResenasGranja______________________________________________________*/
 async function getResenasGranja(idGranja){  

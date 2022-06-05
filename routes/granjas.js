@@ -145,7 +145,7 @@ router.put('/parcial/:id', async function(req, res, next) {
          next(err);
     }
   });
-
+/*
   router.put('/calificar/:idGranja', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
@@ -154,7 +154,7 @@ router.put('/parcial/:id', async function(req, res, next) {
          console.error(`Error al calificar la granja`, err.message);
          next(err);
     }
-  });
+  });*/
 
   router.get('/resenas/:idGranja', async function(req, res, next) {
     try { 
