@@ -16,17 +16,17 @@ async function getResenasGranja(page = 1,idGranja){
         g.nombre as nombre_granja,
         (select concat(u.nombres,' ',u.apellidos) from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as nombre_usuario,
         (select u.foto from usuarios as u inner join reseñas r2 on u.id = r.usuarios_id where r2.id_reseña = r.id_reseña) as foto_usuario,
-        (select ug2.puntuacion  from usuarios_granjas as ug2  where  ug2.id_granja_pk_fk=? and ug2.usuarios_id=u.id) as puntuacion
+        r.calificacion
         FROM reseñas as r inner join granjas as g on (r.id_granja_pk_fk=g.id_granja)
                           inner join usuarios as u on (r.usuarios_id=u.id)
         WHERE  g.id_granja=?
               LIMIT ?,?`, 
-        [idGranja,idGranja,offset, config.listPerPage]
+        [idGranja,offset, config.listPerPage]
       );  
       const rowspuntajes = await db.query(
-        `SELECT avg(ug.puntuacion) as puntaje
-        FROM  usuarios_granjas as ug
-        WHERE ug.id_granja_pk_fk = ?`,
+        `SELECT avg(r.calificacion) as puntaje
+        FROM  reseñas as r
+        WHERE r.id_granja_pk_fk = ?`,
         [idGranja]
       );
       var data = {};
@@ -60,17 +60,18 @@ async function create(resena, token){
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
           try{
-                if(resena.id_granja===undefined || resena.descripcion===undefined ||  resena.fecha===undefined)
+                if(resena.id_granja===undefined || resena.descripcion===undefined ||  resena.fecha===undefined ||  resena.calificacion===undefined)
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                 const result = await db.query(
-                  `INSERT INTO reseñas(id_granja_pk_fk, usuarios_id, descripcion, fecha) VALUES (?,?,?,?)`, 
+                  `INSERT INTO reseñas(id_granja_pk_fk, usuarios_id, descripcion, fecha, calificacion) VALUES (?,?,?,?,?)`, 
                   [
                     resena.id_granja,
                     id_user,
                     resena.descripcion,
-                    resena.fecha
+                    resena.fecha,
+                    resena.calificacion
                   ]
                 );              
                 let message = 'Error creando la reseña';              
@@ -90,7 +91,7 @@ async function create(resena, token){
         if(token && validarToken(token))
         {
            try{ 
-                  if(resena.id_granja===undefined || resena.descripcion===undefined ||  resena.fecha===undefined)
+                  if(resena.id_granja===undefined || resena.descripcion===undefined ||  resena.fecha===undefined ||  resena.calificacion===undefined)
                   {
                     throw createError(400,"Se requieren todos los parámetros!");
                   }
@@ -110,13 +111,15 @@ async function create(resena, token){
                     SET id_granja_pk_fk=?,
                         usuarios_id=?,
                         descripcion=?,
-                        fecha=?
+                        fecha=?,
+                        calificacion=?
                     WHERE id_reseña=?`,
                     [
                       resena.id_granja,
                       id_user,
                       resena.descripcion,
                       resena.fecha,
+                      resena.calificacion,
                       idResena
                     ] 
                   );  

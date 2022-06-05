@@ -5,13 +5,13 @@ const config = require('../config');
 async function getMultiple(page = 1,cadena){
   const offset = helper.getOffset(page, config.listPerPage);
   let cad= '%'+cadena+'%';
- 
+ /*(select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion*/
   const rows = await db.query(
     `SELECT g.id_granja as id_granja, g.nombre, g.descripcion, g.area, g.numero_trabajadores, 
             g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
             g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda,
            (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
-           (select avg(puntuacion) from usuarios_granjas ug5, granjas g5 where g5.id_granja=ug5.id_granja_pk_fk and g.id_granja=ug5.id_granja_pk_fk) as puntuacion
+           
      FROM granjas as g
      WHERE  g.nombre like ? or
             g.descripcion like ?
