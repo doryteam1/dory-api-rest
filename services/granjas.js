@@ -62,10 +62,10 @@ async function getGranjasMayorCalificacion(page = 1,idMunicipio){
      if(idMunicipio){    
           const rows = await db.query(
             `SELECT distinctrow g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
-                                (select avg(puntuacion) from usuarios_granjas ug5 where g.id_granja=ug5.id_granja_pk_fk ) as puntuacion
-             FROM granjas as g left join  usuarios_granjas as ug on (g.id_granja=ug.id_granja_pk_fk)
+                                (select avg(r5.calificacion) from reseñas r5 where g.id_granja=r5.id_granja_pk_fk ) as puntuacion
+             FROM granjas as g left join  reseñas as r on (g.id_granja=r.id_granja_pk_fk)
              WHERE g.id_municipio=?
-             order by ug.puntuacion desc
+             order by r.calificacion desc
             LIMIT ?,?`, 
             [idMunicipio, offset, config.listPerPage]
           );
