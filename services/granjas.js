@@ -918,7 +918,6 @@ module.exports = {
   updatePhotos,
   updateParcial,
   esFavorita,
-  calificar,
   getResenasGranja,
   misFavoritas
 }
