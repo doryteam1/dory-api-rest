@@ -68,6 +68,16 @@ async function create(resena, token){
                 if (resena.calificacion>5 || resena.calificacion<1){
                   throw createError(400,"La calificación de la granja debe ser mayor a 1 y menor a 5");
                 }
+                /*consultar si el usuario tiene relación con la granja en la reseña*/
+                const validarUsuario = await db.query(
+                  `SELECT *
+                  FROM  reseñas as r
+                  WHERE r.id_granja_pk_fk = ? and r.usuarios_id=?`,
+                  [resena.id_granja, id_user]
+                );
+                if(validarUsuario.length>0){
+                  throw createError(400,"Usuario ya tiene una reseña con esa granja");
+                }
                 const result = await db.query(
                   `INSERT INTO reseñas(id_granja_pk_fk, usuarios_id, descripcion, fecha, calificacion) VALUES (?,?,?,?,?)`, 
                   [
@@ -83,8 +93,8 @@ async function create(resena, token){
                   message = {  insertId: result.insertId, message:'Reseña creada exitosamente'};
                 }              
                 return {message};
-              }catch{
-                throw createError(500,"Error Registrando la Reseña");
+              }catch(err){        
+                 throw err;
               }             
       }else{
             throw createError(401,"Usuario no autorizado");
