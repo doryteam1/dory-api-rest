@@ -64,6 +64,9 @@ async function create(resena, token){
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
+                if (resena.calificacion>5 || resena.calificacion<1){
+                  throw createError(400,"La calificación de la granja debe ser mayor a 1 y menor a 5");
+                }
                 const result = await db.query(
                   `INSERT INTO reseñas(id_granja_pk_fk, usuarios_id, descripcion, fecha, calificacion) VALUES (?,?,?,?,?)`, 
                   [
