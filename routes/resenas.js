@@ -22,7 +22,7 @@ router.get('/', async function(req, res, next) {
 
 router.get('/usuario/granja/:idGranja', async function(req, res, next) {
   try {
-    res.json(await resenas.getResenaUsuario(req.headers.authorization, req.query.idGranja));
+    res.json(await resenas.getResenaUsuario(req.headers.authorization, req.params.idGranja));
   } catch (err) {
     console.error(`Error al traer las resena del usuario de la granja ${req.query.idGranja}`, err.message);
     next(err);
