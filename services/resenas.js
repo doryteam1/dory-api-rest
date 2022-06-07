@@ -20,6 +20,7 @@ async function getResenasGranja(page = 1,idGranja){
         FROM reseñas as r inner join granjas as g on (r.id_granja_pk_fk=g.id_granja)
                           inner join usuarios as u on (r.usuarios_id=u.id)
         WHERE  g.id_granja=?
+        order by r.fecha
               LIMIT ?,?`, 
         [idGranja,offset, config.listPerPage]
       );  
