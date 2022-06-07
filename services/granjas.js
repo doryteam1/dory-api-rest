@@ -760,8 +760,8 @@ async function esFavorita(id_granja, token){
                   }
               }else{      
                     await db.query(
-                    `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,puntuacion,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
-                    [id_granja,id_user,null,1,0]
+                    `INSERT INTO usuarios_granjas(id_granja_pk_fk,usuarios_id,esfavorita,espropietario) VALUES (?,?,?,?,?)`,
+                    [id_granja,id_user,1,0]
                   ); 
                   message='Éxito en Registrar la granja a favoritas';  
               }              
