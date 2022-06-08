@@ -64,7 +64,7 @@ async function getResenaUsuario(token,idGranja){
 
     var data = {};
 
-    data.reseña = helper.emptyOrRows(rows).length == 0 ? null : rows[0];
+    data.resena = helper.emptyOrRows(rows).length == 0 ? null : rows[0];
     const meta = {};
     return {
       data,
