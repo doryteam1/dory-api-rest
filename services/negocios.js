@@ -168,15 +168,15 @@ async function createNegocio(body,token){
   }/*End eliminarNegocio*/
 
    /*_____________updatePhotosNegocio ________________________________*/
-  async function updatePhotosNegocio(idNegocio,body,token){
-    var arrayfotos= body.arrayFotos;
+  async function updatePhotosNegocio(idNegocio,body,token){  
+    var arrayfotos= body.arrayFotos;  console.log("fotos:>>>",arrayfotos);   
     let tipo_user=null;     
     const conection= await db.newConnection();
     await conection.beginTransaction();
     if(token && validarToken(token)){
         let payload=helper.parseJwt(token);
         tipo_user= payload.rol;
-        let userN= payload.sub;
+        let userN= payload.sub;          console.log("userID:>>>",userN); console.log("Negocio-ID:>>>",idNegocio);
         try{
             if(tipo_user!="Comerciante"){ 
               throw createError(401,"Usted no tiene autorización");

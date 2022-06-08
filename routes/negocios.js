@@ -53,9 +53,9 @@ router.put('/update/:idNegocio', async function(req, res, next) {
   router.put('/update/photos/:idNegocio', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
-         res.json(await granjas.updatePhotos(req.params.idNegocio,req.body,token));
+         res.json(await negocios.updatePhotosNegocio(req.params.idNegocio,req.body,token));
     } catch (err) {
-         console.error(`Error al actualizar las fotos de la granja`, err.message);
+         console.error(`Error al actualizar las fotos del negocio`, err.message);
          next(err);
     }
   });
