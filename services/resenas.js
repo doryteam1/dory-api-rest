@@ -41,6 +41,41 @@ async function getResenasGranja(page = 1,idGranja){
       }
 }/*End getResenasGranja*/
 
+
+async function getResenaUsuario(token,idGranja){     
+  let rows=[]; 
+  if(token && validarToken(token))
+  {
+    let payload = helper.parseJwt(token);
+    let userId = payload.sub;
+    rows = await db.query(
+    `SELECT  r.id_reseña as id,
+    r.descripcion,
+    r.fecha, 
+    r.usuarios_id as id_usuario, 
+    r.id_granja_pk_fk as id_granja, 
+    g.nombre as nombre_granja,
+    (select concat(u.nombres,' ',u.apellidos) from usuarios as u inner join reseñas r2 on u.id = r2.usuarios_id where r2.id_reseña = r.id_reseña) as nombre_usuario,
+    (select u.foto from usuarios as u inner join reseñas r2 on u.id = r2.usuarios_id where r2.id_reseña = r.id_reseña) as foto_usuario,
+    r.calificacion
+    FROM reseñas as r inner join granjas as g on (r.id_granja_pk_fk=g.id_granja)
+    WHERE r.id_granja_pk_fk=? and r.usuarios_id = ? `, 
+    [idGranja, userId]);
+
+    var data = {};
+
+    data.resena = helper.emptyOrRows(rows).length == 0 ? null : rows[0];
+    const meta = {};
+    return {
+      data,
+      meta
+    }
+  }else{
+    throw createError(401, 'Usuario no autorizado')
+  }  
+}/*End getResenasGranja*/
+
+
 async function getMultiple(page = 1){
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
@@ -196,5 +231,6 @@ module.exports = {
   getMultiple,
   create,
   update,
-  remove
+  remove,
+  getResenaUsuario
 }
