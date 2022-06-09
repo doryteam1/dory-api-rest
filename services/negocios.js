@@ -166,11 +166,71 @@ async function createNegocio(body,token){
       throw createError(401,"Usted no tiene autorización"); 
     }
   }/*End eliminarNegocio*/
+
+   /*_____________updatePhotosNegocio ________________________________*/
+  async function updatePhotosNegocio(idNegocio,body,token){  console.log("Cuerpo >>",body);
+    var arrayfotos= body.arrayFotos;    console.log("Cuerpo fotos >>",body.arrayFotos);
+    let tipo_user=null;     
+    const conection= await db.newConnection();
+    await conection.beginTransaction();
+    if(token && validarToken(token)){
+        let payload=helper.parseJwt(token);
+        tipo_user= payload.rol;
+        let userN= payload.sub;         
+        try{
+            if(tipo_user!="Comerciante"){ 
+              throw createError(401,"Usted no tiene autorización");
+            }else{
+                if(arrayfotos){ 
+                  try{  
+                        const negocioDeUsuario= await db.query(
+                        `SELECT *
+                        FROM negocios as n
+                        WHERE n.usuarios_id=? and n.id_negocio=? `,
+                          [userN,idNegocio]
+                        );
+                       
+                        if(negocioDeUsuario.length<0){
+                           throw createError(401,"Usuario no autorizado");
+                        }
+
+                        await db.query(
+                        `DELETE from fotosNegocios where id_negocio_fk=?`,
+                          [idNegocio]
+                        );       
+                        for(var i=0;i<arrayfotos.length;i++){
+                            await db.query(
+                              `INSERT INTO fotosNegocios(foto_negocio,id_negocio_fk) VALUES (?,?)`,
+                              [arrayfotos[i], idNegocio]
+                            );
+                        }                         
+                  }catch(err) {
+                        throw createError(400,err.message);
+                  }
+                }else{
+                  throw createError(400,"Usted no agrego las fotos para actualizarlas"); 
+                }
+          } 
+          await conection.commit(); 
+          conection.release();
+          message = "Fotos actualizadas correctamente";
+          return { message };
+        }catch (error) {
+          await conection.rollback(); 
+          conection.release();
+          throw error;
+      } 
+    }else{
+      throw createError(401,"Usuario no autorizado");
+    }
+  } //* updatePhotosNegocio */
+
   
 module.exports = {
   getMultiple, 
   createNegocio,
   updateNegocio,
   eliminarNegocio,
-  getNegocioUsuario  
+  getNegocioUsuario,
+  updatePhotosNegocio
 }
