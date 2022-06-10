@@ -178,7 +178,7 @@ async function create(resena, token){
                   }  
                   return {message};
                }catch{
-                    throw createError(500,"Error Registrando la Reseña");
+                    throw createError(500,"Error Actualizando la Reseña");
                }             
         }else{
               throw createError(401,"Usuario no autorizado");
