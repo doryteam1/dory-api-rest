@@ -139,7 +139,7 @@ async function getGranjasMenorArea(page = 1,idMunicipio){
 
 /*_____________Create Granja*________________________________*/
 async function create(body,token){
-      const conection= await db.newConnection(); console.log(body);
+      const conection= await db.newConnection(); 
       await conection.beginTransaction();      
     if(token && validarToken(token)){
           try {                   

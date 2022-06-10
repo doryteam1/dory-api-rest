@@ -89,7 +89,6 @@ router.put('/:id', async function(req, res, next) {
     }
 });
 
-
 router.delete('/:id', async function(req, res, next) {
     try {
       res.json(await asociaciones.remove(req.params.id));
@@ -98,5 +97,15 @@ router.delete('/:id', async function(req, res, next) {
       next(err);
     }
   });
+
+  router.post('/solicitud/adicion/:nit', async function(req, res, next) {
+    try {
+      var token=req.headers.authorization;
+      res.json(await asociaciones.enviarSolicitudAdicion(req.params.nit, token));
+    } catch (err) {
+      console.error(`Error al enviar la solicitud de adición a la asociación`, err.message);
+      next(err);
+    }
+});
 
 module.exports = router;

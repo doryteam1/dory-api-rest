@@ -168,8 +168,8 @@ async function createNegocio(body,token){
   }/*End eliminarNegocio*/
 
    /*_____________updatePhotosNegocio ________________________________*/
-  async function updatePhotosNegocio(idNegocio,body,token){  console.log("Cuerpo >>",body);
-    var arrayfotos= body.arrayFotos;    console.log("Cuerpo fotos >>",body.arrayFotos);
+  async function updatePhotosNegocio(idNegocio,body,token){  
+    var arrayfotos= body.arrayFotos;    
     let tipo_user=null;     
     const conection= await db.newConnection();
     await conection.beginTransaction();
