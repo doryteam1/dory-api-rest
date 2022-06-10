@@ -118,31 +118,33 @@ async function create(asociacion){
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
 
-  async function enviarSolicitudAdicion(nit, token){ console.log('fecha>>>>>>>', dayjs);
+  async function enviarSolicitudAdicion(nit, token){
+          const fecha= dayjs().format('YYYY-MM-DD')+"T"+dayjs().hour()+":"+dayjs().minute()+":"+dayjs().second();
+          let message="Error al enviar la solicitud de adición a la asociación ";  
             if(token && validarToken(token)){
                       const payload=helper.parseJwt(token); 
                       const id_user= payload.sub;
-                      const tipo_user= payload.rol;
-               try{       
-                      if(tipo_user!='Piscicultor' && tipo_user!='Pescador'){
+                      const tipo_user= payload.rol; 
+               try{      
+                      if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                           throw createError(401,"Tipo de usuario no Válido");
                       }
-                      const result = await conection.execute(
+                      const result = await db.query(
                         `INSERT INTO solicitudes (id_estado_fk,usuarios_id_fk,nit_asociacion_fk,fecha) VALUES (?,?,?,?)`, 
                         [
                           1,
                           id_user,
                           nit,
-                          null
+                          fecha
                         ]
-                        );
+                        );                      
                       if(result.affectedRows){
-                        return {message:"Solicitud de adición enviada exitosamente"};
-                      }
-                     return {message:"Error al enviar la solicitud de adición a la asociación"};
-                 }catch{
-                     throw createError(400,"Error al enviar la solicitud de adición a la asociación"); 
-                }            
+                        message="Solicitud de adición enviada exitosamente"
+                      };
+                      return {message};
+                  } catch(error){
+                     throw error; 
+                  }            
             }else{
               throw createError(401,"Usted no tiene autorización"); 
             }
