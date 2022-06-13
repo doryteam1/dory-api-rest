@@ -117,7 +117,6 @@ async function create(asociacion){
   }/*End remove*/
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
-
   async function enviarSolicitudAdicion(nit, token){
           const fecha= dayjs().format('YYYY-MM-DD')+"T"+dayjs().hour()+":"+dayjs().minute()+":"+dayjs().second();
           let message="Error al enviar la solicitud de adición a la asociación ";  
@@ -150,11 +149,46 @@ async function create(asociacion){
             }
   }/*End enviarSolicitudAdicion*/
 
+    /*------------------------------removeSolicitudAdicion---------------------------------------------*/
+    async function removeSolicitudAdicion(id_solicitud, token){
+        let message="Error al eliminar la solicitud de la asociación";  
+        if(token && validarToken(token)){
+                  const payload=helper.parseJwt(token); 
+                  const id_user= payload.sub;                 
+                  const tipo_user= payload.rol; 
+             try{      
+                    if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+                        throw createError(401,"Tipo de usuario no Válido");
+                    }
+                    const consulta = await db.query(
+                      `select * FROM solicitudes WHERE id_solicitud=? and usuarios_id_fk=?`, 
+                      [id_solicitud, id_user]
+                    );
+                    if(consulta.length <= 0){  
+                      throw createError(401,"Usuario autorizado, usted no realizo la solicitud");                  
+                    }
+                      const result = await db.query(
+                        `DELETE FROM solicitudes WHERE id_solicitud=?`, 
+                        [id_solicitud]
+                      );                     
+                    if(result.affectedRows){
+                      message="Eliminación de solicitud exitoso"
+                    };
+                    return {message};
+                } catch(error){
+                  throw error; 
+                }            
+        }else{
+          throw createError(401,"Usted no tiene autorización"); 
+        }
+}/*End removeSolicitudAdicion*/
+
 module.exports = {
   getAsociacionesDepartamento,
   getMultiple,
   create,
   update,
   remove,
-  enviarSolicitudAdicion
+  enviarSolicitudAdicion,
+  removeSolicitudAdicion
 }
