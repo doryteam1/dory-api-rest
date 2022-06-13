@@ -256,7 +256,7 @@ async function createNegocio(body,token){
             }
           const rowsfotos = await db.query(
             `SELECT fn.id_foto_negocio, fn.foto_negocio
-            FROM  fotosnegocios as fn
+            FROM  fotosNegocios as fn
             WHERE fn.id_negocio_fk =?
             `, 
           [idNegocio]
