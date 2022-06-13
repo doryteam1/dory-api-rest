@@ -225,12 +225,66 @@ async function createNegocio(body,token){
     }
   } //* updatePhotosNegocio */
 
-  
+  /*_____________getDetailNegocio ________________________________*/
+  async function getDetailNegocio(idNegocio, token){
+    try{
+      let rows=[];  
+       if(token && validarToken(token)){
+                let payload=helper.parseJwt(token);
+                id_user= payload.sub; 
+                rows = await db.query(
+                  `SELECT neg.*
+                  FROM negocios as neg
+                  WHERE   neg.usuarios_id=? and neg.id_negocio=?
+                  `, 
+                  [id_user,idNegocio]
+                ); 
+                if(rows.length < 1){
+                  throw createError(404, "Usted no tiene ningún negocio con el id "+idNegocio+".")
+                }
+        }else{
+          rows = await db.query(
+            `SELECT neg.*
+            FROM negocios as neg
+            WHERE neg.id_negocio=?
+            `, 
+            [idNegocio]
+          ); 
+        }
+            if(rows.length < 1){
+              throw createError(404, "No se encuentra el negocio con el id "+idNegocio+".")
+            }
+          const rowsfotos = await db.query(
+            `SELECT fn.id_foto_negocio, fn.foto_negocio
+            FROM  fotosnegocios as fn
+            WHERE fn.id_negocio_fk =?
+            `, 
+          [idNegocio]
+          );  
+          var arrayfotos= new Array();  
+          rowsfotos.forEach((element)=>{ 
+              arrayfotos.push(element.foto_negocio);
+          });      
+          var nuevoRows = new Array();
+          nuevoRows.push(rows[0]);
+          nuevoRows[nuevoRows.length-1].fotos_negocio=arrayfotos; 
+
+          const data = helper.emptyOrRows(nuevoRows);                      
+          return {
+            data
+          }
+    } catch(err){        
+          console.log(err);
+          throw err;
+    }
+}/*getDetailNegocio*/
+
 module.exports = {
   getMultiple, 
   createNegocio,
   updateNegocio,
   eliminarNegocio,
   getNegocioUsuario,
-  updatePhotosNegocio
+  updatePhotosNegocio,
+  getDetailNegocio
 }
