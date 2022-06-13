@@ -4,7 +4,7 @@ const negocios = require('../services/negocios');
 
 router.get('/usuario/:idUser', async function(req, res, next) {
   try {  
-    res.json(await negocios.getNegocioUsuario(req.query.page, req.params.idUser));
+    res.json(await negocios.getNegocioUsuario(req.params.idUser));
   } catch (err) {
     console.error(`Error al traer los negocios de éste usuario`, err.message);
     next(err);

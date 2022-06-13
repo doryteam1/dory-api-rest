@@ -5,21 +5,42 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
 /*_____________getNegocioUsuario ________________________________*/
-async function getNegocioUsuario(page = 1,id_user){
-      const offset = helper.getOffset(page, config.listPerPage);
+async function getNegocioUsuario(id_user){
+    try{ 
       const rows = await db.query(
-        `SELECT n.*
-        FROM negocios as n, usuarios as u
-        WHERE u.id=n.usuarios_id and n.usuarios_id=? 
-        LIMIT ?,?`, 
-        [id_user, offset, config.listPerPage]
+        `SELECT n.*, f.foto_negocio
+        FROM negocios as n left join fotosNegocios as f on (f.id_negocio_fk = n.id_negocio)
+                           inner join usuarios as u on (u.id=n.usuarios_id and n.usuarios_id=?)
+        `, 
+        [id_user]
       );
-      const data = helper.emptyOrRows(rows);      
-      const meta = {page};
+    if(rows.length<1){
+      throw createError(404,"Usuario sin negocios");
+    }
+      var arrayfotos= new Array();
+      var nuevoRows = new Array();
+      var index= rows[0].id_negocio;
+      nuevoRows.push(rows[0]);        
+      rows.forEach((element)=>{           
+        if((index == element.id_negocio))
+        { 
+          arrayfotos.push(element.foto_negocio);
+        }else { 
+                  index= element.id_negocio;
+                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+                  nuevoRows.push(element);
+                  arrayfotos=[];  
+                  arrayfotos.push(element.foto_negocio);
+        }
+      });
+      nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
+      const data = helper.emptyOrRows(nuevoRows);  
       return {
-        data,
-        meta
+        data
       }
+    }catch(err){
+      throw err;
+    }
 }/*End getNegocioUsuario*/
 
 /*_____________getMultiple ________________________________*/
@@ -94,10 +115,11 @@ async function createNegocio(body,token){
       try { 
             if(body.nombre_negocio===undefined || 
               body.descripcion_negocio===undefined ||
-              body.imagen===undefined || 
               body.id_departamento===undefined || 
               body.id_municipio===undefined || 
-              body.direccion===undefined 
+              body.direccion===undefined ||
+              body.latitud===undefined || 
+              body.longitud===undefined 
              )
             {
               throw createError(400,"Se requieren todos los parámetros!");
@@ -110,7 +132,9 @@ async function createNegocio(body,token){
                    usuarios_id=?,
                    id_departamento=?,
                    id_municipio=?,
-                   direccion=?
+                   direccion=?,
+                   latitud=?,
+                   longitud=?
                WHERE id_negocio=?`,
                [
                 body.nombre_negocio,
@@ -120,6 +144,8 @@ async function createNegocio(body,token){
                 body.id_departamento,
                 body.id_municipio,
                 body.direccion,
+                body.latitud,
+                body.longitud,
                 idNegocio
                ] 
             );          
