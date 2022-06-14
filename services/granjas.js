@@ -847,7 +847,7 @@ async function misFavoritas(token){
         const id_user=payload.sub;
         try{
                 const rows = await db.query(
-                  `SELECT concat(u.nombres,' ', u.apellidos) as dueño, g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,
+                  `SELECT concat(u.nombres,' ', u.apellidos) as propietario, g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,
                             g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, 
                             g.id_vereda, g.corregimiento_vereda,ug.usuarios_id, ug.esfavorita, ug.espropietario, 
                             (select count(*) from reseñas as r where g.id_granja=r.id_granja_pk_fk) as cantidad_resenas,
