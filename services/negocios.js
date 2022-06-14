@@ -85,7 +85,10 @@ async function createNegocio(body,token){
                     ]
                 ); 
                 if (result.affectedRows) {              
-                    return {message:'Negocio creado exitosamente'};
+                    return {
+                            message:'Negocio creado exitosamente', 
+                            insertId:result[0]['insertId']
+                    };
                 }
                    throw createError(500,"Se presento un problema al registrar el negocio");
           }catch (error) {
