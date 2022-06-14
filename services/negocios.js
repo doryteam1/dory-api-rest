@@ -175,7 +175,12 @@ async function createNegocio(body,token){
             if(rows.length<=0){
               return {message:'Usted no tiene autorización para éste proceso'};
             }
-          try {               
+          try { 
+            
+                await db.query(
+                  `DELETE FROM fotosNegocios WHERE id_negocio_fk=?`, 
+                  [id_negocio]
+                );
                 const result = await db.query(
                   `DELETE FROM negocios WHERE id_negocio=?`, 
                   [id_negocio]
