@@ -20,7 +20,7 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.post('/', async function(req, res, next) {
+router.post('/', async function(req, res, next){
     try {
           var token=req.headers.authorization;
           res.json(await negocios.createNegocio(req.body,token));
