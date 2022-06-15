@@ -443,8 +443,8 @@ async function misConsumos(token){
           const id_user=payload.sub;
           try{
                 const rows = await db.query(
-                  `SELECT eu.id_especie_pk_fk, eu.cantidad_consumo
-                  FROM especies_usuarios as eu
+                  `SELECT e.nombre, eu.cantidad_consumo
+                  FROM especies_usuarios as eu left join especies e on (eu.id_especie_pk_fk=e.id_especie)
                   WHERE  eu.usuarios_id=?
                   `, 
                   [id_user]
@@ -463,7 +463,6 @@ async function misConsumos(token){
       throw createError(401,"Usted no tiene autorización"); 
     }
 }/*End misConsumos*/
-
 
 module.exports = {
   getUserId,
