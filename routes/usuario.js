@@ -39,7 +39,6 @@ router.put('/total/:idUser', async function(req, res, next) {
   }
 });/*De usuarios update */
 
-
 router.put('/update/password', async function(req, res, next) {
   try {
     res.json(await usuario.updatePassword(req.body));
@@ -92,6 +91,16 @@ router.delete('/:idUser', async function(req, res, next) {
   } catch (err) {
     console.error(`Error al borrar el usuario`, err.message);
     next(err);
+  }
+});
+
+router.get('/misconsumos', async function(req, res, next) {
+  try {
+        var token=req.headers.authorization;
+        res.json(await usuario.misConsumos(token));
+  } catch (err) {
+        console.error(`Error al mostrar los consumos del usuario`, err.message);
+        next(err);
   }
 });
 

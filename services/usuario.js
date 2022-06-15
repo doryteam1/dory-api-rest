@@ -437,6 +437,33 @@ async function verifyAccount(body){
     }
 }/*End verifyAccount*/
 
+async function misConsumos(token){
+      if(token && validarToken(token)){
+          const payload=helper.parseJwt(token);
+          const id_user=payload.sub;
+          try{
+                const rows = await db.query(
+                  `SELECT eu.id_especie_pk_fk, eu.cantidad_consumo
+                  FROM especies_usuarios as eu
+                  WHERE  eu.usuarios_id=?
+                  `, 
+                  [id_user]
+                );
+                if(rows.length<1){
+                  throw createError(404,"Usted no tiene ningún consumo");
+                }
+                const data = helper.emptyOrRows(rows);  
+                return {
+                  data
+                }
+          }catch(err){
+            throw err;
+          }
+    }else{
+      throw createError(401,"Usted no tiene autorización"); 
+    }
+}/*End misConsumos*/
+
 
 module.exports = {
   getUserId,
@@ -448,5 +475,6 @@ module.exports = {
   updatePassword,
   recoverPassword,
   changePassword,
-  verifyAccount
+  verifyAccount,
+  misConsumos
 }
