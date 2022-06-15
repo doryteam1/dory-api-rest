@@ -441,7 +441,11 @@ async function misConsumos(token){
       if(token && validarToken(token)){
           const payload=helper.parseJwt(token);
           const id_user=payload.sub;
+          const tipo_user=payload.rol;
           try{
+               if(tipo_user!='Comerciante'){
+                      throw createError(401,"Usted no esta autorizado por no ser consumidor");
+               }
                 const rows = await db.query(
                   `SELECT e.nombre, eu.cantidad_consumo
                   FROM especies_usuarios as eu left join especies e on (eu.id_especie_pk_fk=e.id_especie)
