@@ -309,6 +309,61 @@ async function createNegocio(body,token){
     }
 }/*getDetailNegocio*/
 
+
+/*------------------------------updateParcialNegocio-------------------------------------------------*/
+async function updateParcialNegocio(idNegocio, negocio, token){
+  
+  if(token && validarToken(token))
+  {
+    const payload=helper.parseJwt(token);  
+    const id_user=payload.sub;
+    const rol = payload.rol;
+    if(rol != "Comerciante"){
+      throw createError('401', "Usted no es un usuario Comerciante. No esta autorizado para actualizar el negocio.")
+    }      
+    const rows2 = await db.query(
+      `select neg.*
+       from negocios as neg
+       where neg.usuarios_id = ? and neg.id_negocio = ? `, 
+      [
+        id_user,
+        idNegocio
+      ]
+    );
+    if(rows2.length < 1 ){
+      throw createError('401', 'El usuario no es propietario del negocio y no esta autorizado para actualizarla.')
+    }
+   /* delete negocio.password; */
+    var atributos = Object.keys(negocio);   
+    if(atributos.length!=0)
+    {    
+      var params = Object.values(negocio);   
+      var query = "update negocios set ";
+      params.push(idNegocio);
+
+      for(var i=0; i < atributos.length; i++) {
+        query = query + atributos[i] + '=?,';
+      }
+      query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+      query = query +' '+'where id_negocio=?'
+
+      const result = await db.query(query,params);
+    
+      let message = '';
+      if (result.affectedRows) {
+        message = 'Negocio actualizado exitosamente';
+      }else{
+        throw createError(500,"No se pudo actualizar el registro del negocio");    
+      }
+      return {message};
+    }
+    throw createError(400,"No hay parametros para actualizar");
+}else{
+  throw createError(401,"Usuario no autorizado");
+}
+}/*End updateParcialNegocio*/
+
+
 module.exports = {
   getMultiple, 
   createNegocio,
@@ -316,5 +371,6 @@ module.exports = {
   eliminarNegocio,
   getNegocioUsuario,
   updatePhotosNegocio,
-  getDetailNegocio
+  getDetailNegocio,
+  updateParcialNegocio
 }

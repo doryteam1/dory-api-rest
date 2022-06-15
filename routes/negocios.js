@@ -70,4 +70,14 @@ router.put('/update/:idNegocio', async function(req, res, next) {
     }
   });
 
+  router.put('/parcial/:idNegocio', async function(req, res, next) {
+    try {
+         var token=req.headers.authorization;
+         res.json(await negocios.updateParcialNegocio(req.params.idNegocio, req.body,token));
+    } catch (err) {
+         console.error(`Error al actualizar el negocio parcialmente`, err.message);
+         next(err);
+    }
+  });
+
 module.exports = router;
