@@ -4,7 +4,8 @@ const asociaciones = require('../services/asociaciones');
 
 router.get('/', async function(req, res, next) {
   try {
-    res.json(await asociaciones.getMultiple(req.query.page));
+    var token=req.headers.authorization;
+    res.json(await asociaciones.getMultiple(req.query.page,token));
   } catch (err) {
     console.error(`Error al traer las asociaciones `, err.message);
     next(err);

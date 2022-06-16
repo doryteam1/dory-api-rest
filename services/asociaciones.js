@@ -5,20 +5,20 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 const dayjs = require('dayjs');
 
-async function getAsociacionesDepartamento(page = 1, idDepartamento){
+async function getAsociacionesDepartamento(page = 1, idDepartamento){  
         const offset = helper.getOffset(page, config.listPerPage);
         const rows = await db.query(
-      `SELECT distinctrow  m.id_municipio, m.nombre, m.poblacion,
-          (SELECT count(*) 
-          FROM municipios m1, asociaciones a1
-          WHERE m1.id_municipio=a1.id_municipio and  m1.id_municipio=m.id_municipio ) as count_asociaciones
-      FROM  asociaciones as a, municipios as m, corregimientos as c,veredas as v, departamentos as d
-      WHERE ( m.id_departamento_fk=d.id_departamento) and 
-            (m.id_municipio=a.id_municipio or c.id_municipio=a.id_municipio or v.id_municipio=a.id_municipio)  and
-            d.id_departamento=?
-            LIMIT ?,?`, 
-          [idDepartamento, offset, config.listPerPage]
-     );
+        `SELECT distinctrow  m.id_municipio, m.nombre, m.poblacion,
+            (SELECT count(*) 
+            FROM municipios m1, asociaciones a1
+            WHERE m1.id_municipio=a1.id_municipio and  m1.id_municipio=m.id_municipio ) as count_asociaciones
+        FROM  asociaciones as a, municipios as m, corregimientos as c,veredas as v, departamentos as d
+        WHERE ( m.id_departamento_fk=d.id_departamento) and 
+              (m.id_municipio=a.id_municipio or c.id_municipio=a.id_municipio or v.id_municipio=a.id_municipio)  and
+              d.id_departamento=?
+              LIMIT ?,?`, 
+            [idDepartamento, offset, config.listPerPage]
+       );
         const data = helper.emptyOrRows(rows);
         const meta = {page};
         return {
@@ -28,18 +28,27 @@ async function getAsociacionesDepartamento(page = 1, idDepartamento){
 }/*End GetAsociacionesDepartamento*/
 
 /*--------------------getMultiple-------------------------------------*/
-async function getMultiple(page = 1){
-  const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
-    `SELECT * FROM asociaciones LIMIT ?,?`, 
-    [offset, config.listPerPage]
-  );
-  const data = helper.emptyOrRows(rows);
-  const meta = {page};
-  return {
-    data,
-    meta
-  }
+async function getMultiple(page = 1, token){
+      if(token && validarToken(token)){ 
+        const payload=helper.parseJwt(token); 
+        const id_user= payload.sub;  
+                const offset = helper.getOffset(page, config.listPerPage);
+                const rows = await db.query(
+                  `SELECT * 
+                  FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk)
+                  WHERE au.usuarios_id=?
+                   LIMIT ?,?`, 
+                  [id_user,offset, config.listPerPage]
+                );
+                const data = helper.emptyOrRows(rows);
+                const meta = {page};
+                return {
+                  data,
+                  meta
+                }
+        }else{
+          throw createError(401,"Usted no tiene autorización"); 
+        }
 }/*End getMultiple*/
 
 /*-------------------------create-----------------------*/
