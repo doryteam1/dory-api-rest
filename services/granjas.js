@@ -209,7 +209,7 @@ async function create(body,token){
                 let esfavorita=0; 
                 let espropietario=1;
                 await conection.execute(
-                `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,esfavorita,espropietario) VALUES (?,?,?,?,?)`, 
+                `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,esfavorita,espropietario) VALUES (?,?,?,?)`, 
                 [
                   result[0]['insertId'],
                   id_user,
