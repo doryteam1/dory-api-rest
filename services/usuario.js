@@ -468,6 +468,55 @@ async function misConsumos(token){
     }
 }/*End misConsumos*/
 
+async function updateMisconsumos(body, token){
+    var arrayconsumos= body.arrayConsumos;     console.log("Mis Consumos>>>",arrayconsumos);
+    let tipo_user=null; 
+    let id_user=null; 
+    const conection= await db.newConnection();
+    await conection.beginTransaction();
+    if(token && validarToken(token)){
+        let payload=helper.parseJwt(token);
+        id_user=payload.sub; 
+        tipo_user= payload.rol;
+        try{
+            if(tipo_user!="Consumidor"){ 
+              throw createError(401,"Usted no tiene autorización");
+            }else{
+                if(arrayconsumos){ 
+                  try{
+                        await conection.execute(
+                        `DELETE from especies_usuarios where usuarios_id=?`,
+                          [id_user]
+                        );       
+                        for(var i=0;i<arrayconsumos.length;i++){  
+                              await conection.execute(
+                              `INSERT INTO especies_usuarios(id_especie_pk_fk,usuarios_id,cantidad_consumo) VALUES (?,?,?)`,
+                              [arrayconsumos[i].id_especie, id_user, arrayconsumos[i].cantidad_consumo]
+                            );
+                        }                                           
+                      }catch(err) {
+                        throw err;
+                      }
+                }else{
+                  throw createError(400,"Usted no agrego los consumos para actualizar"); 
+                }
+          } 
+          await conection.commit(); 
+          conection.release();
+          message = "Consumo de usuario actualizada correctamente";
+          return { message };
+        }catch (error) {
+          await conection.rollback(); 
+          conection.release();
+          throw error;
+        } 
+    }else{
+      throw createError(401,"Usuario no autorizado");
+    }
+  }/*End updateMisconsumos*/
+
+
+
 module.exports = {
   getUserId,
   getMultiple,
@@ -479,5 +528,6 @@ module.exports = {
   recoverPassword,
   changePassword,
   verifyAccount,
-  misConsumos
+  misConsumos,
+  updateMisconsumos
 }

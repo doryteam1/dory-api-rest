@@ -80,9 +80,9 @@ router.post('/', async function(req, res, next) {
   });
 
 
-router.put('/:id', async function(req, res, next) {
+router.put('/:nit', async function(req, res, next) {
     try {
-      res.json(await asociaciones.update(req.params.id, req.body));
+      res.json(await asociaciones.update(req.params.nit, req.body));
     } catch (err) {
       console.error(`Error al actualizar la asociación`, err.message);
       next(err);

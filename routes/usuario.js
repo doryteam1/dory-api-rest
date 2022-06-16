@@ -104,4 +104,14 @@ router.get('/misconsumos', async function(req, res, next) {
   }
 });
 
+router.put('/update/misconsumos', async function(req, res, next) {
+  try {
+        var token=req.headers.authorization;
+        res.json(await usuario.updateMisconsumos(req.body,token));
+  } catch (err) {
+        console.error(`Error al actualizar los consumos del usuario`, err.message);
+        next(err);
+  }
+});
+
 module.exports = router;
