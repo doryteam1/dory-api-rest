@@ -443,7 +443,7 @@ async function misConsumos(token){
           const id_user=payload.sub;
           const tipo_user=payload.rol;
           try{
-               if(tipo_user!='Comerciante'){
+               if(tipo_user!='Consumidor'){
                       throw createError(401,"Usted no esta autorizado por no ser consumidor");
                }
                 const rows = await db.query(
