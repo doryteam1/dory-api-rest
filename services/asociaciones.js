@@ -117,7 +117,17 @@ async function create(asociacion){
   }/*End remove*/
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
-  async function enviarSolicitudAdicion(nit, token){
+  async function enviarSolicitudAdicion(nit, token,body){
+         var id_sender= 0;
+         if(!body.quienEnvia || (body.quienEnvia!='usuario' && body.quienEnvia!='asociacion')){
+                       throw createError(400,"No ha enviado la información correcta"); 
+         }else{
+            if(body.quienEnvia!='usuario'){
+                id_sender=2;
+            }else{ 
+              id_sender=1;
+            }
+         }    
           const fecha= dayjs().format('YYYY-MM-DD')+"T"+dayjs().hour()+":"+dayjs().minute()+":"+dayjs().second();
           let message="Error al enviar la solicitud de adición a la asociación ";  
             if(token && validarToken(token)){
@@ -129,10 +139,11 @@ async function create(asociacion){
                           throw createError(401,"Tipo de usuario no Válido");
                       }
                       const result = await db.query(
-                        `INSERT INTO solicitudes (id_estado_fk,usuarios_id_fk,nit_asociacion_fk,fecha) VALUES (?,?,?,?)`, 
+                        `INSERT INTO solicitudes (id_estado_fk,usuarios_id_fk,id_sender_solicitud,nit_asociacion_fk,fecha) VALUES (?,?,?,?,?)`, 
                         [
                           1,
                           id_user,
+                          id_sender,
                           nit,
                           fecha
                         ]
