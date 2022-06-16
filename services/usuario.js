@@ -469,7 +469,7 @@ async function misConsumos(token){
 }/*End misConsumos*/
 
 async function updateMisconsumos(body, token){
-    var arrayconsumos= body.arrayConsumos;     console.log("Mis Consumos>>>",arrayconsumos);
+    var arrayconsumos= body.arrayConsumos;     
     let tipo_user=null; 
     let id_user=null; 
     const conection= await db.newConnection();
@@ -514,8 +514,6 @@ async function updateMisconsumos(body, token){
       throw createError(401,"Usuario no autorizado");
     }
   }/*End updateMisconsumos*/
-
-
 
 module.exports = {
   getUserId,
