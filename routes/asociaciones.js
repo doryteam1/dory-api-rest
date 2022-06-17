@@ -73,7 +73,8 @@ router.get('/departamento/:idDepartamento', async function(req, res, next) {
 
 router.post('/', async function(req, res, next) {
     try {
-      res.json(await asociaciones.create(req.body));
+      var token=req.headers.authorization;
+      res.json(await asociaciones.create(req.body,token));
     } catch (err) {
       console.error(`Error creando la asociación`, err.message);
       next(err);
@@ -83,7 +84,8 @@ router.post('/', async function(req, res, next) {
 
 router.put('/:nit', async function(req, res, next) {
     try {
-      res.json(await asociaciones.update(req.params.nit, req.body));
+      var token=req.headers.authorization;
+      res.json(await asociaciones.update(req.params.nit, req.body,token));
     } catch (err) {
       console.error(`Error al actualizar la asociación`, err.message);
       next(err);
@@ -92,7 +94,8 @@ router.put('/:nit', async function(req, res, next) {
 
 router.delete('/:id', async function(req, res, next) {
     try {
-      res.json(await asociaciones.remove(req.params.id));
+      var token=req.headers.authorization;
+      res.json(await asociaciones.remove(req.params.id,token));
     } catch (err) {
       console.error(`Error al borrar la asociación`, err.message);
       next(err);

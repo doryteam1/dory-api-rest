@@ -52,77 +52,169 @@ async function getMultiple(page = 1, token){
 }/*End getMultiple*/
 
 /*-------------------------create-----------------------*/
-async function create(asociacion){
-    const result = await db.query(
-      `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,id_corregimiento,id_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, 
-      [
-        asociacion.nit,
-        asociacion.nombre,
-        asociacion.direccion,
-        asociacion.legalconstituida,
-        asociacion.fecha_renovacion_camarac,
-        asociacion.foto_camarac,
-        asociacion.id_tipo_asociacion_fk,
-        asociacion.id_departamento,
-        asociacion.id_municipio,
-        asociacion.id_corregimiento,
-        asociacion.id_vereda
-      ]
-    );  
-    let message = 'Error creando asociacion';
-    if (result.affectedRows) {
-      message = {  insertId: result.insertId, message:'asociacion creada exitosamente'};
-    }
-    return {message};
+async function create(asociacion,token){
+          if(token && validarToken(token)){ 
+                    const payload=helper.parseJwt(token);                             
+                    const tipo_user= payload.rol; 
+              try{      
+                  if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+                      throw createError(401,"Tipo de usuario no Válido");
+                  }
+                          if(asociacion.nit===undefined ||
+                              asociacion.nombre===undefined ||                           
+                              asociacion.direccion===undefined ||
+                              asociacion.legalconstituida===undefined || 
+                              asociacion.fecha_renovacion_camarac===undefined || 
+                              asociacion.foto_camarac===undefined ||
+                              asociacion.id_tipo_asociacion_fk === undefined ||
+                              asociacion.id_departamento === undefined ||
+                              asociacion.id_municipio === undefined ||
+                              asociacion.id_corregimiento === undefined ||
+                              asociacion.id_vereda === undefined )
+                          {
+                            throw createError(400,"Se requieren todos los parámetros!");
+                          }
+                          const result = await db.query(
+                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,id_corregimiento,id_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, 
+                            [
+                              asociacion.nit,
+                              asociacion.nombre,
+                              asociacion.direccion,
+                              asociacion.legalconstituida,
+                              asociacion.fecha_renovacion_camarac,
+                              asociacion.foto_camarac,
+                              asociacion.id_tipo_asociacion_fk,
+                              asociacion.id_departamento,
+                              asociacion.id_municipio,
+                              asociacion.id_corregimiento,
+                              asociacion.id_vereda
+                            ]
+                          );  
+                          let message = 'Error creando asociacion';
+                          if (result.affectedRows) {
+                            message = {  insertId: result.insertId, message:'asociacion creada exitosamente'};
+                          }
+                          return {message};
+                  } catch(error){
+                         throw error; 
+                  }
+            }else{
+              throw createError(401,"Usted no tiene autorización"); 
+            }
   }/*End create*/
 
   /*_----------------------------------update--------------------------------*/
-  async function update(nit, asociacion){
-    const result = await db.query(
-      `UPDATE asociaciones 
-       SET nombre=?,
-           direccion=?,
-           legalconstituida=?,
-           fecha_renovacion_camarac=?,
-           foto_camarac=?,
-           id_tipo_asociacion_fk=?,
-           id_departamento=?, 
-           id_municipio=?,
-           id_corregimiento=?,
-           id_vereda=?
-       WHERE nit=?`,
-       [
-        asociacion.nombre,
-        asociacion.direccion,
-        asociacion.legalconstituida,
-        asociacion.fecha_renovacion_camarac,
-        asociacion.foto_camarac,
-        asociacion.id_tipo_asociacion_fk,
-        asociacion.id_departamento,
-        asociacion.id_municipio,
-        asociacion.id_corregimiento,
-        asociacion.id_vereda,
-        nit
-       ] 
-    );
-    let message = 'Error actualizando asociación';
-    if (result.affectedRows) {
-      message = 'Asociacion actualizada exitosamente';
-    }
-    return {message};
+  async function update(nit, asociacion,token){
+          if(token && validarToken(token)){ 
+            const payload=helper.parseJwt(token);                             
+            const tipo_user= payload.rol; 
+            const id_user=payload.sub;
+              try{      
+                if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+                    throw createError(401,"Tipo de usuario no Válido");
+                }
+                        if( asociacion.nombre===undefined ||                           
+                            asociacion.direccion===undefined ||
+                            asociacion.legalconstituida===undefined || 
+                            asociacion.fecha_renovacion_camarac===undefined || 
+                            asociacion.foto_camarac===undefined ||
+                            asociacion.id_tipo_asociacion_fk === undefined ||
+                            asociacion.id_departamento === undefined ||
+                            asociacion.id_municipio === undefined ||
+                            asociacion.id_corregimiento === undefined ||
+                            asociacion.id_vereda === undefined )
+                        {
+                          throw createError(400,"Se requieren todos los parámetros!");
+                        }
+                        const rows = await db.query(
+                          `SELECT * 
+                          FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk and a.nit=?)
+                          WHERE au.usuarios_id=?
+                           LIMIT ?,?`, 
+                          [nit,id_user,offset, config.listPerPage]
+                        );
+                    if(rows.length<1){
+                         throw createError(401,"Usted no tiene autorización para actualizar la asociación"); 
+                    }
+                  const result = await db.query(
+                    `UPDATE asociaciones 
+                     SET nombre=?,
+                        direccion=?,
+                        legalconstituida=?,
+                        fecha_renovacion_camarac=?,
+                        foto_camarac=?,
+                        id_tipo_asociacion_fk=?,
+                        id_departamento=?, 
+                        id_municipio=?,
+                        id_corregimiento=?,
+                        id_vereda=?
+                    WHERE nit=?`,
+                    [
+                      asociacion.nombre,
+                      asociacion.direccion,
+                      asociacion.legalconstituida,
+                      asociacion.fecha_renovacion_camarac,
+                      asociacion.foto_camarac,
+                      asociacion.id_tipo_asociacion_fk,
+                      asociacion.id_departamento,
+                      asociacion.id_municipio,
+                      asociacion.id_corregimiento,
+                      asociacion.id_vereda,
+                      nit
+                    ] 
+                  );
+                  let message = 'Error actualizando asociación';
+                  if (result.affectedRows) {
+                    message = 'Asociacion actualizada exitosamente';
+                  }
+                  return {message};
+                } catch(error){
+                       throw error; 
+                }
+          }else{
+            throw createError(401,"Usted no tiene autorización"); 
+          }
   }/*End update*/
   
   /*----------------------------------------remove-------------------------------------------*/
-  async function remove(nit){
-    const result = await db.query(
-      `DELETE FROM asociaciones WHERE nit=?`, 
-      [nit]
-    );
-    let message = 'Error borrando asociacion';  
-    if (result.affectedRows) {
-      message = 'Asociación borrada exitosamente';
-    }  
-    return {message};
+  async function remove(nit,token){
+    if(token && validarToken(token)){ 
+        const payload=helper.parseJwt(token);                             
+        const tipo_user= payload.rol;
+        const id_user= payload.sub; 
+        try{      
+                  if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+                      throw createError(401,"Tipo de usuario no Válido");
+                  }
+                  if(nit!=undefined && id_user!=undefined && nit!=null && id_user!=null){ 
+                            const rows = await db.query(
+                              `SELECT * 
+                              FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk and a.nit=?)
+                              WHERE au.usuarios_id=?
+                              LIMIT ?,?`, 
+                              [nit,id_user,offset, config.listPerPage]
+                            );
+                        if(rows.length<1){
+                            throw createError(401,"Usted no tiene autorización para eliminar la asociación"); 
+                        }
+                        const result = await db.query(
+                        `DELETE FROM asociaciones WHERE nit=?`, 
+                        [nit]
+                        );
+                        let message = 'Error borrando asociacion';  
+                        if (result.affectedRows) {
+                          message = 'Asociación borrada exitosamente';
+                        }  
+                          return {message};
+                  }else{
+                    throw createError(402,"Parámetros ingresados erroneamente");
+                  }
+            } catch(error){
+                        throw error; 
+            }
+     }else{
+       throw createError(401,"Usted no tiene autorización"); 
+     }
   }/*End remove*/
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
