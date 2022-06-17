@@ -9,8 +9,8 @@ async function getNegocioUsuario(id_user){
     try{ 
       const rows = await db.query(
         `SELECT n.*, f.foto_negocio,
-        select m.nombre from municipio as m where m.id_municipio = n.id_municipio as nombre_municipio, 
-        select d.nombre_departamento from departamento as d where d.id_departamento = n.id_departamento as nombre_departamento
+        (select m.nombre from municipio as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
+        (select d.nombre_departamento from departamento as d where d.id_departamento = n.id_departamento) as nombre_departamento
         FROM negocios as n left join fotosNegocios as f on (f.id_negocio_fk = n.id_negocio)
                            inner join usuarios as u on (u.id=n.usuarios_id and n.usuarios_id=?)
         `, 
