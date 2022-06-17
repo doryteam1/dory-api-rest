@@ -47,7 +47,11 @@ async function getNegocioUsuario(id_user){
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT * FROM negocios LIMIT ?,?`, 
+    `select *,
+     select m.nombre from municipio as m where m.id_municipio = n.id_municipio as nombre_municipio, 
+     select d.nombre_departamento from departamento as d where d.id_departamento = n.id_departamento as nombre_departamento
+     from negocios as n
+    LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
   const data = helper.emptyOrRows(rows);
