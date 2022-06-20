@@ -255,9 +255,10 @@ async function create(body,token){
                body.longitud === undefined ||
                body.id_corregimiento === undefined ||
                body.id_vereda === undefined ||
-               idGranja === undefined ||
                body.corregimiento_vereda === undefined ||
-               body.informacion_adicional_direccion=== undefined)
+               body.informacion_adicional_direccion=== undefined ||
+               idGranja === undefined 
+               )
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
