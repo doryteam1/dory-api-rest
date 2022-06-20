@@ -276,7 +276,7 @@ async function create(body,token){
                   id_corregimiento=? ,
                   id_vereda=?,
                   corregimiento_vereda=?,
-                  body.informacion_adicional_direccion=?
+                  informacion_adicional_direccion=?
               WHERE id_granja=?`,
               [
                   body.nombre_granja,
