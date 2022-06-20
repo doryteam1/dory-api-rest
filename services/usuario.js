@@ -17,7 +17,7 @@ async function getUserId(page = 1, idUser){
                           (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
                           (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
                           (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
-                          u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi
+                          u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion
       FROM tipos_usuarios as tu, usuarios as u
       WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
             u.id=?
@@ -38,7 +38,7 @@ async function getMultiple(page = 1){
     `SELECT u.id, u.cedula,u.nombres, u.apellidos,u.celular,u.direccion,u.email,u.id_tipo_usuario,u.id_area_experticia,
             u.nombre_negocio,u.foto,u.fecha_registro,u.fecha_nacimiento,
             u.id_departamento,u.id_municipio,u.id_corregimiento,u.id_vereda,
-            u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi
+            u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion
      FROM usuarios as u 
      LIMIT ?,?`, 
     [offset, config.listPerPage]
@@ -92,7 +92,7 @@ let message='Registro fallido';
   }
     try{
       const result = await db.query(
-        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud,estaVerificado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud,estaVerificado, otra_area_experticia, otra_area_experticia_descripcion, sobre_mi,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
         [
           usuario.cedula,
           usuario.nombres, 
@@ -113,7 +113,11 @@ let message='Registro fallido';
           usuario.id_vereda,
           usuario.latitud,
           usuario.longitud,
-          usuario.estaVerificado         
+          usuario.estaVerificado,
+          usuario.otra_area_experticia,
+          usuario.otra_area_experticia_descripcion,
+          usuario.sobre_mi,
+          usuario.informacion_adicional_direccion         
         ]
       );
       if (result.affectedRows) {
@@ -155,7 +159,11 @@ async function update(id, usuario){
     usuario.id_corregimiento!= undefined  &&
     usuario.id_vereda!= undefined  &&
     usuario.latitud!= undefined  &&
-    usuario.longitud!= undefined ){
+    usuario.longitud!= undefined &&
+    usuario.otra_area_experticia!= undefined  &&
+    usuario.otra_area_experticia_descripcion!= undefined  &&
+    usuario.sobre_mi!= undefined  &&
+    usuario.informacion_adicional_direccion!= undefined){
 
   const result = await db.query(
   `UPDATE usuarios
@@ -176,7 +184,11 @@ async function update(id, usuario){
         id_corregimiento=?,
         id_vereda=?,
         latitud=?,
-        longitud=?
+        longitud=?,
+        otra_area_experticia=?,
+        otra_area_experticia_descripcion=?,
+        sobre_mi=?,
+        informacion_adicional_direccion=?
    WHERE id=?`,
    [
     usuario.cedula,
@@ -197,6 +209,10 @@ async function update(id, usuario){
     usuario.id_vereda,
     usuario.latitud,
     usuario.longitud,
+    usuario.otra_area_experticia,
+    usuario.otra_area_experticia_descripcion,
+    usuario.sobre_mi,
+    usuario.informacion_adicional_direccion,
     id
    ] 
   );
@@ -221,38 +237,28 @@ async function update(id, usuario){
       `DELETE FROM usuarios WHERE id=?`, 
       [idUser]
     );
-  
     let message = 'Error borrando el registro del usuario';
-  
     if (result.affectedRows) {
       message = 'Usuario borrado exitosamente';
     }
-  
     return {message};
   }/*End Remove*/
 
   
 /* ----------------------------------UPDATE PARCIAL DEL USUARIO-----------------------------*/
-async function updateParcialUsuario(id, usuario){
-  
+async function updateParcialUsuario(id, usuario){  
       delete usuario.password; 
       var atributos=Object.keys(usuario); /*Arreglo de los keys del usuario*/ 
-
       if (atributos.length!=0){    
           var param=Object.values(usuario);
           var query = "UPDATE usuarios SET ";
           param.push(id);/*Agrego el id al final de los parametros*/ 
-
       for(var i=0; i<atributos.length;i++) {
-        query= query+atributos[i]+'=?,';
-      }
+        query= query+atributos[i]+'=?,';      }
       query= query.substring(0, query.length-1);/*eliminar la coma final*/ 
       query= query+' '+'WHERE id=?'
-
-      const result = await db.query(query,param);
-    
-      let message = 'Error actualizando el registro del usuario';
-    
+      const result = await db.query(query,param);    
+      let message = 'Error actualizando el registro del usuario';    
       if (result.affectedRows) {
         message = 'Usuario actualizado exitosamente';
       }
@@ -263,12 +269,10 @@ async function updateParcialUsuario(id, usuario){
 
  /*-------------------------------------updatePassword---------------------------------*/  
 async function updatePassword(datos){
-
   const{newPassword,token,}=datos;
   let message = 'Error al actualizar Password de usuario';
   const payload=helper.parseJwt(token);/*--saco la carga útil del token para averiguar el email del usuario----*/  
-  const email=payload.email;
-  
+  const email=payload.email;  
   if(email!=undefined && newPassword!=undefined)
    {   
      try{ 
@@ -283,13 +287,11 @@ async function updatePassword(datos){
                     u.email=? 
               `, 
               [email]
-            );
-         
+            );         
           if((userbd[0].email==undefined))
           {
               return {message};
-          }
-          
+          }          
         /*--------Actualización del password de usuario--------*/
             const result = await db.query(
               `UPDATE usuarios
@@ -374,8 +376,7 @@ async function changePassword(datos,token){
                         let pass = existbd[0].password;                              
                         if(!( bcrypt.compareSync(antiguoPassword,pass))){
                             throw createError(401,"El usuario no existe ó la contraseña antigua es incorrecta"); 
-                        }
-                                          
+                        }                                          
                         const result = await db.query(
                           `UPDATE usuarios
                             SET password=?
@@ -389,8 +390,7 @@ async function changePassword(datos,token){
                             return{message : 'Contraseña de Usuario cambiada exitosamente'};
                         }else{
                             throw createError(500,"Un problema al cambiar la contraseña del usuario");
-                        }
-                    
+                        }                    
                 } catch (error) {
                         if(!(error.statusCode==401)){
                               throw createError(500,"Ocurrio un problema al cambiar la contraseña del usuario");
@@ -407,7 +407,6 @@ async function changePassword(datos,token){
 }/*End changePassword*/
 
 async function verifyAccount(body){
-
     var token ="bearer"+" "+body.token;  
     if(token && validarToken(token)){
         const payload=helper.parseJwt(token);
