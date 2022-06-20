@@ -10,7 +10,7 @@ async function getNegocioUsuario(id_user){
       const rows = await db.query(
         `SELECT n.*, f.foto_negocio
         FROM negocios as n left join fotosNegocios as f on (f.id_negocio_fk = n.id_negocio)
-                           inner join usuarios as u on (u.id=n.usuarios_id and n.usuarios_id=?)
+        WHERE n.usuarios_id=?
         `, 
         [id_user]
       );
@@ -24,15 +24,19 @@ async function getNegocioUsuario(id_user){
       rows.forEach((element)=>{           
         if((index == element.id_negocio))
         { 
-          arrayfotos.push(element.foto_negocio);
+          if(element.foto_negocio){
+                arrayfotos.push(element.foto_negocio);
+          }          
         }else { 
                   index= element.id_negocio;
                   nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
                   nuevoRows.push(element);
                   arrayfotos=[];  
-                  arrayfotos.push(element.foto_negocio);
+                  if(element.foto_negocio){
+                      arrayfotos.push(element.foto_negocio);
+                  } 
         }
-      });
+      });        
       nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
       const data = helper.emptyOrRows(nuevoRows);  
       return {
@@ -68,20 +72,22 @@ async function createNegocio(body,token){
                    body.descripcion_negocio===undefined ||                   
                    body.id_departamento===undefined || 
                    body.id_municipio===undefined || 
-                   body.direccion===undefined 
+                   body.direccion===undefined ||
+                   body.informacion_adicional_direccion===undefined
                   )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,usuarios_id,id_departamento,id_municipio,direccion) VALUES (?,?,?,?,?,?)`, 
+                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,usuarios_id,id_departamento,id_municipio,direccion,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_negocio,
                       body.descripcion_negocio,
                       id_user,
                       body.id_departamento,
                       body.id_municipio,
-                      body.direccion
+                      body.direccion,
+                      body.informacion_adicional_direccion
                     ]
                 ); 
                 if (result.affectedRows) {              
@@ -120,7 +126,8 @@ async function createNegocio(body,token){
               body.id_municipio===undefined || 
               body.direccion===undefined ||
               body.latitud===undefined || 
-              body.longitud===undefined 
+              body.longitud===undefined ||
+              body.informacion_adicional_direccion===undefined
              )
             {
               throw createError(400,"Se requieren todos los parámetros!");
@@ -134,7 +141,8 @@ async function createNegocio(body,token){
                    id_municipio=?,
                    direccion=?,
                    latitud=?,
-                   longitud=?
+                   longitud=?,
+                   informacion_adicional_direccion=?
                WHERE id_negocio=?`,
                [
                 body.nombre_negocio,
@@ -145,6 +153,7 @@ async function createNegocio(body,token){
                 body.direccion,
                 body.latitud,
                 body.longitud,
+                body.informacion_adicional_direccion,
                 idNegocio
                ] 
             );          
