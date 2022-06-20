@@ -61,7 +61,7 @@ async function getGranjasMayorCalificacion(page = 1,idMunicipio){
   try{
      if(idMunicipio){    
           const rows = await db.query(
-            `SELECT distinctrow g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
+            `SELECT distinctrow g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda, g.informacion_adicional_direccion,
                                 (select avg(r5.calificacion) from reseñas r5 where g.id_granja=r5.id_granja_pk_fk ) as puntuacion
              FROM granjas as g left join  reseñas as r on (g.id_granja=r.id_granja_pk_fk)
              WHERE g.id_municipio=?
@@ -89,7 +89,7 @@ async function getGranjasMayorArea(page = 1,idMunicipio){
   try{
      if(idMunicipio){    
           const rows = await db.query(
-            `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda
+            `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda, g.informacion_adicional_direccion
             FROM granjas as g 
             WHERE g.id_municipio=?
             order by g.area desc
@@ -116,7 +116,7 @@ async function getGranjasMenorArea(page = 1,idMunicipio){
   try{
      if(idMunicipio){    
           const rows = await db.query(
-            `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda
+            `SELECT  g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda, g.informacion_adicional_direccion
             FROM granjas as g 
             WHERE g.id_municipio=?
             order by g.area asc
@@ -157,13 +157,14 @@ async function create(body,token){
                    body.id_municipio===undefined ||
                    body.id_corregimiento===undefined ||
                    body.id_vereda === undefined ||
-                   body.corregimiento_vereda === undefined
+                   body.corregimiento_vereda === undefined ||
+                   body.informacion_adicional_direccion === undefined
                    )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await conection.execute(
-                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,corregimiento_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,corregimiento_vereda,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_granja,
                       body.area,
@@ -177,7 +178,8 @@ async function create(body,token){
                       body.id_municipio,
                       body.id_corregimiento,
                       body.id_vereda,
-                      body.corregimiento_vereda
+                      body.corregimiento_vereda,
+                      body.informacion_adicional_direccion
                     ]
                 );               
                 if(body.arrayTiposInfraestructuras != undefined 
@@ -254,7 +256,8 @@ async function create(body,token){
                body.id_corregimiento === undefined ||
                body.id_vereda === undefined ||
                idGranja === undefined ||
-               body.corregimiento_vereda === undefined)
+               body.corregimiento_vereda === undefined ||
+               body.informacion_adicional_direccion=== undefined)
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
@@ -272,7 +275,8 @@ async function create(body,token){
                   id_municipio=? ,
                   id_corregimiento=? ,
                   id_vereda=?,
-                  corregimiento_vereda=?
+                  corregimiento_vereda=?,
+                  body.informacion_adicional_direccion=?
               WHERE id_granja=?`,
               [
                   body.nombre_granja,
@@ -288,6 +292,7 @@ async function create(body,token){
                   body.id_corregimiento,
                   body.id_vereda,
                   body.corregimiento_vereda,
+                  body.informacion_adicional_direccion,
                   idGranja
               ] 
             );          
@@ -466,7 +471,7 @@ async function create(body,token){
                   id_user= payload.sub; 
                 const offset = helper.getOffset(page, config.listPerPage);
                 rows = await db.query(
-                  `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
+                  `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, g.informacion_adicional_direccion,f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
                                     (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
                                     WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
                                     (select ug2.esfavorita from usuarios_granjas as ug2 where ug2.id_granja_pk_fk=g.id_granja and ug2.usuarios_id=?) as favorita,
@@ -480,7 +485,7 @@ async function create(body,token){
           }else{
             const offset = helper.getOffset(page, config.listPerPage);
             rows = await db.query(
-              `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
+              `SELECT DISTINCT   g.id_granja, g.nombre,g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,g.descripcion,g.latitud,g.longitud, g.corregimiento_vereda, g.informacion_adicional_direccion,f.id_foto,f.imagen,(select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
                                 (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
                                 WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
                                 0 as favorita,
@@ -532,7 +537,7 @@ async function create(body,token){
                   rows = await db.query(
                     `SELECT g.id_granja, g.nombre, g.descripcion, g.area, g.numero_trabajadores, 
                             g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
-                            g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
+                            g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda, g.informacion_adicional_direccion,
                           (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
                           (select ug2.esfavorita from usuarios_granjas as ug2 where ug2.id_granja_pk_fk=g.id_granja and ug2.usuarios_id=?) as favorita,
                           (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = ?) as puntuacion,
@@ -547,7 +552,7 @@ async function create(body,token){
                 rows = await db.query(
                   `SELECT g.id_granja, g.nombre, g.descripcion, g.area, g.numero_trabajadores, 
                           g.produccion_estimada_mes, g.direccion, g.latitud, g.longitud, 
-                          g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda,
+                          g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda, g.corregimiento_vereda, g.informacion_adicional_direccion,
                         (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas,
                         0 as favorita,
                         (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = ?) as puntuacion,
@@ -849,7 +854,7 @@ async function misFavoritas(token){
                 const rows = await db.query(
                   `SELECT concat(u.nombres,' ', u.apellidos) as propietario, g.id_granja, g.nombre, g.area, g.numero_trabajadores, g.produccion_estimada_mes, g.direccion,
                             g.latitud, g.longitud, g.descripcion, g.id_departamento, g.id_municipio, g.id_corregimiento, 
-                            g.id_vereda, g.corregimiento_vereda,ug.usuarios_id, ug.esfavorita, ug.espropietario, 
+                            g.id_vereda, g.corregimiento_vereda,g.informacion_adicional_direccion,ug.usuarios_id, ug.esfavorita, ug.espropietario, 
                             (select count(*) from reseñas as r where g.id_granja=r.id_granja_pk_fk) as cantidad_resenas,
                             (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion
                   FROM granjas as g, usuarios_granjas as ug, usuarios as u
