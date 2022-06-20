@@ -8,7 +8,9 @@ const {validarToken} = require ('../middelware/auth');
 async function getNegocioUsuario(id_user){
     try{ 
       const rows = await db.query(
-        `SELECT n.*, f.foto_negocio
+        `SELECT n.*, f.foto_negocio,
+        (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
+        (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento
         FROM negocios as n left join fotosNegocios as f on (f.id_negocio_fk = n.id_negocio)
         WHERE n.usuarios_id=?
         `, 
@@ -51,7 +53,11 @@ async function getNegocioUsuario(id_user){
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT * FROM negocios LIMIT ?,?`, 
+    `select *,
+     (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
+     (select d.nombre_departamentos from departamento as d where d.id_departamento = n.id_departamento) as nombre_departamento
+     from negocios as n
+    LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
   const data = helper.emptyOrRows(rows);
