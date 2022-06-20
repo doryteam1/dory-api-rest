@@ -236,7 +236,8 @@ async function create(body,token){
   }/*End Create*/
 
   /*__________________________update granja____________________________*/
-  async function update(idGranja, body, token){  
+  async function update(idGranja, body, token){              
+    let message = 'Error actualizando la granja'; 
     const conection= await db.newConnection(); 
     await conection.beginTransaction();
     if(token && validarToken(token)){
@@ -296,9 +297,8 @@ async function create(body,token){
                   body.informacion_adicional_direccion,
                   idGranja
               ] 
-            );          
-            let message = 'Error actualizando la granja';          
-            if (result.affectedRows) {
+            );        
+            if (result[0].affectedRows) {
               message = 'Granja actualizada exitosamente';
             }       
               if(body.arrayTiposInfraestructuras !== undefined 
@@ -311,7 +311,7 @@ async function create(body,token){
                   [idGranja]
                 );/*Borrado de infraestructuras granjas para luego agregarlas nuevamente*/
                  let tiposInfraestructuras = body.arrayTiposInfraestructuras;
-                 for(var i=0;i<tiposInfraestructuras.length;i++){
+                 for(var i=0;i<tiposInfraestructuras.length;i++){    
                     await conection.execute(
                       `INSERT INTO infraestructuras_granjas
                        (id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
@@ -339,7 +339,7 @@ async function create(body,token){
               }              
             await conection.commit(); 
             conection.release();
-            return message;
+            return {message};
       }catch (error) {
             await conection.rollback();  
             conection.release();

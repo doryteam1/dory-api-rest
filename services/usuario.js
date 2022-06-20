@@ -514,6 +514,9 @@ async function updateMisconsumos(body, token){
     }
   }/*End updateMisconsumos*/
 
+
+  
+
 module.exports = {
   getUserId,
   getMultiple,
