@@ -568,7 +568,59 @@ async function updateMisconsumos(body, token){
     }
   }/*End getPescadoresAsociacion*/
 
-
+  async function getPiscicultoresAsociacion(nit, token){
+    let tipo_user=null;
+    let id_user=null;
+    if(token && validarToken(token)){
+        let payload=helper.parseJwt(token);
+        tipo_user= payload.rol;
+        id_user= payload.sub;
+        try{
+            if(tipo_user!="Pescador" && tipo_user!="Piscicultor"){ 
+              throw createError(401,"Usted no tiene autorización");
+            }else{
+                if(nit!=undefined){ 
+                      try{
+                        const rows1 = await db.query(
+                          `SELECT au.usuarios_id
+                          FROM usuarios as u inner join  asociaciones_usuarios as au on (u.id=au.usuarios_id and au.nit_asociacion_pk_fk=?)
+                          WHERE u.id=? 
+                          `, 
+                          [nit,id_user]
+                        );  
+                        if(rows1.length<1){
+                          throw createError(401,"Usted no tiene autorización, soló el propietario esta autorizado");
+                        }
+                           const rows = await db.query(
+                            `SELECT u.id , concat (u.nombres,' ', u.apellidos) as nombres, u.email, 
+                                    (select es.descripcion from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
+                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as estado_solicitud,
+                                    (select ss.nombre from solicitudes as s inner join sender_solicitud as ss on (s.id_sender_solicitud=ss.id_sender_solicitud)
+                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as solicitud_enviada_por
+                            FROM usuarios as u inner join tipos_usuarios as tu on  ((u.id_tipo_usuario=tu.id_tipo_usuario) and 
+                                              (tu.nombre_tipo_usuario like('Piscicultor')) )
+                            `, 
+                            [nit, nit]
+                          );
+                          if(rows.length<1){
+                            throw createError(404,"Usted no se encuentra registrado en ninguna asociación");
+                          }
+                          const data = helper.emptyOrRows(rows);
+                          return { data };
+                      }catch(err) {
+                        throw err;
+                      }
+                }else{
+                  throw createError(400,"La asociación ingresada no existe"); 
+                }
+           }
+        }catch (error) {          
+          throw error;
+        } 
+    }else{
+      throw createError(401,"Usuario no autorizado");
+    }
+  }/*End getPiscicultoresAsociacion*/
 module.exports = {
   getUserId,
   getMultiple,
@@ -582,5 +634,6 @@ module.exports = {
   verifyAccount,
   misConsumos,
   updateMisconsumos,
-  getPescadoresAsociacion
+  getPescadoresAsociacion,
+  getPiscicultoresAsociacion
 }

@@ -124,4 +124,14 @@ router.get('/pescador/asociacion/:nit', async function(req, res, next) {
   }
 });
 
+router.get('/piscicultor/asociacion/:nit', async function(req, res, next) {
+  try {
+        var token=req.headers.authorization;
+        res.json(await usuario.getPescadoresAsociacion(req.params.nit,token));
+  } catch (err) {
+        console.error(`Error al retornar los piscicultores de la asociación ingresada`, err.message);
+        next(err);
+  }
+});
+
 module.exports = router;
