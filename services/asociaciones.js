@@ -76,7 +76,7 @@ async function create(asociacion,token){
                             throw createError(400,"Se requieren todos los parámetros!");
                           }
                           const result = await db.query(
-                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,informacion_adicional_direccion,asociacion.corregimiento_vereda ) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, 
+                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,informacion_adicional_direccion,corregimiento_vereda ) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, 
                             [
                               asociacion.nit,
                               asociacion.nombre,
