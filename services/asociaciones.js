@@ -69,15 +69,14 @@ async function create(asociacion,token){
                               asociacion.id_tipo_asociacion_fk === undefined ||
                               asociacion.id_departamento === undefined ||
                               asociacion.id_municipio === undefined ||
-                              asociacion.id_corregimiento === undefined ||
-                              asociacion.id_vereda === undefined ||
-                              asociacion.informacion_adicional_direccion === undefined
+                              asociacion.informacion_adicional_direccion === undefined ||
+                              asociacion.corregimiento_vereda === undefined
                               )
                           {
                             throw createError(400,"Se requieren todos los parámetros!");
                           }
                           const result = await db.query(
-                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,id_corregimiento,id_vereda,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,informacion_adicional_direccion,asociacion.corregimiento_vereda ) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, 
                             [
                               asociacion.nit,
                               asociacion.nombre,
@@ -88,9 +87,8 @@ async function create(asociacion,token){
                               asociacion.id_tipo_asociacion_fk,
                               asociacion.id_departamento,
                               asociacion.id_municipio,
-                              asociacion.id_corregimiento,
-                              asociacion.id_vereda,
-                              asociacion.informacion_adicional_direccion
+                              asociacion.informacion_adicional_direccion,
+                              asociacion.corregimiento_vereda 
                             ]
                           );  
                           let message = 'Error creando asociacion';
@@ -124,9 +122,8 @@ async function create(asociacion,token){
                             asociacion.id_tipo_asociacion_fk === undefined ||
                             asociacion.id_departamento === undefined ||
                             asociacion.id_municipio === undefined ||
-                            asociacion.id_corregimiento === undefined ||
-                            asociacion.id_vereda === undefined ||
-                            asociacion.informacion_adicional_direccion === undefined
+                            asociacion.informacion_adicional_direccion === undefined ||
+                            asociacion.corregimiento_vereda === undefined
                             )
                         {
                           throw createError(400,"Se requieren todos los parámetros!");
@@ -151,9 +148,8 @@ async function create(asociacion,token){
                         id_tipo_asociacion_fk=?,
                         id_departamento=?, 
                         id_municipio=?,
-                        id_corregimiento=?,
-                        id_vereda=?,
-                        informacion_adicional_direccion=?
+                        informacion_adicional_direccion=?,
+                        corregimiento_vereda=?
                     WHERE nit=?`,
                     [
                       asociacion.nombre,
@@ -164,9 +160,8 @@ async function create(asociacion,token){
                       asociacion.id_tipo_asociacion_fk,
                       asociacion.id_departamento,
                       asociacion.id_municipio,
-                      asociacion.id_corregimiento,
-                      asociacion.id_vereda,
                       asociacion.informacion_adicional_direccion,
+                      asociacion.corregimiento_vereda,
                       nit
                     ] 
                   );
