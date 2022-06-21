@@ -70,12 +70,14 @@ async function create(asociacion,token){
                               asociacion.id_departamento === undefined ||
                               asociacion.id_municipio === undefined ||
                               asociacion.id_corregimiento === undefined ||
-                              asociacion.id_vereda === undefined )
+                              asociacion.id_vereda === undefined ||
+                              asociacion.informacion_adicional_direccion === undefined
+                              )
                           {
                             throw createError(400,"Se requieren todos los parámetros!");
                           }
                           const result = await db.query(
-                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,id_corregimiento,id_vereda) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, 
+                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,id_corregimiento,id_vereda,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, 
                             [
                               asociacion.nit,
                               asociacion.nombre,
@@ -87,7 +89,8 @@ async function create(asociacion,token){
                               asociacion.id_departamento,
                               asociacion.id_municipio,
                               asociacion.id_corregimiento,
-                              asociacion.id_vereda
+                              asociacion.id_vereda,
+                              asociacion.informacion_adicional_direccion
                             ]
                           );  
                           let message = 'Error creando asociacion';
@@ -122,7 +125,9 @@ async function create(asociacion,token){
                             asociacion.id_departamento === undefined ||
                             asociacion.id_municipio === undefined ||
                             asociacion.id_corregimiento === undefined ||
-                            asociacion.id_vereda === undefined )
+                            asociacion.id_vereda === undefined ||
+                            asociacion.informacion_adicional_direccion === undefined
+                            )
                         {
                           throw createError(400,"Se requieren todos los parámetros!");
                         }
@@ -147,7 +152,8 @@ async function create(asociacion,token){
                         id_departamento=?, 
                         id_municipio=?,
                         id_corregimiento=?,
-                        id_vereda=?
+                        id_vereda=?,
+                        informacion_adicional_direccion=?
                     WHERE nit=?`,
                     [
                       asociacion.nombre,
@@ -160,6 +166,7 @@ async function create(asociacion,token){
                       asociacion.id_municipio,
                       asociacion.id_corregimiento,
                       asociacion.id_vereda,
+                      asociacion.informacion_adicional_direccion,
                       nit
                     ] 
                   );
