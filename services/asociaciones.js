@@ -93,7 +93,7 @@ async function create(asociacion,token){
                           );  
                           let message = 'Error creando asociacion';
                           if (result.affectedRows) {
-                            message = {  insertId: result.insertId, message:'asociacion creada exitosamente'};
+                            message = {  nit: nit, message:'asociacion creada exitosamente'};
                           }
                           return {message};
                   } catch(error){
