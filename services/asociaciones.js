@@ -53,9 +53,12 @@ async function getMultiple(page = 1, token){
 
 /*-------------------------create-----------------------*/
 async function create(asociacion,token){
+        const conection= await db.newConnection(); 
+        await conection.beginTransaction(); 
           if(token && validarToken(token)){ 
                     const payload=helper.parseJwt(token);                             
                     const tipo_user= payload.rol; 
+                    const id_user= payload.sub; 
               try{      
                   if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                       throw createError(401,"Tipo de usuario no Válido");
@@ -75,7 +78,7 @@ async function create(asociacion,token){
                           {
                             throw createError(400,"Se requieren todos los parámetros!");
                           }
-                          const result = await db.query(
+                          const result = await conection.execute(
                             `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,informacion_adicional_direccion,corregimiento_vereda ) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, 
                             [
                               asociacion.nit,
@@ -90,14 +93,25 @@ async function create(asociacion,token){
                               asociacion.informacion_adicional_direccion,
                               asociacion.corregimiento_vereda 
                             ]
-                          );  
-                          let message = 'Error creando asociacion';
+                          );                          
+                          await conection.execute(
+                            `INSERT INTO asociaciones_usuarios (nit_asociacion_pk_fk,usuarios_id) VALUES (?,?)`, 
+                            [
+                              asociacion.nit,
+                              id_user
+                            ]
+                            );                 
+                            await conection.commit(); 
+                            conection.release(); 
+                            let message = 'Error creando asociacion';
                           if (result.affectedRows) {
-                            message = {  nit: asociacion.nit, message:'asociacion creada exitosamente'};
+                             message = {  nit: asociacion.nit, message:'asociacion creada exitosamente'};
                           }
                           return {message};
                   } catch(error){
-                         throw error; 
+                          await conection.rollback(); 
+                          conection.release();
+                          throw error; 
                   }
             }else{
               throw createError(401,"Usted no tiene autorización"); 
