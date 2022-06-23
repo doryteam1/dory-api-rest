@@ -218,6 +218,10 @@ async function create(asociacion,token){
                         if(rows.length<1){
                             throw createError(401,"Usted no tiene autorización para eliminar la asociación"); 
                         }
+                        await db.query(
+                          `DELETE FROM asociaciones_usuarios as au WHERE au.nit_asociacion_pk_fk=? and au.usuarios_id=? `, 
+                          [nit,id_user]
+                          );
                         const result = await db.query(
                         `DELETE FROM asociaciones WHERE nit=?`, 
                         [nit]
