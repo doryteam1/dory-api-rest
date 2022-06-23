@@ -60,6 +60,7 @@ async function getMultiple(page = 1, token){
 async function create(asociacion,token){
         const conection= await db.newConnection(); 
         await conection.beginTransaction(); 
+        let message = 'Error creando asociacion';
           if(token && validarToken(token)){ 
                     const payload=helper.parseJwt(token);                             
                     const tipo_user= payload.rol; 
@@ -105,14 +106,13 @@ async function create(asociacion,token){
                               asociacion.nit,
                               id_user
                             ]
-                            );                 
-                            await conection.commit(); 
-                            conection.release(); 
-                            let message = 'Error creando asociacion';
+                            );                            
                           if (result.affectedRows) {
                              message = {  nit: asociacion.nit, message:'asociacion creada exitosamente'};
                           }
-                          return {message};
+                            await conection.commit(); 
+                            conection.release(); 
+                            return {message};
                   } catch(error){
                           await conection.rollback(); 
                           conection.release();
