@@ -147,7 +147,7 @@ async function create(asociacion,token){
                         {
                           throw createError(400,"Se requieren todos los parámetros!");
                         }
-                        const rows = await db.query(
+                        const rows = await conection.execute(
                           `SELECT * 
                           FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk and a.nit=?)
                           WHERE au.usuarios_id=?
@@ -157,7 +157,7 @@ async function create(asociacion,token){
                     if(rows.length<1){
                          throw createError(401,"Usted no tiene autorización para actualizar la asociación"); 
                     }
-                  const result = await db.query(
+                  const result = await conection.execute(
                     `UPDATE asociaciones 
                      SET nombre=?,
                         direccion=?,
@@ -199,6 +199,8 @@ async function create(asociacion,token){
   
   /*----------------------------------------remove-------------------------------------------*/
   async function remove(nit,token){
+        const conection= await db.newConnection(); 
+        await conection.beginTransaction(); 
     if(token && validarToken(token)){ 
         const payload=helper.parseJwt(token);                             
         const tipo_user= payload.rol;
@@ -226,6 +228,8 @@ async function create(asociacion,token){
                         `DELETE FROM asociaciones WHERE nit=?`, 
                         [nit]
                         );
+                        await conection.commit(); 
+                        conection.release(); 
                         let message = 'Error borrando asociacion';  
                         if (result.affectedRows) {
                           message = 'Asociación borrada exitosamente';
@@ -235,7 +239,9 @@ async function create(asociacion,token){
                     throw createError(402,"Parámetros ingresados erroneamente");
                   }
            } catch(error){
-                        throw error; 
+                    await conection.rollback(); 
+                    conection.release();
+                    throw error; 
             }
      }else{
        throw createError(401,"Usted no tiene autorización"); 
