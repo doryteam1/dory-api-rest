@@ -92,10 +92,10 @@ router.put('/:nit', async function(req, res, next) {
     }
 });
 
-router.delete('/:id', async function(req, res, next) {
+router.delete('/:nit', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await asociaciones.remove(req.params.id,token));
+      res.json(await asociaciones.remove(req.params.nit,token));
     } catch (err) {
       console.error(`Error al borrar la asociación`, err.message);
       next(err);
