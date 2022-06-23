@@ -39,7 +39,7 @@ async function getMultiple(page = 1, token){
                           (select d.nombre_departamento from departamentos d  where d.id_departamento=a.id_departamento) as departamento,
                           (select m.nombre from municipios as m  where m.id_municipio=a.id_municipio) as municipio,
                           a.id_corregimiento,a.id_vereda, a.informacion_adicional_direccion,a.corregimiento_vereda,au.usuarios_id,
-                          (SELECT u.nombres from usuarios u where u.id=au.usuarios_id) as propietario
+                          (SELECT concat (u.nombres,' ',u.apellidos) from usuarios u where u.id=au.usuarios_id) as propietario
                   FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk)
                   WHERE au.usuarios_id=?
                    LIMIT ?,?`, 
