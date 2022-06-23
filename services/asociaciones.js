@@ -203,7 +203,7 @@ async function create(asociacion,token){
         const payload=helper.parseJwt(token);                             
         const tipo_user= payload.rol;
         const id_user= payload.sub; 
-       /* try{  */    
+        try{      
                   if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                       throw createError(401,"Tipo de usuario no Válido");
                   }
@@ -234,9 +234,9 @@ async function create(asociacion,token){
                   }else{
                     throw createError(402,"Parámetros ingresados erroneamente");
                   }
-           /* } catch(error){
+           } catch(error){
                         throw error; 
-            }*/
+            }
      }else{
        throw createError(401,"Usted no tiene autorización"); 
      }
