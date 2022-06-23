@@ -34,7 +34,12 @@ async function getMultiple(page = 1, token){
         const id_user= payload.sub;  
                 const offset = helper.getOffset(page, config.listPerPage);
                 const rows = await db.query(
-                  `SELECT * 
+                  `SELECT a.nit,a.nombre,a.direccion,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
+                          a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio,
+                          (select d.nombre_departamento from departamentos d  where d.id_departamento=a.id_departamento) as departamento,
+                          (select m.nombre from municipios as m  where m.id_municipio=a.id_municipio) as municipio,
+                          a.id_corregimiento,a.id_vereda, a.informacion_adicional_direccion,a.corregimiento_vereda,au.usuarios_id,
+                          (SELECT u.nombres from usuarios u where u.id=au.usuarios_id) as propietario
                   FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk)
                   WHERE au.usuarios_id=?
                    LIMIT ?,?`, 
