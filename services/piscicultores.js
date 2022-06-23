@@ -56,7 +56,7 @@ async function getPiscicultoresAsociacion(page = 1,nit){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT  tu.id_tipo_usuario,tu.nombre_tipo_usuario as tipo_usuario,u.cedula,concat(u.nombres," ",u.apellidos) as nombre,
-             u.celular,u.direccion,u.email,u.password,u.id_area_experticia,
+             u.celular,u.direccion,u.email,u.id_area_experticia,
              (select a.nombre from areas_experticias a  where a.id_area=u.id_area_experticia) as area_experticia,u.nombre_negocio,u.foto,u.fecha_registro,u.fecha_nacimiento,
              (select d.nombre_departamento from departamentos d  where d.id_departamento=u.id_departamento) as departamento,
              (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,

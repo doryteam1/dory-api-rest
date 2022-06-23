@@ -57,7 +57,7 @@ async function getMultiple(page = 1, token){
 }/*End getMultiple*/
 
 /*-------------------------create-----------------------*/
-async function create(asociacion,token){
+async function create(asociacion,token){ console.log(asociacion);
         const conection= await db.newConnection(); 
         await conection.beginTransaction(); 
         let message = 'Error creando asociacion';
@@ -68,7 +68,7 @@ async function create(asociacion,token){
               try{      
                   if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                       throw createError(401,"Tipo de usuario no Válido");
-                  }
+                  } 
                           if(asociacion.nit===undefined ||
                               asociacion.nombre===undefined ||                           
                               asociacion.direccion===undefined ||
@@ -106,8 +106,8 @@ async function create(asociacion,token){
                               asociacion.nit,
                               id_user
                             ]
-                            );                            
-                          if (result.affectedRows) {
+                            );    console.log(result);                        
+                          if (result.affectedRows) {console.log('Entrada');
                              message = {  nit: asociacion.nit, message:'asociacion creada exitosamente'};
                           }
                             await conection.commit(); 
