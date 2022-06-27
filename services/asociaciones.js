@@ -150,7 +150,7 @@ async function create(asociacion,token){
                           FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk and a.nit=?)
                           WHERE au.usuarios_id=?
                            LIMIT ?,?`, 
-                          [nit,id_user,offset, config.listPerPage]
+                          [nit,id_user]
                         );
                     if(rows.length<1){
                          throw createError(401,"Usted no tiene autorización para actualizar la asociación"); 
