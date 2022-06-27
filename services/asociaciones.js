@@ -246,26 +246,38 @@ async function create(asociacion,token){
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
   async function enviarSolicitudAdicion(nit, token,body){
-         var id_sender= 0;
+          const id_user= 0;
+          const tipo_user='';
+        if(token && validarToken(token)){
+              const payload=helper.parseJwt(token);                
+               tipo_user= payload.rol; 
+              if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+                throw createError(401,"Tipo de usuario no Válido");
+              }
+        }else{
+          throw createError(401,"Usted no tiene autorización"); 
+        }
+         var id_sender= 1;
          if(!body.quienEnvia || (body.quienEnvia!='usuario' && body.quienEnvia!='asociacion')){
                        throw createError(400,"No ha enviado la información correcta"); 
          }else{
-            if(body.quienEnvia!='usuario'){
-                id_sender=2;
-            }else{ 
-              id_sender=1;
+            if(body.quienEnvia=='usuario'){
+                id_sender=1;
+                id_user= payload.sub;
+            }else if(body.quienEnvia=='asociacion'){                    
+                   if(!body.id_usuario_receptor){
+                         throw createError(400,"No se especificó el ID del usuario receptor de la solicitud");
+                   }
+                   id_sender=2;
+                   id_user= body.id_usuario_receptor;
+            }else{
+                throw createError(400,"Debe especificar correctamente quien envia la solicitud");
             }
          }    
           const fecha= dayjs().format('YYYY-MM-DD')+"T"+dayjs().hour()+":"+dayjs().minute()+":"+dayjs().second();
           let message="Error al enviar la solicitud de adición a la asociación ";  
-            if(token && validarToken(token)){
-                      const payload=helper.parseJwt(token); 
-                      const id_user= payload.sub;
-                      const tipo_user= payload.rol; 
-               try{      
-                      if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
-                          throw createError(401,"Tipo de usuario no Válido");
-                      }
+            
+               try{   
                       const result = await db.query(
                         `INSERT INTO solicitudes (id_estado_fk,usuarios_id_fk,id_sender_solicitud,nit_asociacion_fk,fecha) VALUES (?,?,?,?,?)`, 
                         [
@@ -283,9 +295,7 @@ async function create(asociacion,token){
                   } catch(error){
                      throw error; 
                   }            
-            }else{
-              throw createError(401,"Usted no tiene autorización"); 
-            }
+            
   }/*End enviarSolicitudAdicion*/
 
     /*------------------------------removeSolicitudAdicion---------------------------------------------*/
