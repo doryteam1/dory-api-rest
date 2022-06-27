@@ -121,6 +121,8 @@ async function create(asociacion,token){
 
   /*_----------------------------------update--------------------------------*/
   async function update(nit, asociacion,token){
+        const conection= await db.newConnection(); 
+        await conection.beginTransaction(); 
           if(token && validarToken(token)){ 
             const payload=helper.parseJwt(token);                             
             const tipo_user= payload.rol; 
