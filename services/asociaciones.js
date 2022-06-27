@@ -28,10 +28,8 @@ async function getAsociacionesDepartamento(page = 1, idDepartamento){
 }/*End GetAsociacionesDepartamento*/
 
 /*--------------------getMultiple-------------------------------------*/
-async function getMultiple(page = 1, token){
-      if(token && validarToken(token)){ 
-        const payload=helper.parseJwt(token); 
-        const id_user= payload.sub;  
+async function getMultiple(page = 1, id_user){
+      
                 const offset = helper.getOffset(page, config.listPerPage);
                 const rows = await db.query(
                   `SELECT a.nit,a.nombre,a.direccion,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
@@ -52,13 +50,10 @@ async function getMultiple(page = 1, token){
                   data,
                   meta
                 }
-        }else{
-          throw createError(401,"Usted no tiene autorización"); 
-        }
 }/*End getMultiple*/
 
 /*-------------------------create-----------------------*/
-async function create(asociacion,token){ console.log(asociacion);
+async function create(asociacion,token){
         const conection= await db.newConnection(); 
         await conection.beginTransaction(); 
         let message = 'Error creando asociacion';

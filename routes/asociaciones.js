@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const asociaciones = require('../services/asociaciones');
 
-router.get('/', async function(req, res, next) {
+router.get('/usuario/:id_user', async function(req, res, next) {
   try {
-    var token=req.headers.authorization;
-    res.json(await asociaciones.getMultiple(req.query.page,token));
+    res.json(await asociaciones.getMultiple(req.query.page,id_user));
   } catch (err) {
     console.error(`Error al traer las asociaciones `, err.message);
     next(err);
