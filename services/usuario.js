@@ -626,7 +626,7 @@ async function updateMisconsumos(body, token){
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
       `SELECT * 
-      FROM granjas as g inner join usuarios_granjas as ug on (g.id_granja=ug.id_granja_pk_fk ang ug.espropietario and ug.espropietario=1)
+      FROM granjas as g inner join usuarios_granjas as ug on (g.id_granja=ug.id_granja_pk_fk and ug.espropietario=1)
       WHERE ug.usuarios_id=?
       LIMIT ?,?`, 
       [idUser, offset, config.listPerPage]
