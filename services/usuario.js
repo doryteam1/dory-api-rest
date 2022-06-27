@@ -621,24 +621,7 @@ async function updateMisconsumos(body, token){
       throw createError(401,"Usuario no autorizado");
     }
   }/*End getPiscicultoresAsociacion*/
-
-  async function getGranjasUserId(page = 1, idUser){
-    const offset = helper.getOffset(page, config.listPerPage);
-    const rows = await db.query(
-      `SELECT * 
-      FROM granjas as g inner join usuarios_granjas as ug on (g.id_granja=ug.id_granja_pk_fk and ug.espropietario=1)
-      WHERE ug.usuarios_id=?
-      LIMIT ?,?`, 
-      [idUser, offset, config.listPerPage]
-    );
-    const data = helper.emptyOrRows(rows);
-    const meta = {page};
-    return {
-      data,
-      meta
-    }
-  }/*End getGranjasUserId */
-
+ 
 module.exports = {
   getUserId,
   getMultiple,
@@ -653,6 +636,5 @@ module.exports = {
   misConsumos,
   updateMisconsumos,
   getPescadoresAsociacion,
-  getPiscicultoresAsociacion,
-  getGranjasUserId
+  getPiscicultoresAsociacion
 }

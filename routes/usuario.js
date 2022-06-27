@@ -134,13 +134,4 @@ router.get('/piscicultor/asociacion/:nit', async function(req, res, next) {
   }
 });
 
-router.get('/granjas/idusuario/:idUser', async function(req, res, next) {
-  try {
-    res.json(await usuario.getGranjasUserId(req.query.page,req.params.idUser));
-  } catch (err) {
-    console.error(`Error al traer las granjas a las que pertenece el usuario`, err.message);
-    next(err);
-  }
-});
-
 module.exports = router;
