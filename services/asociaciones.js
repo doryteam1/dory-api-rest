@@ -246,8 +246,8 @@ async function create(asociacion,token){
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
   async function enviarSolicitudAdicion(nit, token,body){
-          const id_user= 0;
-          const tipo_user='';
+          let id_user= 0;
+          let tipo_user='';
         if(token && validarToken(token)){
               const payload=helper.parseJwt(token);                
                tipo_user= payload.rol; 
