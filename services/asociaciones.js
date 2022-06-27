@@ -149,7 +149,7 @@ async function create(asociacion,token){
                           `SELECT * 
                           FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk and a.nit=?)
                           WHERE au.usuarios_id=?
-                           LIMIT ?,?`, 
+                          `, 
                           [nit,id_user]
                         );
                     if(rows.length<1){
