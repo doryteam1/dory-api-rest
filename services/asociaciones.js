@@ -30,7 +30,7 @@ async function getAsociacionesDepartamento(page = 1, idDepartamento){
 async function getAsociacionesMunicipio(page = 1, idMunic){  
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-  `select a.*, d.nombre_departamento, m.nombre as nombre_municipio from asociaciones as a 
+  `select a.*, d.nombre_departamento, m.nombre as nombre_municipio, ta.nombre as nombre_tipo_asociacion from asociaciones as a 
     inner join departamentos as d on a.id_departamento = d.id_departamento
     inner join municipios as m on a.id_municipio = m.id_municipio
     inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion where a.id_municipio = ?`, 
