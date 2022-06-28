@@ -878,8 +878,8 @@ async function misFavoritas(token){
                 }
                 data = helper.emptyOrRows(nuevoRows);      
                 return { data } ;                        
-          }catch{
-            throw createError(404,"Granjas de usuario no encontradas");
+          }catch (err){
+            throw err
           }             
     }else{
         throw createError(401,"Usuario no autorizado");
