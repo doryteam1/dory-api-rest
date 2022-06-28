@@ -70,6 +70,15 @@ router.get('/departamento/:idDepartamento', async function(req, res, next) {
   }
 });
 
+router.get('/municipio/:idMunic', async function(req, res, next) {
+  try {
+    res.json(await asociaciones.getAsociacionesMunicipio(req.query.page,req.params.idMunic));
+  } catch (err) {
+    console.error(`Error al traer las asociaciones del departamento`, err.message);
+    next(err);
+  }
+});
+
 router.post('/', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
