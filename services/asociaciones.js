@@ -121,7 +121,7 @@ async function create(asociacion,token){
 
   /*_----------------------------------update--------------------------------*/
   async function update(nit, asociacion,token){
-        const conection= await db.newConnection(); 
+        const conection= await db.newConnection(); console.log(asociacion);
         await conection.beginTransaction(); 
           if(token && validarToken(token)){ 
             const payload=helper.parseJwt(token);                             
@@ -182,8 +182,8 @@ async function create(asociacion,token){
                       nit
                     ] 
                   );
-                  let message = 'Error actualizando asociación';
-                  if (result.affectedRows) {
+                  let message = 'Error actualizando asociación';   console.log(result);
+                  if (result[0]['affectedRows']) {  
                     message = 'Asociacion actualizada exitosamente';
                   }
                   return {message};
