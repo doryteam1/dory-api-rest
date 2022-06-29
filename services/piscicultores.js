@@ -71,11 +71,18 @@ async function getPiscicultoresAsociacion(page = 1,nit){
              LIMIT ?,?`, 
     [nit,offset, config.listPerPage]
   );
-  const data = helper.emptyOrRows(rows);
+
+  const row = await db.query(`select m.nombre from asociaciones as a inner join municipios as m on a.id_municipio = m.id_municipio where a.nit = ?`,
+  [nit]);
+
+  console.log(row)
+  const municipio = row[0].nombre;
+  let data = helper.emptyOrRows(rows);
   const meta = {page};
 
   return {
     data,
+    municipio,
     meta
   }
 }/*End getPiscicultoresAsociacion*/
