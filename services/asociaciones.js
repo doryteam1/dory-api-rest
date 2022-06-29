@@ -182,7 +182,7 @@ async function create(asociacion,token){
                       `DELETE from asociaciones_usuarios where nit_asociacion_pk_fk=?  and usuarios_id=?`,
                         [nit,id_user]
                       );
-                  const result = conection.execute(
+                  const result = await conection.execute(
                     `UPDATE asociaciones 
                      SET nombre=?,
                         direccion=?,
@@ -212,8 +212,8 @@ async function create(asociacion,token){
                   await conection.execute(
                     `INSERT INTO asociaciones_usuarios(nit_asociacion_pk_fk,usuarios_id) VALUES (?,?)`,
                     [nit, id_user]
-                  );   console.log(result);
-                  if (result[0].affectedRows) {   console.log(" result mayor a cero");
+                  );  
+                  if (result[0]['affectedRows']) {  
                       message = 'Asociacion actualizada exitosamente';
                   }else{
                       message='Error actualizando asociación';
@@ -244,7 +244,7 @@ async function create(asociacion,token){
                       throw createError(401,"Tipo de usuario no Válido");
                   }
                   if(nit!=undefined && id_user!=undefined && nit!=null && id_user!=null){ 
-                            const rows = await db.query(
+                            const rows = await conection.execute(
                               `SELECT * 
                               FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk and a.nit=?)
                               WHERE au.usuarios_id=?
@@ -261,11 +261,9 @@ async function create(asociacion,token){
                         const result = await conection.execute(
                         `DELETE FROM asociaciones WHERE nit=?`, 
                         [nit]
-                        );
-                        await conection.commit(); 
-                        conection.release(); 
+                        );                        
                         let message = 'Error borrando asociacion';  
-                        if (result[0].affectedRows) {
+                        if (result[0]['affectedRows']) {
                           message = 'Asociación borrada exitosamente';
                         } 
                           await conection.commit(); 
