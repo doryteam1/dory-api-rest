@@ -85,10 +85,8 @@ async function create(vereda){
     const result = await db.query(
       `DELETE FROM veredas WHERE id_vereda=?`, 
       [id]
-    );
-  
-    let message = 'Error borrando la vereda';
-  
+    );  
+    let message = 'Error borrando la vereda';  
     if (result.affectedRows) {
       message = 'Vereda borrada exitosamente';
     }
