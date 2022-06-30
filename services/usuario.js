@@ -542,11 +542,13 @@ async function updateMisconsumos(body, token){
                                     (select es.descripcion from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
                                     where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as estado_solicitud,
                                     (select ss.nombre from solicitudes as s inner join sender_solicitud as ss on (s.id_sender_solicitud=ss.id_sender_solicitud)
-                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as solicitud_enviada_por
+                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as solicitud_enviada_por,
+                                    (select s.id_solicitud from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
+                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as id_solicitud
                             FROM usuarios as u inner join tipos_usuarios as tu on  ((u.id_tipo_usuario=tu.id_tipo_usuario) and 
                                               (tu.nombre_tipo_usuario like('Pescador')) )
                             `, 
-                            [nit, nit]
+                            [nit, nit, nit]
                           );
                           if(rows.length<1){
                             throw createError(404,"Usted no se encuentra registrado en ninguna asociación");
@@ -596,11 +598,13 @@ async function updateMisconsumos(body, token){
                                     (select es.descripcion from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
                                     where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as estado_solicitud,
                                     (select ss.nombre from solicitudes as s inner join sender_solicitud as ss on (s.id_sender_solicitud=ss.id_sender_solicitud)
-                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as solicitud_enviada_por
+                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as solicitud_enviada_por,
+                                    (select s.id_solicitud from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
+                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as id_solicitud
                             FROM usuarios as u inner join tipos_usuarios as tu on  ((u.id_tipo_usuario=tu.id_tipo_usuario) and 
                                               (tu.nombre_tipo_usuario like('Piscicultor')) )
                             `, 
-                            [nit, nit]
+                            [nit, nit, nit]
                           );
                           if(rows.length<1){
                             throw createError(404,"Usted no se encuentra registrado en ninguna asociación");
