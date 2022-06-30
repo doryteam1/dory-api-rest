@@ -9,13 +9,16 @@ async function getGranjaUsuario(page = 1,id_user){
       const offset = helper.getOffset(page, config.listPerPage);
       const rows = await db.query(
         `SELECT g.*, u.cedula, u.nombres, u.apellidos, u.celular, ug.espropietario, ug.esfavorita,
-                (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion 
-        FROM granjas as g, usuarios as u, usuarios_granjas as ug
-        WHERE u.id=? and ug.usuarios_id=? and ug.espropietario=1 and g.id_granja=ug.id_granja_pk_fk
+                (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion,f.id_foto,f.imagen
+         FROM granjas as g left join fotos as f on f.id_granja_fk = g.id_granja 
+                           inner join usuarios_granjas as ug on g.id_granja=ug.id_granja_pk_fk and ug.espropietario=1 and ug.usuarios_id=?
+                           inner join usuarios as u on ug.usuarios_id=u.id  
+                              
+        WHERE u.id=?  
         LIMIT ?,?`, 
         [id_user, id_user, offset, config.listPerPage]
       );
-      const data = [];
+      let data = [];
       if(rows.length>0){
         rows.forEach(
           (row)=>{
@@ -32,8 +35,27 @@ async function getGranjaUsuario(page = 1,id_user){
             data.push(granja)
           }
         )
-      }      
-      const meta = {page};
+      }
+
+      var arrayfotos= new Array();
+      var nuevoRows = new Array();
+      var index= rows[0].id_granja;
+      nuevoRows.push(rows[0]);        
+      rows.forEach((element)=>{           
+        if((index == element.id_granja))
+        { 
+          arrayfotos.push(element.imagen);
+        }else { 
+                  index= element.id_granja;
+                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos;/*Arreglo de fotos agregado al final del arreglo de granjas */
+                  nuevoRows.push(element);
+                  arrayfotos=[];  
+                  arrayfotos.push(element.imagen);
+        }
+      });
+        nuevoRows[nuevoRows.length-1].fotos=arrayfotos; 
+        data = helper.emptyOrRows(nuevoRows);
+        const meta = {page}; 
       return {
         data,
         meta
