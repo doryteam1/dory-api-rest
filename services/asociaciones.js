@@ -143,9 +143,10 @@ async function create(asociacion,token){
 
   /*_----------------------------------update--------------------------------*/
   async function update(nit, asociacion,token){
-        const conection= await db.newConnection(); console.log(asociacion);
-        await conection.beginTransaction(); 
-          if(token && validarToken(token)){ 
+        const conection= await db.newConnection(); 
+        await conection.beginTransaction();        
+        let message = '';
+        if(token && validarToken(token)){ 
             const payload=helper.parseJwt(token);                             
             const tipo_user= payload.rol; 
             const id_user=payload.sub;
@@ -173,10 +174,14 @@ async function create(asociacion,token){
                           WHERE au.usuarios_id=?
                           `, 
                           [nit,id_user]
-                        );
+                        );  
                     if(rows.length<1){
                          throw createError(401,"Usted no tiene autorización para actualizar la asociación"); 
                     }
+                    await conection.execute(
+                      `DELETE from asociaciones_usuarios where nit_asociacion_pk_fk=?  and usuarios_id=?`,
+                        [nit,id_user]
+                      );
                   const result = await conection.execute(
                     `UPDATE asociaciones 
                      SET nombre=?,
@@ -204,17 +209,26 @@ async function create(asociacion,token){
                       nit
                     ] 
                   );
-                  let message = 'Error actualizando asociación';   console.log(result);
+                  await conection.execute(
+                    `INSERT INTO asociaciones_usuarios(nit_asociacion_pk_fk,usuarios_id) VALUES (?,?)`,
+                    [nit, id_user]
+                  );  
                   if (result[0]['affectedRows']) {  
-                    message = 'Asociacion actualizada exitosamente';
+                      message = 'Asociacion actualizada exitosamente';
+                  }else{
+                      message='Error actualizando asociación';
                   }
-                  return {message};
-                } catch(error){
-                       throw error; 
-                }
+                      await conection.commit(); 
+                      conection.release();
+                      return {message};
+              } catch(error){
+                        await conection.rollback(); 
+                        conection.release();
+                        throw error;
+              }
           }else{
             throw createError(401,"Usted no tiene autorización"); 
-          }
+       }
   }/*End update*/
   
   /*----------------------------------------remove-------------------------------------------*/
@@ -230,7 +244,7 @@ async function create(asociacion,token){
                       throw createError(401,"Tipo de usuario no Válido");
                   }
                   if(nit!=undefined && id_user!=undefined && nit!=null && id_user!=null){ 
-                            const rows = await db.query(
+                            const rows = await conection.execute(
                               `SELECT * 
                               FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk and a.nit=?)
                               WHERE au.usuarios_id=?
@@ -240,20 +254,20 @@ async function create(asociacion,token){
                         if(rows.length<1){
                             throw createError(401,"Usted no tiene autorización para eliminar la asociación"); 
                         }
-                        await db.query(
+                        await conection.execute(
                           `DELETE FROM asociaciones_usuarios WHERE nit_asociacion_pk_fk=? and usuarios_id=? `, 
                           [nit,id_user]
                           );
-                        const result = await db.query(
+                        const result = await conection.execute(
                         `DELETE FROM asociaciones WHERE nit=?`, 
                         [nit]
-                        );
-                        await conection.commit(); 
-                        conection.release(); 
+                        );                        
                         let message = 'Error borrando asociacion';  
-                        if (result.affectedRows) {
+                        if (result[0]['affectedRows']) {
                           message = 'Asociación borrada exitosamente';
-                        }  
+                        } 
+                          await conection.commit(); 
+                          conection.release(); 
                           return {message};
                   }else{
                     throw createError(402,"Parámetros ingresados erroneamente");

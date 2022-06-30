@@ -120,10 +120,10 @@ router.delete('/:nit', async function(req, res, next) {
     }
 });
 
-router.delete('/solicitud/eliminar/:nit', async function(req, res, next) {
+router.delete('/solicitud/eliminar/:idSolicitud', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
-    res.json(await asociaciones.removeSolicitudAdicion(req.params.nit, token));
+    res.json(await asociaciones.removeSolicitudAdicion(req.params.idSolicitud, token));
   } catch (err) {
     console.error(`Error al eliminar la solicitud de la asociación`, err.message);
     next(err);
