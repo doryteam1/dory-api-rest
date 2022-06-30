@@ -351,8 +351,8 @@ async function create(asociacion,token){
                       `select * FROM solicitudes WHERE id_solicitud=? and usuarios_id_fk=?`, 
                       [id_solicitud, id_user]
                     );
-                    if(consulta.length <= 0){  
-                      throw createError(401,"Usuario autorizado, usted no realizo la solicitud");                  
+                    if(consulta.length < 1){  
+                      throw createError(401,"Usuario no autorizado, usted no realizó la solicitud");                  
                     }
                       const result = await db.query(
                         `DELETE FROM solicitudes WHERE id_solicitud=?`, 
