@@ -34,7 +34,7 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
           d.nombre_departamento, 
           m.nombre as nombre_municipio, 
           ta.nombre as nombre_tipo_asociacion,
-          (select u.nombres from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id where au.nit_asociacion_pk_fk = a.nit) as propietario 
+          (select concat(u.nombres,' ',u.apellidos) from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id where au.nit_asociacion_pk_fk = a.nit) as propietario 
      from asociaciones as a 
      inner join departamentos as d on a.id_departamento = d.id_departamento
      inner join municipios as m on a.id_municipio = m.id_municipio
