@@ -102,7 +102,7 @@ let message='Registro fallido';
   }
     try{
       const result = await db.query(
-        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud,estaVerificado, otra_area_experticia, otra_area_experticia_descripcion, sobre_mi,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+        `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado) VALUES (?,?,?,?,?,?,?,?,?)`, 
         [
           usuario.nombres, 
           usuario.apellidos, 
