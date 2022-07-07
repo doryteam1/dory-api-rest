@@ -54,7 +54,17 @@ async function getMultiple(page = 1){
 
 /* ----------------------------------CREATE-----------------------------*/
 async function create(usuario){
-   
+  if(usuario.nombres === undefined || 
+    usuario.apellidos === undefined ||
+    usuario.id_tipo_usuario === undefined ||
+    usuario.email === undefined ||
+    usuario.password === undefined ||
+    usuario.foto === undefined ||
+    usuario.latitud === undefined ||
+    usuario.longitud === undefined ||
+    usuario.creadoCon === undefined){
+      throw createError(400,"Debe enviar todos los datos requeridos para el registro del usuario");
+  }
   let contentHtml=""; 
   let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del Departamento de Sucre, en alianza con los grupos de investigación, Gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
   if(usuario.creadoCon && usuario.creadoCon=="google"){
@@ -92,32 +102,17 @@ let message='Registro fallido';
   }
     try{
       const result = await db.query(
-        `INSERT INTO usuarios(cedula,nombres,apellidos,celular,direccion,id_tipo_usuario,email,password,id_area_experticia,nombre_negocio,foto,fecha_registro,fecha_nacimiento,id_departamento,id_municipio,id_corregimiento,id_vereda,latitud,longitud,estaVerificado, otra_area_experticia, otra_area_experticia_descripcion, sobre_mi,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+        `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado) VALUES (?,?,?,?,?,?,?,?,?)`, 
         [
-          usuario.cedula,
           usuario.nombres, 
-          usuario.apellidos,
-          usuario.celular,
-          usuario.direccion, 
+          usuario.apellidos, 
           usuario.id_tipo_usuario,
           usuario.email,
           usuario.password, 
-          usuario.id_area_experticia,
-          usuario.nombre_negocio,
-          usuario.foto, 
-          usuario.fecha_registro,
-          usuario.fecha_nacimiento,
-          usuario.id_departamento,
-          usuario.id_municipio,
-          usuario.id_corregimiento,
-          usuario.id_vereda,
+          usuario.foto,
           usuario.latitud,
           usuario.longitud,
-          usuario.estaVerificado,
-          usuario.otra_area_experticia,
-          usuario.otra_area_experticia_descripcion,
-          usuario.sobre_mi,
-          usuario.informacion_adicional_direccion         
+          usuario.estaVerificado
         ]
       );
       if (result.affectedRows) {
