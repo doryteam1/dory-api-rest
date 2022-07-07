@@ -130,4 +130,14 @@ router.delete('/solicitud/eliminar/:idSolicitud', async function(req, res, next)
   }
 });
 
+router.get('/solicitudes/noaceptadas', async function(req, res, next) {
+  try {
+        var token=req.headers.authorization;
+        res.json(await asociaciones.getSolicitudesNoaceptadasPorAsociacion(token));
+  } catch (err) {
+        console.error(`Error al retornar las solicitudes no aceptadas por la asociación`, err.message);
+        next(err);
+  }
+});
+
 module.exports = router;
