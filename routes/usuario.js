@@ -134,4 +134,15 @@ router.get('/piscicultor/asociacion/:nit', async function(req, res, next) {
   }
 });
 
+router.get('/solicitudes/noaceptadas', async function(req, res, next) {
+  try {
+        var token=req.headers.authorization;
+        res.json(await usuario.getSolicitudesNoaceptadasPorUsuario(token));
+  } catch (err) {
+        console.error(`Error al retornar las solicitudes no aceptadas del usuario`, err.message);
+        next(err);
+  }
+});
+
+
 module.exports = router;
