@@ -409,7 +409,6 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
   }
 }/*End getSolicitudesNoaceptadasPorAsociacion*/
 
-
 module.exports = {
   getAsociacionesDepartamento,
   getMultiple,
