@@ -61,7 +61,7 @@ async function getPiscicultoresAsociacion(page = 1,nit){
           `, 
           [nit]
         );
-        if(!(valid_rows)){
+        if(valid_rows.length<1){
             throw createError(404,"La asociación ingresada no existe"); 
         }
         const offset = helper.getOffset(page, config.listPerPage);
