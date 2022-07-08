@@ -1,6 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+var createError = require('http-errors');
 
 async function getPescadoresMunicipio(page = 1,idMunicipio){
   const offset = helper.getOffset(page, config.listPerPage);

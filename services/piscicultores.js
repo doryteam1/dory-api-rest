@@ -106,7 +106,6 @@ async function getPiscicultoresAsociacion(page = 1,nit){
         rowsmiembros.forEach((element)=>{ 
           nuevoRows.push(element);          
         });
-         console.log('Array',' ',nuevoRows);
         const row = await db.query(
           `select m.nombre 
           from asociaciones as a inner join municipios as m on a.id_municipio = m.id_municipio 
