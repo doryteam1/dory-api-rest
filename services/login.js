@@ -90,7 +90,6 @@ async function loginWithGoogle(req){
             email
           ] 
       );
-      console.log(result.affectedRows)
       if (result.affectedRows<1) {
         throw createError(500,"Ocurrio un problema al autenticar el usuario. Intentelo nuevamente");
       }

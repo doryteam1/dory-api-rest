@@ -34,12 +34,15 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
           d.nombre_departamento, 
           m.nombre as nombre_municipio, 
           ta.nombre as nombre_tipo_asociacion,
-          (select concat(u.nombres,' ',u.apellidos) from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id where au.nit_asociacion_pk_fk = a.nit) as propietario 
+          (select concat(u.nombres,' ',u.apellidos) 
+          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id 
+          where au.nit_asociacion_pk_fk = a.nit) as propietario 
      from asociaciones as a 
      inner join departamentos as d on a.id_departamento = d.id_departamento
      inner join municipios as m on a.id_municipio = m.id_municipio
-     inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion where a.id_municipio = ?`, 
-      [idMunic]
+     inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion where a.id_municipio = ?`
+     , 
+    [idMunic]
  );
   const data = helper.emptyOrRows(rows);
   const meta = {};
@@ -284,11 +287,13 @@ async function create(asociacion,token){
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
   async function enviarSolicitudAdicion(nit, token,body){
-          let id_user= 0;
+          let id_emisor= null;
+          let id_receptor=null;
           let tipo_user='';
         if(token && validarToken(token)){
               const payload=helper.parseJwt(token);                
                tipo_user= payload.rol; 
+               id_emisor= payload.sub;
               if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                 throw createError(401,"Tipo de usuario no Válido");
               }
@@ -301,26 +306,25 @@ async function create(asociacion,token){
          }else{
             if(body.quienEnvia=='usuario'){
                 id_sender=1;
-                id_user= payload.sub;
             }else if(body.quienEnvia=='asociacion'){                    
                    if(!body.id_usuario_receptor){
                          throw createError(400,"No se especificó el ID del usuario receptor de la solicitud");
                    }
-                   id_sender=2;
-                   id_user= body.id_usuario_receptor;
+                   id_sender=2;                   
+                   id_receptor= body.id_usuario_receptor;
             }else{
                 throw createError(400,"Debe especificar correctamente quien envia la solicitud");
             }
          }    
           const fecha= dayjs().format('YYYY-MM-DD')+"T"+dayjs().hour()+":"+dayjs().minute()+":"+dayjs().second();
-          let message="Error al enviar la solicitud de adición a la asociación ";  
-            
+          let message="Error al enviar la solicitud de adición a la asociación ";              
                try{   
                       const result = await db.query(
-                        `INSERT INTO solicitudes (id_estado_fk,usuarios_id_fk,id_sender_solicitud,nit_asociacion_fk,fecha) VALUES (?,?,?,?,?)`, 
+                        `INSERT INTO solicitudes (id_estado_fk,usuarios_id_emisor,usuarios_id_receptor,id_sender_solicitud,nit_asociacion_fk,fecha) VALUES (?,?,?,?,?,?)`, 
                         [
                           1,
-                          id_user,
+                          id_emisor,
+                          id_receptor,
                           id_sender,
                           nit,
                           fecha
@@ -332,8 +336,7 @@ async function create(asociacion,token){
                       return {message};
                   } catch(error){
                      throw error; 
-                  }            
-            
+                  } 
   }/*End enviarSolicitudAdicion*/
 
     /*------------------------------removeSolicitudAdicion---------------------------------------------*/
