@@ -307,7 +307,7 @@ async function create(asociacion,token){
                          throw createError(400,"No se especificó el ID del usuario receptor de la solicitud");
                    }
                    id_sender=2;
-                   id_user= body.id_usuario_receptor;
+                   id_user= payload.sub; /*body.id_usuario_receptor;*/
             }else{
                 throw createError(400,"Debe especificar correctamente quien envia la solicitud");
             }
