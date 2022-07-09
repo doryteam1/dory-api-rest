@@ -287,13 +287,13 @@ async function create(asociacion,token){
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
   async function enviarSolicitudAdicion(nit, token,body){
-          let id_emisor= null;
-          let id_receptor=null;
+          let id_usuario_creador= null;
+          let id_user=null;
           let tipo_user='';
         if(token && validarToken(token)){
               const payload=helper.parseJwt(token);                
                tipo_user= payload.rol; 
-               id_emisor= payload.sub;
+               id_usuario_creador= payload.sub;
               if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                 throw createError(401,"Tipo de usuario no Válido");
               }
@@ -305,38 +305,39 @@ async function create(asociacion,token){
                        throw createError(400,"No ha enviado la información correcta"); 
          }else{
             if(body.quienEnvia=='usuario'){
-                id_sender=1;
+                id_sender = 1;
+                id_user = id_usuario_creador;
             }else if(body.quienEnvia=='asociacion'){                    
                    if(!body.id_usuario_receptor){
                          throw createError(400,"No se especificó el ID del usuario receptor de la solicitud");
                    }
-                   id_sender=2;                   
-                   id_receptor= body.id_usuario_receptor;
+                   id_sender = 2;                   
+                   id_user = body.id_usuario_receptor;
             }else{
                 throw createError(400,"Debe especificar correctamente quien envia la solicitud");
             }
          }    
-          const fecha= dayjs().format('YYYY-MM-DD')+"T"+dayjs().hour()+":"+dayjs().minute()+":"+dayjs().second();
-          let message="Error al enviar la solicitud de adición a la asociación ";              
-               try{   
-                      const result = await db.query(
-                        `INSERT INTO solicitudes (id_estado_fk,usuarios_id_emisor,usuarios_id_receptor,id_sender_solicitud,nit_asociacion_fk,fecha) VALUES (?,?,?,?,?,?)`, 
-                        [
-                          1,
-                          id_emisor,
-                          id_receptor,
-                          id_sender,
-                          nit,
-                          fecha
-                        ]
-                        );                      
-                      if(result.affectedRows){
-                        message="Solicitud de adición enviada exitosamente"
-                      };
-                      return {message};
-                  } catch(error){
-                     throw error; 
-                  } 
+        const fecha= dayjs().format('YYYY-MM-DD')+"T"+dayjs().hour()+":"+dayjs().minute()+":"+dayjs().second();
+        let message="Error al enviar la solicitud de adición a la asociación ";              
+        try{   
+              const result = await db.query(
+                `INSERT INTO solicitudes (id_estado_fk,usuarios_id_creador,usuarios_id,id_sender_solicitud,nit_asociacion_fk,fecha) VALUES (?,?,?,?,?,?)`, 
+                [
+                  1,
+                  id_usuario_creador,
+                  id_user,
+                  id_sender,
+                  nit,
+                  fecha
+                ]
+                );                      
+              if(result.affectedRows){
+                message="Solicitud de adición enviada exitosamente"
+              };
+              return {message};
+          } catch(error){
+              throw error; 
+          } 
   }/*End enviarSolicitudAdicion*/
 
     /*------------------------------removeSolicitudAdicion---------------------------------------------*/
