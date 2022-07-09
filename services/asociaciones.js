@@ -56,8 +56,13 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
 async function getDetail(id){
     
   const row = await db.query(
-    `SELECT a.*
-    FROM asociaciones as a`, 
+    `SELECT a.*, d.nombre_departamento as departamento, m.nombre as municipio, ta.nombre as nombre_tipo_asociacion,
+    (select concat(u.nombres,' ',u.apellidos) 
+          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id 
+          where au.nit_asociacion_pk_fk = a.nit) as propietario
+    FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
+    inner join municipios as m on a.id_municipio = m.id_municipio
+    inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion`, 
     [id]
   );
   const data = helper.emptyOrRows(row);
