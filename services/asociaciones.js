@@ -52,6 +52,20 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
   }
 }
 
+
+async function getDetail(id){
+    
+  const row = await db.query(
+    `SELECT a.*
+    FROM asociaciones as a`, 
+    [id]
+  );
+  const data = helper.emptyOrRows(row);
+  return {
+    data
+  }
+}
+
 /*--------------------getMultiple-------------------------------------*/
 async function getMultiple(page = 1, id_user){
       
