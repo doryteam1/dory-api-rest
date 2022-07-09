@@ -351,10 +351,13 @@ async function create(asociacion,token){
                     if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                         throw createError(401,"Tipo de usuario no Válido");
                     }
+                    console.log("id solicitud ", id_solicitud)
+                    console.log("id creador ", id_user)
                     const consulta = await db.query(
                       `select * FROM solicitudes WHERE id_solicitud=? and usuarios_id_creador=?`, 
                       [id_solicitud, id_user]
                     );
+                    console.log("result consulta ", consulta)
                     if(consulta.length < 1){  
                       throw createError(401,"Usuario no autorizado, usted no realizó la solicitud");                  
                     }
