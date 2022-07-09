@@ -334,6 +334,7 @@ async function create(asociacion,token){
               if(result.affectedRows){
                 message="Solicitud de adición enviada exitosamente"
               };
+              console.log(result)
               return {message};
           } catch(error){
               throw error; 
