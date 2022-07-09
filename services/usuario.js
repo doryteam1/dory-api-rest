@@ -525,7 +525,7 @@ async function updateMisconsumos(body, token){
                         const rows1 = await db.query(
                           `SELECT au.usuarios_id
                           FROM usuarios as u inner join  asociaciones_usuarios as au on (u.id=au.usuarios_id and au.nit_asociacion_pk_fk=?)
-                          WHERE u.id=? 
+                          WHERE u.id=?
                           `, 
                           [nit,id_user]
                         );  
@@ -535,11 +535,11 @@ async function updateMisconsumos(body, token){
                            const rows = await db.query(
                             `SELECT u.id , concat (u.nombres,' ', u.apellidos) as nombres, u.email, u.foto,
                                     (select es.descripcion from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
-                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as estado_solicitud,
+                                    where s.usuarios_id=u.id and s.nit_asociacion_fk=?) as estado_solicitud,
                                     (select ss.nombre from solicitudes as s inner join sender_solicitud as ss on (s.id_sender_solicitud=ss.id_sender_solicitud)
-                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as solicitud_enviada_por,
+                                    where s.usuarios_id=u.id and s.nit_asociacion_fk=?) as solicitud_enviada_por,
                                     (select s.id_solicitud from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
-                                    where s.usuarios_id_fk=u.id and s.nit_asociacion_fk=?) as id_solicitud
+                                    where s.usuarios_id=u.id and s.nit_asociacion_fk=?) as id_solicitud
                             FROM usuarios as u inner join tipos_usuarios as tu on  ((u.id_tipo_usuario=tu.id_tipo_usuario) and 
                                               (tu.nombre_tipo_usuario like('Pescador')) )
                             `, 
