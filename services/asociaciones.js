@@ -439,5 +439,6 @@ module.exports = {
   enviarSolicitudAdicion,
   removeSolicitudAdicion,
   getAsociacionesMunicipio,
-  getSolicitudesNoaceptadasPorAsociacion
+  getSolicitudesNoaceptadasPorAsociacion,
+  getDetail
 }
