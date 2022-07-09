@@ -344,15 +344,15 @@ async function create(asociacion,token){
     async function removeSolicitudAdicion(id_solicitud, token){
         let message="Error al eliminar la solicitud de la asociación";  
         if(token && validarToken(token)){
-                  const payload=helper.parseJwt(token); 
-                  const id_user= payload.sub;                 
+                  const payload = helper.parseJwt(token); 
+                  const id_user = payload.sub;                 
                   const tipo_user= payload.rol; 
              try{      
                     if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                         throw createError(401,"Tipo de usuario no Válido");
                     }
                     const consulta = await db.query(
-                      `select * FROM solicitudes WHERE id_solicitud=? and usuarios_id_fk=?`, 
+                      `select * FROM solicitudes WHERE id_solicitud=? and usuarios_id_creador=?`, 
                       [id_solicitud, id_user]
                     );
                     if(consulta.length < 1){  
