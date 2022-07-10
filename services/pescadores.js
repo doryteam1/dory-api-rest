@@ -97,7 +97,7 @@ async function getPescadoresAsociacion(page = 1,nit){
                         (select ta.nombre from tipos_asociaciones as ta  where ta.id_tipo_asociacion=a.id_tipo_asociacion_fk) as tipo_asociacion 
     FROM tipos_usuarios tu,usuarios u,asociaciones as a, solicitudes as s, estados_solicitudes as e
     WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Pescador') ) and 
-    (u.id=s.usuarios_id_fk) and (a.nit=s.nit_asociacion_fk) and (s.id_estado_fk=2) and a.nit=?
+    (u.id=s.usuarios_id) and (a.nit=s.nit_asociacion_fk) and (s.id_estado_fk=2) and a.nit=?
             LIMIT ?,?`, 
     [nit,offset, config.listPerPage]
   );
