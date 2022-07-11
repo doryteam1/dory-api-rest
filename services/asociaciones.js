@@ -27,6 +27,7 @@ async function getAsociacionesDepartamento(page = 1, idDepartamento){
         }
 }/*End GetAsociacionesDepartamento*/
 
+/*---------------------- GetAsociacionesMunicipio--------------------------------*/
 async function getAsociacionesMunicipio(page = 1, idMunic){  
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
@@ -35,12 +36,10 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
           m.nombre as municipio, 
           ta.nombre as nombre_tipo_asociacion,
           (select concat(u.nombres,' ',u.apellidos) 
-          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id 
-          where au.nit_asociacion_pk_fk = a.nit) as propietario 
-     from asociaciones as a 
-     inner join departamentos as d on a.id_departamento = d.id_departamento
-     inner join municipios as m on a.id_municipio = m.id_municipio
-     inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion where a.id_municipio = ?`
+          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as propietario 
+     from asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
+                            inner join municipios as m on a.id_municipio = m.id_municipio
+                            inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion where a.id_municipio = ?`
      , 
     [idMunic]
  );
@@ -50,7 +49,7 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
     data,
     meta
   }
-}
+}/*End GetAsociacionesMunicipio*/
 
 
 async function getDetail(id){
