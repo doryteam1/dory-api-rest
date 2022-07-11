@@ -354,6 +354,16 @@ async function create(asociacion,token){
                    }
                    id_sender = 2;                   
                    id_user = body.id_usuario_receptor;
+                  /*validación del representante legal de la asociación*/                  
+                  const row = await db.query(
+                    `SELECT au.*
+                     FROM asociaciones_usuarios as au
+                     WHERE au.usuarios_id=? and au.nit_asociacion_pk_fk=?`, 
+                     [id_usuario_creador, nit]
+                  );
+                  if(row.length<1){
+                    throw createError(401,"Usted no tiene autorización, No es el representante legal de la asociación"); 
+                  }
             }else{
                 throw createError(400,"Debe especificar correctamente quien envia la solicitud");
             }
