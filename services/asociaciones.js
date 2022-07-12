@@ -38,7 +38,9 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
           (select u.id 
           from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as id_propietario, 
           (select concat(u.nombres,' ',u.apellidos) 
-          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as propietario 
+          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as propietario,
+          (select u.email 
+          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as propietario  
      from asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
                             inner join municipios as m on a.id_municipio = m.id_municipio
                             inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion where a.id_municipio = ?`
@@ -438,7 +440,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
           if(tipo_user!="Pescador" && tipo_user!="Piscicultor"){ 
             throw createError(401,"Usted no tiene autorización");
           }else{                
-                    try{/* solitudes-estado=1, id_user=token, id-sender=1*/
+                    try{
                       const rows = await db.query(
                         `SELECT s.id_solicitud, e.id_estado, e.descripcion as estado, ss.id_sender_solicitud, ss.nombre as enviado_por, concat(u.nombres,' ',u.apellidos) as usuario,  a.nombre as asociacion
                         FROM solicitudes as s inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
