@@ -584,7 +584,10 @@ async function updateMisconsumos(body, token){
                           WHERE u.id=? 
                           `, 
                           [nit,id_user]
-                        );  
+                        );
+                        console.log("nit ", nit)
+                        console.log("id user ",id_user)
+                        console.log("rows1",rows1)
                         if(rows1.length<1){
                           throw createError(401,"Usted no tiene autorización, soló el propietario esta autorizado");
                         }
