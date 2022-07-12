@@ -75,9 +75,8 @@ async function getDetail(id){
   }
 }/*End getDetail*/
 
-/*--------------------getMultiple-------------------------------------*/
-async function getMultiple(page = 1, id_user){
-                /*Asociaciones del Usuario*/
+/*--------------------getMultiple---Asociaciones del Usuario----------------------------------*/
+async function getMultiple(page = 1, id_user){                
                 const offset = helper.getOffset(page, config.listPerPage);
                 const rows = await db.query(
                   `SELECT a.nit,a.nombre,a.direccion,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
@@ -91,36 +90,40 @@ async function getMultiple(page = 1, id_user){
                   WHERE au.usuarios_id=?
                    LIMIT ?,?`, 
                   [id_user,offset, config.listPerPage]
-                );
-                /*Asociaciones a las que pertenece como miembro el usuario*/
-                const rows2 = await db.query(
-                  `SELECT a.nit,a.nombre,a.direccion,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
-                          a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio,
-                          (select d.nombre_departamento from departamentos d  where d.id_departamento=a.id_departamento) as departamento,
-                          (select m.nombre from municipios as m  where m.id_municipio=a.id_municipio) as municipio,
-                          a.id_corregimiento,a.id_vereda, a.informacion_adicional_direccion,a.corregimiento_vereda,u.id,                          
-                          'Miembro' as propietario,
-                          (select ta.nombre from tipos_asociaciones as ta where ta.id_tipo_asociacion = a.id_tipo_asociacion_fk) as tipo_asociacion
-                   FROM asociaciones as a inner join solicitudes as s on s.nit_asociacion_fk=a.nit
-                                inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
-                                inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
-                                inner join usuarios as u on s.usuarios_id=u.id
-                   WHERE s.id_estado_fk=2  and s.usuarios_id=? 
-                  `, 
-                  [id_user]
-                ); 
-                var nuevoRows = new Array();        
-                nuevoRows.push(rows[0]);  
-                rows2.forEach((element)=>{ 
-                  nuevoRows.push(element);          
-                });
-                const data = helper.emptyOrRows(nuevoRows);
+                );                
+                const data = helper.emptyOrRows(rows);
                 const meta = {page};
                 return {
                   data,
                   meta
                 }
 }/*End getMultiple*/
+
+/*________________Asociaciones a las que pertenece como miembro el usuario________________*/
+async function getAsociacionesMiembros(page = 1, id_user){
+const rows2 = await db.query(
+  `SELECT a.nit,a.nombre,a.direccion,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
+          a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio,
+          (select d.nombre_departamento from departamentos d  where d.id_departamento=a.id_departamento) as departamento,
+          (select m.nombre from municipios as m  where m.id_municipio=a.id_municipio) as municipio,
+          a.id_corregimiento,a.id_vereda, a.informacion_adicional_direccion,a.corregimiento_vereda,u.id,                          
+          'Miembro' as propietario,
+          (select ta.nombre from tipos_asociaciones as ta where ta.id_tipo_asociacion = a.id_tipo_asociacion_fk) as tipo_asociacion
+   FROM asociaciones as a inner join solicitudes as s on s.nit_asociacion_fk=a.nit
+                inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
+                inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
+                inner join usuarios as u on s.usuarios_id=u.id
+   WHERE s.id_estado_fk=2  and s.usuarios_id=? 
+  `, 
+  [id_user]
+); 
+const data = helper.emptyOrRows(rows2);
+const meta = {page};
+return {
+  data,
+  meta
+}
+}/*getAsociacionesMiembros*/
 
 /*-------------------------create-----------------------*/
 async function create(asociacion,token){
@@ -529,5 +532,6 @@ module.exports = {
   removeSolicitudAdicion,
   getAsociacionesMunicipio,
   getSolicitudesNoaceptadasPorAsociacion,
-  aceptarSolicitudAsociacion
+  aceptarSolicitudAsociacion,
+  getAsociacionesMiembros
 }

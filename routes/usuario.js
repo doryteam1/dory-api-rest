@@ -134,7 +134,7 @@ router.get('/piscicultor/asociacion/:nit', async function(req, res, next) {
   }
 });
 
-router.get('/solicitudes/noaceptadas', async function(req, res, next) {
+router.get('/solicitudes/noaceptadas/porusuario', async function(req, res, next) {
   try {
         var token=req.headers.authorization;
         res.json(await usuario.getSolicitudesNoaceptadasPorUsuario(token));
