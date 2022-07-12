@@ -406,11 +406,22 @@ async function create(asociacion,token){
                     if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                         throw createError(401,"Tipo de usuario no Válido");
                     }
-                    const consulta = await db.query(
+                    const consulta1 = await db.query(
                       `select * FROM solicitudes WHERE id_solicitud=? and usuarios_id_creador=?`, 
                       [id_solicitud, id_user]
                     );
-                    if(consulta.length < 1){  
+
+                    const consulta2 = await db.query(
+                      `select * FROM solicitudes WHERE id_solicitud=? and usuarios_id=?`, 
+                      [id_solicitud, id_user]
+                    );
+
+                    const consulta3 = await db.query(
+                      `select * from asociaciones_usuarios au inner join solicitudes as s on au.nit_asociacion_pk_fk = s.nit_asociacion_fk WHERE s.id_solicitud = ? and au.usuarios_id = ?`, 
+                      [id_solicitud, id_user]
+                    );
+
+                    if(consulta1.length < 1 && consulta2.length < 1  && consulta3.length < 1){  
                       throw createError(401,"Usuario no autorizado, usted no realizó la solicitud");                  
                     }
                       const result = await db.query(
