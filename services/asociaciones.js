@@ -51,7 +51,7 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
   }
 }/*End GetAsociacionesMunicipio*/
 
-
+/*-------------------------------------------getDetail---------------------------------------------------------------------*/
 async function getDetail(id){
     
   const row = await db.query(
@@ -69,7 +69,7 @@ async function getDetail(id){
   return {
     data
   }
-}
+}/*End getDetail*/
 
 /*--------------------getMultiple-------------------------------------*/
 async function getMultiple(page = 1, id_user){
@@ -464,8 +464,71 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
   }
 }/*End getSolicitudesNoaceptadasPorAsociacion*/
 
+ /*_----------------------------------aceptarSolicitudAsociacion--------------------------------*/
+ async function aceptarSolicitudAsociacion(id_solicitud,nit,token){
+        
+  let message = '';
+  if(token && validarToken(token)){ 
+      const payload=helper.parseJwt(token);                             
+      const tipo_user= payload.rol; 
+      const id_user=payload.sub;
+        try{      
+          if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+              throw createError(401,"Tipo de usuario no Válido");
+          }
+                  if( id_solicitud===undefined)
+                  {
+                    throw createError(400,"Se requiere el identificador de la solicitud");
+                  }
+                  const rows = await db.query(
+                    `SELECT * 
+                     FROM solicitudes as s inner join asociaciones as a on s.nit_asociacion_fk = a.nit
+                                inner join usuarios as u on s.usuarios_id = u.id 
+                     WHERE  u.id=1 and a.nit=?
+                    `, 
+                    [id_user,nit]
+                  );  
+                  if(rows.length<1){
+                      throw createError(401,"Usted no tiene autorización para actualizar la solicitud"); 
+                  }
+               /* await db.query(
+                `DELETE from solicitudes where nit_asociacion_fk=?  and usuarios_id=?`,
+                  [nit,id_user]
+                );*/
+            const result = await db.query(
+              `UPDATE solicitudes
+               SET id_estado_fk=?,
+                   usuarios_id=?, 
+                  nit_asociacion_fk=?,
+              WHERE id_solicitud=?`,
+              [
+                2,
+                id_user,
+                nit,               
+                id_solicitud
+              ] 
+            );
+           /* await db.query(
+              `INSERT INTO solicitudes(id_estado_fk,usuarios_id_creador,usuarios_id,id_sender_solicitud,nit_asociacion_fk,fecha) VALUES (?,?,?,?,?,?)`,
+              [nit, id_user]
+            ); */ 
+            if(result.affectedRows){ 
+                message = 'Solicitud actualizada exitosamente';
+            }else{
+                message='Error actualizando solicitud';
+            }
+                return {message};
+        } catch(error){
+                  throw error;
+        }
+    }else{
+      throw createError(401,"Usted no tiene autorización"); 
+ }
+}/*End aceptarSolicitudAsociacion*/
+
 module.exports = {
   getAsociacionesDepartamento,
+  getDetail,
   getMultiple,
   create,
   update,
@@ -474,5 +537,5 @@ module.exports = {
   removeSolicitudAdicion,
   getAsociacionesMunicipio,
   getSolicitudesNoaceptadasPorAsociacion,
-  getDetail
+  aceptarSolicitudAsociacion
 }

@@ -149,4 +149,14 @@ router.get('/solicitudes/noaceptadas', async function(req, res, next) {
   }
 });
 
+router.put('/aceptarSolicitudAsociacion/:idSolicitud', async function(req, res, next) {
+  try {
+    var token=req.headers.authorization;
+    res.json(await asociaciones.aceptarSolicitudAsociacion(req.params.idSolicitud,token));
+  } catch (err) {
+    console.error(`Error al actualizar la solicitud`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;
