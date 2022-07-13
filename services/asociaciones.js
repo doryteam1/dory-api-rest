@@ -60,18 +60,24 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
 }/*End GetAsociacionesMunicipio*/
 
 /*-------------------------------------------getDetail---------------------------------------------------------------------*/
-async function getDetail(id){
-    
+async function getDetail(nit){    
   const row = await db.query(
-    `SELECT a.*, d.nombre_departamento as departamento, m.nombre as municipio, ta.nombre as nombre_tipo_asociacion,
-    (select concat(u.nombres,' ',u.apellidos) 
-          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id 
-          where au.nit_asociacion_pk_fk = ?) as propietario
+    `SELECT a.*, d.nombre_departamento as departamento, m.nombre as municipio, ta.nombre as tipo_asociacion,
+            (select concat(u.nombres,' ',u.apellidos) 
+                  from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id 
+                  where au.nit_asociacion_pk_fk = ?) as propietario,
+            (select tu.nombre_tipo_usuario 
+             from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit
+                                              inner join tipos_usuarios as tu on tu.id_tipo_usuario = u.id_tipo_usuario) as tipo_propietario,
+            (select u.id 
+             from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as id_propietario,
+            (select u.email 
+             from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as email_propietario
     FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
     inner join municipios as m on a.id_municipio = m.id_municipio
     inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion
     where a.nit = ?`, 
-    [id,id]
+    [nit,nit]
   );
   const data = helper.emptyOrRows(row);
   return {

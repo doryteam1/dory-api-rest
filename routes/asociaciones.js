@@ -11,9 +11,9 @@ router.get('/usuario/:id_user', async function(req, res, next) {
   }
 });
 
-router.get('/detail/:id', async function(req, res, next) {
+router.get('/detail/:nit', async function(req, res, next) {
   try {
-    res.json(await asociaciones.getDetail(req.params.id));
+    res.json(await asociaciones.getDetail(req.params.nit));
   } catch (err) {
     console.error(`Error al traer las asociaciones `, err.message);
     next(err);
