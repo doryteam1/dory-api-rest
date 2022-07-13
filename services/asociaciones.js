@@ -31,17 +31,21 @@ async function getAsociacionesDepartamento(page = 1, idDepartamento){
 async function getAsociacionesMunicipio(page = 1, idMunic){  
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-  `select a.*, 
+  `SELECT a.*, 
           d.nombre_departamento as departamento, 
           m.nombre as municipio, 
-          ta.nombre as nombre_tipo_asociacion,
+          ta.nombre as tipo_asociacion,
+          (select tu.nombre_tipo_usuario 
+            from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit
+                                             inner join tipos_usuarios as tu on tu.id_tipo_usuario = u.id_tipo_usuario 
+            ) as tipo_propietario,
           (select u.id 
           from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as id_propietario, 
           (select concat(u.nombres,' ',u.apellidos) 
           from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as propietario,
           (select u.email 
           from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as email  
-     from asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
+     FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
                             inner join municipios as m on a.id_municipio = m.id_municipio
                             inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion where a.id_municipio = ?`
      , 

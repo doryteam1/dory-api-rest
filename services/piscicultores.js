@@ -83,7 +83,7 @@ async function getPiscicultoresAsociacion(page = 1,nit){
           [nit,offset, config.listPerPage]
         );
 
-        const rowsmiembros = await db.query(
+        const rowsmiembros = await db.query( 
           `SELECT DISTINCT   tu.id_tipo_usuario, tu.nombre_tipo_usuario as tipo_usuario,u.id,u.cedula,concat(u.nombres," ",u.apellidos) as nombre,
                               u.celular,u.direccion,u.email,u.id_area_experticia,
                               (select a.nombre from areas_experticias a  where a.id_area=u.id_area_experticia) as area_experticia,
