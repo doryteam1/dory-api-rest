@@ -13,18 +13,15 @@ async function buscarGranjaCadena(page = 1,cadena){
                   (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas
             FROM granjas as g
             WHERE  g.nombre like ? or
-                    g.descripcion like ?
+                    g.descripcion like ? or
+                    g.area like ?                    
                   LIMIT ?,?`, 
-            [cad,cad,offset, config.listPerPage]
+            [cad,cad,cad, offset, config.listPerPage]
           );
-
           var nuevoRows = new Array();
           var indice=100;
-
-        for  (var i = 0;i<rows.length;i++){
-          
-          indice=rows[i].id_granja;
-        
+        for  (var i = 0;i<rows.length;i++){          
+          indice=rows[i].id_granja;        
           const rowsfotos = await db.query(
             `SELECT f.id_foto,f.imagen
             FROM  fotos as f
@@ -32,16 +29,12 @@ async function buscarGranjaCadena(page = 1,cadena){
               LIMIT ?,?`, 
           [indice,offset, config.listPerPage]
           );
-
         var arrayfotos= new Array();
-
         rowsfotos.forEach((element)=>{ 
           arrayfotos.push(element.imagen);
-        });
-        
+        });        
           nuevoRows.push(rows[i]);
           nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
-
           const rows1 = await db.query(
             `SELECT concat(u.nombres, " ", u.apellidos) as nombre_completo, u.direccion, u.celular
             FROM granjas as g, usuarios_granjas as ug, usuarios as u
@@ -51,13 +44,11 @@ async function buscarGranjaCadena(page = 1,cadena){
               g.id_granja=? LIMIT ?,?`,
               [indice,offset, config.listPerPage]
               );
-
               var arraypropietarios= new Array();
               rows1.forEach((element)=>{ 
               arraypropietarios.push(element);
               nuevoRows[nuevoRows.length-1].propietarios=arraypropietarios;/*Arreglo de propietarios agregado al final del arreglo de granjas */
         });
-
         const rows2 = await db.query(
           `select e.nombre 
             from granjas as g, especies_granjas as eg, especies as e
@@ -66,14 +57,11 @@ async function buscarGranjaCadena(page = 1,cadena){
                   g.id_granja=? LIMIT ?,?`, 
           [indice,offset, config.listPerPage]
         );
-
         var arrayespecies= new Array();
-
         rows2.forEach((element)=>{ 
                 arrayespecies.push(element.nombre);
                 nuevoRows[nuevoRows.length-1].especies=arrayespecies;/*Arreglo de especies agregado al final del arreglo de granjas */
         });
-
         const rows3 = await db.query(
           `select i.nombre 
             from granjas as g, infraestructuras_granjas as ig, infraestructuras as i
@@ -82,18 +70,14 @@ async function buscarGranjaCadena(page = 1,cadena){
                   g.id_granja=? LIMIT ?,?`, 
           [indice,offset, config.listPerPage]
         );
-
         var arrayinfraestructuras= new Array();
-
         rows3.forEach((element)=>{ 
                 arrayinfraestructuras.push(element.nombre);
                 nuevoRows[nuevoRows.length-1].infraestructuras=arrayinfraestructuras;/*Arreglo de especies agregado al final del arreglo de granjas */
         });
-
-        };//END FOR EACH DE RECORRIDO DE LAS GRANJAS
+        };
         const data = helper.emptyOrRows(nuevoRows);
         const meta = {page};
-
         return {
         data,
         meta
