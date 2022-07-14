@@ -642,7 +642,8 @@ async function updateMisconsumos(body, token){
                           ss.nombre as enviado_por, 
                           concat(u.nombres,' ',u.apellidos) as usuario,  
                           a.nombre as asociacion,
-                          concat(u2.nombres,' ',u2.apellidos) as representante_legal
+                          concat(u2.nombres,' ',u2.apellidos) as representante_legal,
+                          u2.foto as foto_representante_legal
                           FROM solicitudes as s inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
                                                 inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
                                                 inner join asociaciones as a on s.nit_asociacion_fk=a.nit
