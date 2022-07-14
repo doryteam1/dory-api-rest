@@ -642,11 +642,13 @@ async function updateMisconsumos(body, token){
                           ss.nombre as enviado_por, 
                           concat(u.nombres,' ',u.apellidos) as usuario,  
                           a.nombre as asociacion,
-                          select u2.nombres from asociaciones as a2 inner join asociaciones_usuarios as au on a2.nit = au.nit_asociacion_pk_fk inner join usuarios as u2 on u2.id = au.usuarios_id where a2.nit = a.nit
+                          concat(u2.nombres,' ',u2.apellidos) as representante_legal
                           FROM solicitudes as s inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
                                                 inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
                                                 inner join asociaciones as a on s.nit_asociacion_fk=a.nit
                                                 inner join usuarios as u on s.usuarios_id=u.id
+                                                inner join asociaciones_usuarios as au on a.nit = au.nit_asociacion_pk_fk 
+                                                inner join usuario as u2 on au.usuarios_id = u2.id
                           WHERE s.id_estado_fk=1 and s.id_sender_solicitud=2 and s.usuarios_id=? 
                           `, 
                           [id_user]
