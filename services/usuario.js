@@ -634,7 +634,15 @@ async function updateMisconsumos(body, token){
             }else{                
                       try{/* solitudes-estado=1, id_user=token, id-sender=2*/
                         const rows = await db.query(
-                          `SELECT s.id_solicitud, e.id_estado, e.descripcion as estado, ss.id_sender_solicitud, ss.nombre as enviado_por, concat(u.nombres,' ',u.apellidos) as usuario,  a.nombre as asociacion
+                          `SELECT 
+                          s.id_solicitud, 
+                          e.id_estado, 
+                          e.descripcion as estado, 
+                          ss.id_sender_solicitud, 
+                          ss.nombre as enviado_por, 
+                          concat(u.nombres,' ',u.apellidos) as usuario,  
+                          a.nombre as asociacion,
+                          (select from asociaciones as a2 inner join asociaciones_usuarios as au on a2.nit = au.nit_asociacion_pk_fk inner join usuarios as u2 on u2.id = au.usuarios_id where a2.nit = a.nit) as nit_asociacion
                           FROM solicitudes as s inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
                                                 inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
                                                 inner join asociaciones as a on s.nit_asociacion_fk=a.nit
