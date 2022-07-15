@@ -76,28 +76,31 @@ async function getPescadoresAsociacion(page = 1,nit){
             u.latitud,u.longitud, a.nit as nit_asociacion, a.nombre as nombre_asociacion,
             a.legalconstituida, a.fecha_renovacion_camarac, a.foto_camarac, a.id_tipo_asociacion_fk as id_tipo_asociacion,
             (select ta.nombre from tipos_asociaciones as ta  where ta.id_tipo_asociacion=a.id_tipo_asociacion_fk) as tipo_asociacion 
-    FROM tipos_usuarios tu,usuarios u,asociaciones_usuarios asu,asociaciones a
-    WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Pescador') ) and 
-            (u.id=asu.usuarios_id) and  (a.nit=asu.nit_asociacion_pk_fk) and a.nit=?
-            LIMIT ?,?`, 
+     FROM usuarios as u left join tipos_usuarios as tu on (u.id_tipo_usuario = tu.id_tipo_usuario) 
+                               left join tipos_usuarios as tu2 on (tu2.nombre_tipo_usuario like('Pescador') ) 
+                               left join asociaciones_usuarios as asu on (u.id=asu.usuarios_id)
+                               left join asociaciones as a on (a.nit=asu.nit_asociacion_pk_fk) 
+     WHERE  a.nit=?
+     LIMIT ?,?`, 
     [nit,offset, config.listPerPage]
   );
 
-  const rowsmiembros = await db.query(
+  const rowsmiembros = await db.query( 
     `SELECT DISTINCT   tu.id_tipo_usuario, tu.nombre_tipo_usuario as tipo_usuario,u.id,u.cedula,concat(u.nombres," ",u.apellidos) as nombre,
-                        u.celular,u.direccion,u.email,u.id_area_experticia,
-                        (select a.nombre from areas_experticias a  where a.id_area=u.id_area_experticia) as area_experticia,
-                        u.nombre_negocio,u.foto,u.fecha_registro,u.fecha_nacimiento,
-                        (select d.nombre_departamento from departamentos d  where d.id_departamento=u.id_departamento) as departamento,
-                        (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
-                        (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
-                        (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
-                        u.latitud,u.longitud, a.nit as nit_asociacion, a.nombre as nombre_asociacion,
-                        a.legalconstituida, a.fecha_renovacion_camarac, a.foto_camarac, a.id_tipo_asociacion_fk as id_tipo_asociacion,
-                        (select ta.nombre from tipos_asociaciones as ta  where ta.id_tipo_asociacion=a.id_tipo_asociacion_fk) as tipo_asociacion 
-    FROM tipos_usuarios tu,usuarios u,asociaciones as a, solicitudes as s, estados_solicitudes as e
-    WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Pescador') ) and 
-    (u.id=s.usuarios_id) and (a.nit=s.nit_asociacion_fk) and (s.id_estado_fk=2) and a.nit=?
+                       u.celular,u.direccion,u.email,u.id_area_experticia,
+                       (select a.nombre from areas_experticias a  where a.id_area=u.id_area_experticia) as area_experticia,
+                       u.nombre_negocio,u.foto,u.fecha_registro,u.fecha_nacimiento,
+                       (select d.nombre_departamento from departamentos d  where d.id_departamento=u.id_departamento) as departamento,
+                       (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
+                       (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
+                       (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
+                       u.latitud,u.longitud, a.nit as nit_asociacion, a.nombre as nombre_asociacion,
+                       a.legalconstituida, a.fecha_renovacion_camarac, a.foto_camarac, a.id_tipo_asociacion_fk as id_tipo_asociacion,
+                       (select ta.nombre from tipos_asociaciones as ta  where ta.id_tipo_asociacion=a.id_tipo_asociacion_fk) as tipo_asociacion 
+    FROM usuarios as u  inner join tipos_usuarios as tu on tu.nombre_tipo_usuario like('Pescador') and (u.id_tipo_usuario=tu.id_tipo_usuario) 
+                        inner join solicitudes as s on (u.id=s.usuarios_id and s.id_estado_fk=2)				   
+                        inner join asociaciones as a on (a.nit=s.nit_asociacion_fk)                                   
+    WHERE  a.nit=?
             LIMIT ?,?`, 
     [nit,offset, config.listPerPage]
   );
