@@ -229,6 +229,10 @@ async function update(id, usuario){
 
   async function remove(idUser){
         await db.query(
+          `DELETE FROM me_gustas WHERE usuarios_id=?`, 
+          [idUser]
+        );
+        await db.query(
           `DELETE FROM productos WHERE usuarios_id=?`, 
           [idUser]
         );
