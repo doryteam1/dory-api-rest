@@ -13,10 +13,11 @@ router.get('/usuario/:id_user', async function(req, res, next) {
 
 router.get('/detail/:nit', async function(req, res, next) {
   try {
-    res.json(await asociaciones.getDetail(req.params.nit));
+          var token=req.headers.authorization;
+          res.json(await asociaciones.getDetail(req.params.nit,token));
   } catch (err) {
-    console.error(`Error al traer las asociaciones `, err.message);
-    next(err);
+          console.error(`Error al traer las asociaciones `, err.message);
+          next(err);
   }
 });
 
