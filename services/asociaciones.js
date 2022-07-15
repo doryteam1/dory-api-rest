@@ -316,6 +316,10 @@ async function create(asociacion,token){
                             throw createError(401,"Usted no tiene autorización para eliminar la asociación"); 
                         }
                         await conection.execute(
+                          `DELETE FROM solicitudes WHERE nit_asociacion_fk=?`, 
+                          [nit]
+                          );
+                        await conection.execute(
                           `DELETE FROM asociaciones_usuarios WHERE nit_asociacion_pk_fk=? and usuarios_id=? `, 
                           [nit,id_user]
                           );
@@ -474,10 +478,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                         WHERE s.id_estado_fk=1 and s.id_sender_solicitud=1 and s.usuarios_id=? 
                         `, 
                         [id_user]
-                      );  
-                      if(rows.length<1){
-                        throw createError(401,"Asociación no tiene solicitudes");
-                      }
+                      );                        
                         const data = helper.emptyOrRows(rows);
                         return { data };
                     }catch(err) {
