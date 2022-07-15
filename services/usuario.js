@@ -655,9 +655,9 @@ async function updateMisconsumos(body, token){
                           `, 
                           [id_user]
                         );  
-                        if(rows.length<1){
+                        /*if(rows.length<1){
                           throw createError(401,"Usted no tiene solicitudes");
-                        }
+                        }*/
                           const data = helper.emptyOrRows(rows);
                           return { data };
                       }catch(err) {
