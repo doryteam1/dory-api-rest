@@ -471,7 +471,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                     try{
                       const rows = await db.query(
                         `SELECT s.id_solicitud, e.id_estado, e.descripcion as estado, ss.id_sender_solicitud, ss.nombre as enviado_por,
-                                concat(u.nombres,' ',u.apellidos) as usuario, u.foto, a.nombre as asociacion
+                                concat(u.nombres,' ',u.apellidos) as usuario, u.foto, s.fecha, a.nombre as asociacion
                         FROM solicitudes as s inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
                                               inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
                                               inner join asociaciones as a on s.nit_asociacion_fk=a.nit
