@@ -65,7 +65,7 @@ async function getPescadoresAsociacion(page = 1,nit){
       throw createError(404,"La asociación ingresada no existe"); 
   }
   const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
+  /*const rows = await db.query(
     `SELECT  tu.id_tipo_usuario,tu.nombre_tipo_usuario as tipo_usuario,u.id,u.cedula,concat(u.nombres," ",u.apellidos) as nombre,
             u.celular,u.direccion,u.email,u.id_area_experticia,
             (select a.nombre from areas_experticias a  where a.id_area=u.id_area_experticia) as area_experticia,u.nombre_negocio,u.foto,u.fecha_registro,u.fecha_nacimiento,
@@ -83,9 +83,9 @@ async function getPescadoresAsociacion(page = 1,nit){
      WHERE  a.nit=?
      LIMIT ?,?`, 
     [nit,offset, config.listPerPage]
-  );
+  );*/
 
-  const rowsmiembros = await db.query( 
+  const rows = await db.query( 
     `SELECT DISTINCT   tu.id_tipo_usuario, tu.nombre_tipo_usuario as tipo_usuario,u.id,u.cedula,concat(u.nombres," ",u.apellidos) as nombre,
                        u.celular,u.direccion,u.email,u.id_area_experticia,
                        (select a.nombre from areas_experticias a  where a.id_area=u.id_area_experticia) as area_experticia,
@@ -104,11 +104,11 @@ async function getPescadoresAsociacion(page = 1,nit){
             LIMIT ?,?`, 
     [nit,offset, config.listPerPage]
   );
-  var nuevoRows = new Array();        
+  /*var nuevoRows = new Array();        
   nuevoRows.push(rows[0]);  
   rowsmiembros.forEach((element)=>{ 
     nuevoRows.push(element);          
-  });
+  });*/
     const row = await db.query(
     `select m.nombre 
     from asociaciones as a inner join municipios as m on a.id_municipio = m.id_municipio 
@@ -116,7 +116,7 @@ async function getPescadoresAsociacion(page = 1,nit){
     [nit]
     );
   const municipio = row[0].nombre;
-  let data = helper.emptyOrRows(nuevoRows);
+  let data = helper.emptyOrRows(rows);
   const meta = {page};
   return {
     data,
