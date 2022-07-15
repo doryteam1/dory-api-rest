@@ -79,6 +79,7 @@ async function create(usuario){
   }else{              
         let mensaje2="Solo falta que verifiques tu cuenta.   Haz click en el siguiente enlace para verificar tu correo electrónico";
         let token=helper.createToken(usuario,4320);/*token de 3 días*/
+        usuario.creadoCon="email";
         contentHtml = `<center>
         <img src="http://sharpyads.com/wp-content/uploads/2022/03/logo-no-name-320x320.png" width="100" height="100" />
         <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
@@ -102,7 +103,7 @@ let message='Registro fallido';
   }
     try{
       const result = await db.query(
-        `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado) VALUES (?,?,?,?,?,?,?,?,?)`, 
+        `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado,creadoCon) VALUES (?,?,?,?,?,?,?,?,?,?)`, 
         [
           usuario.nombres, 
           usuario.apellidos, 
@@ -112,7 +113,8 @@ let message='Registro fallido';
           usuario.foto,
           usuario.latitud,
           usuario.longitud,
-          usuario.estaVerificado
+          usuario.estaVerificado,
+          usuario.creadoCon
         ]
       );
       if (result.affectedRows) {
@@ -125,12 +127,10 @@ let message='Registro fallido';
       }else {
         throw createError(500,"Ocurrió un problema al registrar un usuario");
       }
-
     }catch(err){
         throw err;
     }
-    return {message};
-  
+    return {message};  
 }/*End create*/
 
 /* ----------------------------------UPDATE-----------------------------*/
@@ -228,15 +228,19 @@ async function update(id, usuario){
   /* ----------------------------------REMOVE-----------------------------*/
 
   async function remove(idUser){
-    const result = await db.query(
-      `DELETE FROM usuarios WHERE id=?`, 
-      [idUser]
-    );
-    let message = 'Error borrando el registro del usuario';
-    if (result.affectedRows) {
-      message = 'Usuario borrado exitosamente';
-    }
-    return {message};
+        await db.query(
+          `DELETE FROM solicitudes WHERE usuarios_id=?`, 
+          [idUser]
+        );
+        const result = await db.query(
+          `DELETE FROM usuarios WHERE id=?`, 
+          [idUser]
+        );
+        let message = 'Error borrando el registro del usuario';
+        if (result.affectedRows) {
+          message = 'Usuario borrado exitosamente';
+        }
+        return {message};
   }/*End Remove*/
 
   
