@@ -37,6 +37,14 @@ async function getGranjaUsuario(page = 1,id_usuario,token){
               );
        }
               let data = [];
+              const meta = {page}; 
+              if(rows.length < 1){
+                return { 
+                    data,
+                    meta 
+                };
+              }
+
               if(rows.length>0){
                 rows.forEach(
                   (row)=>{
@@ -72,7 +80,7 @@ async function getGranjaUsuario(page = 1,id_usuario,token){
               });
                 nuevoRows[nuevoRows.length-1].fotos=arrayfotos; 
                 data = helper.emptyOrRows(nuevoRows);
-                const meta = {page}; 
+                
               return {
                 data,
                 meta
