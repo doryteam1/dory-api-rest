@@ -83,12 +83,9 @@ async function getDetail(nit,token){
                           (select s.id_solicitud from solicitudes as s where s.nit_asociacion_fk = ? and s.usuarios_id = ?) as id_solicitud                    
                 FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
                                        inner join municipios as m on a.id_municipio = m.id_municipio
-                                       inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion 
-                                       left join solicitudes as s on (s.nit_asociacion_fk=a.nit)
-                                       left join estados_solicitudes as es on (es.id_estado=s.id_estado_fk)
-                                       left join sender_solicitud as ss on (ss.id_sender_solicitud=s.id_sender_solicitud)
+                                       inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion
                 where a.nit = ?`,               
-               [nit,nit,id_user]
+               [nit, nit, id_user, nit, id_user, nit, id_user, nit]
                );
         }else{
                 row = await db.query(
