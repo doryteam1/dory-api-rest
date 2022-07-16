@@ -85,7 +85,7 @@ async function getDetail(nit,token){
                                        left join solicitudes as s on (s.nit_asociacion_fk=a.nit)
                                        left join estados_solicitudes as es on (es.id_estado=s.id_estado_fk)
                                        left join sender_solicitud as ss on (ss.id_sender_solicitud=s.id_sender_solicitud)
-                where a.nit = ? and (s.usuarios_id = ? or s.usuarios_id = null)`,               
+                where a.nit = ?`,               
                [nit,nit,id_user]
                );
         }else{
