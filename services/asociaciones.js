@@ -31,7 +31,7 @@ async function getAsociacionesDepartamento(page = 1, idDepartamento){
 async function getAsociacionesMunicipio(page = 1, idMunic){  
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-  `SELECT a.*, 
+  `SELECT a.*, (select ta.nombre from tipos_asociaciones as ta  where ta.id_tipo_asociacion=a.id_tipo_asociacion_fk) as tipo_asociacion ,
           d.nombre_departamento as departamento, 
           m.nombre as municipio, 
           ta.nombre as tipo_asociacion,
