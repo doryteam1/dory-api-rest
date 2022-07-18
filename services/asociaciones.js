@@ -117,13 +117,17 @@ async function getDetail(nit,token){
 /*--------------------getMultiple---Asociaciones del Usuario----------------------------------*/
 async function getMultiple(page = 1, id_user){                
                 const offset = helper.getOffset(page, config.listPerPage);
-                const rows = await db.query(
+                const rows = await db.query(/*--------------------Asociaciones del Usuario como propietario----------------------------------*/
                   `SELECT a.nit,a.nombre,a.direccion,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
                           a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio,
                           (select d.nombre_departamento from departamentos d  where d.id_departamento=a.id_departamento) as departamento,
                           (select m.nombre from municipios as m  where m.id_municipio=a.id_municipio) as municipio,
                           a.id_corregimiento,a.id_vereda, a.informacion_adicional_direccion,a.corregimiento_vereda,au.usuarios_id,
                           (SELECT concat (u.nombres,' ',u.apellidos) from usuarios u where u.id=au.usuarios_id) as propietario,
+                          (select tu.nombre_tipo_usuario 
+                            from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit
+                                                             inner join tipos_usuarios as tu on tu.id_tipo_usuario = u.id_tipo_usuario 
+                          ) as tipo_propietario,
                           (select ta.nombre from tipos_asociaciones as ta where ta.id_tipo_asociacion = a.id_tipo_asociacion_fk) as tipo_asociacion
                   FROM asociaciones as a left join asociaciones_usuarios as au on (a.nit=au.nit_asociacion_pk_fk)
                   WHERE au.usuarios_id=?
