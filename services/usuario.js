@@ -684,6 +684,54 @@ async function updateMisconsumos(body, token){
     }
   }/*End getSolicitudesNoaceptadasPorUsuario*/
 
+  /*Envia todas las solicitudes de que le han llegado a todas las asociaciones que el representa*/
+  async function getSolicitudesNoAceptadasTodasAsociacionesRep(token){
+    let tipo_user=null;
+    let id_user=null;
+    if(token && validarToken(token)){
+        let payload=helper.parseJwt(token);
+        tipo_user= payload.rol;
+        id_user= payload.sub;
+        try{
+            if(tipo_user!="Pescador" && tipo_user!="Piscicultor"){ 
+              throw createError(401,"Usted no tiene autorización");
+            }else{                
+                      try{
+                        const rows = await db.query(
+                          `SELECT 
+                          s.id_solicitud, 
+                          e.id_estado, 
+                          e.descripcion as estado, 
+                          ss.id_sender_solicitud, 
+                          ss.nombre as enviado_por,   
+                          a.nombre as asociacion,
+                          s.fecha as fecha_solicitud,
+                          concat(u.nombres,' ',u.apellidos) as nombre_quien_envia, 
+                          FROM solicitudes as s
+                          inner join asociaciones as a on a.nit = s.nit_asociacion_fk
+                          inner join asociaciones_usuarios as au on au.nit_asociacion_pk_fk = a.nit
+                          inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado                      
+                          inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
+                          inner join usuario as u on u.id = s.usuarios_id
+                          WHERE s.id_estado_fk=1 and s.id_sender_solicitud=1 and au.usuarios_id = ?
+                          `, 
+                          [id_user]
+                        );  
+                        const data = helper.emptyOrRows(rows);
+                        return { data };
+                      }catch(err) {
+                        throw err;
+                      }
+                }           
+        }catch (error) {          
+          throw error;
+        } 
+    }else{
+      throw createError(401,"Usuario no autorizado");
+    }
+  }/*End getSolicitudesNoaceptadasPorUsuario*/
+
+
 module.exports = {
   getUserId,
   getMultiple,
@@ -699,5 +747,6 @@ module.exports = {
   updateMisconsumos,
   getPescadoresAsociacion,
   getPiscicultoresAsociacion,
-  getSolicitudesNoaceptadasPorUsuario
+  getSolicitudesNoaceptadasPorUsuario,
+  getSolicitudesNoAceptadasTodasAsociacionesRep
 }
