@@ -663,7 +663,7 @@ async function updateMisconsumos(body, token){
                                                 inner join usuarios as u on s.usuarios_id=u.id
                                                 inner join asociaciones_usuarios as au on a.nit = au.nit_asociacion_pk_fk 
                                                 inner join usuarios as u2 on au.usuarios_id = u2.id
-                          WHERE s.id_estado_fk=1 and s.id_sender_solicitud=2 and s.usuarios_id=? 
+                          WHERE s.id_estado_fk=1 and s.usuarios_id=? and (s.id_sender_solicitud=2 or s.id_sender_solicitud=1)
                           `, 
                           [id_user]
                         );  
