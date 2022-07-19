@@ -706,7 +706,7 @@ async function updateMisconsumos(body, token){
                           ss.nombre as enviado_por,   
                           a.nombre as asociacion,
                           s.fecha as fecha_solicitud,
-                          concat(u.nombres,' ',u.apellidos) as nombre_quien_envia, 
+                          concat(u.nombres,' ',u.apellidos) as nombre_quien_envia
                           FROM solicitudes as s
                           inner join asociaciones as a on a.nit = s.nit_asociacion_fk
                           inner join asociaciones_usuarios as au on au.nit_asociacion_pk_fk = a.nit
