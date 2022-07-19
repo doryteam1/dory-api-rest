@@ -148,7 +148,7 @@ router.get('/solicitudes/noaceptadas/porusuario', async function(req, res, next)
 router.get('/solicitudes/noaceptadas/representante', async function(req, res, next) {
   try {
         var token=req.headers.authorization;
-        res.json(await usuario.getSolicitudesNoaceptadasPorUsuario(token));
+        res.json(await usuario.getSolicitudesNoAceptadasTodasAsociacionesRep(token));
   } catch (err) {
         console.error(`Error al retornar las solicitudes no aceptadas de las asociaciones del representante`, err.message);
         next(err);
