@@ -555,7 +555,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                     [id_solicitud]
                   );  
                   
-                  let idSender = solicitud.id_sender_solicitud;
+                  let idSender = solicitud[0].id_sender_solicitud;
 
                   console.log("solicitud ",solicitud)
                   console.log("id sender ",idSender)
