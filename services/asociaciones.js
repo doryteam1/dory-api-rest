@@ -557,15 +557,30 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                   
                   let idSender = solicitud[0].id_sender_solicitud;
 
+                  /*solicitud enviada por usuario solo puede ser aceptada por el representante*/
+                  if(idSender == 1){
+                    const rows = await db.query(
+                      `SELECT au.usuarios_id as id_representante
+                       FROM solicitudes as s 
+                       inner join asociaciones_usuarios as au on s.nit_asociacion_fk = au.nit_asociacion_pk_fk
+                       WHERE  s.id_solicitud=?
+                      `, 
+                      [id_solicitud]
+                    );  
+                    console.log("id representante ",rows[0].id_representante)
+                  }else{//enviada por asociación - solo puede ser aceptada por el usuario
+                    const rows = await db.query(
+                      `SELECT * 
+                       FROM solicitudes as s
+                       WHERE  s.usuarios_id=? and s.id_solicitud=?
+                      `, 
+                      [id_user,id_solicitud]
+                    );  
+                  }
+
                   console.log("solicitud ",solicitud)
                   console.log("id sender ",idSender)
-                  const rows = await db.query(
-                    `SELECT * 
-                     FROM solicitudes as s inner join usuarios as u on s.usuarios_id = u.id 
-                     WHERE  u.id=? and s.id_solicitud=?
-                    `, 
-                    [id_user,id_solicitud]
-                  );  
+                  
                   if(rows.length<1){
                       throw createError(401,"Usted no tiene autorización para actualizar la solicitud"); 
                   }               
