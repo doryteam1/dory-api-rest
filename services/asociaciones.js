@@ -546,6 +546,19 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                   {
                     throw createError(400,"Se requiere el identificador de la solicitud");
                   }
+
+                  const solicitud = await db.query(
+                    `SELECT * 
+                     FROM solicitudes as s
+                     WHERE s.id_solicitud=?
+                    `, 
+                    [id_solicitud]
+                  );  
+                  
+                  let idSender = solicitud.id_sender_solicitud;
+
+                  console.log("solicitud ",solicitud)
+                  console.log("id sender ",idSender)
                   const rows = await db.query(
                     `SELECT * 
                      FROM solicitudes as s inner join usuarios as u on s.usuarios_id = u.id 
