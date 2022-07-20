@@ -567,7 +567,10 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                       `, 
                       [id_solicitud]
                     );  
-                    console.log("id representante ",rows[0].id_representante)
+                    let idRepresentante = rows[0].id_representante;
+                    if(idRepresentante != id_user){
+                      throw createError(401,"Usted no tiene autorización para actualizar la solicitud"); 
+                    }
                   }else{//enviada por asociación - solo puede ser aceptada por el usuario
                     const rows = await db.query(
                       `SELECT * 
@@ -576,33 +579,28 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                       `, 
                       [id_user,id_solicitud]
                     );  
-                  }
-
-                  console.log("solicitud ",solicitud)
-                  console.log("id sender ",idSender)
-                  
-                  if(rows.length<1){
+                    if(rows.length<1){
                       throw createError(401,"Usted no tiene autorización para actualizar la solicitud"); 
-                  }               
+                    }  
+                  }
+                               
                   const result = await db.query(
                     `UPDATE solicitudes
-                    SET id_estado_fk=?,
-                        usuarios_id=?
+                    SET id_estado_fk=?
                     WHERE id_solicitud=?`,
                     [
-                      2,
-                      id_user,               
+                      2,       
                       id_solicitud
                     ] 
                   );
             if(result.affectedRows){ 
                 message = 'Solicitud actualizada exitosamente';
             }else{
-                message='Error actualizando la solicitud del usuario';
+              throw createError(500,"Error actualizando el estado de la solicitud");
             }
-                return {message};
+            return {message};
         } catch(error){
-                  throw error;
+          throw error;
         }
     }else{
       throw createError(401,"Usted no tiene autorización"); 
