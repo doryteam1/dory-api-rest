@@ -75,7 +75,7 @@ async function getPiscicultoresAsociacion(page = 1,nit){
                              (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
                              (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
                              u.latitud,u.longitud, a.nit as nit_asociacion, a.nombre as nombre_asociacion,
-                             a.legalconstituida, a.fecha_renovacion_camarac, a.foto_camarac, a.id_tipo_asociacion_fk as id_tipo_asociacion,
+                             a.legalconstituida, a.fecha_renovacion_camarac, a.foto_camarac, a.id_tipo_asociacion_fk as id_tipo_asociacion,a.telefono,
                              (select ta.nombre from tipos_asociaciones as ta  where ta.id_tipo_asociacion=a.id_tipo_asociacion_fk) as tipo_asociacion,
                              s.id_solicitud 
           FROM usuarios as u  inner join tipos_usuarios as tu on tu.nombre_tipo_usuario like('Piscicultor') and (u.id_tipo_usuario=tu.id_tipo_usuario) 
