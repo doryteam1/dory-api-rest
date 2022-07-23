@@ -5,21 +5,56 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 const dayjs = require('dayjs');
 
-async function ObtenerTodasAsociaciones(page = 1){  
-        const offset = helper.getOffset(page, config.listPerPage);
-        const rows = await db.query(
-        `SELECT a.*
-        FROM  asociaciones as a inner join departamentos as d on ( d.id_departamento=a.id_departamento )
-                                inner join municipios as m on ( m.id_municipio=a.id_municipio )
-        LIMIT ?,?`, 
-        [ offset, config.listPerPage]
-      );
-        const data = helper.emptyOrRows(rows);
-        const meta = {page};
-        return {
-          data,
-          meta
-        }
+async function ObtenerTodasAsociaciones(page = 1, token ){  
+            let id_user;
+            let row;
+          if(token && validarToken(token)){ 
+                const payload=helper.parseJwt(token);  
+                id_user= payload.sub; 
+                row = await db.query(
+                  `SELECT a.*, d.nombre_departamento as departamento, m.nombre as municipio, ta.nombre as tipo_asociacion,
+                          (select concat(u1.nombres,' ',u1.apellidos) from asociaciones_usuarios as au inner join usuarios as u1 on  u1.id = au.usuarios_id
+                           where au.nit_asociacion_pk_fk=a.nit) as propietario,
+                          (select tu.nombre_tipo_usuario  from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit
+                                                                                           inner join tipos_usuarios as tu on tu.id_tipo_usuario = u.id_tipo_usuario) as tipo_usuario_propietario,
+                          (select u.id from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as id_propietario,
+                          (select u.email from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as email_propietario,
+                          (select es.descripcion from solicitudes as s inner join estados_solicitudes as es on s.id_estado_fk = es.id_estado 
+                           where  s.nit_asociacion_fk = a.nit and s.usuarios_id=?) as estado_solicitud,
+                          (select ss.nombre from solicitudes as s inner join sender_solicitud as ss on s.id_sender_solicitud = ss.id_sender_solicitud                                               
+                           where s.nit_asociacion_fk = a.nit and s.usuarios_id = ?) as solicitud_enviada_por,
+                          (select s.id_solicitud  from solicitudes as s 
+                           where s.nit_asociacion_fk = a.nit and s.usuarios_id = ?) as id_solicitud,
+                          (select count(*) from solicitudes as s 
+                           where s.id_estado_fk=2 and a.nit=s.nit_asociacion_fk)  as count_miembros  
+                  FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
+                                    inner join municipios as m on a.id_municipio = m.id_municipio
+                                    inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion
+                  `,               
+                  [id_user, id_user, id_user]
+                  );
+          }else{
+                  row = await db.query(
+                    `SELECT a.*, d.nombre_departamento as departamento, m.nombre as municipio, ta.nombre as tipo_asociacion,
+                            (select concat(u1.nombres,' ',u1.apellidos) from asociaciones_usuarios as au inner join usuarios as u1 on  u1.id = au.usuarios_id
+                            where au.nit_asociacion_pk_fk=a.nit) as propietario,
+                            (select tu.nombre_tipo_usuario  from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit
+                                                                                            inner join tipos_usuarios as tu on tu.id_tipo_usuario = u.id_tipo_usuario) as tipo_usuario_propietario,
+                            (select u.id from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as id_propietario,
+                            (select u.email from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as email_propietario,
+                            (select count(*) from solicitudes as s 
+                            where s.id_estado_fk=2 and a.nit=s.nit_asociacion_fk)  as count_miembros  
+                    FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
+                                      inner join municipios as m on a.id_municipio = m.id_municipio
+                                      inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion
+                    `,               
+                    []
+                    );
+          }  
+              const data = helper.emptyOrRows(row);
+              return {
+                data
+              }
 }/*End ObtenerTodasAsociaciones*/
 
 async function getAsociacionesDepartamento(page = 1, idDepartamento){  

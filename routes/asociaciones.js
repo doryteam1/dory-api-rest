@@ -172,7 +172,8 @@ router.get('/miembros/:idUser', async function(req, res, next) {
 
 router.get('/todas', async function(req, res, next) {
   try {
-        res.json(await asociaciones.ObtenerTodasAsociaciones(req.query.page));
+        var token=req.headers.authorization;
+        res.json(await asociaciones.ObtenerTodasAsociaciones(req.query.page,token));
   } catch (err) {
         console.error(`Error al retornar todas las asociaciones`, err.message);
         next(err);
