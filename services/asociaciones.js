@@ -278,7 +278,7 @@ async function create(asociacion,token){
                               id_user
                             ]
                             );                          
-                          if (result.affectedRows) {
+                          if (result[0]['affectedRows']) {
                              message = {  nit: asociacion.nit, message:'asociacion creada exitosamente'};
                           }
                             await conection.commit(); 
