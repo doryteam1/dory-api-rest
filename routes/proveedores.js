@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const proveedores = require('../services/proveedores');
 
-
 router.get('/productos/userId/:id', async function(req, res, next) {
   try {
     res.json(await proveedores.getMultiple(req.params.id));
@@ -11,7 +10,6 @@ router.get('/productos/userId/:id', async function(req, res, next) {
     next(err);
   }
 });
-
 
 router.post('/producto', async function(req, res, next) {
     try {
@@ -23,7 +21,6 @@ router.post('/producto', async function(req, res, next) {
     }
   });
 
-
 router.put('/producto/:codigo', async function(req, res, next) {
     try {
           var token=req.headers.authorization;
@@ -33,7 +30,6 @@ router.put('/producto/:codigo', async function(req, res, next) {
           next(err);
     }
 });
-
 
 router.delete('/producto/:id', async function(req, res, next) {
     try {
@@ -45,4 +41,13 @@ router.delete('/producto/:id', async function(req, res, next) {
     }
   });
 
+  router.get('/producto/todos', async function(req, res, next) {
+    try {
+          res.json(await proveedores.ObtenerTodosProductos());
+    } catch (err) {
+          console.error(`Error al traer todos los productos del sistema`, err.message);
+          next(err);
+    }
+  });
+  
 module.exports = router;

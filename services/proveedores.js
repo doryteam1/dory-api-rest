@@ -4,6 +4,18 @@ const config = require('../config');
 var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
+async function ObtenerTodosProductos(){         
+               let row = await db.query(
+                `SELECT p.codigo as codigo_producto,p.nombreProducto as nombre_producto,p.precio,p.descripcion,p.imagen,p.usuarios_id as id_proveedor,(select concat(u.nombres,'',u.apellidos))as proveedor
+                FROM productos as p inner join usuarios as u on p.usuarios_id = u.id
+                `,               
+                []
+                );
+                const data = helper.emptyOrRows(row);
+                return {
+                  data
+                }
+}/*End ObtenerTodasProductos*/
 
 async function getMultiple(id_user){
    const rows = await db.query(
@@ -159,5 +171,6 @@ module.exports = {
   getMultiple,
   create,
   update,
-  remove
+  remove,
+  ObtenerTodosProductos
 }
