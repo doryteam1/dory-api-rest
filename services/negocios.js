@@ -63,6 +63,8 @@ async function getMultiple(page = 1){
     []
   );
 
+  let resultSet = rows;
+
   if(rows.length > 0){
     let negocios = [];
     let currentNegocio = { ...rows[0], fotos:[]}
@@ -76,10 +78,10 @@ async function getMultiple(page = 1){
         currentNegocio.fotos.push(rows[i].foto)
       }
     }
-    rows = negocios;
+    resultSet = negocios;
   }
   
-  const data = helper.emptyOrRows(rows);
+  const data = helper.emptyOrRows(resultSet);
   const meta = {page};
   return {
     data,
