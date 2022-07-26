@@ -54,11 +54,31 @@ async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `select *,
-     (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
-     (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento
-     from negocios as n`, 
+    (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
+    (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento,
+    fn.foto_negocio as foto
+    from negocios as n
+    inner join fotosNegocios as fn on n.id_negocio = fn.id_negocio_fk
+    order by n.id_negocio asc`, 
     []
   );
+
+  if(rows.length > 0){
+    let negocios = [];
+    let currentNegocio = { ...rows[0], fotos:[]}
+    for(let i=0; i<rows.length; i++){
+      if(rows[i].id_negocio == currentNegocio.id_negocio){
+        currentNegocio.fotos.push(rows[i].foto)
+      }else{
+        currentNegocio.foto = undefined;
+        negocios.push(currentNegocio);
+        currentNegocio = { ...rows[i], fotos:[] };
+        currentNegocio.fotos.push(rows[i].foto)
+      }
+    }
+    rows = negocios;
+  }
+  
   const data = helper.emptyOrRows(rows);
   const meta = {page};
   return {
