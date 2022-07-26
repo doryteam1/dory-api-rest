@@ -58,7 +58,7 @@ async function getMultiple(page = 1){
     (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento,
     fn.foto_negocio as foto
     from negocios as n
-    inner join fotosNegocios as fn on n.id_negocio = fn.id_negocio_fk
+    left join fotosNegocios as fn on n.id_negocio = fn.id_negocio_fk
     order by n.id_negocio asc`, 
     []
   );
@@ -70,12 +70,16 @@ async function getMultiple(page = 1){
     let currentNegocio = { ...rows[0], fotos:[]}
     for(let i=0; i<rows.length; i++){
       if(rows[i].id_negocio == currentNegocio.id_negocio){
-        currentNegocio.fotos.push(rows[i].foto)
+        if(!rows[i].foto){
+          currentNegocio.fotos.push(rows[i].foto)
+        }
       }else{
         currentNegocio.foto = undefined;
         negocios.push(currentNegocio);
         currentNegocio = { ...rows[i], fotos:[] };
-        currentNegocio.fotos.push(rows[i].foto)
+        if(!rows[i].foto){
+          currentNegocio.fotos.push(rows[i].foto)
+        }
       }
     }
     resultSet = negocios;
