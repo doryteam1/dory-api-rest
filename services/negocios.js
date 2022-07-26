@@ -70,14 +70,14 @@ async function getMultiple(page = 1){
     let currentNegocio = { ...rows[0], fotos:[]}
     for(let i=0; i<rows.length; i++){
       if(rows[i].id_negocio == currentNegocio.id_negocio){
-        if(!(rows[i].foto)){
+        if(rows[i].foto){
           currentNegocio.fotos.push(rows[i].foto)
         }
       }else{
         currentNegocio.foto = undefined;
         negocios.push(currentNegocio);
         currentNegocio = { ...rows[i], fotos:[] };
-        if(!(rows[i].foto)){
+        if(rows[i].foto){
           currentNegocio.fotos.push(rows[i].foto)
         }
       }
