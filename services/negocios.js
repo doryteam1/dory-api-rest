@@ -55,7 +55,7 @@ async function getMultiple(page = 1){
   const rows = await db.query(
     `select *,
      (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
-     (select d.nombre_departamentos from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento
+     (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento
      from negocios as n`, 
     []
   );
