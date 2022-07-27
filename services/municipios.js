@@ -147,27 +147,37 @@ async function create(municipio){
 /* ------------------------------------getConsumosEspeciesTotal------------------------------------*/
 async function getConsumosEspeciesTotal(){
    
-  const rowsEspecies = await db.query(
-    `SELECT e.*
-    FROM especies as e
-    `, 
-    []
-  );                
-  let consumototalMunicipio=[]; 
-  let rowsConsumos;
- for(let i=0; i<rowsEspecies.length;i++){
-      rowsConsumos= await db.query(
-        `SELECT e.nombre as especie, sum(eu.cantidad_consumo) as consumo, count(eu.usuarios_id) as cantidad_usuario,
-         ( select m.nombre from municipios as m where m.id_municipio=u.id_municipio ) as municipio
-        FROM especies_usuarios as eu inner join especies as e on e.id_especie=eu.id_especie_pk_fk
-                                    inner join usuarios as u on u.id=eu.usuarios_id
-                                    inner join municipios as m on u.id_municipio=m.id_municipio
-        WHERE eu.id_especie_pk_fk=?
-        `, 
-        [rowsEspecies[i].id_especie]
-      );            
-      consumototalMunicipio.push(rowsConsumos[0]);
- }/*end for*/          
+              const rowsEspecies = await db.query(
+                `SELECT e.*
+                FROM especies as e
+                `, 
+                []
+              );        
+              const rowsMunicipios = await db.query(
+                `SELECT m.*
+                FROM municipios as m
+                `, 
+                []
+              );              
+              let consumototalMunicipio=[]; 
+              let rowsConsumos;
+
+              for(let i=0; i<rowsMunicipios.length;i++){
+                  for(let j=0; j<rowsEspecies.length;j++){
+                        rowsConsumos= await db.query(
+                          `SELECT e.nombre as especie, sum(eu.cantidad_consumo) as consumo, count(eu.usuarios_id) as cantidad_usuario,
+                          ( select m.nombre from municipios as m where m.id_municipio=u.id_municipio ) as municipio
+                          FROM especies_usuarios as eu inner join especies as e on e.id_especie=eu.id_especie_pk_fk
+                                                      inner join usuarios as u on u.id=eu.usuarios_id
+                                                      inner join municipios as m on u.id_municipio=m.id_municipio
+                          WHERE eu.id_especie_pk_fk=? and u.id_municipio=?
+                          `, 
+                          [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio]
+                        );            
+                        consumototalMunicipio.push(rowsConsumos[0]);
+                  }/*end for especies*/   
+                } /*end for municipios*/   
+ 
       const data = helper.emptyOrRows(consumototalMunicipio);            
       return {
             data
