@@ -125,18 +125,19 @@ async function create(municipio){
               []
             );                
             let consumototalMunicipio=[]; 
+            let rowsConsumos;
            for(let i=0; i<rowsEspecies.length;i++){
-                let rowsConsumos= await db.query(
+                rowsConsumos= await db.query(
                   `SELECT e.nombre as especie, sum(eu.cantidad_consumo) as consumo, count(eu.usuarios_id) as cantidad_usuario,
                    ( select m.nombre from municipios as m where m.id_municipio=u.id_municipio ) as municipio
                   FROM especies_usuarios as eu inner join especies as e on e.id_especie=eu.id_especie_pk_fk
                                               inner join usuarios as u on u.id=eu.usuarios_id
                   WHERE u.id_municipio=? and eu.id_especie_pk_fk=?
-                                  `, 
+                  `, 
                   [id_municipio,rowsEspecies[i].id_especie]
                 );            
-                consumototalMunicipio.push(rowsConsumos);
-           }/*end for*/
+                consumototalMunicipio.push(rowsConsumos[0]);
+           }/*end for*/          
                 const data = helper.emptyOrRows(consumototalMunicipio);            
                 return {
                       data
