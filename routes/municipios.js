@@ -29,7 +29,6 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-
 router.post('/', async function(req, res, next) {
     try {
       res.json(await municipios.create(req.body));
@@ -38,7 +37,6 @@ router.post('/', async function(req, res, next) {
       next(err);
     }
   });
-
 
 router.put('/:id', async function(req, res, next) {
     try {
@@ -49,12 +47,20 @@ router.put('/:id', async function(req, res, next) {
     }
 });
 
-
-router.delete('/:id', async function(req, res, next) {
+router.delete('/:idMunicipio', async function(req, res, next) {
     try {
-      res.json(await municipios.remove(req.params.id));
+      res.json(await municipios.remove(req.params.idMunicipio));
     } catch (err) {
       console.error(`Error al borrar el municipio`, err.message);
+      next(err);
+    }
+  });
+
+  router.get('/consumo/especies/municipio/:idMunicipio', async function(req, res, next) {
+    try {
+      res.json(await municipios.getConsumosEspecies(req.params.idMunicipio));
+    } catch (err) {
+      console.error(`Error al traer los consumos del municipio `, err.message);
       next(err);
     }
   });

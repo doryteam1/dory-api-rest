@@ -15,7 +15,7 @@ async function ObtenerTodosProductos(){
                 return {
                   data
                 }
-}/*End ObtenerTodasProductos*/
+}/*End ObtenerTodosProductos*/
 
 async function getMultiple(id_user){
    const rows = await db.query(
@@ -31,10 +31,7 @@ async function getMultiple(id_user){
 }
 
 /*-----------------------------------create de productos---------------------------------------------------*/
-
-
-async function create(producto,token){
-    
+async function create(producto,token){    
    if(token && validarToken(token)){
        try {
             let payload=helper.parseJwt(token);
@@ -69,13 +66,9 @@ async function create(producto,token){
            throw createError(401,"Usted no tiene autorización"); 
         }
 }/*--End create productos-------*/
- 
-
 
 /*-----------------------------------update de productos---------------------------------------------------*/
-
   async function update(codigo, producto, token){
-
     if(token && validarToken(token)){
           try{
             let payload=helper.parseJwt(token);
@@ -130,12 +123,9 @@ async function create(producto,token){
         }
   }/*--End update productos----*/
 
-  /*-----------------------------------remove de productos---------------------------------------------------*/
-  
+  /*-----------------------------------remove de productos---------------------------------------------------*/  
   async function remove(codigo,token){
-
     if(token && validarToken(token)){
-
         try{
               let payload=helper.parseJwt(token);
               let rol= payload.rol;
