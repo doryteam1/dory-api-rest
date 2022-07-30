@@ -12,12 +12,13 @@ router.get('/user/:id', async function(req, res, next) {
   }
 });
 
-router.get('/', async function(req, res, next) {
+router.get('/todas', async function(req, res, next) {
   try {
-    res.json(await granjas.getMultiple(req.query.page));
+        var token=req.headers.authorization;
+        res.json(await granjas.getGranjasTodas(req.query.page,token));
   } catch (err) {
-    console.error(`Error al traer las granjas `, err.message);
-    next(err);
+        console.error(`Error al traer las granjas del sistema`, err.message);
+        next(err);
   }
 });
 
