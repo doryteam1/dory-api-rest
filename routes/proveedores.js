@@ -59,5 +59,15 @@ router.delete('/producto/:id', async function(req, res, next) {
          next(err);
     }
   });
+
+  router.get('/detailed/:codigoProducto', async function(req, res, next) {
+    try {
+      var token=req.headers.authorization;
+      res.json(await proveedores.getDetailProducto(req.params.codigoProducto,token));
+    } catch (err) {
+      console.error(`Error al traer los productos detallados `, err.message);
+      next(err);
+    }
+  });
   
 module.exports = router;
