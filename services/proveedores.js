@@ -181,10 +181,69 @@ async function create(producto,token){
 
   }/*--End Remove productos----*/
 
+   /*_____________updatePhotosProducto ________________________________*/
+   async function updatePhotosProducto(codigoProducto,body,token){  
+    var arrayfotos= body.arrayFotos;    
+    let tipo_user=null;     
+    const conection= await db.newConnection();
+    await conection.beginTransaction();
+    if(token && validarToken(token)){
+        let payload=helper.parseJwt(token);
+        tipo_user= payload.rol;
+        let userN= payload.sub;         
+        try{
+            if(tipo_user!="Proveedor"){ 
+              throw createError(401,"Usted no tiene autorización");
+            }else{
+                if(arrayfotos){ 
+                  try{  
+                        const productoDeUsuario= await db.query(
+                        `SELECT *
+                        FROM productos as p
+                        WHERE p.usuarios_id=? and p.codigo=? `,
+                          [userN,codigoProducto]
+                        );
+                       
+                        if(productoDeUsuario.length<0){
+                           throw createError(401,"Usuario no autorizado");
+                        }
+
+                        await db.query(
+                        `DELETE from fotosProductos where codigo_producto_fk=?`,
+                          [codigoProducto]
+                        );       
+                        for(var i=0;i<arrayfotos.length;i++){
+                            await db.query(
+                              `INSERT INTO fotosProductos(foto,codigo_producto_fk) VALUES (?,?)`,
+                              [arrayfotos[i], codigoProducto]
+                            );
+                        }                         
+                  }catch(err) {
+                        throw createError(400,err.message);
+                  }
+                }else{
+                  throw createError(400,"Usted no agrego las fotos del producto para actualizarlas"); 
+                }
+          } 
+          await conection.commit(); 
+          conection.release();
+          message = "Fotos actualizadas correctamente";
+          return { message };
+        }catch (error) {
+          await conection.rollback(); 
+          conection.release();
+          throw error;
+      } 
+    }else{
+      throw createError(401,"Usuario no autorizado");
+    }
+  } //* updatePhotosProducto */
+
 module.exports = {
   getMultiple,
   create,
   update,
   remove,
-  ObtenerTodosProductos
+  ObtenerTodosProductos,
+  updatePhotosProducto
 }

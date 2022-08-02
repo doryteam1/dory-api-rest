@@ -49,5 +49,15 @@ router.delete('/producto/:id', async function(req, res, next) {
           next(err);
     }
   });
+
+  router.put('/update/photos/:codigoProducto', async function(req, res, next) {
+    try { 
+         var token=req.headers.authorization;
+         res.json(await proveedores.updatePhotosProducto(req.params.codigoProducto,req.body,token));
+    } catch (err) {
+         console.error(`Error al actualizar las fotos del producto`, err.message);
+         next(err);
+    }
+  });
   
 module.exports = router;
