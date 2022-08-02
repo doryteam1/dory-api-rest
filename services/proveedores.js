@@ -5,21 +5,48 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
 async function ObtenerTodosProductos(){         
-               let row = await db.query(
-                `SELECT p.codigo as codigo_producto,p.nombreProducto as nombre_producto,p.precio,p.descripcion,p.imagen,p.usuarios_id as id_proveedor,(select concat(u.nombres,'',u.apellidos))as proveedor
+               const rows = await db.query(
+                `SELECT p.codigo,p.nombreProducto,p.precio,p.descripcion,p.usuarios_id as id_proveedor,f.foto,(select concat(u.nombres,'',u.apellidos))as proveedor
                 FROM productos as p inner join usuarios as u on p.usuarios_id = u.id
+                                    inner join fotosProductos as f on (f.codigo_producto_fk = p.codigo)
                 `,               
                 []
                 );
-                const data = helper.emptyOrRows(row);
+                if(rows.length<1){
+                  throw createError(404,"Productos No Encontrados");
+                }
+                var arrayfotos= new Array();
+                var nuevoRows = new Array();
+                var index= rows[0].codigo; 
+                console.log(' foto?','', rows[0].foto); 
+                nuevoRows.push(rows[0]);                  
+                rows.forEach((element)=>{ 
+                  if((index == element.codigo))
+                  { 
+                    if(element.foto){                            
+                          arrayfotos.push(element.foto);          
+                    }          
+                  }else {                                                  
+                            index= element.codigo;
+                            nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+                            nuevoRows.push(element);
+                            arrayfotos=[];  
+                            if(element.foto){
+                                arrayfotos.push(element.foto);
+                            }                                              
+                  }  
+                });        
+                nuevoRows[nuevoRows.length-1].fotos=arrayfotos;         
+                const data = helper.emptyOrRows(nuevoRows); 
                 return {
                   data
                 }
 }/*End ObtenerTodosProductos*/
 
+/*-----------------------------------getMultiple---------------------------------------------------*/
 async function getMultiple(id_user){
    const rows = await db.query(
-    `SELECT p.codigo,p.nombreProducto,p.precio, p.descripcion, p.imagen
+    `SELECT p.codigo,p.nombreProducto,p.precio, p.descripcion
      FROM productos p 
      WHERE p.usuarios_id = ?`, 
     [id_user]
@@ -28,7 +55,7 @@ async function getMultiple(id_user){
   return {
     data
   }
-}
+}/*------------End GetMultiple-------------*/
 
 /*-----------------------------------create de productos---------------------------------------------------*/
 async function create(producto,token){    
@@ -38,12 +65,11 @@ async function create(producto,token){
             let rol= payload.rol;         
                 if (rol=='Proveedor') {                                      
                       const result = await db.query(
-                        `INSERT INTO productos(nombreProducto,precio,descripcion,imagen,usuarios_id) VALUES (?,?,?,?,?)`, 
+                        `INSERT INTO productos(nombreProducto,precio,descripcion,usuarios_id) VALUES (?,?,?,?)`, 
                         [
                           producto.nombreProducto,
                           producto.precio,
                           producto.descripcion,
-                          producto.imagen,
                           payload.sub
                         ]
                       );                  
@@ -75,7 +101,7 @@ async function create(producto,token){
             let rol= payload.rol;
             let id_user= payload.sub;
                   if (rol=='Proveedor') {
-                    if(producto.nombreProducto==undefined || producto.precio==undefined || producto.descripcion==undefined || producto.imagen==undefined){
+                    if(producto.nombreProducto==undefined || producto.precio==undefined || producto.descripcion==undefined ){
                          throw createError(400,"Se requieren todos los parámetros!");
                     }
                     const rows = await db.query(
@@ -92,14 +118,12 @@ async function create(producto,token){
                         `UPDATE productos 
                         SET nombreProducto=?,
                             precio=?,
-                            descripcion=?,
-                            imagen=? 
+                            descripcion=?
                         WHERE codigo=?`,
                         [
                           producto.nombreProducto,
                           producto.precio,
-                          producto.descripcion, 
-                          producto.imagen,
+                          producto.descripcion,
                           codigo
                         ] 
                       );                    
