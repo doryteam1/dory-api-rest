@@ -43,8 +43,8 @@ async function ObtenerTodosProductos(){
                 }
 }/*End ObtenerTodosProductos*/
 
-/*-----------------------------------getMultiple---------------------------------------------------*/
-async function getMultiple(id_user){
+/*-----------------------------------getProductosUsuarioProveedor---------------------------------------------------*/
+async function getProductosUsuarioProveedor(id_user){
    const rows = await db.query(
     `SELECT p.codigo,p.nombreProducto,p.precio, p.descripcion, f.foto
     FROM productos as p left join usuarios as u on p.usuarios_id = u.id
@@ -81,7 +81,7 @@ async function getMultiple(id_user){
   return {
     data
   }
-}/*------------End GetMultiple-------------*/
+}/*------------End getProductosUsuarioProveedor-------------*/
 
 /*-----------------------------------create de productos---------------------------------------------------*/
 async function create(producto,token){    
@@ -320,7 +320,7 @@ async function create(producto,token){
 }/*getDetailProducto*/
 
 module.exports = {
-  getMultiple,
+  getProductosUsuarioProveedor,
   create,
   update,
   remove,
