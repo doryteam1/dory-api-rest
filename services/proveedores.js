@@ -46,12 +46,38 @@ async function ObtenerTodosProductos(){
 /*-----------------------------------getMultiple---------------------------------------------------*/
 async function getMultiple(id_user){
    const rows = await db.query(
-    `SELECT p.codigo,p.nombreProducto,p.precio, p.descripcion
-     FROM productos p 
+    `SELECT p.codigo,p.nombreProducto,p.precio, p.descripcion, f.foto
+    FROM productos as p left join usuarios as u on p.usuarios_id = u.id
+                        left join fotosProductos as f on (f.codigo_producto_fk = p.codigo)
      WHERE p.usuarios_id = ?`, 
     [id_user]
   );
-  const data = helper.emptyOrRows(rows);
+  if(rows.length<1){
+    throw createError(404,"Productos No Encontrados");
+  }
+  var arrayfotos= new Array();
+  var nuevoRows = new Array();
+  var index= rows[0].codigo; 
+  console.log(' foto?','', rows[0].foto); 
+  nuevoRows.push(rows[0]);                  
+  rows.forEach((element)=>{ 
+    if((index == element.codigo))
+    { 
+      if(element.foto){                            
+            arrayfotos.push(element.foto);          
+      }          
+    }else {                                                  
+              index= element.codigo;
+              nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+              nuevoRows.push(element);
+              arrayfotos=[];  
+              if(element.foto){
+                  arrayfotos.push(element.foto);
+              }                                              
+    }  
+  });        
+  nuevoRows[nuevoRows.length-1].fotos=arrayfotos;         
+  const data = helper.emptyOrRows(nuevoRows);
   return {
     data
   }
