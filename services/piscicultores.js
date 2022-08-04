@@ -15,7 +15,7 @@ async function getPiscicultoresTodos(page = 1){
     (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
     u.latitud,u.longitud
  FROM tipos_usuarios as tu, usuarios as u
- WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Piscicultor')) 
+ WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Piscicultor')) and u.estaVerificado=1
            LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
@@ -42,6 +42,7 @@ async function getPiscicultoresMunicipio(page = 1,idMunicipio){
     u.latitud,u.longitud
  FROM tipos_usuarios as tu, usuarios as u
  WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Piscicultor')) and 
+       u.estaVerificado=1 and
        u.id_municipio=?
            LIMIT ?,?`, 
     [idMunicipio,offset, config.listPerPage]
@@ -59,15 +60,16 @@ async function getPiscicultoresDepartamento(page = 1, idDepartamento){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT distinctrow  m.id_municipio, m.nombre, m.poblacion,
-    (SELECT count(*) 
-     FROM municipios m1, usuarios u1, tipos_usuarios tu 
-     WHERE m1.id_municipio=u1.id_municipio and  m1.id_municipio=m.id_municipio and 
-     u1.id_tipo_usuario=tu.id_tipo_usuario and tu.nombre_tipo_usuario like('Piscicultor')) as count_piscicultores
-FROM  usuarios as u, municipios as m, corregimientos as c,veredas as v, departamentos as d
-WHERE ( m.id_departamento_fk=d.id_departamento) and 
-(m.id_municipio=u.id_municipio or c.id_municipio=u.id_municipio or v.id_municipio=u.id_municipio)  and
-d.id_departamento=?
- LIMIT ?,?`, 
+        (SELECT count(*) 
+        FROM municipios m1, usuarios u1, tipos_usuarios tu 
+        WHERE m1.id_municipio=u1.id_municipio and  m1.id_municipio=m.id_municipio and 
+        u1.id_tipo_usuario=tu.id_tipo_usuario and tu.nombre_tipo_usuario like('Piscicultor')) as count_piscicultores
+    FROM  usuarios as u, municipios as m, corregimientos as c,veredas as v, departamentos as d
+    WHERE ( m.id_departamento_fk=d.id_departamento) and 
+          (m.id_municipio=u.id_municipio or c.id_municipio=u.id_municipio or v.id_municipio=u.id_municipio)  and
+          u.estaVerificado=1 and
+          d.id_departamento=?
+    LIMIT ?,?`, 
     [idDepartamento, offset, config.listPerPage]
   );
   const data = helper.emptyOrRows(rows);
