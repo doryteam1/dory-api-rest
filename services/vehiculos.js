@@ -48,7 +48,7 @@ async function getVehiculoUser(page = 1, id_user){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT v.* , f.fotov
-     FROM vehiculos as v left join fotosvehiculos as f on (f.id_vehiculo_fk = v.id_vehiculo)
+     FROM vehiculos as v left join fotosVehiculos as f on (f.id_vehiculo_fk = v.id_vehiculo)
      WHERE  v.usuarios_id=?
      LIMIT ?,?`, 
     [id_user, offset, config.listPerPage]
