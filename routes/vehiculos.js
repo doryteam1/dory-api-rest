@@ -51,4 +51,14 @@ router.delete('/:id', async function(req, res, next) {
     }
   });
 
+  router.put('/update/photos/:idVehiculo', async function(req, res, next) {
+    try { 
+         var token=req.headers.authorization;
+         res.json(await vehiculos.updatePhotosVehiculos(req.params.idVehiculo,req.body,token));
+    } catch (err) {
+         console.error(`Error al actualizar las fotos del vehículo`, err.message);
+         next(err);
+    }
+  });
+
 module.exports = router;

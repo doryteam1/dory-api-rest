@@ -7,11 +7,37 @@ var createError = require('http-errors');
 async function getMultiple(page = 1){
         const offset = helper.getOffset(page, config.listPerPage);
         const rows = await db.query(
-          `SELECT * FROM vehiculos LIMIT ?,?`, 
+          `SELECT v.* , f.fotov
+           FROM vehiculos as v left join fotosvehiculos as f on (f.id_vehiculo_fk = v.id_vehiculo)
+           LIMIT ?,?`, 
           [offset, config.listPerPage]
         );
-        const data = helper.emptyOrRows(rows);
-        const meta = {page};
+        if(rows.length<1){
+          throw createError(404,"No hay vehiculos registrados");
+        }
+          var arrayfotos= new Array();
+          var nuevoRows = new Array();
+          var index= rows[0].id_vehiculo;
+          nuevoRows.push(rows[0]);        
+          rows.forEach((element)=>{           
+            if((index == element.id_vehiculo))
+            { 
+              if(element.fotov){
+                    arrayfotos.push(element.fotov);
+              }          
+            }else { 
+                      index= element.id_vehiculo;
+                      nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+                      nuevoRows.push(element);
+                      arrayfotos=[];  
+                      if(element.fotov){
+                          arrayfotos.push(element.fotov);
+                      } 
+            }
+          });        
+          nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
+          const data = helper.emptyOrRows(nuevoRows); 
+          const meta = {page};
         return {
           data,
           meta
@@ -21,18 +47,42 @@ async function getMultiple(page = 1){
 async function getVehiculoUser(page = 1, id_user){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT * 
-     FROM vehiculos as v
+    `SELECT v.* , f.fotov
+     FROM vehiculos as v left join fotosvehiculos as f on (f.id_vehiculo_fk = v.id_vehiculo)
      WHERE  v.usuarios_id=?
      LIMIT ?,?`, 
     [id_user, offset, config.listPerPage]
   );
-  const data = helper.emptyOrRows(rows);
-  const meta = {page};
-  return {
-    data,
-    meta
+  if(rows.length<1){
+    throw createError(404,"Usuario sin vehiculos");
   }
+    var arrayfotos= new Array();
+    var nuevoRows = new Array();
+    var index= rows[0].id_vehiculo;
+    nuevoRows.push(rows[0]);        
+    rows.forEach((element)=>{           
+      if((index == element.id_vehiculo))
+      { 
+        if(element.fotov){
+              arrayfotos.push(element.fotov);
+        }          
+      }else { 
+                index= element.id_vehiculo;
+                nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+                nuevoRows.push(element);
+                arrayfotos=[];  
+                if(element.fotov){
+                    arrayfotos.push(element.fotov);
+                } 
+      }
+    });        
+    nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
+    const data = helper.emptyOrRows(nuevoRows); 
+    const meta = {page};
+    return {
+      data,
+      meta
+    }
 }/*End getVehiculoUser*/
 
 /*----------------------------------create-vehículo-------------------------------------------------- */
@@ -158,10 +208,69 @@ async function create(vehiculo,token){
            }
   }/*End remove*/
 
+  /*_____________updatePhotosVehiculos ________________________________*/
+  async function updatePhotosVehiculos(idVehiculo,body,token){  
+    var arrayfotos= body.arrayFotos;    
+    let tipo_user=null;     
+    const conection= await db.newConnection();
+    await conection.beginTransaction();
+    if(token && validarToken(token)){
+        let payload=helper.parseJwt(token);
+        tipo_user= payload.rol;
+        let userN= payload.sub;         
+        try{
+            if(tipo_user!="Transportador"){ 
+              throw createError(401,"Usted no tiene autorización");
+            }else{
+                if(arrayfotos){ 
+                  try{  
+                        const vehiculoDeUsuario= await db.query(
+                        `SELECT *
+                        FROM vehiculos as v
+                        WHERE v.usuarios_id=? and v.id_vehiculo=? `,
+                          [userN,idVehiculo]
+                        );
+                       
+                        if(vehiculoDeUsuario.length<0){
+                           throw createError(401,"Usuario no autorizado");
+                        }
+
+                        await db.query(
+                        `DELETE from fotosVehiculos where id_vehiculo_fk=?`,
+                          [idVehiculo]
+                        );       
+                        for(var i=0;i<arrayfotos.length;i++){
+                            await db.query(
+                              `INSERT INTO fotosVehiculos(fotov,id_vehiculo_fk) VALUES (?,?)`,
+                              [arrayfotos[i], idVehiculo]
+                            );
+                        }                         
+                  }catch(err) {
+                        throw createError(400,err.message);
+                  }
+                }else{
+                  throw createError(400,"Usted no agrego las fotos para actualizarlas"); 
+                }
+          } 
+          await conection.commit(); 
+          conection.release();
+          message = "Fotos actualizadas correctamente";
+          return { message };
+        }catch (error) {
+          await conection.rollback(); 
+          conection.release();
+          throw error;
+      } 
+    }else{
+      throw createError(401,"Usuario no autorizado");
+    }
+  } //* updatePhotosVehiculos */
+
 module.exports = {
   getMultiple,
   getVehiculoUser,
   create,
   update,
-  remove
+  remove,
+  updatePhotosVehiculos
 }
