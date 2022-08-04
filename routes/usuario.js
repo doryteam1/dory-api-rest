@@ -182,4 +182,22 @@ router.get('/transportadores/todos', async function(req, res, next) {
   }
 });
 
+router.get('/consumidores/todos', async function(req, res, next) {
+  try {
+    res.json(await usuario.getUsersConsumidores(req.query.page));
+  } catch (err) {
+    console.error(`Error al traer los usuarios de tipo consumidor`, err.message);
+    next(err);
+  }
+});
+
+router.get('/comerciantes/todos', async function(req, res, next) {
+  try {
+    res.json(await usuario.getUsersComerciantes(req.query.page));
+  } catch (err) {
+    console.error(`Error al traer los usuarios de tipo comerciante`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;
