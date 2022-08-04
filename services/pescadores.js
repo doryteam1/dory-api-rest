@@ -15,7 +15,7 @@ async function getPescadoresTodos(page = 1){
     (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
     u.latitud,u.longitud
  FROM tipos_usuarios as tu, usuarios as u
- WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Pescador'))
+ WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Pescador')) and u.estaVerificado=1
            LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
@@ -39,7 +39,7 @@ async function getPescadoresMunicipio(page = 1,idMunicipio){
     (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
     u.latitud,u.longitud
  FROM tipos_usuarios as tu, usuarios as u
- WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Pescador')) and 
+ WHERE (u.id_tipo_usuario=tu.id_tipo_usuario) and (tu.nombre_tipo_usuario like('Pescador')) and u.estaVerificado=1 and 
        u.id_municipio=?
            LIMIT ?,?`, 
     [idMunicipio,offset, config.listPerPage]
@@ -63,8 +63,9 @@ async function getPescadoresDepartamento(page = 1, idDepartamento){
             u1.id_tipo_usuario=tu.id_tipo_usuario and tu.nombre_tipo_usuario like('Pescador')) as count_pescadores
 FROM  usuarios as u, municipios as m, corregimientos as c,veredas as v, departamentos as d
 WHERE ( m.id_departamento_fk=d.id_departamento) and 
-(m.id_municipio=u.id_municipio or c.id_municipio=u.id_municipio or v.id_municipio=u.id_municipio)  and
-d.id_departamento=?
+      (m.id_municipio=u.id_municipio or c.id_municipio=u.id_municipio or v.id_municipio=u.id_municipio) and 
+      u.estaVerificado=1 and
+      d.id_departamento=?
  LIMIT ?,?`, 
     [idDepartamento, offset, config.listPerPage]
   );
