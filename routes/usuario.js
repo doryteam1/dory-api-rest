@@ -164,4 +164,22 @@ router.get('/proveedores/todos', async function(req, res, next) {
   }
 });
 
+router.get('/investigadores/todos', async function(req, res, next) {
+  try {
+    res.json(await usuario.getUsersInvestigadoresExpertos(req.query.page));
+  } catch (err) {
+    console.error(`Error al traer los usuarios de tipo investigador experto`, err.message);
+    next(err);
+  }
+});
+
+router.get('/transportadores/todos', async function(req, res, next) {
+  try {
+    res.json(await usuario.getUsersTransportadores(req.query.page));
+  } catch (err) {
+    console.error(`Error al traer los usuarios de tipo transportador`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;
