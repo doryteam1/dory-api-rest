@@ -273,11 +273,66 @@ async function create(vehiculo,token){
     }
   } //* updatePhotosVehiculos */
 
+    /*_____________getDetailVehiculo ________________________________*/
+    async function getDetailVehiculo(idVehiculo, token){
+      try{
+        let rows=[];  
+         if(token && validarToken(token)){
+                  let payload=helper.parseJwt(token);
+                  id_user= payload.sub; 
+                  rows = await db.query(
+                    `SELECT v.*
+                    FROM vehiculos as v
+                    WHERE   v.usuarios_id=? and v.id_vehiculo=?
+                    `, 
+                    [id_user,idVehiculo]
+                  ); 
+                  if(rows.length < 1){
+                    throw createError(404, "Usted no tiene ningún vehículo con el id "+idVehiculo+".")
+                  }
+          }else{
+            rows = await db.query(
+              `SELECT v.*
+              FROM vehiculos as v
+              WHERE v.id_vehiculo=?
+              `, 
+              [idVehiculo]
+            ); 
+          }
+              if(rows.length < 1){
+                throw createError(404, "No se encuentra el vehículo con el id "+idVehiculo+".")
+              }
+            const rowsfotos = await db.query(
+              `SELECT fv.id_fotov, fv.fotov
+              FROM  fotosVehiculos as fv
+              WHERE fv.id_vehiculo_fk =?
+              `, 
+            [idVehiculo]
+            );  
+            var arrayfotos= new Array();  
+            rowsfotos.forEach((element)=>{ 
+                arrayfotos.push(element.fotov);
+            });      
+            var nuevoRows = new Array();
+            nuevoRows.push(rows[0]);
+            nuevoRows[nuevoRows.length-1].fotos_vehiculos=arrayfotos; 
+  
+            const data = helper.emptyOrRows(nuevoRows);                      
+            return {
+              data
+            }
+      } catch(err){        
+            console.log(err);
+            throw err;
+      }
+  }/*getDetailVehiculo*/
+
 module.exports = {
   getMultiple,
   getVehiculoUser,
   create,
   update,
   remove,
-  updatePhotosVehiculos
+  updatePhotosVehiculos,
+  getDetailVehiculo
 }
