@@ -747,7 +747,7 @@ async function updateMisconsumos(body, token){
         WHERE u.id_tipo_usuario=tu.id_tipo_usuario and
               u.id_tipo_usuario=2
         LIMIT ?,?`, 
-        [idUser, offset, config.listPerPage]
+        [ offset, config.listPerPage]
     );
     const data = helper.emptyOrRows(rows);
     const meta = {page};
