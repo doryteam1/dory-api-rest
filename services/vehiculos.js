@@ -209,7 +209,14 @@ async function create(vehiculo,token){
   }/*End remove*/
 
   /*_____________updatePhotosVehiculos ________________________________*/
-  async function updatePhotosVehiculos(idVehiculo,body,token){  
+  async function updatePhotosVehiculos(idVehiculo,body,token){ 
+    const verifyVehiculo = await db.query(
+      `SELECT * FROM vehiculos WHERE id_vehiculo=?`, 
+      [idVehiculo]
+    );
+     if (verifyVehiculo.length<1){
+           throw createError(400,"Vehículo no se encuentra registrado");
+     }
     var arrayfotos= body.arrayFotos;    
     let tipo_user=null;     
     const conection= await db.newConnection();
