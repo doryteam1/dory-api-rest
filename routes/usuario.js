@@ -155,4 +155,13 @@ router.get('/solicitudes/noaceptadas/representante', async function(req, res, ne
   }
 });
 
+router.get('/proveedores/todos', async function(req, res, next) {
+  try {
+    res.json(await usuario.getUsersProveedores(req.query.page));
+  } catch (err) {
+    console.error(`Error al traer los usuarios de tipo proveedor`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;
