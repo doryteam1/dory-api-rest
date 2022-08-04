@@ -274,7 +274,7 @@ async function create(vehiculo,token){
   } //* updatePhotosVehiculos */
 
     /*_____________getDetailVehiculo ________________________________*/
-    async function getDetailVehiculo(idVehiculo){
+    async function getDetailVehiculo(idVehiculo){ 
       try{
            const rows = await db.query(
               `SELECT v.*

@@ -63,7 +63,6 @@ router.delete('/:id', async function(req, res, next) {
 
   router.get('/detailed/:idVehiculo', async function(req, res, next) {
     try {
-      /*var token=req.headers.authorization;*/
       res.json(await vehiculos.getDetailVehiculo(req.params.idVehiculo));
     } catch (err) {
       console.error(`Error al traer el detalle del vehiculo `, err.message);
