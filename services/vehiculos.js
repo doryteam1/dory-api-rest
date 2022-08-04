@@ -112,10 +112,10 @@ async function create(vehiculo,token){
                         id_user
                       ]
                     );                  
-                    let message = {message: 'Error creando vehiculo'};                  
+                    let message = {message: 'Error creando vehiculo'};
                     if (result.affectedRows) {
-                      message = {message:'Vehículo creado exitosamente'};
-                      return message;
+                        message = {  insertId: result.insertId, message:'producto creado exitosamente'};
+                        return {message};
                     }else{
                       throw createError(500,"ocurrió un problema al registrar el vehículo");
                     }                    
