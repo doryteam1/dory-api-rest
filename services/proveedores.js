@@ -6,9 +6,15 @@ const {validarToken} = require ('../middelware/auth');
 
 async function ObtenerTodosProductos(){         
                const rows = await db.query(
-                `SELECT p.codigo,p.nombreProducto,p.precio,p.descripcion,p.usuarios_id as id_proveedor,f.foto,(select concat(u.nombres,'',u.apellidos))as proveedor
+                `SELECT p.codigo,
+                p.nombreProducto,p.precio,p.descripcion,
+                p.usuarios_id as id_proveedor,
+                f.foto,
+                (select concat(u.nombres,'',u.apellidos))as proveedor,
+                m.nombre as municipio_proveedor
                 FROM productos as p inner join usuarios as u on p.usuarios_id = u.id
                                     inner join fotosProductos as f on (f.codigo_producto_fk = p.codigo)
+                                    left join municipios as m on u.id_municipio = m.id_municipio
                 `,               
                 []
                 );
