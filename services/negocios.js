@@ -204,19 +204,18 @@ async function createNegocio(body,token){
   async function eliminarNegocio(id_negocio,token){
     
     if(token && validarToken(token)){
-              const payload=helper.parseJwt(token);  
-              const id_user=payload.sub;
+            const payload=helper.parseJwt(token);  
+            const id_user=payload.sub;
             const rows = await db.query(
               `SELECT n.usuarios_id
               FROM negocios as n
               WHERE n.usuarios_id=?`, 
               [id_user]
             );
-            if(rows.length<=0){
+            if(rows.length<1){
               return {message:'Usted no tiene autorización para éste proceso'};
             }
-          try { 
-            
+          try {
                 await db.query(
                   `DELETE FROM fotosNegocios WHERE id_negocio_fk=?`, 
                   [id_negocio]

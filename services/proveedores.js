@@ -175,11 +175,25 @@ async function create(producto,token){
 
   /*-----------------------------------remove de productos---------------------------------------------------*/  
   async function remove(codigo,token){
-    if(token && validarToken(token)){
+    if(token && validarToken(token)){      
         try{
               let payload=helper.parseJwt(token);
               let rol= payload.rol;
+              const id_user=payload.sub;
                     if (rol=='Proveedor') {
+                      const rows = await db.query(
+                        `SELECT p.usuarios_id
+                        FROM productos as p
+                        WHERE p.usuarios_id=?`, 
+                        [id_user]
+                      );
+                      if(rows.length<1){
+                        return {message:'Usted no tiene autorización para éste proceso'};
+                      }
+                      await db.query(
+                        `DELETE FROM fotosProductos WHERE codigo_producto_fk=?`, 
+                        [codigo]
+                      );
                         const result = await db.query(
                           `DELETE FROM productos WHERE codigo=?`, 
                           [codigo]
@@ -204,7 +218,6 @@ async function create(producto,token){
     } else{
            throw createError(401,"Usted no tiene autorización"); 
         }
-
   }/*--End Remove productos----*/
 
    /*_____________updatePhotosProducto ________________________________*/
