@@ -199,8 +199,7 @@ async function getMultiple(page = 1, id_user){
 }/*End getMultiple*/
 
 /*________________Asociaciones a las que pertenece como miembro el usuario________________*/
-async function getAsociacionesMiembros(page = 1, id_user){
-       
+async function getAsociacionesMiembros(page = 1, id_user){       
             const rows2 = await db.query(
               `SELECT a.nit,a.nombre,a.direccion,a.telefono,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
                       a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio,
@@ -611,17 +610,14 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                   {
                     throw createError(400,"Se requiere el identificador de la solicitud");
                   }
-
                   const solicitud = await db.query(
                     `SELECT * 
                      FROM solicitudes as s
                      WHERE s.id_solicitud=?
                     `, 
                     [id_solicitud]
-                  );  
-                  
+                  );                  
                   let idSender = solicitud[0].id_sender_solicitud;
-
                   /*solicitud enviada por usuario solo puede ser aceptada por el representante*/
                   if(idSender == 1){
                     const rows = await db.query(
@@ -647,8 +643,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                     if(rows.length<1){
                       throw createError(401,"Usted no tiene autorización para actualizar la solicitud"); 
                     }  
-                  }
-                               
+                  }                               
                   const result = await db.query(
                     `UPDATE solicitudes
                     SET id_estado_fk=?

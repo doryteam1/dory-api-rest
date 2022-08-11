@@ -6,8 +6,8 @@ const bcrypt= require('bcrypt');
 const nodemailer = require('nodemailer');
 const {validarToken} = require ('../middelware/auth');
 
+/* ----------------------getUserId-----------------------------*/
 async function getUserId(page = 1, idUser){
-
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT distinctrow   u.cedula,concat(u.nombres," ",u.apellidos) as nombre_completo,
@@ -134,99 +134,90 @@ let message='Registro fallido';
 }/*End create*/
 
 /* ----------------------------------UPDATE-----------------------------*/
-
-async function update(id, usuario){
-      
-  if (usuario.cedula!= undefined && 
-    usuario.nombres!= undefined  && 
-    usuario.apellidos!= undefined  &&
-    usuario.celular!= undefined  &&
-    usuario.direccion!= undefined  && 
-    usuario.id_tipo_usuario!= undefined  &&
-    usuario.email!= undefined  &&
-    usuario.id_area_experticia!= undefined  &&
-    usuario.nombre_negocio!= undefined  &&
-    usuario.foto!= undefined  && 
-    usuario.fecha_registro!= undefined  &&
-    usuario.fecha_nacimiento!= undefined  &&
-    usuario.id_departamento!= undefined &&
-    usuario.id_municipio!= undefined  &&
-    usuario.id_corregimiento!= undefined  &&
-    usuario.id_vereda!= undefined  &&
-    usuario.latitud!= undefined  &&
-    usuario.longitud!= undefined &&
-    usuario.otra_area_experticia!= undefined  &&
-    usuario.otra_area_experticia_descripcion!= undefined  &&
-    usuario.sobre_mi!= undefined  &&
-    usuario.informacion_adicional_direccion!= undefined){
-
-  const result = await db.query(
-  `UPDATE usuarios
-   SET  cedula=?,
-        nombres=?, 
-        apellidos=?,
-        celular=?,
-        direccion=?, 
-        id_tipo_usuario=?,
-        email=?,
-        id_area_experticia=?,
-        nombre_negocio=?,
-        foto=?, 
-        fecha_registro=?,
-        fecha_nacimiento=?,
-        id_departamento=?,
-        id_municipio=?,
-        id_corregimiento=?,
-        id_vereda=?,
-        latitud=?,
-        longitud=?,
-        otra_area_experticia=?,
-        otra_area_experticia_descripcion=?,
-        sobre_mi=?,
-        informacion_adicional_direccion=?
-   WHERE id=?`,
-   [
-    usuario.cedula,
-    usuario.nombres, 
-    usuario.apellidos,
-    usuario.celular,
-    usuario.direccion, 
-    usuario.id_tipo_usuario,
-    usuario.email,
-    usuario.id_area_experticia,
-    usuario.nombre_negocio,
-    usuario.foto, 
-    usuario.fecha_registro,
-    usuario.fecha_nacimiento,
-    usuario.id_departamento,
-    usuario.id_municipio,
-    usuario.id_corregimiento,
-    usuario.id_vereda,
-    usuario.latitud,
-    usuario.longitud,
-    usuario.otra_area_experticia,
-    usuario.otra_area_experticia_descripcion,
-    usuario.sobre_mi,
-    usuario.informacion_adicional_direccion,
-    id
-   ] 
-  );
-
-  let message = 'Usuario no esta registrado';
-
-  if (result.affectedRows) {
-    message = 'Usuario actualizado exitosamente';
-  }
-
-  return {message};
-}  
-    throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
-   
+async function update(id, usuario){      
+        if (usuario.cedula!= undefined && 
+          usuario.nombres!= undefined  && 
+          usuario.apellidos!= undefined  &&
+          usuario.celular!= undefined  &&
+          usuario.direccion!= undefined  && 
+          usuario.id_tipo_usuario!= undefined  &&
+          usuario.email!= undefined  &&
+          usuario.id_area_experticia!= undefined  &&
+          usuario.nombre_negocio!= undefined  &&
+          usuario.foto!= undefined  && 
+          usuario.fecha_registro!= undefined  &&
+          usuario.fecha_nacimiento!= undefined  &&
+          usuario.id_departamento!= undefined &&
+          usuario.id_municipio!= undefined  &&
+          usuario.id_corregimiento!= undefined  &&
+          usuario.id_vereda!= undefined  &&
+          usuario.latitud!= undefined  &&
+          usuario.longitud!= undefined &&
+          usuario.otra_area_experticia!= undefined  &&
+          usuario.otra_area_experticia_descripcion!= undefined  &&
+          usuario.sobre_mi!= undefined  &&
+          usuario.informacion_adicional_direccion!= undefined){
+        const result = await db.query(
+        `UPDATE usuarios
+        SET  cedula=?,
+              nombres=?, 
+              apellidos=?,
+              celular=?,
+              direccion=?, 
+              id_tipo_usuario=?,
+              email=?,
+              id_area_experticia=?,
+              nombre_negocio=?,
+              foto=?, 
+              fecha_registro=?,
+              fecha_nacimiento=?,
+              id_departamento=?,
+              id_municipio=?,
+              id_corregimiento=?,
+              id_vereda=?,
+              latitud=?,
+              longitud=?,
+              otra_area_experticia=?,
+              otra_area_experticia_descripcion=?,
+              sobre_mi=?,
+              informacion_adicional_direccion=?
+        WHERE id=?`,
+        [
+          usuario.cedula,
+          usuario.nombres, 
+          usuario.apellidos,
+          usuario.celular,
+          usuario.direccion, 
+          usuario.id_tipo_usuario,
+          usuario.email,
+          usuario.id_area_experticia,
+          usuario.nombre_negocio,
+          usuario.foto, 
+          usuario.fecha_registro,
+          usuario.fecha_nacimiento,
+          usuario.id_departamento,
+          usuario.id_municipio,
+          usuario.id_corregimiento,
+          usuario.id_vereda,
+          usuario.latitud,
+          usuario.longitud,
+          usuario.otra_area_experticia,
+          usuario.otra_area_experticia_descripcion,
+          usuario.sobre_mi,
+          usuario.informacion_adicional_direccion,
+          id
+        ] 
+        );
+        let message = 'Usuario no esta registrado';
+        if (result.affectedRows) {
+          message = 'Usuario actualizado exitosamente';
+        }
+        return {message};
+      }  
+          throw createError(400,"Un problema con los parametros ingresados al actualizar");         
 }/*fin update*/
 
-
   /* ----------------------------------REMOVE-----------------------------*/
-
   async function remove(idUser){
         await db.query(
           `DELETE FROM me_gustas WHERE usuarios_id=?`, 
@@ -250,7 +241,6 @@ async function update(id, usuario){
         }
         return {message};
   }/*End Remove*/
-
   
 /* ----------------------------------UPDATE PARCIAL DEL USUARIO-----------------------------*/
 async function updateParcialUsuario(id, usuario){  
@@ -355,7 +345,6 @@ async function recoverPassword(datos){
 
 /*-------------------------------------changePassword---------------------------------*/  
 async function changePassword(datos,token){
-
     const{antiguoPassword,newPassword,}=datos;
       if(antiguoPassword==newPassword){
           throw createError(400,"La  nueva contraseña no debe ser igual a la contraseña antigua"); 
@@ -633,6 +622,7 @@ async function updateMisconsumos(body, token){
     }
   }/*End getPiscicultoresAsociacion*/
 
+  /*___________________ getSolicitudesNoaceptadasPorUsuario____________________________________*/
   async function getSolicitudesNoaceptadasPorUsuario(token){
     let tipo_user=null;
     let id_user=null;
@@ -666,10 +656,7 @@ async function updateMisconsumos(body, token){
                           WHERE s.id_estado_fk=1 and s.id_sender_solicitud=2 and s.usuarios_id=? 
                           `, 
                           [id_user]
-                        );  
-                        /*if(rows.length<1){
-                          throw createError(401,"Usted no tiene solicitudes");
-                        }*/
+                        );                         
                           const data = helper.emptyOrRows(rows);
                           return { data };
                       }catch(err) {
@@ -684,7 +671,7 @@ async function updateMisconsumos(body, token){
     }
   }/*End getSolicitudesNoaceptadasPorUsuario*/
 
-  /*Envia todas las solicitudes de que le han llegado a todas las asociaciones que el representa*/
+  /*________getSolicitudesNoaceptadasTodasAsociacionesRep________Envia todas las solicitudes que  han llegado a todas las asociaciones donde es representante legal*/
   async function getSolicitudesNoAceptadasTodasAsociacionesRep(token){
     let tipo_user=null;
     let id_user=null;
@@ -730,7 +717,7 @@ async function updateMisconsumos(body, token){
     }else{
       throw createError(401,"Usuario no autorizado");
     }
-  }/*End getSolicitudesNoaceptadasPorUsuario*/
+  }/*End getSolicitudesNoaceptadasTodasAsociacionesRep*/
 
   async function getUsersProveedores(page = 1){
     const offset = helper.getOffset(page, config.listPerPage);
