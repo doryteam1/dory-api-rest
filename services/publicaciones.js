@@ -98,35 +98,32 @@ async function createPublicacion(body,token){
           try {                   
                 const payload=helper.parseJwt(token);
                 const id_user=payload.sub;              
-                if(body.nombre_negocio===undefined || 
-                   body.descripcion_negocio===undefined ||                   
-                   body.id_departamento===undefined || 
-                   body.id_municipio===undefined || 
-                   body.direccion===undefined ||
-                   body.informacion_adicional_direccion===undefined
+                if(body.cantidad===undefined || 
+                   body.preciokilogramo===undefined ||                   
+                   body.id_especie===undefined || 
+                   body.id_municipio===undefined ||                   
+                   body.usuarios_id===undefined
                   )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,usuarios_id,id_departamento,id_municipio,direccion,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?)`, 
+                    `INSERT INTO publicaciones (cantidad,preciokilograma,id_especie_fk,id_municipio_fk,usuarios_id) VALUES (?,?,?,?,?)`, 
                     [
-                      body.nombre_negocio,
-                      body.descripcion_negocio,
-                      id_user,
-                      body.id_departamento,
+                      body.cantidad,
+                      body.preciokilogramo,                      
+                      body.id_especie,
                       body.id_municipio,
-                      body.direccion,
-                      body.informacion_adicional_direccion
+                      id_user
                     ]
                 ); 
                 if (result.affectedRows) {              
                     return {
-                            message:'Negocio creado exitosamente',
+                            message:'Publicación creada exitosamente',
                             insertId:result.insertId
                     };
                 }
-                   throw createError(500,"Se presento un problema al registrar el negocio");
+                   throw createError(500,"Se presentó un problema al registrar la publicación");
           }catch (error) {
                 throw error;
           } 
@@ -136,61 +133,50 @@ async function createPublicacion(body,token){
   }/*End Create*/
 
   /*____________________________updateNegocio__________________________*/
-  async function updatePublicacion(idNegocio, body, token){     
+  async function updatePublicacion(idpublicacion, body, token){     
     if(token && validarToken(token)){
               const payload=helper.parseJwt(token);  
               const id_user=payload.sub;
         const rows = await db.query(
-          `SELECT n.usuarios_id
-          FROM negocios as n
-          WHERE n.usuarios_id=?`, 
+          `SELECT p.usuarios_id
+          FROM publicaciones as p
+          WHERE p.usuarios_id=?`, 
           [id_user]
         );
-        if(rows.length<=0){
+        if(rows.length<1){
           return {message:'Usted no tiene autorización para éste proceso'};
         }   
       try { 
-            if(body.nombre_negocio===undefined || 
-              body.descripcion_negocio===undefined ||
-              body.id_departamento===undefined || 
-              body.id_municipio===undefined || 
-              body.direccion===undefined ||
-              body.latitud===undefined || 
-              body.longitud===undefined ||
-              body.informacion_adicional_direccion===undefined
+            if(body.cantidad===undefined || 
+              body.preciokilogramo===undefined ||                   
+              body.id_especie===undefined || 
+              body.id_municipio===undefined ||                   
+              body.usuarios_id===undefined
              )
             {
               throw createError(400,"Se requieren todos los parámetros!");
             }
             const result = await db.query(
-              `UPDATE negocios 
-               SET nombre_negocio=?,
-                   descripcion_negocio=?,                   
-                   usuarios_id=?,
-                   id_departamento=?,
-                   id_municipio=?,
-                   direccion=?,
-                   latitud=?,
-                   longitud=?,
-                   informacion_adicional_direccion=?
-               WHERE id_negocio=?`,
+              `UPDATE publicaciones
+               SET cantidad=?,
+                   preciokilogramo=?,                   
+                   id_especie_fk=?,
+                   id_municipio_fk=?,
+                   usuarios_id=?
+               WHERE id_publicacion=?`,
                [
-                body.nombre_negocio,
-                body.descripcion_negocio,
-                id_user,
-                body.id_departamento,
+                body.cantidad,
+                body.preciokilogramo,                      
+                body.id_especie,
                 body.id_municipio,
-                body.direccion,
-                body.latitud,
-                body.longitud,
-                body.informacion_adicional_direccion,
-                idNegocio
+                id_user,
+                idpublicacion
                ] 
             );          
             if (result.affectedRows) {              
-              return {message:'Negocio Actualizado exitosamente'};
+              return {message:'Publicación Actualizada exitosamente'};
             }
-             throw createError(500,"Se presento un problema al actualizar el negocio");
+             throw createError(500,"Se presento un problema al actualizar la publicación");
       }catch (error) {           
             throw error;
       } 
@@ -200,15 +186,15 @@ async function createPublicacion(body,token){
   }/*End updatePublicacion*/
   
    /*_____________removePublicacion ________________________________*/
-  async function removePublicacion(id_negocio,token){
+  async function removePublicacion(idpublicacion,token){
     
     if(token && validarToken(token)){
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
             const rows = await db.query(
-              `SELECT n.usuarios_id
-              FROM negocios as n
-              WHERE n.usuarios_id=?`, 
+              `SELECT p.usuarios_id
+              FROM publicaciones as p
+              WHERE p.usuarios_id=?`, 
               [id_user]
             );
             if(rows.length<1){
@@ -216,17 +202,17 @@ async function createPublicacion(body,token){
             }
           try {
                 await db.query(
-                  `DELETE FROM fotosNegocios WHERE id_negocio_fk=?`, 
-                  [id_negocio]
+                  `DELETE FROM fotosPublicaciones WHERE id_publicacion_fk=?`, 
+                  [idpublicacion]
                 );
                 const result = await db.query(
-                  `DELETE FROM negocios WHERE id_negocio=?`, 
-                  [id_negocio]
+                  `DELETE FROM publicaciones WHERE id_publicacion=?`, 
+                  [idpublicacion]
                 );       
                 if (result.affectedRows) {              
-                  return {message:'Negocio eliminado exitosamente'};
+                  return {message:'Publicación eliminado exitosamente'};
                 }
-                throw createError(500,"Se presento un problema al eliminar el negocio");
+                throw createError(500,"Se presento un problema al eliminar la publicación");
            }catch (error) {           
                  throw error;
            } 
@@ -236,7 +222,7 @@ async function createPublicacion(body,token){
   }/*End removePublicacion*/
 
    /*_____________updatePhotosPublicacion ________________________________*/
-  async function updatePhotosPublicacion(idNegocio,body,token){  
+  async function updatePhotosPublicacion(idpublicacion,body,token){  
     var arrayfotos= body.arrayFotos;    
     let tipo_user=null;     
     const conection= await db.newConnection();
@@ -246,37 +232,35 @@ async function createPublicacion(body,token){
         tipo_user= payload.rol;
         let userN= payload.sub;         
         try{
-            if(tipo_user!="Comerciante"){ 
+            if(tipo_user!="Piscicultor" || tipo_user!="Pescador" ){ 
               throw createError(401,"Usted no tiene autorización");
             }else{
                 if(arrayfotos){ 
                   try{  
-                        const negocioDeUsuario= await db.query(
+                        const publicacionDeUsuario= await db.query(
                         `SELECT *
-                        FROM negocios as n
-                        WHERE n.usuarios_id=? and n.id_negocio=? `,
-                          [userN,idNegocio]
-                        );
-                       
-                        if(negocioDeUsuario.length<0){
+                        FROM publicaciones as p
+                        WHERE p.usuarios_id=? and p.id_publicacion=? `,
+                          [userN,idpublicacion]
+                        );                       
+                        if(publicacionDeUsuario.length<1){
                            throw createError(401,"Usuario no autorizado");
                         }
-
                         await db.query(
-                        `DELETE from fotosNegocios where id_negocio_fk=?`,
-                          [idNegocio]
+                        `DELETE from fotosPublicaciones where id_publicacion_fk=?`,
+                          [idpublicacion]
                         );       
                         for(var i=0;i<arrayfotos.length;i++){
                             await db.query(
-                              `INSERT INTO fotosNegocios(foto_negocio,id_negocio_fk) VALUES (?,?)`,
-                              [arrayfotos[i], idNegocio]
+                              `INSERT INTO fotosPublicaciones(fotop,id_publicacion_fk) VALUES (?,?)`,
+                              [arrayfotos[i], idpublicacion]
                             );
                         }                         
                   }catch(err) {
                         throw createError(400,err.message);
                   }
                 }else{
-                  throw createError(400,"Usted no agrego las fotos para actualizarlas"); 
+                  throw createError(400,"Usted no agregó las fotos para actualizarlas"); 
                 }
           } 
           await conection.commit(); 
@@ -294,48 +278,48 @@ async function createPublicacion(body,token){
   } //* updatePhotosPublicacion */
 
   /*_____________getDetailPublicacion ________________________________*/
-  async function getDetailPublicacion(idNegocio, token){
+  async function getDetailPublicacion(idpublicacion, token){
     try{
       let rows=[];  
        if(token && validarToken(token)){
                 let payload=helper.parseJwt(token);
                 id_user= payload.sub; 
                 rows = await db.query(
-                  `SELECT neg.*
-                  FROM negocios as neg
-                  WHERE   neg.usuarios_id=? and neg.id_negocio=?
+                  `SELECT p.*
+                  FROM publicaciones as p
+                  WHERE  p.usuarios_id=? and p.id_publicacion=?
                   `, 
-                  [id_user,idNegocio]
+                  [id_user,idpublicacion]
                 ); 
                 if(rows.length < 1){
-                  throw createError(404, "Usted no tiene ningún negocio con el id "+idNegocio+".")
+                  throw createError(404, "Usted no tiene ninguna publicación con el id "+idpublicacion+".")
                 }
         }else{
           rows = await db.query(
-            `SELECT neg.*
-            FROM negocios as neg
-            WHERE neg.id_negocio=?
+            `SELECT p.*
+            FROM publicaciones as p
+            WHERE p.id_publicacion=?
             `, 
-            [idNegocio]
+            [idpublicacion]
           ); 
         }
             if(rows.length < 1){
-              throw createError(404, "No se encuentra el negocio con el id "+idNegocio+".")
+              throw createError(404, "No se encuentra la publicación con el id "+idpublicacion+".")
             }
           const rowsfotos = await db.query(
-            `SELECT fn.id_foto_negocio, fn.foto_negocio
-            FROM  fotosNegocios as fn
-            WHERE fn.id_negocio_fk =?
+            `SELECT fp.id_foto_publicacion, fp.fotop
+            FROM  fotosPublicaciones as fp
+            WHERE fp.id_publicacion_fk =?
             `, 
-          [idNegocio]
+          [idpublicacion]
           );  
           var arrayfotos= new Array();  
           rowsfotos.forEach((element)=>{ 
-              arrayfotos.push(element.foto_negocio);
+              arrayfotos.push(element.fotop);
           });      
           var nuevoRows = new Array();
           nuevoRows.push(rows[0]);
-          nuevoRows[nuevoRows.length-1].fotos_negocio=arrayfotos; 
+          nuevoRows[nuevoRows.length-1].fotos_publicacion=arrayfotos; 
 
           const data = helper.emptyOrRows(nuevoRows);                      
           return {
@@ -349,53 +333,53 @@ async function createPublicacion(body,token){
 
 
 /*------------------------------updateParcialPublicacion-------------------------------------------------*/
-async function updateParcialPublicacion(idNegocio, negocio, token){
+async function updateParcialPublicacion(idpublicacion, publicacion, token){
   
   if(token && validarToken(token))
   {
     const payload=helper.parseJwt(token);  
     const id_user=payload.sub;
     const rol = payload.rol;
-    if(rol != "Comerciante"){
-      throw createError('401', "Usted no es un usuario Comerciante. No esta autorizado para actualizar el negocio.")
+    if(rol != "Piscicultor" || rol != "Pescador"){
+      throw createError('401', "Usted no es un usuario Piscicultor ó Pescador. No esta autorizado para actualizar la publicación.")
     }      
     const rows2 = await db.query(
-      `select neg.*
-       from negocios as neg
-       where neg.usuarios_id = ? and neg.id_negocio = ? `, 
+      `select p.*
+       from publicaciones as p
+       where p.usuarios_id = ? and p.id_publicacion = ? `, 
       [
         id_user,
-        idNegocio
+        idpublicacion
       ]
     );
     if(rows2.length < 1 ){
-      throw createError('401', 'El usuario no es propietario del negocio y no esta autorizado para actualizarla.')
+      throw createError('401', 'El usuario no es propietario de la publicación y no esta autorizado para actualizarla.')
     }
    /* delete negocio.password; */
-    var atributos = Object.keys(negocio);   
+    var atributos = Object.keys(publicacion);   
     if(atributos.length!=0)
     {    
-      var params = Object.values(negocio);   
-      var query = "update negocios set ";
-      params.push(idNegocio);
+      var params = Object.values(publicacion);   
+      var query = "update publicaciones set ";
+      params.push(idpublicacion);
 
       for(var i=0; i < atributos.length; i++) {
         query = query + atributos[i] + '=?,';
       }
       query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
-      query = query +' '+'where id_negocio=?'
+      query = query +' '+'where id_publicacion=?'
 
       const result = await db.query(query,params);
     
       let message = '';
       if (result.affectedRows) {
-        message = 'Negocio actualizado exitosamente';
+        message = 'Publicación actualizada exitosamente';
       }else{
-        throw createError(500,"No se pudo actualizar el registro del negocio");    
+        throw createError(500,"No se pudó actualizar el registro del negocio");    
       }
       return {message};
     }
-    throw createError(400,"No hay parametros para actualizar");
+    throw createError(400,"No hay parámetros para actualizar");
 }else{
   throw createError(401,"Usuario no autorizado");
 }
