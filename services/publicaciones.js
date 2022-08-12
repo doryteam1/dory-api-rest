@@ -53,46 +53,43 @@ async function getPublicacionesUsuario(id_user){
 
 /*_____________getPublicacionesMultiple ________________________________*/
 async function getPublicacionesMultiple(page = 1){
-  const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
-    `select *,
-    (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
-    (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento,
-    fn.foto_negocio as foto
-    from negocios as n
-    left join fotosNegocios as fn on n.id_negocio = fn.id_negocio_fk
-    order by n.id_negocio asc`, 
-    []
-  );
-
-  let resultSet = rows;
-
-  if(rows.length > 0){
-    let negocios = [];
-    let currentNegocio = { ...rows[0], fotos:[]}
-    for(let i=0; i<rows.length; i++){
-      if(rows[i].id_negocio == currentNegocio.id_negocio){
-        if(rows[i].foto){
-          currentNegocio.fotos.push(rows[i].foto)
+      const offset = helper.getOffset(page, config.listPerPage);
+      const rows = await db.query(
+        `SELECT p.id_publicacion, p.cantidad, p.preciokilogramo, 
+                (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
+                (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
+                (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
+                fp.fotop
+        FROM publicaciones as p left join fotosPublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
+        order by p.id_publicacion asc`, 
+        []
+      );
+      let resultSet = rows;
+      if(rows.length > 0){
+        let publicaciones = [];
+        let currentPublicacion = { ...rows[0], fotos:[]}
+        for(let i=0; i<rows.length; i++){
+            if(rows[i].id_publicacion == currentPublicacion.id_publicacion){
+              if(rows[i].fotop){
+                currentPublicacion.fotos.push(rows[i].fotop)
+              }
+            }else{
+              currentPublicacion.foto = undefined;
+              publicaciones.push(currentPublicacion);
+              currentPublicacion = { ...rows[i], fotos:[] };
+              if(rows[i].fotop){
+                currentPublicacion.fotos.push(rows[i].fotop)
+              }
+            }
         }
-      }else{
-        currentNegocio.foto = undefined;
-        negocios.push(currentNegocio);
-        currentNegocio = { ...rows[i], fotos:[] };
-        if(rows[i].foto){
-          currentNegocio.fotos.push(rows[i].foto)
-        }
+        resultSet = publicaciones;
+      }      
+      const data = helper.emptyOrRows(resultSet);
+      const meta = {page};
+      return {
+        data,
+        meta
       }
-    }
-    resultSet = negocios;
-  }
-  
-  const data = helper.emptyOrRows(resultSet);
-  const meta = {page};
-  return {
-    data,
-    meta
-  }
 }/*End getPublicacionesMultiple*/
 
 /*_____________Create Publicación________________________________*/
