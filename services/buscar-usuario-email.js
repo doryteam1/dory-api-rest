@@ -20,7 +20,7 @@ async function getMultiple(page = 1, email){
           (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
           u.id_vereda,
           (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
-          u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi
+          u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.takeTour
           FROM usuarios as u left join tipos_usuarios as tu  on u.id_tipo_usuario=tu.id_tipo_usuario
           WHERE   u.email=?
           LIMIT ?,?`, 
