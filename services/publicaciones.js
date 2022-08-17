@@ -108,7 +108,7 @@ async function createPublicacion(body,token){
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO publicaciones (cantidad,preciokilograma,id_especie_fk,id_municipio_fk,usuarios_id) VALUES (?,?,?,?,?)`, 
+                    `INSERT INTO publicaciones (cantidad,preciokilogramo,id_especie_fk,id_municipio_fk,usuarios_id) VALUES (?,?,?,?,?)`, 
                     [
                       body.cantidad,
                       body.preciokilogramo,                      
@@ -132,7 +132,7 @@ async function createPublicacion(body,token){
      }
   }/*End Create*/
 
-  /*____________________________updateNegocio__________________________*/
+  /*____________________________updatePublicacion__________________________*/
   async function updatePublicacion(idpublicacion, body, token){     
     if(token && validarToken(token)){
               const payload=helper.parseJwt(token);  
