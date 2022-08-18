@@ -231,8 +231,8 @@ async function createPublicacion(body,token){
         let payload=helper.parseJwt(token);
         tipo_user= payload.rol;
         let userN= payload.sub;         
-        try{
-            if(tipo_user!="Piscicultor" || tipo_user!="Pescador" ){ 
+        try{         
+            if(tipo_user!="Piscicultor" && tipo_user!="Pescador" ){ 
               throw createError(401,"Usted no tiene autorización");
             }else{
                 if(arrayfotos){ 
@@ -340,7 +340,7 @@ async function updateParcialPublicacion(idpublicacion, publicacion, token){
     const payload=helper.parseJwt(token);  
     const id_user=payload.sub;
     const rol = payload.rol;
-    if(rol != "Piscicultor" || rol != "Pescador"){
+    if(rol != "Piscicultor" && rol != "Pescador"){
       throw createError('401', "Usted no es un usuario Piscicultor ó Pescador. No esta autorizado para actualizar la publicación.")
     }      
     const rows2 = await db.query(
