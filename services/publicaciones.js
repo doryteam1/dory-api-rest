@@ -13,7 +13,7 @@ async function getPublicacionesUsuario(id_user){
                 (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
                 (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
                 fp.fotop
-        FROM publicaciones as p left join fotosPublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
+        FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
         WHERE p.usuarios_id=?
         `, 
         [id_user]
@@ -60,7 +60,7 @@ async function getPublicacionesMultiple(page = 1){
                 (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
                 (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
                 fp.fotop
-        FROM publicaciones as p left join fotosPublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
+        FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
         order by p.id_publicacion asc`, 
         []
       );
@@ -247,12 +247,12 @@ async function createPublicacion(body,token){
                            throw createError(401,"Usuario no autorizado");
                         }
                         await db.query(
-                        `DELETE from fotosPublicaciones where id_publicacion_fk=?`,
+                        `DELETE from fotospublicaciones where id_publicacion_fk=?`,
                           [idpublicacion]
                         );       
                         for(var i=0;i<arrayfotos.length;i++){
                             await db.query(
-                              `INSERT INTO fotosPublicaciones(fotop,id_publicacion_fk) VALUES (?,?)`,
+                              `INSERT INTO fotospublicaciones(fotop,id_publicacion_fk) VALUES (?,?)`,
                               [arrayfotos[i], idpublicacion]
                             );
                         }                         
