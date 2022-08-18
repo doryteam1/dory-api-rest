@@ -308,7 +308,7 @@ async function createPublicacion(body,token){
             }
           const rowsfotos = await db.query(
             `SELECT fp.id_foto_publicacion, fp.fotop
-            FROM  fotosPublicaciones as fp
+            FROM  fotospublicaciones as fp
             WHERE fp.id_publicacion_fk =?
             `, 
           [idpublicacion]
