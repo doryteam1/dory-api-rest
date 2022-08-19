@@ -315,7 +315,8 @@ async function createNegocio(body,token){
                 }
         }else{
           rows = await db.query(
-            `SELECT neg.*
+            `SELECT neg.*, ( select m.nombre from municipios as m where m.id_municipio=neg.id_municipio ) as municipio,
+                    (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2  WHERE   u2.id=neg.usuarios_id) as propietario
             FROM negocios as neg
             WHERE neg.id_negocio=?
             `, 
