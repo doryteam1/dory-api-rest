@@ -101,8 +101,7 @@ async function createPublicacion(body,token){
                 if(body.cantidad===undefined || 
                    body.preciokilogramo===undefined ||                   
                    body.id_especie===undefined || 
-                   body.id_municipio===undefined ||                   
-                   body.usuarios_id===undefined
+                   body.id_municipio===undefined 
                   )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
