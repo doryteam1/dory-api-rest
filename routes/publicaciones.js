@@ -43,7 +43,7 @@ router.put('/update/:idPublicacion', async function(req, res, next) {
   router.delete('/eliminar/:idPublicacion', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;  
-         res.json(await publicaciones.eliminarNegocio(req.params.idPublicacion,token));
+         res.json(await publicaciones.removePublicacion(req.params.idPublicacion,token));
     } catch (err) {
          console.error(`Error al borrar la publicación`, err.message);
          next(err);
@@ -53,7 +53,7 @@ router.put('/update/:idPublicacion', async function(req, res, next) {
   router.put('/update/photos/:idPublicacion', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;
-         res.json(await publicaciones.updatePhotosNegocio(req.params.idPublicacion,req.body,token));
+         res.json(await publicaciones.updatePhotosPublicacion(req.params.idPublicacion,req.body,token));
     } catch (err) {
          console.error(`Error al actualizar las fotos de la publicación`, err.message);
          next(err);
@@ -63,7 +63,7 @@ router.put('/update/:idPublicacion', async function(req, res, next) {
   router.get('/detailed/:idPublicacion', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await publicaciones.getDetailNegocio(req.params.idPublicacion,token));
+      res.json(await publicaciones.getDetailPublicacion(req.params.idPublicacion,token));
     } catch (err) {
       console.error(`Error al traer la publicación detallada `, err.message);
       next(err);
@@ -73,7 +73,7 @@ router.put('/update/:idPublicacion', async function(req, res, next) {
   router.put('/parcial/:idPublicacion', async function(req, res, next) {
     try {
          var token=req.headers.authorization;
-         res.json(await publicaciones.updateParcialNegocio(req.params.idPublicacion, req.body,token));
+         res.json(await publicaciones.updateParcialPublicacion(req.params.idPublicacion, req.body,token));
     } catch (err) {
          console.error(`Error al actualizar la publicación parcialmente`, err.message);
          next(err);

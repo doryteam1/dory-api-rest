@@ -13,7 +13,7 @@ async function getPublicacionesUsuario(id_user){
                 (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
                 (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
                 fp.fotop
-        FROM publicaciones as p left join fotosPublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
+        FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
         WHERE p.usuarios_id=?
         `, 
         [id_user]
@@ -60,7 +60,7 @@ async function getPublicacionesMultiple(page = 1){
                 (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
                 (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
                 fp.fotop
-        FROM publicaciones as p left join fotosPublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
+        FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
         order by p.id_publicacion asc`, 
         []
       );
@@ -101,14 +101,13 @@ async function createPublicacion(body,token){
                 if(body.cantidad===undefined || 
                    body.preciokilogramo===undefined ||                   
                    body.id_especie===undefined || 
-                   body.id_municipio===undefined ||                   
-                   body.usuarios_id===undefined
+                   body.id_municipio===undefined 
                   )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO publicaciones (cantidad,preciokilograma,id_especie_fk,id_municipio_fk,usuarios_id) VALUES (?,?,?,?,?)`, 
+                    `INSERT INTO publicaciones (cantidad,preciokilogramo,id_especie_fk,id_municipio_fk,usuarios_id) VALUES (?,?,?,?,?)`, 
                     [
                       body.cantidad,
                       body.preciokilogramo,                      
@@ -132,7 +131,7 @@ async function createPublicacion(body,token){
      }
   }/*End Create*/
 
-  /*____________________________updateNegocio__________________________*/
+  /*____________________________updatePublicacion__________________________*/
   async function updatePublicacion(idpublicacion, body, token){     
     if(token && validarToken(token)){
               const payload=helper.parseJwt(token);  
@@ -202,7 +201,7 @@ async function createPublicacion(body,token){
             }
           try {
                 await db.query(
-                  `DELETE FROM fotosPublicaciones WHERE id_publicacion_fk=?`, 
+                  `DELETE FROM fotospublicaciones WHERE id_publicacion_fk=?`, 
                   [idpublicacion]
                 );
                 const result = await db.query(
@@ -231,8 +230,8 @@ async function createPublicacion(body,token){
         let payload=helper.parseJwt(token);
         tipo_user= payload.rol;
         let userN= payload.sub;         
-        try{
-            if(tipo_user!="Piscicultor" || tipo_user!="Pescador" ){ 
+        try{         
+            if(tipo_user!="Piscicultor" && tipo_user!="Pescador" ){ 
               throw createError(401,"Usted no tiene autorización");
             }else{
                 if(arrayfotos){ 
@@ -247,12 +246,12 @@ async function createPublicacion(body,token){
                            throw createError(401,"Usuario no autorizado");
                         }
                         await db.query(
-                        `DELETE from fotosPublicaciones where id_publicacion_fk=?`,
+                        `DELETE from fotospublicaciones where id_publicacion_fk=?`,
                           [idpublicacion]
                         );       
                         for(var i=0;i<arrayfotos.length;i++){
                             await db.query(
-                              `INSERT INTO fotosPublicaciones(fotop,id_publicacion_fk) VALUES (?,?)`,
+                              `INSERT INTO fotospublicaciones(fotop,id_publicacion_fk) VALUES (?,?)`,
                               [arrayfotos[i], idpublicacion]
                             );
                         }                         
@@ -308,7 +307,7 @@ async function createPublicacion(body,token){
             }
           const rowsfotos = await db.query(
             `SELECT fp.id_foto_publicacion, fp.fotop
-            FROM  fotosPublicaciones as fp
+            FROM  fotospublicaciones as fp
             WHERE fp.id_publicacion_fk =?
             `, 
           [idpublicacion]
@@ -340,7 +339,7 @@ async function updateParcialPublicacion(idpublicacion, publicacion, token){
     const payload=helper.parseJwt(token);  
     const id_user=payload.sub;
     const rol = payload.rol;
-    if(rol != "Piscicultor" || rol != "Pescador"){
+    if(rol != "Piscicultor" && rol != "Pescador"){
       throw createError('401', "Usted no es un usuario Piscicultor ó Pescador. No esta autorizado para actualizar la publicación.")
     }      
     const rows2 = await db.query(

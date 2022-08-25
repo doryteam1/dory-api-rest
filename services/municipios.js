@@ -181,6 +181,46 @@ async function getConsumosEspeciesTotal(){
       }
 }/* End getConsumosEspeciesTotal*/
 
+/* ------------------------------------getConsumosEspeciesTotalNuevo------------------------------------*/
+async function getConsumosEspeciesTotalNuevo(){   
+  const rowsEspecies = await db.query(
+    `SELECT e.*
+    FROM especies as e
+    `, 
+    []
+  );        
+  const rowsMunicipios = await db.query(
+    `SELECT m.*
+    FROM municipios as m
+    `, 
+    []
+  );   
+  let data={};           
+  let rowsConsumos;
+  let arrayConsumo=[];
+    for(let i=0; i<rowsMunicipios.length;i++){   
+      arrayConsumo=[];
+      for(let j=0; j<rowsEspecies.length;j++){
+            rowsConsumos= await db.query(
+              `SELECT e.nombre as especie, sum(eu.cantidad_consumo) as consumo, count(eu.usuarios_id) as cantidad_usuario,
+              ( select m.id_municipio from municipios as m where m.id_municipio=u.id_municipio ) as id_municipio
+              FROM especies_usuarios as eu inner join especies as e on e.id_especie=eu.id_especie_pk_fk
+                                          inner join usuarios as u on u.id=eu.usuarios_id
+                                          inner join municipios as m on u.id_municipio=m.id_municipio
+              WHERE eu.id_especie_pk_fk=? and u.id_municipio=?
+              `, 
+              [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio]
+            );           
+            arrayConsumo.push(rowsConsumos[0]);          
+      }/*end for especies*/  
+       data[rowsMunicipios[i].nombre]=arrayConsumo;
+    } /*end for municipios*/       
+          
+return {
+data
+}
+}/* End getConsumosEspeciesTotalNuevo*/
+
 module.exports = {
   getMunicipio,
   GetMunicipioDelDepartamento,
@@ -189,5 +229,6 @@ module.exports = {
   update,
   remove,
   getConsumosEspecies,
-  getConsumosEspeciesTotal
+  getConsumosEspeciesTotal,
+  getConsumosEspeciesTotalNuevo
 }

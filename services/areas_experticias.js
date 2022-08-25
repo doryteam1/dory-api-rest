@@ -10,13 +10,11 @@ async function getMultiple(page = 1){
   );
   const data = helper.emptyOrRows(rows);
   const meta = {page};
-
   return {
     data,
     meta
   }
 }
-
 
 async function create(area_experticia){
     const result = await db.query(
@@ -26,14 +24,11 @@ async function create(area_experticia){
         area_experticia.nombre, 
         area_experticia.descripcion
       ]
-    );
-  
-    let message = 'Error creando Area de Experticia';
-  
+    );  
+    let message = 'Error creando Area de Experticia';  
     if (result.affectedRows) {
       message = 'Area de Experticia creada exitosamente';
-    }
-  
+    }  
     return {message};
   }
 
@@ -50,12 +45,10 @@ async function create(area_experticia){
        ] 
     );
   
-    let message = 'Error actualizando Area de Experticia';
-  
+    let message = 'Error actualizando Area de Experticia';  
     if (result.affectedRows) {
       message = 'Area de experticia actualizada exitosamente';
-    }
-  
+    }  
     return {message};
   }
   
@@ -63,14 +56,11 @@ async function create(area_experticia){
     const result = await db.query(
       `DELETE FROM areas_experticias WHERE id_area=?`, 
       [id]
-    );
-  
-    let message = 'Error borrando Area de Experticia';
-  
+    );  
+    let message = 'Error borrando Area de Experticia';  
     if (result.affectedRows) {
       message = 'Area de Experticia borrada exitosamente';
-    }
-  
+    }  
     return {message};
   }
 

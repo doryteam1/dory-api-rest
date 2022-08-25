@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const areas_experticias = require('../services/areas_experticias');
 
-
 router.get('/', async function(req, res, next) {
   try {
     res.json(await areas_experticias.getMultiple(req.query.page));
@@ -11,7 +10,6 @@ router.get('/', async function(req, res, next) {
     next(err);
   }
 });
-
 
 router.post('/', async function(req, res, next) {
     try {
@@ -22,7 +20,6 @@ router.post('/', async function(req, res, next) {
     }
   });
 
-
 router.put('/:id', async function(req, res, next) {
     try {
       res.json(await areas_experticias.update(req.params.id, req.body));
@@ -31,7 +28,6 @@ router.put('/:id', async function(req, res, next) {
       next(err);
     }
 });
-
 
 router.delete('/:id', async function(req, res, next) {
     try {
