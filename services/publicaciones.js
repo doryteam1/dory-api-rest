@@ -201,7 +201,7 @@ async function createPublicacion(body,token){
             }
           try {
                 await db.query(
-                  `DELETE FROM fotosPublicaciones WHERE id_publicacion_fk=?`, 
+                  `DELETE FROM fotospublicaciones WHERE id_publicacion_fk=?`, 
                   [idpublicacion]
                 );
                 const result = await db.query(
