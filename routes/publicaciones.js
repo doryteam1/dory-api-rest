@@ -43,7 +43,7 @@ router.put('/update/:idPublicacion', async function(req, res, next) {
   router.delete('/eliminar/:idPublicacion', async function(req, res, next) {
     try { 
          var token=req.headers.authorization;  
-         res.json(await publicaciones.eliminarNegocio(req.params.idPublicacion,token));
+         res.json(await publicaciones.removePublicacion(req.params.idPublicacion,token));
     } catch (err) {
          console.error(`Error al borrar la publicación`, err.message);
          next(err);
