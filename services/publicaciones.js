@@ -318,7 +318,7 @@ async function createPublicacion(body,token){
           });      
           var nuevoRows = new Array();
           nuevoRows.push(rows[0]);
-          nuevoRows[nuevoRows.length-1].fotos_publicacion=arrayfotos; 
+          nuevoRows[nuevoRows.length-1].fotos=arrayfotos; 
 
           const data = helper.emptyOrRows(nuevoRows);                      
           return {
