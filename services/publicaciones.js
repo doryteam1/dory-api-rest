@@ -285,7 +285,7 @@ async function createPublicacion(body,token){
                 id_user= payload.sub; 
                 rows = await db.query(
                   `SELECT p.*,
-                         (select u.nombres from usuarios as u where u.id = p.usuarios_id) as usuario,
+                         (select concat(u.nombres," ",u.apellidos)  from usuarios as u where u.id = p.usuarios_id) as usuario,
                          (select u.foto from usuarios as u where u.id = p.usuarios_id) as foto_perfil,
                          (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
                          (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio
@@ -300,7 +300,7 @@ async function createPublicacion(body,token){
         }else{
           rows = await db.query(
             `SELECT p.*,
-                    (select u.nombres from usuarios as u where u.id = p.usuarios_id) as usuario,
+                    (select concat(u.nombres," ",u.apellidos) from usuarios as u where u.id = p.usuarios_id) as usuario,
                     (select u.foto from usuarios as u where u.id = p.usuarios_id) as foto_perfil,
                     (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
                     (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio
