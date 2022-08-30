@@ -284,7 +284,11 @@ async function createPublicacion(body,token){
                 let payload=helper.parseJwt(token);
                 id_user= payload.sub; 
                 rows = await db.query(
-                  `SELECT p.*
+                  `SELECT p.*,
+                         (select u.nombres from usuarios as u where u.id = p.usuarios_id) as usuario,
+                         (select u.foto from usuarios as u where u.id = p.usuarios_id) as foto_perfil,
+                         (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
+                         (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio
                   FROM publicaciones as p
                   WHERE  p.usuarios_id=? and p.id_publicacion=?
                   `, 
@@ -295,7 +299,11 @@ async function createPublicacion(body,token){
                 }
         }else{
           rows = await db.query(
-            `SELECT p.*
+            `SELECT p.*,
+                    (select u.nombres from usuarios as u where u.id = p.usuarios_id) as usuario,
+                    (select u.foto from usuarios as u where u.id = p.usuarios_id) as foto_perfil,
+                    (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
+                    (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio
             FROM publicaciones as p
             WHERE p.id_publicacion=?
             `, 
