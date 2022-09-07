@@ -642,6 +642,7 @@ async function updateMisconsumos(body, token){
                           e.descripcion as estado, 
                           ss.id_sender_solicitud, 
                           ss.nombre as enviado_por, 
+                          u.id as id_usuario,
                           concat(u.nombres,' ',u.apellidos) as usuario,  
                           a.nombre as asociacion,
                           concat(u2.nombres,' ',u2.apellidos) as representante_legal,
@@ -693,6 +694,7 @@ async function updateMisconsumos(body, token){
                           ss.nombre as enviado_por,   
                           a.nombre as asociacion,
                           s.fecha as fecha_solicitud,
+                          u.id as id_usuario,
                           concat(u.nombres,' ',u.apellidos) as nombre_quien_envia,
                           u.foto
                           FROM solicitudes as s
