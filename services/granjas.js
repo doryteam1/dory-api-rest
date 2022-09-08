@@ -236,7 +236,7 @@ async function getGranjasMenorArea(page = 1,idMunicipio){
 }/*End getGranjasMenorArea*/
 
 /*_____________Create Granja*________________________________*/
-async function create(body,token){
+async function createGranja(body,token){
       const conection= await db.newConnection(); 
       await conection.beginTransaction();      
     if(token && validarToken(token)){
@@ -334,7 +334,7 @@ async function create(body,token){
   }/*End Create*/
 
   /*__________________________update granja____________________________*/
-  async function update(idGranja, body, token){              
+  async function updateGranja(idGranja, body, token){              
     let message = 'Error actualizando la granja'; 
     const conection= await db.newConnection(); 
     await conection.beginTransaction();
@@ -1011,8 +1011,8 @@ module.exports = {
   getGranjasMayorCalificacion,
   getGranjasMayorArea,
   getGranjasMenorArea,
-  create,
-  update,
+  createGranja,
+  updateGranja,
   eliminarGranja,
   getGranjaUsuario,
   getGranjasDepartamento,

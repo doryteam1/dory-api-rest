@@ -52,7 +52,7 @@ router.get('/menorArea/:idMunicipio', async function(req, res, next) {
 router.post('/', async function(req, res, next) {
     try {
           var token=req.headers.authorization;
-          res.json(await granjas.create(req.body,token));
+          res.json(await granjas.createGranja(req.body,token));
     } catch (err) {
           console.error(`Error creando la granja`, err.message);
           next(err);
@@ -62,7 +62,7 @@ router.post('/', async function(req, res, next) {
 router.put('/general/:id', async function(req, res, next) {
     try {
          var token=req.headers.authorization;
-         res.json(await granjas.update(req.params.id, req.body,token));
+         res.json(await granjas.updateGranja(req.params.id, req.body,token));
     } catch (err) {
          console.error(`Error al actualizar la granja`, err.message);
          next(err);
