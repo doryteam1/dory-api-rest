@@ -181,34 +181,56 @@ async function create(vehiculo,token){
   /*----------------------------------remove-vehículo-------------------------------------------------- */
   
   async function remove(id_vehiculo,token){
-
-            if(token && validarToken(token)){
-                  try {
+        const conection= await db.newConnection(); 
+        conection.beginTransaction();
+        let id_user=null;
+              try {
+                  if(token && validarToken(token)){                        
                       const payload=helper.parseJwt(token);  
-                      const id_user=payload.sub;
-                      const rol=payload.rol;
-                                        
+                      id_user=payload.sub;
+                      const rol=payload.rol;                                        
                       if(rol!="Transportador"){
                         throw createError(401,"tipo de usuario no autorizado");
                       }
-                      const result = await db.query(
-                        `DELETE FROM vehiculos WHERE id_vehiculo=? and usuarios_id=?`, 
-                        [id_vehiculo,id_user]
-                      );                    
-                      let message = 'Error borrando vehiculo';                    
-                      if (result.affectedRows) {
-                        message = 'vehiculo borrada exitosamente';
-                        return {message};
+                      if(id_vehiculo!=undefined && id_user!=undefined && id_vehiculo!=null && id_user!=null){
+                            const propiedad = await conection.execute(
+                              `SELECT * from vehiculos as v where  v.id_vehiculo=? and v.usuarios_id=?`,
+                              [id_vehiculo, id_user]
+                              );
+                            if(propiedad.length>0){
+                                  await conection.execute(
+                                    `DELETE from fotosVehiculos where id_vehiculo_fk=?`,
+                                      [id_vehiculo]
+                                    ); 
+                                  const result = await conection.execute(
+                                    `DELETE FROM vehiculos WHERE id_vehiculo=? and usuarios_id=?`, 
+                                    [id_vehiculo,id_user]
+                                  );                    
+                                  let message = ''; 
+                                  if (result[0]['affectedRows'] > 0) {
+                                      message = 'vehiculo borrada exitosamente';
+                                  }else{
+                                      throw createError(400,'Error al eliminar el vehículo');
+                                  }
+                                      conection.commit(); 
+                                      conection.release();
+                                      return {message}; 
+                            }else{
+                                 throw createError(404,"Vehículo no encontrado ó el usuario no es el propietario");
+                            }
                       }else{
-                        throw createError(500,"ocurrió un problema al eliminar el vehículo");
-                      }   
-                     
-                  }catch (error) {
-                      throw error;
-                  }
-           }else{
-              throw createError(401,"Usted no tiene autorización"); 
-           }
+                          throw createError(402,"Parámetros ingresados erroneamente"); 
+                      }
+                  }else{
+                    throw createError(401,"Usuario no autorizado"); 
+                  }          
+              }catch (error) {
+                conection.rollback(); /*Si hay algún error  */ 
+                conection.release(); 
+                console.log(error);
+                throw error;
+              }
+
   }/*End remove*/
 
   /*_____________updatePhotosVehiculos ________________________________*/
