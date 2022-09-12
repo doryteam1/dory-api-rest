@@ -86,7 +86,7 @@ async function create(usuario){
         <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
         <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje2}</p> 
         <form>
-        <a href="https://dory-web-app-tests.herokuapp.com/verify-account?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Verificar cuenta de usuario </a></form>
+        <a href="${process.env.DORY_WEB_APP_URL}/verify-account?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Verificar cuenta de usuario </a></form>
         </center>
         </br>
         `;
@@ -330,7 +330,7 @@ async function recoverPassword(datos){
                   <img src="http://sharpyads.com/wp-content/uploads/2022/03/logo-no-name-320x320.png" width="100" height="100" />
                   <p>${mensaje}</p>   
                   <form>
-                  <a href="https://dory-web-app-tests.herokuapp.com/reset-password?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Actualizar Password </a></form>
+                  <a href="${process.env.DORY_WEB_APP_URL}/reset-password?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Actualizar Password </a></form>
                   </center>
                   </br>
                   `;
