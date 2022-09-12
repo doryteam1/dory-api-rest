@@ -230,7 +230,6 @@ async function create(vehiculo,token){
                 console.log(error);
                 throw error;
               }
-
   }/*End remove*/
 
   /*_____________updatePhotosVehiculos ________________________________*/

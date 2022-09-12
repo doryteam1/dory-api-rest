@@ -104,13 +104,15 @@ async function createNegocio(body,token){
                    body.id_departamento===undefined || 
                    body.id_municipio===undefined || 
                    body.direccion===undefined ||
+                   body.latitud===undefined || 
+                   body.longitud===undefined ||
                    body.informacion_adicional_direccion===undefined
                   )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,usuarios_id,id_departamento,id_municipio,direccion,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?)`, 
+                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,usuarios_id,id_departamento,id_municipio,direccion,latitud,longitud,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?)`, 
                     [
                       body.nombre_negocio,
                       body.descripcion_negocio,
@@ -118,6 +120,8 @@ async function createNegocio(body,token){
                       body.id_departamento,
                       body.id_municipio,
                       body.direccion,
+                      body.latitud,
+                      body.longitud,
                       body.informacion_adicional_direccion
                     ]
                 ); 
