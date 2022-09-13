@@ -4,7 +4,7 @@ const areas_experticias = require('../services/areas_experticias');
 
 router.get('/', async function(req, res, next) {
   try {
-    res.json(await areas_experticias.getMultiple(req.query.page));
+    res.json(await areas_experticias.getAreasExperticia(req.query.page));
   } catch (err) {
     console.error(`Error al traer las areas_experticias`, err.message);
     next(err);
