@@ -16,7 +16,7 @@ async function getAreasExperticia(page = 1){
   }
 }
 
-async function create(area_experticia){
+async function createAreaExperticia(area_experticia){
     const result = await db.query(
       `INSERT INTO areas_experticias(id_area,nombre,descripcion) VALUES (?,?,?)`, 
       [
@@ -66,7 +66,7 @@ async function create(area_experticia){
 
 module.exports = {
   getAreasExperticia,
-  create,
+  createAreaExperticia,
   update,
   remove
 }

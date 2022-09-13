@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const areas_experticias = require('../services/areas_experticias');
 
-router.get('/', async function(req, res, next) {
+router.get('/obtener', async function(req, res, next) {
   try {
     res.json(await areas_experticias.getAreasExperticia(req.query.page));
   } catch (err) {
@@ -11,16 +11,16 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.post('/', async function(req, res, next) {
+router.post('/registrar', async function(req, res, next) {
     try {
-      res.json(await areas_experticias.create(req.body));
+      res.json(await areas_experticias.createAreaExperticia(req.body));
     } catch (err) {
       console.error(`Error creando area de experticia`, err.message);
       next(err);
     }
   });
 
-router.put('/:id', async function(req, res, next) {
+router.put('/actualizar/:id', async function(req, res, next) {
     try {
       res.json(await areas_experticias.update(req.params.id, req.body));
     } catch (err) {
@@ -29,7 +29,7 @@ router.put('/:id', async function(req, res, next) {
     }
 });
 
-router.delete('/:id', async function(req, res, next) {
+router.delete('/eliminar/:id', async function(req, res, next) {
     try {
       res.json(await areas_experticias.remove(req.params.id));
     } catch (err) {
