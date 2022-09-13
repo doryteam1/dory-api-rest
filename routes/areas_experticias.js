@@ -22,7 +22,7 @@ router.post('/registrar', async function(req, res, next) {
 
 router.put('/actualizar/:id', async function(req, res, next) {
     try {
-      res.json(await areas_experticias.update(req.params.id, req.body));
+      res.json(await areas_experticias.updateAreaExperticia(req.params.id, req.body));
     } catch (err) {
       console.error(`Error al actualizar area de experticia`, err.message);
       next(err);
@@ -31,7 +31,7 @@ router.put('/actualizar/:id', async function(req, res, next) {
 
 router.delete('/eliminar/:id', async function(req, res, next) {
     try {
-      res.json(await areas_experticias.remove(req.params.id));
+      res.json(await areas_experticias.removeAreaExperticia(req.params.id));
     } catch (err) {
       console.error(`Error al borrar area de experticia`, err.message);
       next(err);

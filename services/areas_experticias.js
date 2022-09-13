@@ -32,7 +32,7 @@ async function createAreaExperticia(area_experticia){
     return {message};
   }
 
-  async function update(id, area_experticia){
+  async function updateAreaExperticia(id, area_experticia){
     const result = await db.query(
       `UPDATE areas_experticias
        SET nombre=?,
@@ -52,7 +52,7 @@ async function createAreaExperticia(area_experticia){
     return {message};
   }
   
-  async function remove(id){
+  async function removeAreaExperticia(id){
     const result = await db.query(
       `DELETE FROM areas_experticias WHERE id_area=?`, 
       [id]
@@ -67,6 +67,6 @@ async function createAreaExperticia(area_experticia){
 module.exports = {
   getAreasExperticia,
   createAreaExperticia,
-  update,
-  remove
+  updateAreaExperticia,
+  removeAreaExperticia
 }
