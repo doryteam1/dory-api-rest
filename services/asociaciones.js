@@ -170,8 +170,8 @@ async function getDetail(nit,token){
       
 }/*End getDetail*/
 
-/*--------------------getMultiple---Asociaciones del Usuario----------------------------------*/
-async function getMultiple(page = 1, id_user){                
+/*--------------------getAsociacionesUser----------------------------------*/
+async function getAsociacionesUser(page = 1, id_user){                
                 const offset = helper.getOffset(page, config.listPerPage);
                 const rows = await db.query(/*--------------------Asociaciones del Usuario como propietario----------------------------------*/
                   `SELECT a.nit,a.nombre,a.direccion,a.telefono,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
@@ -196,7 +196,7 @@ async function getMultiple(page = 1, id_user){
                   data,
                   meta
                 }
-}/*End getMultiple*/
+}/*End getAsociacionesUser*/
 
 /*________________Asociaciones a las que pertenece como miembro el usuario________________*/
 async function getAsociacionesMiembros(page = 1, id_user){       
@@ -670,7 +670,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
 module.exports = {
   getAsociacionesDepartamento,
   getDetail,
-  getMultiple,
+  getAsociacionesUser,
   create,
   update,
   remove,
