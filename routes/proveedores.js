@@ -60,7 +60,7 @@ router.delete('/producto/:id', async function(req, res, next) {
     }
   });
 
-  router.get('/detailed/:codigoProducto', async function(req, res, next) {
+  router.get('/producto/detailed/:codigoProducto', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
       res.json(await proveedores.getDetailProducto(req.params.codigoProducto,token));
