@@ -301,7 +301,7 @@ async function create(vehiculo,token){
     async function getDetailVehiculo(idVehiculo){ 
       try{
            const rows = await db.query(
-              `SELECT v.*
+              `SELECT v.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=v.usuarios_id) as municipio_propietario
               FROM vehiculos as v
               WHERE v.id_vehiculo=?
               `, 

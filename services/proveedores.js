@@ -292,7 +292,7 @@ async function create(producto,token){
                 let payload=helper.parseJwt(token);
                 id_user= payload.sub; 
                 rows = await db.query(
-                  `SELECT p.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio
+                  `SELECT p.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio_proveedor
                   FROM productos as p
                   WHERE   p.usuarios_id=? and p.codigo=?
                   `, 
@@ -303,7 +303,7 @@ async function create(producto,token){
                 }
         }else{
           rows = await db.query(
-            `SELECT p.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio
+            `SELECT p.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio_proveedor
             FROM productos as p
             WHERE p.codigo=?
             `, 
