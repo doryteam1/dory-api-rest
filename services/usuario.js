@@ -534,7 +534,7 @@ async function updateMisconsumos(body, token){
                           throw createError(401,"Usted no tiene autorización, soló el propietario esta autorizado");
                         }
                            const rows = await db.query(
-                            `SELECT u.id , concat (u.nombres,' ', u.apellidos) as nombres, u.email, u.foto,
+                            `SELECT u.id , concat (u.nombres,' ', u.apellidos) as nombres, u.email, u.celular as telefono,u.foto,
                                     (select es.descripcion from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
                                     where s.usuarios_id=u.id and s.nit_asociacion_fk=?) as estado_solicitud,
                                     (select ss.nombre from solicitudes as s inner join sender_solicitud as ss on (s.id_sender_solicitud=ss.id_sender_solicitud)
@@ -590,7 +590,7 @@ async function updateMisconsumos(body, token){
                           throw createError(401,"Usted no tiene autorización, soló el propietario esta autorizado");
                         }
                            const rows = await db.query(
-                            `SELECT u.id , concat (u.nombres,' ', u.apellidos) as nombres, u.email, u.foto,
+                            `SELECT u.id , concat (u.nombres,' ', u.apellidos) as nombres, u.email, u.celular as telefono, u.foto,
                                     (select es.descripcion from solicitudes as s inner join estados_solicitudes as es on (s.id_estado_fk=es.id_estado)
                                     where s.usuarios_id=u.id and s.nit_asociacion_fk=?) as estado_solicitud,
                                     (select ss.nombre from solicitudes as s inner join sender_solicitud as ss on (s.id_sender_solicitud=ss.id_sender_solicitud)
