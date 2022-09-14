@@ -112,7 +112,7 @@ async function getAsociacionesMunicipio(page = 1, idMunic){
 }/*End GetAsociacionesMunicipio*/
 
 /*-------------------------------------------getDetail---------------------------------------------------------------------*/
-async function getDetail(nit,token){          
+async function getDetailAsociacion(nit,token){          
          let id_user;
          let row;
         if(token && validarToken(token)){ 
@@ -669,7 +669,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
 
 module.exports = {
   getAsociacionesDepartamento,
-  getDetail,
+  getDetailAsociacion,
   getAsociacionesUser,
   create,
   update,
