@@ -288,50 +288,36 @@ async function create(producto,token){
   async function getDetailProducto(codigoProducto, token){
     try{
       let rows=[];  
-       if(token && validarToken(token)){
-                let payload=helper.parseJwt(token);
-                id_user= payload.sub; 
-                rows = await db.query(
-                  `SELECT p.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio_proveedor
-                  FROM productos as p
-                  WHERE   p.usuarios_id=? and p.codigo=?
-                  `, 
-                  [id_user,codigoProducto]
-                ); 
-                if(rows.length < 1){
-                  throw createError(404, "Usted no tiene ningún producto con código "+codigoProducto+".")
-                }
-        }else{
-          rows = await db.query(
-            `SELECT p.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio_proveedor
-            FROM productos as p
-            WHERE p.codigo=?
-            `, 
-            [codigoProducto]
-          ); 
-        }
-            if(rows.length < 1){
-              throw createError(404, "No se encuentra el producto con el código "+codigoProducto+".")
-            }
-          const rowsfotos = await db.query(
-            `SELECT fp.id_foto_producto, fp.foto
-            FROM  fotosProductos as fp
-            WHERE fp.codigo_producto_fk =?
-            `, 
-          [codigoProducto]
-          );  
-          var arrayfotos= new Array();  
-          rowsfotos.forEach((element)=>{ 
-              arrayfotos.push(element.foto);
-          });      
-          var nuevoRows = new Array();
-          nuevoRows.push(rows[0]);
-          nuevoRows[nuevoRows.length-1].fotos_producto=arrayfotos; 
+      rows = await db.query(
+        `SELECT p.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio_proveedor
+        FROM productos as p
+        WHERE p.codigo=?
+        `, 
+        [codigoProducto]
+      ); 
+  
+      if(rows.length < 1){
+        throw createError(404, "No se encuentra el producto con el código "+codigoProducto+".")
+      }
+      const rowsfotos = await db.query(
+        `SELECT fp.id_foto_producto, fp.foto
+        FROM  fotosProductos as fp
+        WHERE fp.codigo_producto_fk =?
+        `, 
+      [codigoProducto]
+      );  
+      var arrayfotos= new Array();  
+      rowsfotos.forEach((element)=>{ 
+          arrayfotos.push(element.foto);
+      });      
+      var nuevoRows = new Array();
+      nuevoRows.push(rows[0]);
+      nuevoRows[nuevoRows.length-1].fotos_producto=arrayfotos; 
 
-          const data = helper.emptyOrRows(nuevoRows);                      
-          return {
-            data
-          }
+      const data = helper.emptyOrRows(nuevoRows);                      
+      return {
+        data
+      }
     } catch(err){        
           console.log(err);
           throw err;
