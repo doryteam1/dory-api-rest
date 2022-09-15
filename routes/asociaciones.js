@@ -34,7 +34,7 @@ router.get('/municipio/:idMunic', async function(req, res, next) {
   try {
     res.json(await asociaciones.getAsociacionesMunicipio(req.query.page,req.params.idMunic));
   } catch (err) {
-    console.error(`Error al traer las asociaciones del departamento`, err.message);
+    console.error(`Error al traer las asociaciones del municipio`, err.message);
     next(err);
   }
 });
