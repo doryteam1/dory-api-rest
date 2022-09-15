@@ -4,7 +4,7 @@ const sexos = require('../services/sexos');
 
 router.get('/obtener', async function(req, res, next) {
   try {
-    res.json(await sexos.getsexos(req.query.page));
+    res.json(await sexos.getSexos(req.query.page));
   } catch (err) {
     console.error(`Error al traer los sexos de los usuarios`, err.message);
     next(err);
