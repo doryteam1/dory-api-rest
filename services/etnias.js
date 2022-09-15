@@ -19,35 +19,33 @@ async function getEtnias(page = 1){
 }/*End getAreaExperticia*/
 
 
-/*_____________________ createAreaExperticia______________________________________________*/
+/*_____________________ createEtnia______________________________________________*/
 async function createEtnia(etnia){
-        if(etnia.id_area === undefined || 
-           etnia.nombre === undefined ||
-           etnia.descripcion === undefined ){
-                throw createError(400,"Debe enviar todos los datos requeridos para el registro del área de experticia");
+        if(etnia.id === undefined || 
+           etnia.nombre === undefined ){
+                throw createError(400,"Debe enviar todos los datos requeridos para el registro de la etnia");
         }
           try{
                 const result = await db.query(
-                  `INSERT INTO areas_experticias(id_area,nombre,descripcion) VALUES (?,?,?)`, 
+                  `INSERT INTO etnias(id,nombre) VALUES (?,?)`, 
                   [
-                    etnia.id_area,
-                    etnia.nombre, 
-                    etnia.descripcion
+                    etnia.id,
+                    etnia.nombre
                   ]
                 );  
                 let message = 'Error creando la etnia';  
                 if (result.affectedRows) {
                   message = 'Etnia creada exitosamente';
                 }else {
-                      throw createError(500,"Ocurrió un problema al registrar un aárea de experticia");
+                      throw createError(500,"Ocurrió un problema al registrar la etnia");
                 }
             }catch(err){
               throw err;
             }      
             return {message};
-  }/*End createAreaExperticia*/
+  }/*End createEtnia*/
 
-  /*_____________________ updateAreaExperticia______________________________________________*/
+  /*_____________________ updateEtnia______________________________________________*/
   async function updateEtnia(id, etnia){
           if( 
             etnia.nombre === undefined ){
@@ -67,7 +65,7 @@ async function createEtnia(etnia){
             message = 'Etnia actualizada exitosamente';
           }  
           return {message};
-  }/*End updateAreaExperticia*/
+  }/*End updateEtnia*/
   
   /*______________________ removeEtnia_______________________________*/
   async function removeEtnia(id){
