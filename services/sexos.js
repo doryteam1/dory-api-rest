@@ -49,7 +49,7 @@ async function createSexo(Sexo){
   async function updateSexo(id, Sexo){
           if( 
             Sexo.nombre === undefined ){
-                throw createError(400,"Debe enviar todos los datos requeridos para la actualización de la Sexo");
+                throw createError(400,"Debe enviar todos los datos requeridos para la actualización del Sexo del usuario");
           }
             const result = await db.query(
             `UPDATE sexos
