@@ -25,6 +25,7 @@ async function createEtnia(etnia){
            etnia.nombre === undefined ){
                 throw createError(400,"Debe enviar todos los datos requeridos para el registro de la etnia");
         }
+         let message = 'Error creando la etnia';  
           try{
                 const result = await db.query(
                   `INSERT INTO etnias(id,nombre) VALUES (?,?)`, 
@@ -32,8 +33,7 @@ async function createEtnia(etnia){
                     etnia.id,
                     etnia.nombre
                   ]
-                );  
-                let message = 'Error creando la etnia';  
+                );                  
                 if (result.affectedRows) {
                   message = 'Etnia creada exitosamente';
                 }else {
