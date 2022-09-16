@@ -82,6 +82,7 @@ async function getMultiple(page = 1){
         }
       }
     }
+    negocios.push(currentNegocio)
     resultSet = negocios;
   }
   
