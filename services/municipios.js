@@ -176,14 +176,7 @@ async function getConsumosEspeciesTotalNuevo(){
               [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio]
             );                                
                    if(rowsConsumos[0].consumo==null){
-                          especies= await db.query(
-                            `SELECT e.nombre as especie
-                             FROM especies as e
-                                  WHERE e.id_especie=?
-                            `, 
-                            [rowsEspecies[j].id_especie]
-                          );
-                          rowsConsumos[0].especie=especies[0].especie;
+                           rowsConsumos[0].especie=rowsEspecies[j].nombre;
                           rowsConsumos[0].consumo=0;
                           rowsConsumos[0].id_municipio=rowsMunicipios[i].id_municipio;
                    }
