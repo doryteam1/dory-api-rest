@@ -144,43 +144,6 @@ async function create(municipio){
                 }
           }/* End getConsumosEspecies*/
 
-/* ------------------------------------getConsumosEspeciesTotal------------------------------------*/
-async function getConsumosEspeciesTotal(){   
-              const rowsEspecies = await db.query(
-                `SELECT e.*
-                FROM especies as e
-                `, 
-                []
-              );        
-              const rowsMunicipios = await db.query(
-                `SELECT m.*
-                FROM municipios as m
-                `, 
-                []
-              );              
-              let consumototalMunicipio=[]; 
-              let rowsConsumos;
-              for(let i=0; i<rowsMunicipios.length;i++){
-                  for(let j=0; j<rowsEspecies.length;j++){
-                        rowsConsumos= await db.query(
-                          `SELECT e.nombre as especie, sum(eu.cantidad_consumo) as consumo, count(eu.usuarios_id) as cantidad_usuario,
-                          ( select m.id_municipio from municipios as m where m.id_municipio=u.id_municipio ) as id_municipio
-                          FROM especies_usuarios as eu inner join especies as e on e.id_especie=eu.id_especie_pk_fk
-                                                      inner join usuarios as u on u.id=eu.usuarios_id
-                                                      inner join municipios as m on u.id_municipio=m.id_municipio
-                          WHERE eu.id_especie_pk_fk=? and u.id_municipio=?
-                          `, 
-                          [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio]
-                        );
-                      consumototalMunicipio.push(rowsMunicipios[i].nombre,rowsConsumos[0]);                         
-                  }/*end for especies*/   
-                } /*end for municipios*/    
-      const data = helper.emptyOrRows(consumototalMunicipio);            
-      return {
-            data
-      }
-}/* End getConsumosEspeciesTotal*/
-
 /* ------------------------------------getConsumosEspeciesTotalNuevo------------------------------------*/
 async function getConsumosEspeciesTotalNuevo(){   
   const rowsEspecies = await db.query(
@@ -234,6 +197,5 @@ module.exports = {
   update,
   remove,
   getConsumosEspecies,
-  getConsumosEspeciesTotal,
   getConsumosEspeciesTotalNuevo
 }
