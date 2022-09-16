@@ -231,8 +231,8 @@ return {
 }
 }/*getAsociacionesMiembros*/
 
-/*-------------------------create-----------------------*/
-async function create(asociacion,token){
+/*-------------------------createAsociacion-----------------------*/
+async function createAsociacion(asociacion,token){
         const conection= await db.newConnection(); 
         await conection.beginTransaction(); 
         let message = 'Error creando asociacion';
@@ -298,7 +298,7 @@ async function create(asociacion,token){
             }else{
               throw createError(401,"Usted no tiene autorización"); 
             }
-  }/*End create*/
+  }/*End createAsociacion*/
 
   /*_----------------------------------update--------------------------------*/
   async function update(nit, asociacion,token){
@@ -671,7 +671,7 @@ module.exports = {
   getAsociacionesDepartamento,
   getDetailAsociacion,
   getAsociacionesUser,
-  create,
+  createAsociacion,
   update,
   remove,
   enviarSolicitudAdicion,

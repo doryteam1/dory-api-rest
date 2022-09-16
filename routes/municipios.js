@@ -69,7 +69,7 @@ router.delete('/:idMunicipio', async function(req, res, next) {
     try {
       res.json(await municipios.getConsumosEspeciesTotal());
     } catch (err) {
-      console.error(`Error al traer el total del consumos de especies por municipio `, err.message);
+      console.error(`Error al traer el total del consumo de especies por municipio `, err.message);
       next(err);
     }
   });
@@ -78,7 +78,7 @@ router.delete('/:idMunicipio', async function(req, res, next) {
     try {
       res.json(await municipios.getConsumosEspeciesTotalNuevo());
     } catch (err) {
-      console.error(`Error al traer el total del consumos de especies por municipio  `, err.message);
+      console.error(`Error al traer el total del consumo de especies por municipio  `, err.message);
       next(err);
     }
   });

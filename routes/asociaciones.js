@@ -42,7 +42,7 @@ router.get('/municipio/:idMunic', async function(req, res, next) {
 router.post('/', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await asociaciones.create(req.body,token));
+      res.json(await asociaciones.createAsociacion(req.body,token));
     } catch (err) {
       console.error(`Error creando la asociación`, err.message);
       next(err);
