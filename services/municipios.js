@@ -173,7 +173,19 @@ async function getConsumosEspeciesTotalNuevo(){
               WHERE eu.id_especie_pk_fk=? and u.id_municipio=?
               `, 
               [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio]
-            );     
+            );                                
+                   if(rowsConsumos[0].consumo==null){
+                          rowsEspecies= await db.query(
+                            `SELECT e.nombre as especie
+                             FROM especies as e
+                                  WHERE e.id_especie=?
+                            `, 
+                            [rowsEspecies[j].id_especie]
+                          );
+                          rowsConsumos[0].especie=rowsEspecies[0].especie;
+                          rowsConsumos[0].consumo=0;
+                          rowsConsumos[0].id_municipio=rowsMunicipios[i].id_municipio;
+                   }
                    arrayConsumo.push(rowsConsumos[0]);
                   
       }/*end for especies*/  
