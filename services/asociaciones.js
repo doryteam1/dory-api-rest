@@ -736,8 +736,8 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                               throw error;
                     }
             }
-                if(rowsGranjas.length<1){
-                    data=[];
+                let data=[];
+                if(rowsGranjas.length<1){                    
                    return {data}
                 }
                 var arrayfotos= new Array();
@@ -757,7 +757,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                   }
                 });
                   nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
-                  const data = helper.emptyOrRows(nuevoRows);                      
+                  data = helper.emptyOrRows(nuevoRows);                      
                   return {
                     data
                   }
