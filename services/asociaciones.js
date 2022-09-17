@@ -453,6 +453,7 @@ async function createAsociacion(asociacion,token){
           let id_usuario_creador= null;
           let id_user=null;
           let tipo_user='';
+          let rowVerificar=[];
         if(token && validarToken(token)){
               const payload=helper.parseJwt(token);                
                tipo_user= payload.rol; 
@@ -467,13 +468,37 @@ async function createAsociacion(asociacion,token){
          if(!body.quienEnvia || (body.quienEnvia!='usuario' && body.quienEnvia!='asociacion')){
                        throw createError(400,"No ha enviado la información correcta"); 
          }else{
-            if(body.quienEnvia=='usuario'){
+            if(body.quienEnvia=='usuario'){                
+
+                /*------verificar que el usuario no este en otra asociación------*/
+                rowVerificar = await db.query(
+                  `SELECT s.*
+                   FROM solicitudes as s
+                   WHERE s.usuarios_id=? and id_estado_fk=2`, 
+                   [id_usuario_creador]
+                );
+                if(rowVerificar.length>0){
+                  throw createError(401,"Usted no puede registrarse en más de una asociación "); 
+                }                     
+                /*------fin-->--verificar que el usuario no este en otra asociación------*/
                 id_sender = 1;
                 id_user = id_usuario_creador;
+
             }else if(body.quienEnvia=='asociacion'){                    
                    if(!body.id_usuario_receptor){
                          throw createError(400,"No se especificó el ID del usuario receptor de la solicitud");
                    }
+                     /*------verificar que el usuario no este en otra asociación------*/
+                    rowVerificar = await db.query(
+                      `SELECT s.*
+                      FROM solicitudes as s
+                      WHERE s.usuarios_id=? and id_estado_fk=2`, 
+                      [body.id_usuario_receptor]
+                    );
+                    if(rowVerificar.length>0){
+                      throw createError(401,"Usuario no puede estar registrado en más de una asociación "); 
+                    }                     
+                    /*------fin-->--verificar que el usuario no este en otra asociación------*/
                    id_sender = 2;                   
                    id_user = body.id_usuario_receptor;
                   /*validación del representante legal de la asociación*/                  

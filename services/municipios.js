@@ -161,7 +161,6 @@ async function getConsumosEspeciesTotalNuevo(){
   let data={};           
   let rowsConsumos;
   let arrayConsumo=[];
-  let especies;
     for(let i=0; i<rowsMunicipios.length;i++){   
       arrayConsumo=[];
       for(let j=0; j<rowsEspecies.length;j++){
