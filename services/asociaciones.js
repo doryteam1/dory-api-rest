@@ -450,7 +450,7 @@ async function createAsociacion(asociacion,token){
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
   async function enviarSolicitudAdicion(nit, token,body){
-          let id_usuario_creador= null;
+          let id_usuario_creador= null;/*Creador de la solicitud; cuando la solicitud es enviada por una asociación este es el nit del representante legal*/
           let id_user=null;
           let tipo_user='';
           let rowVerificar=[];
@@ -692,7 +692,75 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
  }
 }/*End aceptarSolicitudAsociacion*/
 
-module.exports = {
+ /*_----------------------------------ObtenerTodasGranjasAsociadas--------------------------------*/
+ async function ObtenerTodasGranjasAsociadas(nit,token){   
+          let rowsGranjas=[];
+          if(token && validarToken(token)){ 
+                  const payload=helper.parseJwt(token);                             
+                  const id_user=payload.sub;
+                  try{                
+                        rowsGranjas = await db.query(
+                          `SELECT   g.*,f.id_foto,f.imagen,
+                                    (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
+                                    (select Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
+                                    where   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
+                                    (select ug2.esfavorita from usuarios_granjas as ug2 where ug2.id_granja_pk_fk=g.id_granja and ug2.usuarios_id=?) as favorita,
+                                    (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion               
+                          FROM solicitudes as s inner join usuarios_granjas as ug on (s.usuarios_id=ug.usuarios_id)
+                                                inner join granjas as g on (ug.id_granja_pk_fk=g.id_granja)
+                                                left join fotos as f on (f.id_granja_fk = g.id_granja)
+                          WHERE s.nit_asociacion_fk=? and s.id_estado_fk=2 and ug.espropietario=1
+                          `, 
+                          [id_user,nit]
+                        );                     
+                    } catch(error){
+                              throw error;
+                    }
+            }else{
+                   try{                
+                        rowsGranjas = await db.query(
+                          `SELECT   g.*,f.id_foto,f.imagen,
+                                    (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja) as count_resenas,
+                                    (select Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
+                                    where   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
+                                    0 as favorita,
+                                    (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion               
+                          FROM solicitudes as s inner join usuarios_granjas as ug on (s.usuarios_id=ug.usuarios_id)
+                                                inner join granjas as g on (ug.id_granja_pk_fk=g.id_granja)
+                                                left join fotos as f on (f.id_granja_fk = g.id_granja)
+                          WHERE s.nit_asociacion_fk=? and s.id_estado_fk=2 and ug.espropietario=1
+                          `, 
+                          [nit]
+                        );                     
+                    } catch(error){
+                              throw error;
+                    }
+            }
+                var arrayfotos= new Array();
+                var nuevoRows = new Array();
+                var index= rowsGranjas[0].id_granja;
+                nuevoRows.push(rowsGranjas[0]);        
+                rowsGranjas.forEach((element)=>{           
+                  if((index == element.id_granja))
+                  { 
+                    arrayfotos.push(element.imagen);
+                  }else { 
+                            index= element.id_granja;
+                            nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
+                            nuevoRows.push(element);
+                            arrayfotos=[];  
+                            arrayfotos.push(element.imagen);
+                  }
+                });
+                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
+                  const data = helper.emptyOrRows(nuevoRows);                      
+                  return {
+                    data
+                  }
+}/*End ObtenerTodasGranjasAsociadas*/
+
+module.exports = {  
+  ObtenerTodasAsociaciones,
   getAsociacionesDepartamento,
   getDetailAsociacion,
   getAsociacionesUser,
@@ -705,5 +773,5 @@ module.exports = {
   getSolicitudesNoaceptadasPorAsociacion,
   aceptarSolicitudAsociacion,
   getAsociacionesMiembros,
-  ObtenerTodasAsociaciones
+  ObtenerTodasGranjasAsociadas
 }
