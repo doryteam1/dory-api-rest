@@ -736,6 +736,10 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                               throw error;
                     }
             }
+                if(rowsGranjas.length<1){
+                    data=[];
+                   return {data}
+                }
                 var arrayfotos= new Array();
                 var nuevoRows = new Array();
                 var index= rowsGranjas[0].id_granja;
