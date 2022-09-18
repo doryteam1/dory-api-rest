@@ -158,7 +158,7 @@ async function getConsumosEspeciesTotalNuevo(){
     `, 
     []
   );   
-  let data={};           
+  let data=[];           
   let rowsConsumos;
   let arrayConsumo=[];
     for(let i=0; i<rowsMunicipios.length;i++){   
@@ -174,16 +174,20 @@ async function getConsumosEspeciesTotalNuevo(){
               `, 
               [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio]
             );                                
-                   if(rowsConsumos[0].consumo==null){
-                           rowsConsumos[0].especie=rowsEspecies[j].nombre;
-                          rowsConsumos[0].consumo=0;
-                          rowsConsumos[0].id_municipio=rowsMunicipios[i].id_municipio;
-                   }
-                   arrayConsumo.push(rowsConsumos[0]);
+            if(rowsConsumos[0].consumo==null){
+                  rowsConsumos[0].especie=rowsEspecies[j].nombre;
+                  rowsConsumos[0].consumo=0;
+            }
+            rowsConsumos[0].id_municipio = undefined;
+            arrayConsumo.push(rowsConsumos[0]);
                   
-      }/*end for especies*/  
-       data[rowsMunicipios[i].nombre]=arrayConsumo;
-    } /*end for municipios*/       
+      }/*end for especies*/
+      data.push({
+        municipio:rowsMunicipios[i].nombre,
+        id_municipio:rowsMunicipios[i].id_municipio,
+        consumo:arrayConsumo
+      })
+    } /*end for municipios*/   
           
 return {
 data
