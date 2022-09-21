@@ -242,87 +242,92 @@ async function createGranja(body,token){
     if(token && validarToken(token)){
           try {                   
                 const payload=helper.parseJwt(token);
-                const id_user=payload.sub;                
-                if(body.nombre_granja===undefined || 
-                   body.area===undefined || 
-                   body.numero_trabajadores===undefined ||
-                   body.produccion_estimada_mes===undefined || 
-                   body.direccion===undefined ||
-                   body.latitud===undefined ||
-                   body.longitud===undefined ||
-                   body.descripcion===undefined || 
-                   body.id_departamento===undefined || 
-                   body.id_municipio===undefined ||
-                   body.id_corregimiento===undefined ||
-                   body.id_vereda === undefined ||
-                   body.corregimiento_vereda === undefined ||
-                   body.informacion_adicional_direccion === undefined
-                   )
-                {
-                  throw createError(400,"Se requieren todos los parámetros!");
-                }
-                 const result = await conection.execute(
-                    `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,corregimiento_vereda,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
-                    [
-                      body.nombre_granja,
-                      body.area,
-                      body.numero_trabajadores,
-                      body.produccion_estimada_mes,
-                      body.direccion,
-                      body.latitud,
-                      body.longitud,
-                      body.descripcion,
-                      body.id_departamento,
-                      body.id_municipio,
-                      body.id_corregimiento,
-                      body.id_vereda,
-                      body.corregimiento_vereda,
-                      body.informacion_adicional_direccion
-                    ]
-                );               
-                if(body.arrayTiposInfraestructuras != undefined 
-                  && body.arrayTiposInfraestructuras != null 
-                  && body.arrayTiposInfraestructuras != 'null' 
-                  && body.arrayTiposInfraestructuras != '')
-                {                
-                    let tiposInfraestructuras = body.arrayTiposInfraestructuras;  
-                    for(var i=0;i<tiposInfraestructuras.length;i++){
+                const id_user=payload.sub;
+                const tipo_user=payload.rol;  
+                if(tipo_user!="Piscicultor" || tipo_user!="Administrador"){ 
+                  throw createError(401,"Usted no tiene autorización");
+                }else{
+                        if(body.nombre_granja===undefined || 
+                          body.area===undefined || 
+                          body.numero_trabajadores===undefined ||
+                          body.produccion_estimada_mes===undefined || 
+                          body.direccion===undefined ||
+                          body.latitud===undefined ||
+                          body.longitud===undefined ||
+                          body.descripcion===undefined || 
+                          body.id_departamento===undefined || 
+                          body.id_municipio===undefined ||
+                          body.id_corregimiento===undefined ||
+                          body.id_vereda === undefined ||
+                          body.corregimiento_vereda === undefined ||
+                          body.informacion_adicional_direccion === undefined
+                          )
+                        {
+                          throw createError(400,"Se requieren todos los parámetros!");
+                        }
+                        const result = await conection.execute(
+                            `INSERT INTO granjas (nombre,area,numero_trabajadores, produccion_estimada_mes,direccion,latitud,longitud,descripcion,id_departamento,id_municipio,id_corregimiento,id_vereda,corregimiento_vereda,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                            [
+                              body.nombre_granja,
+                              body.area,
+                              body.numero_trabajadores,
+                              body.produccion_estimada_mes,
+                              body.direccion,
+                              body.latitud,
+                              body.longitud,
+                              body.descripcion,
+                              body.id_departamento,
+                              body.id_municipio,
+                              body.id_corregimiento,
+                              body.id_vereda,
+                              body.corregimiento_vereda,
+                              body.informacion_adicional_direccion
+                            ]
+                        );               
+                        if(body.arrayTiposInfraestructuras != undefined 
+                          && body.arrayTiposInfraestructuras != null 
+                          && body.arrayTiposInfraestructuras != 'null' 
+                          && body.arrayTiposInfraestructuras != '')
+                        {                
+                            let tiposInfraestructuras = body.arrayTiposInfraestructuras;  
+                            for(var i=0;i<tiposInfraestructuras.length;i++){
+                                await conection.execute(
+                                  `INSERT INTO infraestructuras_granjas(id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
+                                  [result[0]['insertId'], tiposInfraestructuras[i]]
+                                );
+                            }
+                        }                
+                        if(body.arrayEspecies != undefined 
+                          && body.arrayEspecies != null
+                          && body.arrayEspecies != 'null'
+                          && body.arrayEspecies != '')
+                        {        
+                          let especies = body.arrayEspecies;     
+                          for(var j=0;j<especies.length;j++){
+                              await conection.execute(
+                                `INSERT INTO especies_granjas(id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
+                                [especies[j], result[0]['insertId']]
+                              );
+                          }
+                        }  
+                        let esfavorita=0; 
+                        let espropietario=1;
                         await conection.execute(
-                          `INSERT INTO infraestructuras_granjas(id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
-                          [result[0]['insertId'], tiposInfraestructuras[i]]
-                        );
-                    }
-                }                
-                if(body.arrayEspecies != undefined 
-                  && body.arrayEspecies != null
-                  && body.arrayEspecies != 'null'
-                  && body.arrayEspecies != '')
-                {        
-                  let especies = body.arrayEspecies;     
-                  for(var j=0;j<especies.length;j++){
-                      await conection.execute(
-                        `INSERT INTO especies_granjas(id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
-                        [especies[j], result[0]['insertId']]
-                      );
-                  }
-                }  
-                let esfavorita=0; 
-                let espropietario=1;
-                await conection.execute(
-                `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,esfavorita,espropietario) VALUES (?,?,?,?)`, 
-                [
-                  result[0]['insertId'],
-                  id_user,
-                  esfavorita,
-                  espropietario
-                ]
-                );                 
-                await conection.commit(); 
-                conection.release();                
-                return {
-                  message:'Granja creada exitosamente',
-                  insertId:result[0]['insertId']
-                };
+                        `INSERT INTO usuarios_granjas (id_granja_pk_fk,usuarios_id,esfavorita,espropietario) VALUES (?,?,?,?)`, 
+                        [
+                          result[0]['insertId'],
+                          id_user,
+                          esfavorita,
+                          espropietario
+                        ]
+                        );                 
+                        await conection.commit(); 
+                        conection.release();                
+                        return {
+                          message:'Granja creada exitosamente',
+                          insertId:result[0]['insertId']
+                        };
+              }
           }catch (error) {
                 await conection.rollback(); 
                 conection.release();
@@ -342,6 +347,16 @@ async function createGranja(body,token){
       try {                 
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
+            const rows = await db.query(
+              `SELECT  ug.espropietario
+              FROM usuarios_granjas as ug 
+              WHERE ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk = ?
+              LIMIT ?,?`, 
+              [id_user, idGranja]
+            );
+            if(rows.length<1){
+              throw createError(401,"Usted no tiene autorización");
+            }
             if(body.nombre_granja===undefined || 
                body.area===undefined || 
                body.numero_trabajadores===undefined ||
@@ -361,9 +376,9 @@ async function createGranja(body,token){
             {
               throw createError(400,"Se requieren todos los parámetros!");
             } 
-            const result = await conection.execute(
+              const result = await conection.execute(
               `UPDATE granjas 
-              SET nombre=?,
+               SET nombre=?,
                   area=? ,
                   numero_trabajadores=?,
                   produccion_estimada_mes=?,
@@ -378,7 +393,7 @@ async function createGranja(body,token){
                   corregimiento_vereda=?,
                   informacion_adicional_direccion=?
               WHERE id_granja=?`,
-              [
+                [
                   body.nombre_granja,
                   body.area,
                   body.numero_trabajadores,
@@ -394,11 +409,11 @@ async function createGranja(body,token){
                   body.corregimiento_vereda,
                   body.informacion_adicional_direccion,
                   idGranja
-              ] 
-            );        
-            if (result[0].affectedRows) {
-              message = 'Granja actualizada exitosamente';
-            }       
+                ] 
+              );        
+              if (result[0].affectedRows) {
+                message = 'Granja actualizada exitosamente';
+              }       
               if(body.arrayTiposInfraestructuras !== undefined 
                 && body.arrayTiposInfraestructuras !== null 
                 && body.arrayTiposInfraestructuras !== 'null' 
@@ -483,7 +498,21 @@ async function createGranja(body,token){
        try{
             if(token && validarToken(token)){
                   let payload=helper.parseJwt(token);
-                  id_user= payload.sub;                 
+                  id_user= payload.sub; 
+                  const tipo_user=payload.rol;                  
+                  const rows = await db.query(
+                    `SELECT  ug.espropietario
+                    FROM usuarios_granjas as ug 
+                    WHERE ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk = ?
+                    LIMIT ?,?`, 
+                    [id_user,id_granja]
+                  );
+                  if(rows.length<1){
+                    throw createError(401,"Usted no tiene autorización");
+                  }
+                  if(tipo_user!="Administrador"){
+                    throw createError(401,"Usted no tiene autorización");
+                  }
                   if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
                       const propiedad = await conection.execute(
                         `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario='1' and ug.id_granja_pk_fk=?`,
@@ -741,7 +770,18 @@ async function createGranja(body,token){
     if(token && validarToken(token)){
         let payload=helper.parseJwt(token);
         tipo_user= payload.rol;
+        let id_user=payload.sub;
         try{
+              const rows = await db.query(
+                `SELECT  ug.espropietario
+                FROM usuarios_granjas as ug 
+                WHERE ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk = ?
+                LIMIT ?,?`, 
+                [id_user, idGranja]
+              );
+              if(rows.length<1){
+                throw createError(401,"Usted no tiene autorización");
+              }
             if(tipo_user!="Piscicultor"){ 
               throw createError(401,"Usted no tiene autorización");
             }else{
