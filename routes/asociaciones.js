@@ -139,4 +139,14 @@ router.get('/granjas/asociadas/:nit', async function(req, res, next) {
   }
 });
 
+router.put('/parcial/:nitAsociacion', async function(req, res, next) {
+  try {
+       var token=req.headers.authorization;
+       res.json(await asociaciones.updateParcialAsociacion(req.params.nitAsociacion, req.body,token));
+  } catch (err) {
+       console.error(`Error al actualizar la asociación parcialmente`, err.message);
+       next(err);
+  }
+});
+
 module.exports = router;

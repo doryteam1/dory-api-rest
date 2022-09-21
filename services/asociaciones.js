@@ -763,6 +763,59 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                   }
 }/*End ObtenerTodasGranjasAsociadas*/
 
+/*------------------------------updateParcialAsociacion-------------------------------------------------*/
+async function updateParcialAsociacion(nitAsociacion, asociacion, token){
+  
+        if(token && validarToken(token))
+        {
+          const payload=helper.parseJwt(token);  
+          const id_user=payload.sub;
+          const rol = payload.rol;
+            if(!(rol==='Piscicultor' || rol==='Pescador')){
+              throw createError(401,"Tipo de usuario no Válido");
+            }     
+          const rows2 = await db.query(
+            `select au.*
+            from asociaciones_usuarios as au
+            where au.usuarios_id = ? and au.nit_asociacion_pk_fk = ? `, 
+            [
+              id_user,
+              nitAsociacion
+            ]
+          );
+          if(rows2.length < 1 ){
+            throw createError('401', 'Usuario no autorizado.')
+          }
+        
+          var atributos = Object.keys(asociacion);   
+          if(atributos.length!=0)
+          {    
+            var params = Object.values(asociacion);   
+            var query = "update asociaciones set ";
+            params.push(nitAsociacion);
+
+            for(var i=0; i < atributos.length; i++) {
+              query = query + atributos[i] + '=?,';
+            }
+            query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+            query = query +' '+'where nit=?'
+
+            const result = await db.query(query,params);
+          
+            let message = '';
+            if (result.affectedRows) {
+              message = 'asociacion actualizada exitosamente';
+            }else{
+              throw createError(500,"No se pudo actualizar el registro de la asociacion");    
+            }
+            return {message};
+          }
+          throw createError(400,"No hay parámetros para actualizar");
+      }else{
+        throw createError(401,"Usuario no autorizado");
+      }
+}/*End updateParcialAsociacion*/
+
 module.exports = {  
   ObtenerTodasAsociaciones,
   getAsociacionesDepartamento,
@@ -777,5 +830,6 @@ module.exports = {
   getSolicitudesNoaceptadasPorAsociacion,
   aceptarSolicitudAsociacion,
   getAsociacionesMiembros,
-  ObtenerTodasGranjasAsociadas
+  ObtenerTodasGranjasAsociadas,
+  updateParcialAsociacion
 }
