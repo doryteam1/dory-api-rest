@@ -11,7 +11,7 @@ async function getUserId(page = 1, idUser){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT distinctrow   u.cedula,concat(u.nombres," ",u.apellidos) as nombre_completo,
-                          u.celular,u.direccion,u.email,tu.id_tipo_usuario,tu.nombre_tipo_usuario as tipo_usuario,u.id_area_experticia,
+                          u.celular,u.direccion,u.email,tu.id_tipo_usuario,tu.nombre_tipo_usuario as tipo_usuario,u.id_area_experticia,u.url_sisben,url_imagen_cedula,
                           (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
                           (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
                           (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,
