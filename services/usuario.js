@@ -226,28 +226,61 @@ async function update(id, usuario){
 }/*fin update*/
 
   /* ----------------------------------REMOVE-----------------------------*/
-  async function remove(idUser){
-        await db.query(
-          `DELETE FROM me_gustas WHERE usuarios_id=?`, 
-          [idUser]
-        );
-        await db.query(
-          `DELETE FROM productos WHERE usuarios_id=?`, 
-          [idUser]
-        );
-        await db.query(
-          `DELETE FROM solicitudes WHERE usuarios_id=?`, 
-          [idUser]
-        );
-        const result = await db.query(
-          `DELETE FROM usuarios WHERE id=?`, 
-          [idUser]
-        );
-        let message = 'Error borrando el registro del usuario';
-        if (result.affectedRows) {
-          message = 'Usuario borrado exitosamente';
-        }
-        return {message};
+  async function remove(idUser,token){
+
+    const conection= await db.newConnection(); /*conection of TRANSACTION */
+    conection.beginTransaction();
+    let id_user=null;     
+       try{
+            if(token && validarToken(token)){
+                  let payload=helper.parseJwt(token);
+                  id_user= payload.sub; 
+                  const tipo_user=payload.rol;                  
+                  const rows = await db.query(
+                    `SELECT  u.*
+                    FROM usuarios as u
+                    WHERE u.id=? 
+                    `, 
+                    [id_user]
+                  );
+                  if(rows.length<1){
+                    throw createError(401,"Usted no tiene autorización");
+                  }
+                  if(tipo_user!="Administrador"){
+                    throw createError(401,"Usted no tiene autorización");
+                  }
+                      await conection.execute(
+                        `DELETE FROM me_gustas WHERE usuarios_id=?`, 
+                        [idUser]
+                      );
+                      await conection.execute(
+                        `DELETE FROM productos WHERE usuarios_id=?`, 
+                        [idUser]
+                      );
+                      await conection.execute(
+                        `DELETE FROM solicitudes WHERE usuarios_id=?`, 
+                        [idUser]
+                      );
+                      const result = await conection.execute(
+                        `DELETE FROM usuarios WHERE id=?`, 
+                        [idUser]
+                      );
+                      let message = 'Error borrando el registro del usuario';
+                      if (result.affectedRows) {
+                        message = 'Usuario borrado exitosamente';
+                      }
+                          conection.commit(); 
+                          conection.release();
+                      return {message};
+            }else{
+              throw createError(401,"Usuario no autorizado"); 
+            }
+          }catch (error) {
+            conection.rollback(); /*Si hay algún error  */ 
+            conection.release(); 
+            console.log(error);
+            throw error;
+          }
   }/*End Remove*/
   
 /* ----------------------------------UPDATE PARCIAL DEL USUARIO-----------------------------*/

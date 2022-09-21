@@ -87,7 +87,8 @@ router.put('/verify/account', async function(req, res, next) {
 
 router.delete('/:idUser', async function(req, res, next) {
   try {
-    res.json(await usuario.remove(req.params.idUser));
+    var token=req.headers.authorization;
+    res.json(await usuario.remove(req.params.idUser,token));
   } catch (err) {
     console.error(`Error al borrar el usuario`, err.message);
     next(err);
