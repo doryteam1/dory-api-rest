@@ -32,7 +32,8 @@ router.post('/create', async function(req, res, next) {
 
 router.put('/total/:idUser', async function(req, res, next) {
   try {
-    res.json(await usuario.update(req.params.idUser, req.body));
+    var token=req.headers.authorization;
+    res.json(await usuario.update(req.params.idUser, req.body,token));
   } catch (err) {
     console.error(`Error al actualizar el usuario`, err.message);
     next(err);

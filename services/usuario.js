@@ -144,92 +144,110 @@ let message='Registro fallido';
 }/*End create*/
 
 /* ----------------------------------UPDATE-----------------------------*/
-async function update(id, usuario){      
-        if (usuario.cedula!= undefined && 
-          usuario.nombres!= undefined  && 
-          usuario.apellidos!= undefined  &&
-          usuario.celular!= undefined  &&
-          usuario.direccion!= undefined  && 
-          usuario.id_tipo_usuario!= undefined  &&
-          usuario.email!= undefined  &&
-          usuario.id_area_experticia!= undefined  &&
-          usuario.nombre_negocio!= undefined  &&
-          usuario.foto!= undefined  && 
-          usuario.fecha_registro!= undefined  &&
-          usuario.fecha_nacimiento!= undefined  &&
-          usuario.id_departamento!= undefined &&
-          usuario.id_municipio!= undefined  &&
-          usuario.id_corregimiento!= undefined  &&
-          usuario.id_vereda!= undefined  &&
-          usuario.latitud!= undefined  &&
-          usuario.longitud!= undefined &&
-          usuario.otra_area_experticia!= undefined  &&
-          usuario.otra_area_experticia_descripcion!= undefined  &&
-          usuario.sobre_mi!= undefined  &&
-          usuario.informacion_adicional_direccion!= undefined){
-        const result = await db.query(
-        `UPDATE usuarios
-        SET  cedula=?,
-              nombres=?, 
-              apellidos=?,
-              celular=?,
-              direccion=?, 
-              id_tipo_usuario=?,
-              email=?,
-              id_area_experticia=?,
-              nombre_negocio=?,
-              foto=?, 
-              fecha_registro=?,
-              fecha_nacimiento=?,
-              id_departamento=?,
-              id_municipio=?,
-              id_corregimiento=?,
-              id_vereda=?,
-              latitud=?,
-              longitud=?,
-              otra_area_experticia=?,
-              otra_area_experticia_descripcion=?,
-              sobre_mi=?,
-              informacion_adicional_direccion=?
-        WHERE id=?`,
-        [
-          usuario.cedula,
-          usuario.nombres, 
-          usuario.apellidos,
-          usuario.celular,
-          usuario.direccion, 
-          usuario.id_tipo_usuario,
-          usuario.email,
-          usuario.id_area_experticia,
-          usuario.nombre_negocio,
-          usuario.foto, 
-          usuario.fecha_registro,
-          usuario.fecha_nacimiento,
-          usuario.id_departamento,
-          usuario.id_municipio,
-          usuario.id_corregimiento,
-          usuario.id_vereda,
-          usuario.latitud,
-          usuario.longitud,
-          usuario.otra_area_experticia,
-          usuario.otra_area_experticia_descripcion,
-          usuario.sobre_mi,
-          usuario.informacion_adicional_direccion,
-          id
-        ] 
-        );
-        let message = 'Usuario no esta registrado';
-        if (result.affectedRows) {
-          message = 'Usuario actualizado exitosamente';
-        }
-        return {message};
-      }  
-          throw createError(400,"Un problema con los parametros ingresados al actualizar");         
+async function update(idUser, usuario, token){
+              try{
+                if(token && validarToken(token)){
+                        let payload=helper.parseJwt(token);
+                        let id_user= payload.sub; 
+                        if(id_user!=idUser){
+                          throw createError(401,"Usted no tiene autorización");
+                        }
+                          if (usuario.cedula!= undefined && 
+                            usuario.nombres!= undefined  && 
+                            usuario.apellidos!= undefined  &&
+                            usuario.celular!= undefined  &&
+                            usuario.direccion!= undefined  && 
+                            usuario.id_tipo_usuario!= undefined  &&
+                            usuario.email!= undefined  &&
+                            usuario.id_area_experticia!= undefined  &&
+                            usuario.nombre_negocio!= undefined  &&
+                            usuario.foto!= undefined  && 
+                            usuario.fecha_registro!= undefined  &&
+                            usuario.fecha_nacimiento!= undefined  &&
+                            usuario.id_departamento!= undefined &&
+                            usuario.id_municipio!= undefined  &&
+                            usuario.id_corregimiento!= undefined  &&
+                            usuario.id_vereda!= undefined  &&
+                            usuario.latitud!= undefined  &&
+                            usuario.longitud!= undefined &&
+                            usuario.otra_area_experticia!= undefined  &&
+                            usuario.otra_area_experticia_descripcion!= undefined  &&
+                            usuario.sobre_mi!= undefined  &&
+                            usuario.informacion_adicional_direccion!= undefined  &&
+                            usuario.id_sexo!= undefined  &&
+                            usuario.id_etnia!= undefined  &&
+                            usuario.url_sisben!= undefined  &&
+                            usuario.url_imagen_cedula!= undefined          
+                            ){
+                              const result = await db.query(
+                              `UPDATE usuarios
+                              SET  cedula=?,
+                                    nombres=?, 
+                                    apellidos=?,
+                                    celular=?,
+                                    direccion=?, 
+                                    id_tipo_usuario=?,
+                                    email=?,
+                                    id_area_experticia=?,
+                                    nombre_negocio=?,
+                                    foto=?, 
+                                    fecha_registro=?,
+                                    fecha_nacimiento=?,
+                                    id_departamento=?,
+                                    id_municipio=?,
+                                    id_corregimiento=?,
+                                    id_vereda=?,
+                                    latitud=?,
+                                    longitud=?,
+                                    otra_area_experticia=?,
+                                    otra_area_experticia_descripcion=?,
+                                    sobre_mi=?,
+                                    informacion_adicional_direccion=?
+                              WHERE id=?`,
+                              [
+                                usuario.cedula,
+                                usuario.nombres, 
+                                usuario.apellidos,
+                                usuario.celular,
+                                usuario.direccion, 
+                                usuario.id_tipo_usuario,
+                                usuario.email,
+                                usuario.id_area_experticia,
+                                usuario.nombre_negocio,
+                                usuario.foto, 
+                                usuario.fecha_registro,
+                                usuario.fecha_nacimiento,
+                                usuario.id_departamento,
+                                usuario.id_municipio,
+                                usuario.id_corregimiento,
+                                usuario.id_vereda,
+                                usuario.latitud,
+                                usuario.longitud,
+                                usuario.otra_area_experticia,
+                                usuario.otra_area_experticia_descripcion,
+                                usuario.sobre_mi,
+                                usuario.informacion_adicional_direccion,
+                                idUser
+                              ] 
+                              );
+                              let message = 'Usuario no esta registrado';
+                              if (result.affectedRows) {
+                                message = 'Usuario actualizado exitosamente';
+                              }
+                              return {message};
+                              }  
+                                  throw createError(400,"Un problema con los parametros ingresados al actualizar");                                   
+                }else{
+                      throw createError(401,"Usuario no autorizado"); 
+                }
+              } catch (error) {
+                        console.log(error);
+                        throw error;
+              }
 }/*fin update*/
 
   /* ----------------------------------REMOVE-----------------------------*/
   async function remove(idUser,token){
-
     const conection= await db.newConnection(); /*conection of TRANSACTION */
     conection.beginTransaction();
     let id_user=null;     
