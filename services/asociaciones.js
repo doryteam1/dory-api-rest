@@ -140,12 +140,18 @@ async function getDetailAsociacion(nit,token){
                           (select count(*)  
                           from solicitudes as s
                           where s.id_estado_fk=2 and s.nit_asociacion_fk=?
-                          )  as count_miembros                
+                          )  as count_miembros, 
+                          (select count(*)  
+                          from solicitudes as s inner join usuarios as u on s.usuarios_id=u.id
+                          where s.id_estado_fk=2 and s.nit_asociacion_fk=? and u.id_sexo=2) count_miembros_masculinos,
+                          (select count(*)  
+                          from solicitudes as s inner join usuarios as u on s.usuarios_id=u.id
+                          where s.id_estado_fk=2 and s.nit_asociacion_fk=? and u.id_sexo=1) count_miembros_femeninos
                 FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
                                        inner join municipios as m on a.id_municipio = m.id_municipio
                                        inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion
                 where a.nit = ?`,               
-               [nit, nit, id_user, nit, id_user, nit, id_user, nit, nit]
+               [nit, nit, id_user, nit, id_user, nit, id_user, nit, nit, nit, nit]
                );
         }else{
                 row = await db.query(
