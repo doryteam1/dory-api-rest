@@ -70,7 +70,9 @@ async function create(usuario){
     usuario.foto === undefined ||
     usuario.latitud === undefined ||
     usuario.longitud === undefined ||
-    usuario.creadoCon === undefined){
+    usuario.creadoCon === undefined ||
+    usuario.id_sexo === undefined ||
+    usuario.id_etnia === undefined ){
       throw createError(400,"Debe enviar todos los datos requeridos para el registro del usuario");
   }
   let contentHtml=""; 
