@@ -237,20 +237,12 @@ async function update(id, usuario){
             if(token && validarToken(token)){
                   let payload=helper.parseJwt(token);
                   id_user= payload.sub; 
-                  const tipo_user=payload.rol;                  
-                  const rows = await db.query(
-                    `SELECT  u.*
-                    FROM usuarios as u
-                    WHERE u.id=? 
-                    `, 
-                    [id_user]
-                  );
-                  if(rows.length<1){
+                  const tipo_user=payload.rol; 
+                  
+                  if(id_user!=idUser && tipo_user!="Administrador"){
                     throw createError(401,"Usted no tiene autorización");
                   }
-                  if(tipo_user!="Administrador"){
-                    throw createError(401,"Usted no tiene autorización");
-                  }
+                
                       await conection.execute(
                         `DELETE FROM me_gustas WHERE usuarios_id=?`, 
                         [idUser]
