@@ -169,7 +169,7 @@ async function getDetailAsociacion(nit,token){
                             (select u.url_sisben 
                               from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_sisben,
                             (select u.url_imagen_cedula 
-                                from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_imagen_cedula,
+                                from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_imagen_cedula
                   FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
                                          inner join municipios as m on a.id_municipio = m.id_municipio
                                          inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion                                         
