@@ -189,7 +189,7 @@ async function getAsociacionesUser(page = 1, id_user){
                 const offset = helper.getOffset(page, config.listPerPage);
                 const rows = await db.query(/*--------------------Asociaciones del Usuario como propietario----------------------------------*/
                   `SELECT a.nit,a.nombre,a.direccion,a.telefono,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
-                          a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio,
+                          a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio, a.url_rut,
                           (select d.nombre_departamento from departamentos d  where d.id_departamento=a.id_departamento) as departamento,
                           (select m.nombre from municipios as m  where m.id_municipio=a.id_municipio) as municipio,
                           a.id_corregimiento,a.id_vereda, a.informacion_adicional_direccion,a.corregimiento_vereda,au.usuarios_id,
@@ -216,7 +216,7 @@ async function getAsociacionesUser(page = 1, id_user){
 async function getAsociacionesMiembros(page = 1, id_user){       
             const rows2 = await db.query(
               `SELECT a.nit,a.nombre,a.direccion,a.telefono,a.legalconstituida,a.fecha_renovacion_camarac,a.foto_camarac,
-                      a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio,
+                      a.id_tipo_asociacion_fk,a.id_departamento,a.id_municipio, a.url_rut,
                       (select d.nombre_departamento from departamentos d  where d.id_departamento=a.id_departamento) as departamento,
                       (select m.nombre from municipios as m  where m.id_municipio=a.id_municipio) as municipio,
                       a.id_corregimiento,a.id_vereda, a.informacion_adicional_direccion,a.corregimiento_vereda,u.id as id_miembro,
@@ -269,13 +269,14 @@ async function createAsociacion(asociacion,token){
                               asociacion.id_municipio === undefined ||
                               asociacion.informacion_adicional_direccion === undefined ||
                               asociacion.corregimiento_vereda === undefined ||
-                              asociacion.telefono === undefined
+                              asociacion.telefono === undefined ||
+                              asociacion.url_rut === undefined
                               )
                           {
                             throw createError(400,"Se requieren todos los parámetros!");
                           }
                           const result = await conection.execute(
-                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,informacion_adicional_direccion,corregimiento_vereda,telefono ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                            `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,informacion_adicional_direccion,corregimiento_vereda,telefono, url_rut ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                             [
                               asociacion.nit,
                               asociacion.nombre,
@@ -288,7 +289,8 @@ async function createAsociacion(asociacion,token){
                               asociacion.id_municipio,
                               asociacion.informacion_adicional_direccion,
                               asociacion.corregimiento_vereda,
-                              asociacion.telefono 
+                              asociacion.telefono,
+                              asociacion.url_rut
                             ]
                           );                          
                           await conection.execute(
@@ -337,7 +339,8 @@ async function createAsociacion(asociacion,token){
                             asociacion.id_municipio === undefined ||
                             asociacion.informacion_adicional_direccion === undefined ||
                             asociacion.corregimiento_vereda === undefined ||
-                            asociacion.telefono === undefined
+                            asociacion.telefono === undefined ||
+                            asociacion.url_rut === undefined
                             )
                         {
                           throw createError(400,"Se requieren todos los parámetros!");
@@ -368,7 +371,8 @@ async function createAsociacion(asociacion,token){
                         id_municipio=?,
                         informacion_adicional_direccion=?,
                         corregimiento_vereda=?,
-                        telefono=?
+                        telefono=?,
+                        url_rut
                     WHERE nit=?`,
                     [
                       asociacion.nombre,
@@ -382,6 +386,7 @@ async function createAsociacion(asociacion,token){
                       asociacion.informacion_adicional_direccion,
                       asociacion.corregimiento_vereda,
                       asociacion.telefono,
+                      asociacion.url_rut,
                       nit
                     ] 
                   );
