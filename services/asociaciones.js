@@ -372,7 +372,7 @@ async function createAsociacion(asociacion,token){
                         informacion_adicional_direccion=?,
                         corregimiento_vereda=?,
                         telefono=?,
-                        url_rut
+                        url_rut=?
                     WHERE nit=?`,
                     [
                       asociacion.nombre,
