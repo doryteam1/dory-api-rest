@@ -59,7 +59,8 @@ router.post('/recover/password', async function(req, res, next) {
 
 router.put('/parcial/:idUser', async function(req, res, next) {
   try {
-    res.json(await usuario.updateParcialUsuario(req.params.idUser, req.body));
+    var token=req.headers.authorization;
+    res.json(await usuario.updateParcialUsuario(req.params.idUser, req.body, token));
   } catch (err) {
     console.error(`Error al actualizar el usuario`, err.message);
     next(err);

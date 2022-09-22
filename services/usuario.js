@@ -278,25 +278,40 @@ async function update(id, usuario){
   }/*End Remove*/
   
 /* ----------------------------------UPDATE PARCIAL DEL USUARIO-----------------------------*/
-async function updateParcialUsuario(id, usuario){  
-      delete usuario.password; 
-      var atributos=Object.keys(usuario); /*Arreglo de los keys del usuario*/ 
-      if (atributos.length!=0){    
-          var param=Object.values(usuario);
-          var query = "UPDATE usuarios SET ";
-          param.push(id);/*Agrego el id al final de los parametros*/ 
-      for(var i=0; i<atributos.length;i++) {
-        query= query+atributos[i]+'=?,';      }
-      query= query.substring(0, query.length-1);/*eliminar la coma final*/ 
-      query= query+' '+'WHERE id=?'
-      const result = await db.query(query,param);    
-      let message = 'Error actualizando el registro del usuario';    
-      if (result.affectedRows) {
-        message = 'Usuario actualizado exitosamente';
-      }
-      return {message};
-    }
-   throw createError(400,"No hay parametros para actualizar");
+async function updateParcialUsuario(idUser, usuario, token){  
+          try{
+                if(token && validarToken(token)){
+                        let payload=helper.parseJwt(token);
+                        let id_user= payload.sub; 
+                        if(id_user!=idUser){
+                          throw createError(401,"Usted no tiene autorización");
+                        }
+                            delete usuario.password; 
+                            var atributos=Object.keys(usuario); /*Arreglo de los keys del usuario*/ 
+                            if (atributos.length!=0){    
+                                var param=Object.values(usuario);
+                                var query = "UPDATE usuarios SET ";
+                                param.push(idUser);/*Agrego el id al final de los parametros*/ 
+                            for(var i=0; i<atributos.length;i++) {
+                              query= query+atributos[i]+'=?,';      }
+                            query= query.substring(0, query.length-1);/*eliminar la coma final*/ 
+                            query= query+' '+'WHERE id=?'
+                            const result = await db.query(query,param);    
+                            let message = 'Error actualizando el registro del usuario';    
+                            if (result.affectedRows) {
+                              message = 'Usuario actualizado exitosamente';
+                            }
+                            return {message};
+                          }
+                        throw createError(400,"No hay parametros para actualizar");
+                }else{
+                  throw createError(401,"Usuario no autorizado"); 
+                }
+              } catch (error) {
+                    console.log(error);
+                    throw error;
+              }   
+
  }/*End updateParcialUsuario*/
 
  /*-------------------------------------updatePassword---------------------------------*/  
