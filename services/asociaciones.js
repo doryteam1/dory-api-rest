@@ -127,13 +127,13 @@ async function getDetailAsociacion(nit,token){
                           from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit
                                                             inner join tipos_usuarios as tu on tu.id_tipo_usuario = u.id_tipo_usuario) as tipo_propietario,
                           (select u.id 
-                          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as id_propietario,
+                          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as id_propietario,                         
+                          (select u.email 
+                          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as email_propietario,
                           (select u.url_sisben 
                             from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_sisben,
                           (select u.url_imagen_cedula 
-                              from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_imagen_cedula,
-                          (select u.email 
-                          from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as email_propietario, 
+                              from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_imagen_cedula, 
                           (select es.descripcion from solicitudes as s inner join estados_solicitudes as es on s.id_estado_fk = es.id_estado where s.nit_asociacion_fk = ? and s.usuarios_id = ?) as estado_solicitud, 
                           (select ss.nombre from solicitudes as s inner join sender_solicitud as ss on s.id_sender_solicitud = ss.id_sender_solicitud where s.nit_asociacion_fk = ? and s.usuarios_id = ?) as solicitud_enviada_por,
                           (select s.id_solicitud from solicitudes as s where s.nit_asociacion_fk = ? and s.usuarios_id = ?) as id_solicitud ,
@@ -165,7 +165,11 @@ async function getDetailAsociacion(nit,token){
                             (select u.id 
                             from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as id_propietario,
                             (select u.email 
-                            from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as email_propietario
+                            from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as email_propietario,
+                            (select u.url_sisben 
+                              from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_sisben,
+                            (select u.url_imagen_cedula 
+                                from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_imagen_cedula,
                   FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
                                          inner join municipios as m on a.id_municipio = m.id_municipio
                                          inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion                                         
