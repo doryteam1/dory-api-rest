@@ -15,7 +15,8 @@ router.get('/', async function(req, res, next) {
 
 router.post('/', async function(req, res, next) {
     try {
-      res.json(await eventos.create(req.body));
+      var token=req.headers.authorization;
+      res.json(await eventos.create(req.body,token));
     } catch (err) {
       console.error(`Error creando el evento`, err.message);
       next(err);
@@ -25,7 +26,8 @@ router.post('/', async function(req, res, next) {
 
 router.put('/:id', async function(req, res, next) {
     try {
-      res.json(await eventos.update(req.params.id, req.body));
+      var token=req.headers.authorization;
+      res.json(await eventos.update(req.params.id, req.body,token));
     } catch (err) {
       console.error(`Error al actualizar el evento`, err.message);
       next(err);
@@ -35,7 +37,8 @@ router.put('/:id', async function(req, res, next) {
 
 router.delete('/:id', async function(req, res, next) {
     try {
-      res.json(await eventos.remove(req.params.id));
+      var token=req.headers.authorization;
+      res.json(await eventos.remove(req.params.id,token));
     } catch (err) {
       console.error(`Error al borrar el evento`, err.message);
       next(err);
