@@ -45,4 +45,14 @@ router.delete('/:id', async function(req, res, next) {
     }
   });
 
+  router.put('/update/parcial/evento/:idEvento', async function(req, res, next) {
+    try {
+      var token=req.headers.authorization;
+      res.json(await eventos.updateParcialEvento(req.params.idEvento, req.body,token));
+    } catch (err) {
+      console.error(`Error al actualizar el evento`, err.message);
+      next(err);
+    }
+});
+
 module.exports = router;

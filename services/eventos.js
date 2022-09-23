@@ -150,9 +150,56 @@ async function create(evento,token){
            }
   }/*End remove*/
 
+  /*------------------------------updateParcialEvento-------------------------------------------------*/
+async function updateParcialEvento(idEvento, evento, token){  
+        if(token && validarToken(token))
+        {
+          const payload=helper.parseJwt(token); 
+          const rol = payload.rol;
+          if(rol != "Administrador"){
+            throw createError('401', "Usted no esta autorizado para realizar éste proceso.")
+          }      
+          const rows2 = await db.query(
+            `select ev.*
+            from eventos as ev
+            where ev.id_evento = ?=`, 
+            [
+              idEvento
+            ]
+          );
+          if(rows2.length < 1 ){
+            throw createError('401', 'El evento no existe.')
+          }
+          var atributos = Object.keys(evento);   
+          if(atributos.length!=0)
+          {    
+            var params = Object.values(evento);   
+            var query = "update eventos set ";
+            params.push(idEvento);
+            for(var i=0; i < atributos.length; i++) {
+              query = query + atributos[i] + '=?,';
+            }
+            query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+            query = query +' '+'where id_evento=?'
+            const result = await db.query(query,params);          
+            let message = '';
+            if (result.affectedRows) {
+               message = 'Evento actualizado exitosamente';
+            }else{
+              throw createError(500,"No se pudo actualizar el evento");    
+            }
+            return {message};
+          }
+          throw createError(400,"No hay parámetros para actualizar");
+      }else{
+        throw createError(401,"Usuario no autorizado");
+      }
+}/*End updateParcialEvento*/
+
 module.exports = {
   getMultiple,
   create,
   update,
-  remove
+  remove,
+  updateParcialEvento
 }
