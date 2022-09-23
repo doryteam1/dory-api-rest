@@ -113,7 +113,7 @@ let message='Registro fallido';
   }
     try{
       const result = await db.query(
-        `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado,creadoCon) VALUES (?,?,?,?,?,?,?,?,?,?)`, 
+        `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado,creadoCon,id_sexo,id_etnia) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, 
         [
           usuario.nombres, 
           usuario.apellidos, 
@@ -124,7 +124,9 @@ let message='Registro fallido';
           usuario.latitud,
           usuario.longitud,
           usuario.estaVerificado,
-          usuario.creadoCon
+          usuario.creadoCon,
+          usuario.id_sexo,
+          usuario.id_etnia
         ]
       );
       if (result.affectedRows) {
