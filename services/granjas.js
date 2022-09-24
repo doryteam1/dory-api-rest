@@ -244,7 +244,7 @@ async function createGranja(body,token){
                 const payload=helper.parseJwt(token);
                 const id_user=payload.sub;
                 const tipo_user=payload.rol;  
-                if(tipo_user!="Piscicultor" || tipo_user!="Administrador"){ 
+                if(tipo_user!="Piscicultor" && tipo_user!="Administrador"){ 
                   throw createError(401,"Usted no tiene autorización");
                 }else{
                         if(body.nombre_granja===undefined || 
