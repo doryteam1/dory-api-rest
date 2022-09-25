@@ -351,7 +351,7 @@ async function createGranja(body,token){
               `SELECT  ug.espropietario
               FROM usuarios_granjas as ug 
               WHERE ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk = ?
-              LIMIT ?,?`, 
+              `, 
               [id_user, idGranja]
             );
             if(rows.length<1){
