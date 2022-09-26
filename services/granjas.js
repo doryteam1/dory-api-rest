@@ -244,7 +244,7 @@ async function createGranja(body,token){
                 const payload=helper.parseJwt(token);
                 const id_user=payload.sub;
                 const tipo_user=payload.rol;  
-                if(tipo_user!="Piscicultor" && tipo_user!="Administrador"){ 
+                if(tipo_user!="Piscicultor"){ 
                   throw createError(401,"Usted no tiene autorización");
                 }else{
                         if(body.nombre_granja===undefined || 
@@ -357,102 +357,106 @@ async function createGranja(body,token){
             if(rows.length<1){
               throw createError(401,"Usted no tiene autorización");
             }
-            if(body.nombre_granja===undefined || 
-               body.area===undefined || 
-               body.numero_trabajadores===undefined ||
-               body.produccion_estimada_mes===undefined || 
-               body.direccion===undefined ||
-               body.descripcion===undefined || 
-               body.id_departamento===undefined || 
-               body.id_municipio===undefined ||
-               body.latitud === undefined ||
-               body.longitud === undefined ||
-               body.id_corregimiento === undefined ||
-               body.id_vereda === undefined ||
-               body.corregimiento_vereda === undefined ||
-               body.informacion_adicional_direccion=== undefined ||
-               idGranja === undefined 
-               )
-            {
-              throw createError(400,"Se requieren todos los parámetros!");
-            } 
-              const result = await conection.execute(
-              `UPDATE granjas 
-               SET nombre=?,
-                  area=? ,
-                  numero_trabajadores=?,
-                  produccion_estimada_mes=?,
-                  direccion=? ,
-                  latitud=? ,
-                  longitud=? ,
-                  descripcion=? ,
-                  id_departamento=? ,
-                  id_municipio=? ,
-                  id_corregimiento=? ,
-                  id_vereda=?,
-                  corregimiento_vereda=?,
-                  informacion_adicional_direccion=?
-              WHERE id_granja=?`,
-                [
-                  body.nombre_granja,
-                  body.area,
-                  body.numero_trabajadores,
-                  body.produccion_estimada_mes,
-                  body.direccion,
-                  body.latitud,
-                  body.longitud,
-                  body.descripcion,
-                  body.id_departamento,
-                  body.id_municipio,
-                  body.id_corregimiento,
-                  body.id_vereda,
-                  body.corregimiento_vereda,
-                  body.informacion_adicional_direccion,
-                  idGranja
-                ] 
-              );        
-              if (result[0].affectedRows) {
-                message = 'Granja actualizada exitosamente';
-              }       
-              if(body.arrayTiposInfraestructuras !== undefined 
-                && body.arrayTiposInfraestructuras !== null 
-                && body.arrayTiposInfraestructuras !== 'null' 
-                && body.arrayTiposInfraestructuras !== ''){      
-                await conection.execute(
-                  `DELETE FROM infraestructuras_granjas
-                   WHERE id_granja_pk_fk=?`,
-                  [idGranja]
-                );/*Borrado de infraestructuras granjas para luego agregarlas nuevamente*/
-                 let tiposInfraestructuras = body.arrayTiposInfraestructuras;
-                 for(var i=0;i<tiposInfraestructuras.length;i++){    
-                    await conection.execute(
-                      `INSERT INTO infraestructuras_granjas
-                       (id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
-                      [idGranja, tiposInfraestructuras[i]]
-                    );
-                 }
-              }
-              if(body.arrayEspecies !== undefined 
-                && body.arrayEspecies !== null
-                && body.arrayEspecies !== 'null'
-                && body.arrayEspecies !== ''){
-                await conection.execute(
-                  `DELETE FROM especies_granjas
-                   WHERE id_granja_pk_fk=?`,
-                  [idGranja]
-                );/*Borrado de especies de granjas para luego agregarlas nuevamente*/
-                  let especies = body.arrayEspecies;
-                 for(var j=0;j<especies.length;j++){
-                    await conection.execute(
-                      `INSERT INTO especies_granjas 
-                       (id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
-                      [especies[j], idGranja]
-                    );
-                 }
-              }              
-            await conection.commit(); 
-            conection.release();
-            return {message};
+            if(tipo_user!="Piscicultor" && tipo_user!="Administrador"){ 
+              throw createError(401,"Usted no tiene autorización");
+            }else{
+                        if(body.nombre_granja===undefined || 
+                          body.area===undefined || 
+                          body.numero_trabajadores===undefined ||
+                          body.produccion_estimada_mes===undefined || 
+                          body.direccion===undefined ||
+                          body.descripcion===undefined || 
+                          body.id_departamento===undefined || 
+                          body.id_municipio===undefined ||
+                          body.latitud === undefined ||
+                          body.longitud === undefined ||
+                          body.id_corregimiento === undefined ||
+                          body.id_vereda === undefined ||
+                          body.corregimiento_vereda === undefined ||
+                          body.informacion_adicional_direccion=== undefined ||
+                          idGranja === undefined 
+                          )
+                        {
+                          throw createError(400,"Se requieren todos los parámetros!");
+                        } 
+                          const result = await conection.execute(
+                          `UPDATE granjas 
+                          SET nombre=?,
+                              area=? ,
+                              numero_trabajadores=?,
+                              produccion_estimada_mes=?,
+                              direccion=? ,
+                              latitud=? ,
+                              longitud=? ,
+                              descripcion=? ,
+                              id_departamento=? ,
+                              id_municipio=? ,
+                              id_corregimiento=? ,
+                              id_vereda=?,
+                              corregimiento_vereda=?,
+                              informacion_adicional_direccion=?
+                          WHERE id_granja=?`,
+                            [
+                              body.nombre_granja,
+                              body.area,
+                              body.numero_trabajadores,
+                              body.produccion_estimada_mes,
+                              body.direccion,
+                              body.latitud,
+                              body.longitud,
+                              body.descripcion,
+                              body.id_departamento,
+                              body.id_municipio,
+                              body.id_corregimiento,
+                              body.id_vereda,
+                              body.corregimiento_vereda,
+                              body.informacion_adicional_direccion,
+                              idGranja
+                            ] 
+                          );        
+                          if (result[0].affectedRows) {
+                            message = 'Granja actualizada exitosamente';
+                          }       
+                          if(body.arrayTiposInfraestructuras !== undefined 
+                            && body.arrayTiposInfraestructuras !== null 
+                            && body.arrayTiposInfraestructuras !== 'null' 
+                            && body.arrayTiposInfraestructuras !== ''){      
+                            await conection.execute(
+                              `DELETE FROM infraestructuras_granjas
+                              WHERE id_granja_pk_fk=?`,
+                              [idGranja]
+                            );/*Borrado de infraestructuras granjas para luego agregarlas nuevamente*/
+                            let tiposInfraestructuras = body.arrayTiposInfraestructuras;
+                            for(var i=0;i<tiposInfraestructuras.length;i++){    
+                                await conection.execute(
+                                  `INSERT INTO infraestructuras_granjas
+                                  (id_granja_pk_fk,id_infraestructura_pk_fk) VALUES (?,?)`,
+                                  [idGranja, tiposInfraestructuras[i]]
+                                );
+                            }
+                          }
+                          if(body.arrayEspecies !== undefined 
+                            && body.arrayEspecies !== null
+                            && body.arrayEspecies !== 'null'
+                            && body.arrayEspecies !== ''){
+                            await conection.execute(
+                              `DELETE FROM especies_granjas
+                              WHERE id_granja_pk_fk=?`,
+                              [idGranja]
+                            );/*Borrado de especies de granjas para luego agregarlas nuevamente*/
+                              let especies = body.arrayEspecies;
+                            for(var j=0;j<especies.length;j++){
+                                await conection.execute(
+                                  `INSERT INTO especies_granjas 
+                                  (id_especie_pk_fk,id_granja_pk_fk) VALUES (?,?)`,
+                                  [especies[j], idGranja]
+                                );
+                            }
+                          }              
+                        await conection.commit(); 
+                        conection.release();
+                        return {message};
+            }
       }catch (error) {
             await conection.rollback();  
             conection.release();
