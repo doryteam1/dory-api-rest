@@ -5,10 +5,8 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
 async function getMultiple(page = 1,token){
-
       const offset = helper.getOffset(page, config.listPerPage);
-      let rows=[];
-      
+      let rows=[];      
       if(token && validarToken(token)){
           const payload=helper.parseJwt(token);        
          rows = await db.query(
@@ -63,200 +61,230 @@ async function getMultiple(page = 1,token){
           data,
           meta
         }
-}
+}/*End getMultiple */
 
 
 /*--------------------------------CREATE---------------------------------------- */ 
-
-async function create(novedad){
-
-    const conection= await db.newConnection(); /*conection of TRANSACTION */
-    await conection.beginTransaction();
-    if(novedad.titulo!= undefined && 
-      novedad.autor!= undefined && 
-      novedad.cuerpo!= undefined && 
-      novedad.fecha_creacion!= undefined && 
-      novedad.resumen!= undefined && 
-      novedad.cant_visitas!= undefined && 
-      novedad.url_foto_autor!= undefined && 
-      novedad.url_foto_novedad!= undefined && 
-      novedad.url_novedad!= undefined && 
-      novedad.canal!= undefined && 
-      novedad.email_autor!= undefined && 
-      novedad.id_tipo_novedad!= undefined && 
-      novedad.usuarios_id!= undefined 
-    ){
-        try {
-          const result = await db.query(
-            `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,usuarios_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
-            [
-              novedad.id_novedad,
-              novedad.titulo,
-              novedad.autor,
-              novedad.cuerpo,
-              novedad.fecha_creacion,
-              novedad.resumen,
-              novedad.cant_visitas,
-              novedad.url_foto_autor,
-              novedad.url_foto_novedad,
-              novedad.url_novedad,
-              novedad.canal,
-              novedad.email_autor,
-              novedad.id_tipo_novedad,
-              novedad.usuarios_id
-            ]
-          );               
-          let message = 'Error creando novedad';              
-          if (result.affectedRows) {
-            message = {  insertId: result.insertId, message:'novedad creada exitosamente'};
-          }          
-          const rowsId = await db.query(
-            `SELECT MAX(id_novedad) AS id FROM novedades`
-          ); /*ultimo Id_novedad que se creo con autoincremental*/
-      
-          var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/        
-          for(var i=0;i<categorias.length;i++){
-              await db.query(
-                `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
-                [categorias[i], rowsId[0].id]
-              );
-          }
-          await conection.commit(); 
-                conection.release();
-          return {message};
-        } catch (error) {
-          await conection.rollback(); /*Si hay algún error  */ 
-                conection.release();
-          throw createError(500,"Falla en el registro de novedad"); 
-        }
-    }
-      throw createError(400,"Un problema con los parametros ingresados");         
+async function create(novedad,token){
+            try{
+              if(token && validarToken(token)){
+                          let payload=helper.parseJwt(token);
+                          let tipo_user= payload.rol; 
+                          let id_user= payload.sub; 
+                        if(tipo_user!='Administrador'){
+                                throw createError(401,"Usted no tiene autorización para registrar eventos");
+                        }
+                      const conection= await db.newConnection(); /*conection of TRANSACTION */
+                      await conection.beginTransaction();
+                      if(novedad.titulo!= undefined && 
+                        novedad.autor!= undefined && 
+                        novedad.cuerpo!= undefined && 
+                        novedad.fecha_creacion!= undefined && 
+                        novedad.resumen!= undefined && 
+                        novedad.cant_visitas!= undefined && 
+                        novedad.url_foto_autor!= undefined && 
+                        novedad.url_foto_novedad!= undefined && 
+                        novedad.url_novedad!= undefined && 
+                        novedad.canal!= undefined && 
+                        novedad.email_autor!= undefined && 
+                        novedad.id_tipo_novedad!= undefined 
+                      ){
+                          try {
+                            const result = await db.query(
+                              `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,usuarios_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                              [
+                                novedad.id_novedad,
+                                novedad.titulo,
+                                novedad.autor,
+                                novedad.cuerpo,
+                                novedad.fecha_creacion,
+                                novedad.resumen,
+                                novedad.cant_visitas,
+                                novedad.url_foto_autor,
+                                novedad.url_foto_novedad,
+                                novedad.url_novedad,
+                                novedad.canal,
+                                novedad.email_autor,
+                                novedad.id_tipo_novedad,
+                                id_user
+                              ]
+                            );               
+                            let message = 'Error creando novedad';              
+                            if (result.affectedRows) {
+                              message = {  insertId: result.insertId, message:'novedad creada exitosamente'};
+                            }          
+                            const rowsId = await db.query(
+                              `SELECT MAX(id_novedad) AS id FROM novedades`
+                            ); /*ultimo Id_novedad que se creo con autoincremental*/
+                        
+                            var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/        
+                            for(var i=0;i<categorias.length;i++){
+                                await db.query(
+                                  `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
+                                  [categorias[i], rowsId[0].id]
+                                );
+                            }
+                            await conection.commit(); 
+                                  conection.release();
+                            return {message};
+                          } catch (error) {
+                            await conection.rollback(); /*Si hay algún error  */ 
+                                  conection.release();
+                            throw createError(500,"Falla en el registro de novedad"); 
+                          }
+                      }
+                        throw createError(400,"Un problema con los parametros ingresados"); 
+              }else{ 
+                    throw createError(401,"Usted no tiene autorización"); 
+              }
+          }catch(error){
+                  throw error;
+          }                      
   }//End Function Create
 
 
   /*--------------------------------UPDATE---------------------------------------- */ 
 
-  async function update(id, novedad){
-
-    const conection= await db.newConnection(); /*conection of TRANSACTION */
-     conection.beginTransaction();
-    if(novedad.titulo!= undefined && 
-      novedad.autor!= undefined && 
-      novedad.cuerpo!= undefined && 
-      novedad.fecha_creacion!= undefined && 
-      novedad.resumen!= undefined && 
-      novedad.cant_visitas!= undefined && 
-      novedad.url_foto_autor!= undefined && 
-      novedad.url_foto_novedad!= undefined && 
-      novedad.url_novedad!= undefined && 
-      novedad.canal!= undefined && 
-      novedad.email_autor!= undefined && 
-      novedad.id_tipo_novedad!= undefined && 
-      novedad.usuarios_id!= undefined 
-    ){
-        try {
-          const result = await db.query(
-            `UPDATE novedades 
-            SET titulo=?,
-                autor=?,
-                cuerpo=?,
-                fecha_creacion=?,
-                resumen=?,
-                cant_visitas=?,
-                url_foto_autor=?,
-                url_foto_novedad=?,
-                url_novedad=?,
-                canal=?,
-                email_autor=?,
-                id_tipo_novedad=?,
-                usuarios_id=? 
-            WHERE id_novedad=?`,
-            [
-              novedad.titulo,
-              novedad.autor,
-              novedad.cuerpo,
-              novedad.fecha_creacion,
-              novedad.resumen,
-              novedad.cant_visitas,
-              novedad.url_foto_autor,
-              novedad.url_foto_novedad,
-              novedad.url_novedad,
-              novedad.canal,
-              novedad.email_autor,
-              novedad.id_tipo_novedad,
-              novedad.usuarios_id,
-              id
-            ] 
-          );        
-          let message = 'Error actualizando novedad';            
-          if (result.affectedRows) {
-            message = 'Novedad actualizada exitosamente';
-          }        
-            var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/      
-          await db.query(
-            `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
-            [id]
-          );        
-          for(var i=0;i<categorias.length;i++){
-              await db.query(
-                `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
-                [categorias[i], id]
-              );
-          }      
-          conection.commit(); 
-          conection.release();
-          return {message};
-        } catch (error) {
-          conection.rollback(); /*Si hay algún error  */ 
-          conection.release();
-          throw createError(500,"Error al actualizar la novedad");        
-        }
-    }
-  throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
-
+  async function update(id, novedad,token){
+              try{
+                if(token && validarToken(token)){
+                            let payload=helper.parseJwt(token);
+                            let tipo_user= payload.rol; 
+                            let id_user= payload.sub; 
+                          if(tipo_user!='Administrador'){
+                                  throw createError(401,"Usted no tiene autorización para registrar eventos");
+                          }
+                          const conection= await db.newConnection(); /*conection of TRANSACTION */
+                          conection.beginTransaction();
+                          if(novedad.titulo!= undefined && 
+                            novedad.autor!= undefined && 
+                            novedad.cuerpo!= undefined && 
+                            novedad.fecha_creacion!= undefined && 
+                            novedad.resumen!= undefined && 
+                            novedad.cant_visitas!= undefined && 
+                            novedad.url_foto_autor!= undefined && 
+                            novedad.url_foto_novedad!= undefined && 
+                            novedad.url_novedad!= undefined && 
+                            novedad.canal!= undefined && 
+                            novedad.email_autor!= undefined && 
+                            novedad.id_tipo_novedad!= undefined 
+                          ){
+                              try {
+                                const result = await db.query(
+                                  `UPDATE novedades 
+                                  SET titulo=?,
+                                      autor=?,
+                                      cuerpo=?,
+                                      fecha_creacion=?,
+                                      resumen=?,
+                                      cant_visitas=?,
+                                      url_foto_autor=?,
+                                      url_foto_novedad=?,
+                                      url_novedad=?,
+                                      canal=?,
+                                      email_autor=?,
+                                      id_tipo_novedad=?,
+                                      usuarios_id=? 
+                                  WHERE id_novedad=?`,
+                                  [
+                                    novedad.titulo,
+                                    novedad.autor,
+                                    novedad.cuerpo,
+                                    novedad.fecha_creacion,
+                                    novedad.resumen,
+                                    novedad.cant_visitas,
+                                    novedad.url_foto_autor,
+                                    novedad.url_foto_novedad,
+                                    novedad.url_novedad,
+                                    novedad.canal,
+                                    novedad.email_autor,
+                                    novedad.id_tipo_novedad,
+                                    id_user,
+                                    id
+                                  ] 
+                                );        
+                                let message = 'Error actualizando novedad';            
+                                if (result.affectedRows) {
+                                  message = 'Novedad actualizada exitosamente';
+                                }        
+                                  var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/      
+                                await db.query(
+                                  `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
+                                  [id]
+                                );        
+                                for(var i=0;i<categorias.length;i++){
+                                    await db.query(
+                                      `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
+                                      [categorias[i], id]
+                                    );
+                                }      
+                                conection.commit(); 
+                                conection.release();
+                                return {message};
+                              } catch (error) {
+                                conection.rollback(); /*Si hay algún error  */ 
+                                conection.release();
+                                throw createError(500,"Error al actualizar la novedad");        
+                              }
+                          }
+                        throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
+                      }else{ 
+                        throw createError(401,"Usted no tiene autorización"); 
+                  }
+              }catch(error){
+                      throw error;
+              }
   }//End Function update
 
   
 /*--------------------------------REMOVE---------------------------------------- */ 
 
-  async function remove(id){
-
-    const conection= await db.newConnection(); /*conection of TRANSACTION */
-     conection.beginTransaction();
-    let message = 'Error borrando novedad';
-
-    try {
-             await db.query(
-               `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
-                 [id]
-                 );  /*Elimino la relación de la novedad en la tabla categorias_novedades */
-      
-          const result = await db.query(
-            `DELETE FROM novedades WHERE id_novedad=?`, 
-            [id]
-          );  
-            
-          if (result.affectedRows) {
-            message = 'Novedad borrado exitosamente';
-          }
-            
-          conection.commit(); 
-          conection.release();
-         return {message};
-
-    } catch (error) {
-       conection.rollback(); /*Si hay algún error  */ 
-       conection.release();
-       throw createError(500,"Error al eliminar la novedad");
-    }
-
+  async function remove(id,token){
+            try{
+              if(token && validarToken(token)){
+                          let payload=helper.parseJwt(token);
+                          let tipo_user= payload.rol; 
+                          let id_user= payload.sub; 
+                        if(tipo_user!='Administrador'){
+                                throw createError(401,"Usted no tiene autorización para registrar eventos");
+                        }
+                      const conection= await db.newConnection(); /*conection of TRANSACTION */
+                      conection.beginTransaction();
+                      let message = 'Error borrando novedad';
+                      try {
+                              await db.query(
+                                `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
+                                  [id]
+                                  );  /*Elimino la relación de la novedad en la tabla categorias_novedades */
+                        
+                            const result = await db.query(
+                              `DELETE FROM novedades WHERE id_novedad=?`, 
+                              [id]
+                            );  
+                              
+                            if (result.affectedRows) {
+                              message = 'Novedad borrado exitosamente';
+                            }            
+                            conection.commit(); 
+                            conection.release();
+                          return {message};
+                      } catch (error) {
+                        conection.rollback(); /*Si hay algún error  */ 
+                        conection.release();
+                        throw createError(500,"Error al eliminar la novedad");
+                      }
+                }else{ 
+                      throw createError(401,"Usted no tiene autorización"); 
+                }
+            }catch(error){
+                    throw error;
+            }
   }/*fin remove*/
 
 
   /*--------------------------------UPDATE Visitas---------------------------------------- */ 
 
   async function updateVisitas(id){
-
           let contador;
           const rows = await db.query(
             `SELECT  *       
@@ -265,11 +293,8 @@ async function create(novedad){
             `, 
             [id]
           );
-
       if(rows!=null && rows.length>0){
-
-        contador=rows[0].cant_visitas+1;
-        
+        contador=rows[0].cant_visitas+1;        
           try {
                 const result = await db.query(
                   `UPDATE novedades 
@@ -279,41 +304,30 @@ async function create(novedad){
                     contador,
                     id
                   ] 
-                );
-              
-                let message = 'Error actualizando la visita en la novedad';
-                  
+                );              
+                let message = 'Error actualizando la visita en la novedad';                  
                 if (result.affectedRows) {
                   message = 'Visita de la novedad actualizada exitosamente';
-                }
-              
+                }              
               return {message};
-
           } catch (error) {
                 return {message:'Error al actualizar la visita de la novedad'};
               }
       }
-      throw createError(404,"La Novedad No existe"); 
-
+      throw createError(404,"La Novedad No existe");
 }//End Function update visitas
 
 
 /*--------------------------------AGREGAR--LIKE-------------------------------------- */ 
 
 async function agregarLikes(id_novedad,token){
-
         let id_user=null;
-
         if(token && validarToken(token)){
-
                 let payload=helper.parseJwt(token);
                 id_user= payload.sub;
-                let message = 'Error ingresando like a novedad';
-                 
+                let message = 'Error ingresando like a novedad';                 
                   if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
-
-                        try {
-              
+                        try {              
                               const result = await db.query(
                                 `INSERT INTO me_gustas(id_novedad_pk_fk,usuarios_id) VALUES (?,?)`, 
                                 [
@@ -327,7 +341,6 @@ async function agregarLikes(id_novedad,token){
                                 return {message};
                               }
                               throw createError(400,message);
-
                         } catch(err) {
                             throw createError(400,err.message);
                               }
@@ -335,7 +348,6 @@ async function agregarLikes(id_novedad,token){
                         throw createError(400,"Error por parámetros ingresados"); 
                     }
       }
-
 }//End Function Create
 
 /*--------------------------------REMOVE--LIKE-------------------------------------- */ 
@@ -344,14 +356,11 @@ async function eliminarLikes(id_novedad,token){
 
        let id_user=null;
        let message = 'Error al eliminar like a novedad';
-
        if(token && validarToken(token)){
              let payload=helper.parseJwt(token);
-             id_user= payload.sub;
-                
+             id_user= payload.sub;                
                 if(id_novedad!=undefined && id_user!=undefined && id_novedad!=null && id_user!=null){
                     try {
-
                           const result= await db.query(
                             `DELETE from me_gustas where id_novedad_pk_fk=? and usuarios_id=?`,
                               [id_novedad,id_user]
@@ -371,7 +380,6 @@ async function eliminarLikes(id_novedad,token){
                      }
       }
 }/*fin remove like*/
-
 
 module.exports = {
   getMultiple,

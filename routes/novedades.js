@@ -15,7 +15,8 @@ router.get('/', async function(req, res, next) {
 
 router.post('/', async function(req, res, next) {
     try {
-      res.json(await novedades.create(req.body));
+      var token=req.headers.authorization;
+      res.json(await novedades.create(req.body,token));
     } catch (err) {
       console.error(`Error registrando la novedad.`, err.message);
       next(err);
@@ -25,7 +26,8 @@ router.post('/', async function(req, res, next) {
 
 router.put('/total/:id', async function(req, res, next) {
     try {
-      res.json(await novedades.update(req.params.id, req.body));
+      var token=req.headers.authorization;
+      res.json(await novedades.update(req.params.id, req.body,token));
     } catch (err) {
       console.error(`Error al actualizar la novedad.`, err.message);
       next(err);
@@ -35,7 +37,8 @@ router.put('/total/:id', async function(req, res, next) {
 
 router.delete('/general/:id', async function(req, res, next) {
     try {
-      res.json(await novedades.remove(req.params.id));
+      var token=req.headers.authorization;
+      res.json(await novedades.remove(req.params.id,token));
     } catch (err) {
       console.error(`Error al borrar la novedad.`, err.message);
       next(err);
