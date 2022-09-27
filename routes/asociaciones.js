@@ -149,8 +149,9 @@ router.put('/parcial/:nitAsociacion', async function(req, res, next) {
 });
 
 router.get('/miembros/nit/:nit', async function(req, res, next) {
-  try {        
-        res.json(await asociaciones.getMiembrosAsociacion(req.params.nit));
+  try {   
+        var token=req.headers.authorization;     
+        res.json(await asociaciones.getMiembrosAsociacion(req.params.nit,token));
   } catch (err) {
         console.error(`Error al retornar los miembros de la asociación`, err.message);
         next(err);

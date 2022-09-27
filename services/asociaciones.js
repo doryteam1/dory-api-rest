@@ -906,7 +906,7 @@ async function getMiembrosAsociacion(nit,token){
                       [nit]
                     );                    
                     asocia = await db.query(
-                    `SELECT DISTINCT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut
+                    `SELECT DISTINCT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut, a.foto_camarac
                      FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
                                                inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
                                                inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
@@ -924,15 +924,15 @@ async function getMiembrosAsociacion(nit,token){
                         data
                     };
                }else{
-                     getMiembrosAsociacionPublico();
+                     data=await getMiembrosAsociacionPublico(nit);
               }          
-              }else{
-                     getMiembrosAsociacionPublico();
-              }/*End else*/          
-             
+           }else{
+                     data=await getMiembrosAsociacionPublico(nit);
+           }/*End else*/          
+     return {data};
 }/*getMiembrosAsociacion*/
 
-async function getMiembrosAsociacionPublico(){  
+async function getMiembrosAsociacionPublico(nit){  
           let representante={};
           let data={};
           let miembros = [];
@@ -994,7 +994,7 @@ async function getMiembrosAsociacionPublico(){
               [nit]
             );
             asocia = await db.query(
-            `SELECT DISTINCT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut
+            `SELECT DISTINCT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut, a.foto_camarac
             FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
                                       inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
                                       inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
@@ -1008,9 +1008,7 @@ async function getMiembrosAsociacionPublico(){
             }
             miembros = helper.emptyOrRows(rows2);
             data={representante,miembros,asociacion,};
-            return {
-              data
-            };
+            return  data;
 }
 
 
