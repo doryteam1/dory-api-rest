@@ -289,8 +289,14 @@ async function create(producto,token){
     try{
       let rows=[];  
       rows = await db.query(
-        `SELECT p.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio_proveedor
+        `SELECT p.*,
+        (select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=p.usuarios_id) as municipio_proveedor,
+        d.nombre_departamento as departamento_proveedor,
+        u.celular as celular_proveedor,
+        u.email as email_proveedor
         FROM productos as p
+        inner join usuarios as u on p.usuarios_id = u.id
+        left join departamentos as d on u.id_departamento = d.id_departamento
         WHERE p.codigo=?
         `, 
         [codigoProducto]
