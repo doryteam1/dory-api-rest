@@ -321,10 +321,12 @@ async function createAsociacion(asociacion,token){
         const conection= await db.newConnection(); 
         await conection.beginTransaction();        
         let message = '';
+        let tipo_user= null; 
+        let id_user= null;
         if(token && validarToken(token)){ 
             const payload=helper.parseJwt(token);                             
-            const tipo_user= payload.rol; 
-            const id_user=payload.sub;
+            tipo_user= payload.rol; 
+            id_user=payload.sub;
               try{      
                 if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                     throw createError(401,"Tipo de usuario no Válido");
