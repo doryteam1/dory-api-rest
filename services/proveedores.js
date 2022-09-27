@@ -295,7 +295,7 @@ async function create(producto,token){
         u.celular as celular_proveedor,
         u.email as email_proveedor
         FROM productos as p
-        inner join usuarios as u on p.usuarios_id = u.id,
+        inner join usuarios as u on p.usuarios_id = u.id
         left join departamentos as d on u.id_departamento = d.id_departamento
         WHERE p.codigo=?
         `, 
