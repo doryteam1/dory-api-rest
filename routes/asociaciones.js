@@ -111,7 +111,6 @@ router.put('/aceptarSolicitudAsociacion/:idSolicitud', async function(req, res, 
 
 router.get('/miembros/:idUser', async function(req, res, next) {
   try {
-        var token=req.headers.authorization;
         res.json(await asociaciones.getAsociacionesMiembros(req.query.page, req.params.idUser));
   } catch (err) {
         console.error(`Error al retornar las asociaciones de las que es miembro el usuario`, err.message);
@@ -146,6 +145,15 @@ router.put('/parcial/:nitAsociacion', async function(req, res, next) {
   } catch (err) {
        console.error(`Error al actualizar la asociación parcialmente`, err.message);
        next(err);
+  }
+});
+
+router.get('/miembros/nit/:nit', async function(req, res, next) {
+  try {        
+        res.json(await asociaciones.getMiembrosAsociacion(req.params.nit));
+  } catch (err) {
+        console.error(`Error al retornar los miembros de la asociación`, err.message);
+        next(err);
   }
 });
 
