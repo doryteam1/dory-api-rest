@@ -858,7 +858,7 @@ async function getMiembrosAsociacion(nit){
                               (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
                               (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
                               u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion,
-                              u.url_sisben, url_imagen_cedula,a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut
+                              u.url_sisben, url_imagen_cedula
                       FROM asociaciones_usuarios as au inner join asociaciones as a on a.nit=au.nit_asociacion_pk_fk
                               inner join usuarios as u on au.usuarios_id=u.id							     
                       WHERE au.nit_asociacion_pk_fk=?
@@ -868,8 +868,6 @@ async function getMiembrosAsociacion(nit){
                     let representante={};
                     if(rows.length>0){
                          representante=rows[0];
-                    }else{
-                        representante=null;
                     }
                     let data={};
                     let miembros = [];
@@ -891,7 +889,7 @@ async function getMiembrosAsociacion(nit){
                               (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
                               (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
                               u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion,
-                              u.url_sisben, url_imagen_cedula,a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut
+                              u.url_sisben, url_imagen_cedula
                         FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
                                                inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
                                                inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
@@ -899,9 +897,23 @@ async function getMiembrosAsociacion(nit){
                         WHERE s.id_estado_fk=2  and nit_asociacion_fk=?
                       `, 
                       [nit]
-                    ); 
+                    );
+                    let asociacion = {};
+                    const asocia = await db.query(
+                    `SELECT DISTINCT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut
+                     FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
+                                               inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
+                                               inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
+                                               inner join usuarios as u on u.id=s.usuarios_id
+                     WHERE s.id_estado_fk=2  and nit_asociacion_fk=?
+                      `, 
+                      [nit]
+                    );
+                    if(asocia.length>0){
+                      asociacion=asocia[0];
+                    }
                     miembros = helper.emptyOrRows(rows2);
-                    data={representante,miembros,};
+                    data={representante,miembros,asociacion,};
                     return {
                        data
                     } 
