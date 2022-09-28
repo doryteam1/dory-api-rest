@@ -837,101 +837,6 @@ async function updateParcialAsociacion(nitAsociacion, asociacion, token){
       }
 }/*End updateParcialAsociacion*/
 
-/*_____________________________________getMiembrosAsociacion________________________________________________________*/
-async function getMiembrosAsociacion(nit,token){  
-          let representante={};
-          let data={};
-          let miembros = [];
-          let asociacion = {};          
-          let asocia = {};
-          let rows=[];
-          let rows2=[];
-          let id_user=null;
-              if(token && validarToken(token))
-              {
-                      const payload=helper.parseJwt(token);  
-                      id_user=payload.sub;
-                      rows = await db.query(
-                      `SELECT  u.id, concat (u.nombres,' ', u.apellidos) as nombres, u.cedula, u.direccion, u.email, u.celular as telefono, u.foto,
-                              (select tu.id_tipo_usuario from tipos_usuarios as tu  where tu.id_tipo_usuario=u.id_tipo_usuario) as id_tipo_usuario,
-                              (select tu.nombre_tipo_usuario from tipos_usuarios as tu  where tu.id_tipo_usuario=u.id_tipo_usuario) as tipo_usuario,
-                              (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
-                              (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
-                              (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,
-                              (select et.id from etnias as et  where et.id=u.id_etnia) as id_etnia,
-                              (select ae.id_area from areas_experticias as ae  where ae.id_area=u.id_area_experticia) as id_area_experticia,
-                              (select ae.nombre from areas_experticias as ae  where ae.id_area=u.id_area_experticia) as area_experticia,
-                              u.nombre_negocio,u.fecha_registro,u.fecha_nacimiento,
-                              (select d.id_departamento from departamentos d  where d.id_departamento=u.id_departamento) as id_departamento,
-                              (select d.nombre_departamento from departamentos d  where d.id_departamento=u.id_departamento) as departamento,
-                              (select m.id_municipio from municipios as m  where m.id_municipio=u.id_municipio) as id_municipio,
-                              (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
-                              (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
-                              (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
-                              u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion,
-                              u.url_sisben, url_imagen_cedula
-                      FROM asociaciones_usuarios as au inner join asociaciones as a on a.nit=au.nit_asociacion_pk_fk
-                              inner join usuarios as u on au.usuarios_id=u.id							     
-                      WHERE au.nit_asociacion_pk_fk=? and au.usuarios_id=?
-                      `, 
-                      [nit,id_user]
-                    );                     
-                if(rows.length>0){
-                      representante=rows[0];                     
-                      rows2 = await db.query(
-                      `SELECT  u.id, concat (u.nombres,' ', u.apellidos) as nombres, u.cedula, u.direccion, u.email, u.celular as telefono, u.foto,
-                              (select tu.id_tipo_usuario from tipos_usuarios as tu  where tu.id_tipo_usuario=u.id_tipo_usuario) as id_tipo_usuario,
-                              (select tu.nombre_tipo_usuario from tipos_usuarios as tu  where tu.id_tipo_usuario=u.id_tipo_usuario) as tipo_usuario,
-                              (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
-                              (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
-                              (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,
-                              (select et.id from etnias as et  where et.id=u.id_etnia) as id_etnia,
-                              (select ae.id_area from areas_experticias as ae  where ae.id_area=u.id_area_experticia) as id_area_experticia,
-                              (select ae.nombre from areas_experticias as ae  where ae.id_area=u.id_area_experticia) as area_experticia,
-                              u.nombre_negocio,u.fecha_registro,u.fecha_nacimiento,
-                              (select d.id_departamento from departamentos d  where d.id_departamento=u.id_departamento) as id_departamento,
-                              (select d.nombre_departamento from departamentos d  where d.id_departamento=u.id_departamento) as departamento,
-                              (select m.id_municipio from municipios as m  where m.id_municipio=u.id_municipio) as id_municipio,
-                              (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
-                              (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
-                              (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
-                              u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion,
-                              u.url_sisben, url_imagen_cedula
-                        FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
-                                               inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
-                                               inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
-                                               inner join usuarios as u on u.id=s.usuarios_id
-                        WHERE s.id_estado_fk=2  and nit_asociacion_fk=?
-                      `, 
-                      [nit]
-                    );                    
-                    asocia = await db.query(
-                    `SELECT DISTINCT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut, a.foto_camarac
-                     FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
-                                               inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
-                                               inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
-                                               inner join usuarios as u on u.id=s.usuarios_id
-                     WHERE s.id_estado_fk=2  and nit_asociacion_fk=?
-                      `, 
-                      [nit]
-                    );
-                    if(asocia.length>0){
-                      asociacion=asocia[0];
-                    }
-                    miembros = helper.emptyOrRows(rows2);
-                    data={representante,miembros,asociacion,};
-                    return{
-                        data
-                    };
-               }else{
-                     data=await getMiembrosAsociacionPublico(nit);
-              }          
-           }else{
-                     data=await getMiembrosAsociacionPublico(nit);
-           }/*End else*/          
-     return {data};
-}/*getMiembrosAsociacion*/
-
 async function getMiembrosAsociacionPublico(nit){  
           let representante={};
           let data={};
@@ -1011,6 +916,102 @@ async function getMiembrosAsociacionPublico(nit){
             return  data;
 }
 
+async function getMiembrosAsociacionPrivado(nit,token){  
+      let representante={};
+      let data={};
+      let miembros = [];
+      let asociacion = {};          
+      let asocia = {};
+      let rows=[];
+      let rows2=[];
+      let id_user=null;
+      if(token && validarToken(token))
+      {
+              const payload=helper.parseJwt(token);  
+              id_user=payload.sub;
+              rows = await db.query(
+              `SELECT  u.id, concat (u.nombres,' ', u.apellidos) as nombres, u.cedula, u.direccion, u.email, u.celular as telefono, u.foto,
+                      (select tu.id_tipo_usuario from tipos_usuarios as tu  where tu.id_tipo_usuario=u.id_tipo_usuario) as id_tipo_usuario,
+                      (select tu.nombre_tipo_usuario from tipos_usuarios as tu  where tu.id_tipo_usuario=u.id_tipo_usuario) as tipo_usuario,
+                      (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
+                      (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
+                      (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,
+                      (select et.id from etnias as et  where et.id=u.id_etnia) as id_etnia,
+                      (select ae.id_area from areas_experticias as ae  where ae.id_area=u.id_area_experticia) as id_area_experticia,
+                      (select ae.nombre from areas_experticias as ae  where ae.id_area=u.id_area_experticia) as area_experticia,
+                      u.nombre_negocio,u.fecha_registro,u.fecha_nacimiento,
+                      (select d.id_departamento from departamentos d  where d.id_departamento=u.id_departamento) as id_departamento,
+                      (select d.nombre_departamento from departamentos d  where d.id_departamento=u.id_departamento) as departamento,
+                      (select m.id_municipio from municipios as m  where m.id_municipio=u.id_municipio) as id_municipio,
+                      (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
+                      (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
+                      (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
+                      u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion,
+                      u.url_sisben, url_imagen_cedula
+              FROM asociaciones_usuarios as au inner join asociaciones as a on a.nit=au.nit_asociacion_pk_fk
+                      inner join usuarios as u on au.usuarios_id=u.id							     
+              WHERE au.nit_asociacion_pk_fk=? and au.usuarios_id=?
+              `, 
+              [nit,id_user]
+            );                     
+                 if(rows.length>0){
+                        representante=rows[0];                     
+                        rows2 = await db.query(
+                        `SELECT  u.id, concat (u.nombres,' ', u.apellidos) as nombres, u.cedula, u.direccion, u.email, u.celular as telefono, u.foto,
+                                (select tu.id_tipo_usuario from tipos_usuarios as tu  where tu.id_tipo_usuario=u.id_tipo_usuario) as id_tipo_usuario,
+                                (select tu.nombre_tipo_usuario from tipos_usuarios as tu  where tu.id_tipo_usuario=u.id_tipo_usuario) as tipo_usuario,
+                                (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
+                                (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
+                                (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,
+                                (select et.id from etnias as et  where et.id=u.id_etnia) as id_etnia,
+                                (select ae.id_area from areas_experticias as ae  where ae.id_area=u.id_area_experticia) as id_area_experticia,
+                                (select ae.nombre from areas_experticias as ae  where ae.id_area=u.id_area_experticia) as area_experticia,
+                                u.nombre_negocio,u.fecha_registro,u.fecha_nacimiento,
+                                (select d.id_departamento from departamentos d  where d.id_departamento=u.id_departamento) as id_departamento,
+                                (select d.nombre_departamento from departamentos d  where d.id_departamento=u.id_departamento) as departamento,
+                                (select m.id_municipio from municipios as m  where m.id_municipio=u.id_municipio) as id_municipio,
+                                (select m.nombre from municipios as m  where m.id_municipio=u.id_municipio) as municipio,
+                                (select c.nombre from corregimientos as c  where c.id_corregimiento=u.id_corregimiento) as corregimiento,
+                                (select v.nombre from veredas as v  where v.id_vereda=u.id_vereda) as vereda,
+                                u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion,
+                                u.url_sisben, url_imagen_cedula
+                          FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
+                                                inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
+                                                inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
+                                                inner join usuarios as u on u.id=s.usuarios_id
+                          WHERE s.id_estado_fk=2  and nit_asociacion_fk=?
+                        `, 
+                        [nit]
+                      );                    
+                      asocia = await db.query(
+                      `SELECT DISTINCT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut, a.foto_camarac
+                      FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
+                                                inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
+                                                inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
+                                                inner join usuarios as u on u.id=s.usuarios_id
+                      WHERE s.id_estado_fk=2  and nit_asociacion_fk=?
+                        `, 
+                        [nit]
+                      );
+                      if(asocia.length>0){
+                        asociacion=asocia[0];
+                      }
+                      miembros = helper.emptyOrRows(rows2);
+                      data={representante,miembros,asociacion,};
+                      return{
+                          data
+                      };
+                }else{
+                      console.log('No es representante legal, sin autorización');
+                      throw createError(401,"Usuario no autorizado");
+                }          
+        }else{
+            throw createError(401,"Usuario no autorizado");
+        }/*End else*/          
+return {data};
+}/*getMiembrosAsociacion*/
+
+
 
 
 module.exports = {  
@@ -1029,5 +1030,6 @@ module.exports = {
   getAsociacionesMiembros,
   ObtenerTodasGranjasAsociadas,
   updateParcialAsociacion,
-  getMiembrosAsociacion
+  getMiembrosAsociacionPublico,
+  getMiembrosAsociacionPrivado
 }

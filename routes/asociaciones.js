@@ -148,10 +148,19 @@ router.put('/parcial/:nitAsociacion', async function(req, res, next) {
   }
 });
 
-router.get('/miembros/nit/:nit', async function(req, res, next) {
-  try {   
-        var token=req.headers.authorization;     
-        res.json(await asociaciones.getMiembrosAsociacion(req.params.nit,token));
+router.get('/miembros/publico/nit/:nit', async function(req, res, next) {
+  try {    
+        res.json(await asociaciones.getMiembrosAsociacionPublico(req.params.nit));
+  } catch (err) {
+        console.error(`Error al retornar los miembros de la asociación`, err.message);
+        next(err);
+  }
+});
+
+router.get('/miembros/privado/nit/:nit', async function(req, res, next) {
+  try {  
+       var token=req.headers.authorization;  
+        res.json(await asociaciones.getMiembrosAsociacionPrivado(req.params.nit,token));
   } catch (err) {
         console.error(`Error al retornar los miembros de la asociación`, err.message);
         next(err);
