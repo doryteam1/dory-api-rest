@@ -91,9 +91,8 @@ async function create(novedad,token){
                       ){
                           try {
                             const result = await db.query(
-                              `INSERT INTO novedades(id_novedad, titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,usuarios_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
-                              [
-                                novedad.id_novedad,
+                              `INSERT INTO novedades( titulo,autor,cuerpo,fecha_creacion,resumen,cant_visitas,url_foto_autor,url_foto_novedad,url_novedad,canal,email_autor,id_tipo_novedad,usuarios_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                              [                                
                                 novedad.titulo,
                                 novedad.autor,
                                 novedad.cuerpo,
