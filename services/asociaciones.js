@@ -984,12 +984,9 @@ async function getMiembrosAsociacionPrivado(nit,token){
                         [nit]
                       );                    
                       asocia = await db.query(
-                      `SELECT DISTINCT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut, a.foto_camarac
-                      FROM asociaciones as a inner join solicitudes as s on a.nit=s.nit_asociacion_fk
-                                                inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
-                                                inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
-                                                inner join usuarios as u on u.id=s.usuarios_id
-                      WHERE s.id_estado_fk=2  and nit_asociacion_fk=?
+                      `SELECT a.nombre as nombre_asociacion, a.direccion as direccion_asociacion, a.url_rut, a.foto_camarac
+                      FROM asociaciones as a 
+                      WHERE a.nit=?
                         `, 
                         [nit]
                       );
