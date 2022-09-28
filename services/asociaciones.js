@@ -255,10 +255,10 @@ async function createAsociacion(asociacion,token){
                     const tipo_user= payload.rol; 
                     const id_user= payload.sub; 
               try{      
-                  if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
-                      throw createError(401,"Tipo de usuario no Válido");
-                  } 
-                          if(asociacion.nit===undefined ||
+                      if(tipo_user!='Piscicultor' && tipo_user!='Pescador'){
+                          throw createError(401,"Tipo de usuario no Válido");
+                      }
+                        if(asociacion.nit===undefined ||
                               asociacion.nombre===undefined ||                           
                               asociacion.direccion===undefined ||
                               asociacion.legalconstituida===undefined || 
@@ -271,7 +271,7 @@ async function createAsociacion(asociacion,token){
                               asociacion.corregimiento_vereda === undefined ||
                               asociacion.telefono === undefined ||
                               asociacion.url_rut === undefined
-                              )
+                          )
                           {
                             throw createError(400,"Se requieren todos los parámetros!");
                           }
@@ -328,7 +328,7 @@ async function createAsociacion(asociacion,token){
             tipo_user= payload.rol; 
             id_user=payload.sub;
               try{      
-                if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+                if(tipo_user!='Piscicultor' && tipo_user!='Pescador' && tipo_user!="Administrador"){
                     throw createError(401,"Tipo de usuario no Válido");
                 }
                         if( asociacion.nombre===undefined ||                           
@@ -423,7 +423,7 @@ async function createAsociacion(asociacion,token){
         const tipo_user= payload.rol;
         const id_user= payload.sub; 
         try{      
-                  if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+                  if(tipo_user!='Piscicultor' && tipo_user!='Pescador' && tipo_user!="Administrador"){
                       throw createError(401,"Tipo de usuario no Válido");
                   }
                   if(nit!=undefined && id_user!=undefined && nit!=null && id_user!=null){ 
