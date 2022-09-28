@@ -380,6 +380,32 @@ async function eliminarLikes(id_novedad,token){
       }
 }/*fin remove like*/
 
+/*_____________getDetailNovedad ________________________________*/
+async function getDetailNovedad(idNovedad){
+        try{
+          let rows=[];  
+          rows = await db.query(
+            `SELECT nov.*, (SELECT tn.nombre FROM  tipos_novedades as tn  WHERE   tn.id_tipo_novedad=nov.id_novedad) as tipo_novedad,
+                   (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2  WHERE   u2.id=nov.usuarios_id) as creador_novedad
+            FROM novedades as nov
+            WHERE nov.id_novedad=?
+            `, 
+            [idNovedad]
+          );         
+            if(rows.length < 1){
+              throw createError(404, "No se encuentra la novedad con el id "+idNovedad+".")
+            }         
+          const data = helper.emptyOrRows(rows);                      
+          return {
+            data
+          }
+        } catch(err){        
+              console.log(err);
+              throw err;
+        }
+}/*getDetailNovedad*/
+
+
 module.exports = {
   getMultiple,
   create,
@@ -387,5 +413,6 @@ module.exports = {
   remove,
   updateVisitas,
   agregarLikes,
-  eliminarLikes
+  eliminarLikes,
+  getDetailNovedad
 }

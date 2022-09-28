@@ -12,7 +12,6 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-
 router.post('/', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
@@ -22,7 +21,6 @@ router.post('/', async function(req, res, next) {
       next(err);
     }
   });
-
 
 router.put('/total/:id', async function(req, res, next) {
     try {
@@ -34,7 +32,6 @@ router.put('/total/:id', async function(req, res, next) {
     }
 });
 
-
 router.delete('/general/:id', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
@@ -44,7 +41,6 @@ router.delete('/general/:id', async function(req, res, next) {
       next(err);
     }
   });
-
   
   router.put('/visitas/:id', async function(req, res, next) {
     try {
@@ -55,5 +51,13 @@ router.delete('/general/:id', async function(req, res, next) {
     }
 });
 
+router.get('/detailed/:idNovedad', async function(req, res, next) {
+  try {    
+    res.json(await novedades.getDetailNovedad(req.params.idNovedad));
+  } catch (err) {
+    console.error(`Error al traer la novedad detallada `, err.message);
+    next(err);
+  }
+});
 
 module.exports = router;
