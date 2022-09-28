@@ -786,7 +786,7 @@ async function createGranja(body,token){
               if(rows.length<1){
                 throw createError(401,"Usted no tiene autorización");
               }
-            if(tipo_user!="Piscicultor"){ 
+            if(tipo_user!="Piscicultor" && tipo_user!="Administrador"){ 
               throw createError(401,"Usted no tiene autorización");
             }else{
                 if(arrayfotos){ 
@@ -830,8 +830,8 @@ async function createGranja(body,token){
       const payload=helper.parseJwt(token);  
       const id_user=payload.sub;
       const rol = payload.rol;
-      if(rol != "Piscicultor"){
-        throw createError('401', "Usted no es un usuario piscicultor. No esta autorizado para actualizar esta granja.")
+      if(rol != "Piscicultor" && rol !="Administrador"){
+        throw createError('401', "Usted no esta autorizado para actualizar esta granja.")
       }      
       const rows2 = await db.query(
         `select *
