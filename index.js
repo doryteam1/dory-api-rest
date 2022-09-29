@@ -38,15 +38,6 @@ const buscarGranjaRouter = require('./routes/buscar-granja');
 const buscarPescadoresRouter = require('./routes/buscar-pescadores');
 const buscarPiscicultoresRouter = require('./routes/buscar-piscicultores');
 const buscarUsuarioEmailRouter = require('./routes/buscar-usuario-email');
-const buscarNormatividadTipoRouter = require('./routes/buscar-normatividad-tipo');
-const buscarNormatividadRouter = require('./routes/buscar-normatividad');
-/*const buscarEventoTipoRouter = require('./routes/buscar-evento-tipo');
-const buscarEventoCursoRouter = require('./routes/buscar-evento-curso');
-const buscarEventoSeminarioRouter = require('./routes/buscar-evento-seminario');
-const buscarEventoTallerRouter = require('./routes/buscar-evento-taller');
-const buscarEventoDiplomadoRouter = require('./routes/buscar-evento-diplomado');
-const buscarEventoCapacitacionRouter = require('./routes/buscar-evento-capacitacion');
-const buscarEventoCongresoRouter = require('./routes/buscar-evento-congreso');*/
 const buscarNovedadRouter = require('./routes/buscar-novedad');
 const loginRouter = require('./routes/login');
 const contactenosRouter = require('./routes/contactenos');
@@ -116,8 +107,6 @@ app.use('/api/buscar/pescadores', buscarPescadoresRouter)
 app.use('/api/buscar/piscicultores', buscarPiscicultoresRouter)
 app.use('/api/piscicultores', piscicultoresRouter)
 app.use('/api/buscar/usuario/email', buscarUsuarioEmailRouter) 
-app.use('/api/buscar/normatividad/tipo', buscarNormatividadTipoRouter)
-app.use('/api/buscar/normatividad', buscarNormatividadRouter)
 app.use('/api/buscar/novedad', buscarNovedadRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/contactenos',contactenosRouter)

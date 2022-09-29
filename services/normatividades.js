@@ -18,6 +18,46 @@ async function getMultiple(page = 1){
       }
 }/*End getMultiple*/
 
+/*____________________getNormatividadesCadena________________________________________________*/
+async function getNormatividadesCadena(page = 1, cadena){
+        const offset = helper.getOffset(page, config.listPerPage);
+        let cad= '%'+cadena+'%';
+        const rows = await db.query(
+          `SELECT  concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
+          FROM tipos_normatividades as tn, normatividades n
+          WHERE (n.id_tipo_fk=tn.id_tipo) and 
+                (tn.nombre  like ? or n.nombre like ? or n.contenido like ? )
+          LIMIT ?,?`, 
+          [cad,cad, cad, offset, config.listPerPage]
+        );
+        const data = helper.emptyOrRows(rows);
+        const meta = {page};
+        return {
+          data,
+          meta
+        }
+}/*End getNormatividadesCadena*/
+
+/*_______________________ getNormatividadesTipo_________________________________*/
+async function getNormatividadesTipo(page = 1, tipo){
+      const offset = helper.getOffset(page, config.listPerPage);
+      let tipoNormatividad= '%'+tipo+'%';
+      const rows = await db.query(
+        `SELECT  concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
+        FROM tipos_normatividades as tn, normatividades n
+        WHERE n.id_tipo_fk=tn.id_tipo and 
+              tn.nombre like ?
+        LIMIT ?,?`, 
+        [tipoNormatividad, offset, config.listPerPage]
+      );
+      const data = helper.emptyOrRows(rows);
+      const meta = {page};
+      return {
+        data,
+        meta
+      }
+}/*End getNormatividadesTipo*/
+
 /*___________________________create___________________________________________*/
 async function create(normatividad,token){
     try{
@@ -128,6 +168,8 @@ async function create(normatividad,token){
 
 module.exports = {
   getMultiple,
+  getNormatividadesCadena,
+  getNormatividadesTipo,
   create,
   update,
   remove

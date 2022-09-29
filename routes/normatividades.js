@@ -11,6 +11,24 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+router.get('/buscar/:cadena', async function(req, res, next) {
+      try {
+        res.json(await normatividades.getNormatividadesCadena(req.query.page,req.params.cadena));
+      } catch (err) {
+        console.error(`Error al traer las normatividades por Cadena`, err.message);
+        next(err);
+      }
+ });
+
+ router.get('/tipos/buscar/:tipo', async function(req, res, next) {
+      try {
+        res.json(await normatividades.getNormatividadesTipos(req.query.page,req.params.tipo));
+      } catch (err) {
+        console.error(`Error al traer las normatividades por tipo`, err.message);
+        next(err);
+      }
+    });
+
 router.post('/', async function(req, res, next) {
     try {
           var token=req.headers.authorization;
