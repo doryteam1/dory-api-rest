@@ -38,7 +38,6 @@ const buscarGranjaRouter = require('./routes/buscar-granja');
 const buscarPescadoresRouter = require('./routes/buscar-pescadores');
 const buscarPiscicultoresRouter = require('./routes/buscar-piscicultores');
 const buscarUsuarioEmailRouter = require('./routes/buscar-usuario-email');
-const buscarNovedadRouter = require('./routes/buscar-novedad');
 const loginRouter = require('./routes/login');
 const contactenosRouter = require('./routes/contactenos');
 const compartirRouter = require('./routes/compartir');
