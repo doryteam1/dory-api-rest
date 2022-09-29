@@ -3,7 +3,7 @@ const router = express.Router();
 const eventos = require('../services/eventos');
 
 
-router.get('/', async function(req, res, next) {
+router.get('/todos', async function(req, res, next) {
   try {
     res.json(await eventos.getMultiple(req.query.page));
   } catch (err) {
@@ -12,6 +12,68 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+router.get('/capacitaciones/buscar/:cadena', async function(req, res, next) {
+  try {
+    res.json(await eventos.getEventosCapacitaciones(req.query.page,req.params.cadena));
+  } catch (err) {
+    console.error(`Error al traer los Eventos de Capacitaciones`, err.message);
+    next(err);
+  }
+});
+
+router.get('/congresos/buscar/:cadena', async function(req, res, next) {
+  try {
+    res.json(await eventos.getEventosCongresos(req.query.page,req.params.cadena));
+  } catch (err) {
+    console.error(`Error al traer los Eventos de Congresos`, err.message);
+    next(err);
+  }
+});
+
+router.get('/diplomados/buscar/:cadena', async function(req, res, next) {
+  try {
+    res.json(await eventos.getEventosDiplomados(req.query.page,req.params.cadena));
+  } catch (err) {
+    console.error(`Error al traer los Eventos de Diplomados`, err.message);
+    next(err);
+  }
+});
+
+router.get('/cursos/buscar/:cadena', async function(req, res, next) {
+  try {
+    res.json(await eventos.getEventosCursos(req.query.page,req.params.cadena));
+  } catch (err) {
+    console.error(`Error al traer los Eventos de Cursos`, err.message);
+    next(err);
+  }
+});
+
+router.get('/seminarios/buscar/:cadena', async function(req, res, next) {
+  try {
+    res.json(await eventos.getEventosSeminarios(req.query.page,req.params.cadena));
+  } catch (err) {
+    console.error(`Error al traer los Eventos de Seminarios`, err.message);
+    next(err);
+  }
+});
+
+router.get('/talleres/buscar/:cadena', async function(req, res, next) {
+  try {
+    res.json(await eventos.getEventosTalleres(req.query.page,req.params.cadena));
+  } catch (err) {
+    console.error(`Error al traer los Eventos de Talleres`, err.message);
+    next(err);
+  }
+});
+
+router.get('/tipos/buscar/:tipo', async function(req, res, next) {
+  try {
+    res.json(await eventos.getEventosTipos(req.query.page,req.params.tipo));
+  } catch (err) {
+    console.error(`Error al traer los Eventos por tipo`, err.message);
+    next(err);
+  }
+});
 
 router.post('/', async function(req, res, next) {
     try {

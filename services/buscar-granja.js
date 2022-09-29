@@ -83,7 +83,7 @@ async function buscarGranjaCadena(page = 1,cadena){
         }
  }
 
- async function buscarGranjaMunicipio(page = 1,id_municip, cadena){
+ async function buscarGranjaMunicipio(page = 1,idMunicipio, cadena){
                       const offset = helper.getOffset(page, config.listPerPage);
                       let cad= '%'+cadena+'%';
                       const rows = await db.query(
@@ -92,11 +92,9 @@ async function buscarGranjaCadena(page = 1,cadena){
                                 g.id_departamento, g.id_municipio, g.id_corregimiento, g.id_vereda,
                               (select count(*) from reseñas r1,granjas g1 where r1.id_granja_pk_fk=g1.id_granja and r1.id_granja_pk_fk= g.id_granja and g1.id_granja=g.id_granja) as count_resenas
                         FROM granjas as g
-                        WHERE  ( g.nombre like ? or
-                                g.descripcion like ? or
-                                g.area like ? )  and ( g.id_municipio = ? )                 
+                        WHERE   g.nombre like ? or  g.descripcion like ? or g.area like ?  and ( g.id_municipio = ? )                 
                               LIMIT ?,?`, 
-                        [cad,cad,cad, id_municip, offset, config.listPerPage]
+                        [cad,cad,cad, idMunicipio, offset, config.listPerPage]
                       );
                       var nuevoRows = new Array();
                       var indice=100;

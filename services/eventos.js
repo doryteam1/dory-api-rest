@@ -18,6 +18,148 @@ async function getMultiple(page = 1){
   }
 }/*End getMultiple*/
 
+/*__________________________getEventosCapacitaciones_____________________*/
+async function getEventosCapacitaciones(page = 1, cadena){
+      const offset = helper.getOffset(page, config.listPerPage);
+      let cad= '%'+cadena+'%';
+      const rows = await db.query(
+        `SELECT distinct e.id_evento, e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen, te.nombre as tipo
+        FROM eventos as e inner join tipos_eventos as te  
+                    on ((te.nombre like '%Capacitaciones%') and (e.id_tipo_evento_fk=te.id_evento))  and                                            
+                        (e.nombre like ? or e.resumen like ? or e.organizador like ? or e.dirigidoa like ?) 
+                        LIMIT ?,?`, 
+        [cad, cad, cad, cad, offset, config.listPerPage]
+      );  
+      const data = helper.emptyOrRows(rows);
+      const meta = {page};
+      return {
+        data,
+        meta
+      }
+}/*End getEventosCapacitaciones*/
+
+/*_____________________________End getEventosCongresos_____________________________________*/
+async function getEventosCongresos(page = 1, cadena){
+      const offset = helper.getOffset(page, config.listPerPage);
+      let cad= '%'+cadena+'%';
+      const rows = await db.query(
+        `SELECT distinct e.id_evento, e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen, te.nombre as tipo
+        FROM eventos as e inner join tipos_eventos as te  
+                    on ((te.nombre like '%Congresos%') and (e.id_tipo_evento_fk=te.id_evento))  and                                            
+                        (e.nombre like ? or e.resumen like ? or e.organizador like ? or e.dirigidoa like ?) 
+                        LIMIT ?,?`, 
+        [cad, cad, cad, cad, offset, config.listPerPage]
+      );  
+      const data = helper.emptyOrRows(rows);
+      const meta = {page};
+      return {
+        data,
+        meta
+      }
+}/*End getEventosCongresos*/
+
+/*______________________________ getEventosCursos__________________________________________*/
+async function getEventosCursos(page = 1, cadena){
+      const offset = helper.getOffset(page, config.listPerPage);
+      let cad= '%'+cadena+'%';
+      const rows = await db.query(
+        `SELECT distinct e.id_evento, e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen, te.nombre as tipo
+        FROM eventos as e inner join tipos_eventos as te  
+                    on ((te.nombre like '%Cursos%') and (e.id_tipo_evento_fk=te.id_evento))  and                                            
+                        (e.nombre like ? or e.resumen like ? or e.organizador like ? or e.dirigidoa like ?) 
+                        LIMIT ?,?`, 
+        [cad, cad, cad, cad, offset, config.listPerPage]
+      );
+      const data = helper.emptyOrRows(rows);
+      const meta = {page};
+
+      return {
+        data,
+        meta
+      }
+}/*End getEventosCursos*/
+
+/*__________________________ getEventosDiplomados___________________________________________*/
+async function getEventosDiplomados(page = 1, cadena){
+      const offset = helper.getOffset(page, config.listPerPage);
+      let cad= '%'+cadena+'%';
+      const rows = await db.query(
+        `SELECT distinct e.id_evento, e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen, te.nombre as tipo
+        FROM eventos as e inner join tipos_eventos as te  
+                    on ((te.nombre like '%Diplomados%') and (e.id_tipo_evento_fk=te.id_evento))  and                                            
+                        (e.nombre like ? or e.resumen like ? or e.organizador like ? or e.dirigidoa like ?) 
+                        LIMIT ?,?`, 
+        [cad, cad, cad, cad, offset, config.listPerPage]
+      );
+      const data = helper.emptyOrRows(rows);
+      const meta = {page};
+      return {
+        data,
+        meta
+      }
+}/*End getEventosDiplomados*/
+
+/*____________________________________getEventosSeminarios___________________________________________*/
+async function getEventosSeminarios(page = 1, cadena){
+      const offset = helper.getOffset(page, config.listPerPage);
+      let cad= '%'+cadena+'%';
+      const rows = await db.query(
+        `SELECT distinct e.id_evento, e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen, te.nombre as tipo
+        FROM eventos as e inner join tipos_eventos as te  
+                    on ((te.nombre like '%Seminarios%') and (e.id_tipo_evento_fk=te.id_evento))  and                                            
+                        (e.nombre like ? or e.resumen like ? or e.organizador like ? or e.dirigidoa like ?) 
+                        LIMIT ?,?`, 
+        [cad, cad, cad, cad, offset, config.listPerPage]
+      );
+      const data = helper.emptyOrRows(rows);
+      const meta = {page};
+      return {
+        data,
+        meta
+      }
+}/*END getEventosSeminarios */
+
+/*___________________________________________ getEventosTalleres______________________________________ */
+async function getEventosTalleres(page = 1, cadena){
+  const offset = helper.getOffset(page, config.listPerPage);
+  let cad= '%'+cadena+'%';
+  const rows = await db.query(
+    `SELECT distinct e.id_evento, e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen, te.nombre as tipo
+    FROM eventos as e inner join tipos_eventos as te  
+                 on ((te.nombre like '%Talleres%') and (e.id_tipo_evento_fk=te.id_evento))  and                                            
+                     (e.nombre like ? or e.resumen like ? or e.organizador like ? or e.dirigidoa like ?) 
+                     LIMIT ?,?`, 
+    [cad, cad, cad, cad, offset, config.listPerPage]
+  );
+  const data = helper.emptyOrRows(rows);
+  const meta = {page};
+
+  return {
+    data,
+    meta
+  }
+}/*End getEventosTalleres */
+
+/*__________________________________ getEventosTipos_______________________________ */
+async function getEventosTipos(page = 1, tipo){
+      const offset = helper.getOffset(page, config.listPerPage);
+      let tipoEvento= '%'+tipo+'%';
+      const rows = await db.query(
+        `SELECT  te.nombre as tipo,e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen
+        FROM tipos_eventos as te, eventos as e
+        WHERE e.id_tipo_evento_fk=te.id_evento and 
+              te.nombre like ?
+        LIMIT ?,?`, 
+        [tipoEvento, offset, config.listPerPage]
+      );
+      const data = helper.emptyOrRows(rows);
+      const meta = {page};
+      return {
+        data,
+        meta
+      }
+}/*End getEventosTipos */
+
 /*------------------------------------------------create---------------------------------------------------*/
 async function create(evento,token){
            try{
@@ -198,6 +340,13 @@ async function updateParcialEvento(idEvento, evento, token){
 
 module.exports = {
   getMultiple,
+  getEventosCapacitaciones,
+  getEventosCongresos,
+  getEventosCursos,
+  getEventosDiplomados,
+  getEventosSeminarios,
+  getEventosTalleres,
+  getEventosTipos,
   create,
   update,
   remove,
