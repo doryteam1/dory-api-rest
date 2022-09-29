@@ -67,7 +67,7 @@ async function create(normatividad,token){
                   if(tipo_user!='Administrador'){
                           throw createError(401,"Usted no tiene autorización para registrar eventos");
                   }
-                  if( normatividad.id===undefined ||                     
+                  if(                     
                       normatividad.nombre===undefined ||  
                       normatividad.contenido===undefined || 
                       normatividad.url_descarga===undefined || 
@@ -78,9 +78,8 @@ async function create(normatividad,token){
                       throw createError(400,"Se requieren todos los parámetros de la normatividad");
                     }
                   const result = await db.query(
-                    `INSERT INTO normatividades(id,nombre, contenido,url_descarga,id_tipo_fk,fecha) VALUES (?,?,?,?,?,?)`, 
+                    `INSERT INTO normatividades(nombre, contenido,url_descarga,id_tipo_fk,fecha) VALUES (?,?,?,?,?)`, 
                     [
-                    normatividad.id,
                     normatividad.nombre, 
                     normatividad.contenido,
                     normatividad.url_descarga, 
