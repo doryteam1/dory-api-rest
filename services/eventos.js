@@ -169,7 +169,7 @@ async function create(evento,token){
                        if(tipo_user!='Administrador'){
                               throw createError(401,"Usted no tiene autorización para registrar eventos");
                        }
-                       if(evento.id_evento===undefined ||
+                       if(
                           evento.nombre===undefined || 
                           evento.resumen===undefined || 
                           evento.fecha===undefined ||
@@ -186,9 +186,8 @@ async function create(evento,token){
                           throw createError(400,"Se requieren todos los parámetros del evento");
                         }
                             const result = await db.query(
-                              `INSERT INTO eventos(id_evento,nombre,resumen,fecha, hora, imagen, url, dirigidoa, organizador, costo, id_modalidad_fk, id_tipo_evento_fk) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                              `INSERT INTO eventos(nombre,resumen,fecha, hora, imagen, url, dirigidoa, organizador, costo, id_modalidad_fk, id_tipo_evento_fk) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, 
                               [
-                                evento.id_evento,
                                 evento.nombre,
                                 evento.resumen,
                                 evento.fecha,
