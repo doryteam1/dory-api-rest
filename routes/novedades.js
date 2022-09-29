@@ -60,4 +60,64 @@ router.get('/detailed/:idNovedad', async function(req, res, next) {
   }
 });
 
+router.get('/buscar/tipo/:cadena', async function(req, res, next) {
+  try {
+       var token=req.headers.authorization; 
+       res.json(await novedades.getNovedadesTipo(req.query.page,req.params.cadena,token));
+  } catch (err) {
+    console.error(`Error al traer las novedades por su tipo`, err.message);
+    next(err);
+  }
+});
+
+router.get('/buscar/:cadena', async function(req, res, next) {
+  try {
+       var token=req.headers.authorization; 
+       res.json(await novedades.getNovedadesCadena(req.query.page,req.params.cadena,token));
+  } catch (err) {
+    console.error(`Error al traer las novedades con la cadena ingresada`, err.message);
+    next(err);
+  }
+});
+
+router.get('/buscar/articulo/:cadena', async function(req, res, next) {
+  try {
+        var token = req.headers.authorization;
+        res.json(await novedades.getArticulos(req.query.page,req.params.cadena,token));
+  } catch (err) {
+    console.error(`Error al traer las novedades del tipo Articulo`, err.message);
+    next(err);
+  }
+});
+
+router.get('/buscar/articulo-colombia/:cadena', async function(req, res, next) {
+  try {
+        var token=req.headers.authorization;        
+        res.json(await novedades.getArticulosColombianos(req.query.page,req.params.cadena,token));
+  } catch (err) {
+    console.error(`Error al traer las novedades del tipo Articulo colombiano`, err.message);
+    next(err);
+  }
+});
+
+router.get('/buscar/revista/:cadena', async function(req, res, next) {
+  try {
+        var token=req.headers.authorization; 
+        res.json(await novedades.getRevistas(req.query.page,req.params.cadena,token));
+  } catch (err) {
+    console.error(`Error al traer las novedades del tipo Revista`, err.message);
+    next(err);
+  }
+});
+
+router.get('/buscar/noticia/:cadena', async function(req, res, next) {
+  try {
+       var token=req.headers.authorization; 
+       res.json(await novedades.getNoticias(req.query.page,req.params.cadena,token));
+  } catch (err) {
+    console.error(`Error al traer las novedades del tipo Noticia`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;

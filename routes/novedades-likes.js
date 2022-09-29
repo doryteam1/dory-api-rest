@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const novedades = require('../services/novedades');
 
-
 router.post('/like/:id', async function(req, res, next) {
   try { 
         var token=req.headers.authorization;
@@ -22,6 +21,5 @@ router.delete('/dislike/:id', async function(req, res, next) {
     next(err);
   }
 });
-
 
 module.exports = router;
