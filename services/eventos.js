@@ -247,8 +247,8 @@ async function create(evento,token){
                                       evento.dirigidoa,
                                       evento.organizador,
                                       evento.costo,
-                                      evento.id_modalidad_fk,
-                                      evento.id_tipo_evento_fk,
+                                      evento.id_modalidad,
+                                      evento.id_tipo_evento,
                                       idEvento
                                     ] 
                                   );                      
