@@ -629,6 +629,7 @@ async function createGranja(body,token){
               [idMunicipio,offset, config.listPerPage]
             );
           }
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>",rows);
                 var arrayfotos= new Array();
                 var nuevoRows = new Array();
                 var index= rows[0].id_granja;

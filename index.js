@@ -46,8 +46,9 @@ const negociosRouter = require('./routes/negocios');
 const publicacionesRouter = require('./routes/publicaciones');
 const etniasRouter = require('./routes/etnias');
 const sexosRouter = require('./routes/sexos');
-var cors = require('cors');
+const nosotrosRouter = require('./routes/nosotros');
 
+var cors = require('cors');
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
@@ -114,6 +115,8 @@ app.use('/api/publicaciones',publicacionesRouter)
 app.use('/api/novedades/auth',verifyToken,novedadesLikesRouter)
 app.use('/api/etnias',etniasRouter)
 app.use('/api/sexos',sexosRouter)
+app.use('/api/nosotros',nosotrosRouter)
+
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
   const error= new Error('NOT FOUND');
