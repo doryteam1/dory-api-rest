@@ -274,7 +274,7 @@ async function create(evento,token){
                     }else{ 
                        throw createError(401,"Usted no tiene autorización"); 
                     }
-              }catch{
+              }catch(error){
                    throw error;
               }
   }/*End Update*/
