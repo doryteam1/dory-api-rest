@@ -249,7 +249,7 @@ async function create(evento,token){
                                         organizador=?,
                                         costo=?,
                                         id_modalidad_fk=?,
-                                        id_tipo_evento_fk
+                                        id_tipo_evento_fk=?
                                     WHERE id_evento=?`,
                                     [
                                       evento.nombre,
