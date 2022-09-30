@@ -206,7 +206,7 @@ async function create(evento,token){
                    }else{ 
                          throw createError(401,"Usted no tiene autorización"); 
                    }
-            }catch{
+            }catch(error){
                     throw error;
              }
   }/**End create*/
@@ -300,9 +300,9 @@ async function create(evento,token){
                   }else{ 
                         throw createError(401,"Usted no tiene autorización"); 
                   }
-           }catch{
-                throw error;
-           }
+                }catch(error){
+                      throw error;
+                }
   }/*End remove*/
 
   /*------------------------------updateParcialEvento-------------------------------------------------*/
