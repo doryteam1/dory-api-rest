@@ -13,7 +13,8 @@ router.get('/obtener', async function(req, res, next) {
 
 router.post('/registrar', async function(req, res, next) {
     try {
-      res.json(await nosotros.registrarNosotros(req.body));
+      var token=req.headers.authorization;
+      res.json(await nosotros.registrarNosotros(req.body,token));
     } catch (err) {
       console.error(`Error al registrar la información de nosotros`, err.message);
       next(err);
@@ -22,7 +23,8 @@ router.post('/registrar', async function(req, res, next) {
 
 router.put('/actualizar/:id', async function(req, res, next) {
     try {
-      res.json(await nosotros.actualizarNosotros(req.params.id, req.body));
+      var token=req.headers.authorization;
+      res.json(await nosotros.actualizarNosotros(req.params.id, req.body,token));
     } catch (err) {
       console.error(`Error al actualizar la información de nosotros`, err.message);
       next(err);
@@ -31,7 +33,8 @@ router.put('/actualizar/:id', async function(req, res, next) {
 
 router.delete('/eliminar/:id', async function(req, res, next) {
     try {
-      res.json(await nosotros.eliminarNosotros(req.params.id));
+      var token=req.headers.authorization;
+      res.json(await nosotros.eliminarNosotros(req.params.id,token));
     } catch (err) {
       console.error(`Error al borrar la información de nosotros`, err.message);
       next(err);
