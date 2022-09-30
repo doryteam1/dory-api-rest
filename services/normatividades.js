@@ -95,7 +95,7 @@ async function create(normatividad,token){
             }else{ 
                   throw createError(401,"Usted no tiene autorización"); 
             }
-     }catch{
+     }catch(error){
              throw error;
      }
   }/*End create*/
@@ -134,7 +134,7 @@ async function create(normatividad,token){
               }else{ 
                   throw createError(401,"Usted no tiene autorización"); 
               }
-        }catch{
+        }catch(error){
                 throw error;
         }
   }/*End update*/
@@ -160,7 +160,7 @@ async function create(normatividad,token){
                 }else{ 
                       throw createError(401,"Usted no tiene autorización"); 
                 }
-            }catch{
+            }catch(error){
                     throw error;
             }     
   }/*End remove*/
