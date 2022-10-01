@@ -19,7 +19,8 @@ async function getPublicacionesUsuario(id_user){
         [id_user]
       );
     if(rows.length<1){
-      throw createError(404,"Usuario sin publicaiones");
+      data = [];
+      return {data}
     }
       var arrayfotos= new Array();
       var nuevoRows = new Array();
