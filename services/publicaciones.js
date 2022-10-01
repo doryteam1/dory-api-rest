@@ -18,7 +18,11 @@ async function getPublicacionesUsuario(id_user){
         `, 
         [id_user]
       );
-      
+      let data;
+      if(rows.length<1){
+        data = [];
+        return {data}
+      }
       var arrayfotos= new Array();
       var nuevoRows = new Array();
       var index= rows[0].id_publicacion;
@@ -40,7 +44,7 @@ async function getPublicacionesUsuario(id_user){
         }
       });        
       nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
-      const data = helper.emptyOrRows(nuevoRows);  
+      data = helper.emptyOrRows(nuevoRows);  
       return {
         data
       }
