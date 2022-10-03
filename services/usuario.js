@@ -279,6 +279,10 @@ async function update(idUser, usuario, token){
                         `DELETE FROM reseñas WHERE usuarios_id=?`, 
                         [idUser]
                       );
+                      await conection.execute(
+                        `DELETE FROM usuarios_granjas WHERE usuarios_id=?`, 
+                        [idUser]
+                      );
                       const result = await conection.execute(
                         `DELETE FROM usuarios WHERE id=?`, 
                         [idUser]
