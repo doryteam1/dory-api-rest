@@ -142,10 +142,10 @@ async function getEventosTipos(page = 1, tipo){
       const offset = helper.getOffset(page, config.listPerPage);
       let tipoEvento= '%'+tipo+'%';
       const rows = await db.query(
-        `SELECT  te.nombre as tipo,e.nombre as nombre,e.url, e.resumen, e.fecha, e.hora, e.dirigidoa, e.organizador, e.costo, e.imagen
-        FROM tipos_eventos as te, eventos as e
-        WHERE e.id_tipo_evento_fk=te.id_evento and 
-              te.nombre like ?
+        `SELECT  te.nombre as tipo,e.*, m.nombre as modalidad
+        FROM eventos as e inner join tipos_eventos as te on e.id_tipo_evento_fk=te.id_evento
+                          inner join modalidades as m on e.id_modalidad_fk=m.id_modalidad      
+        WHERE te.nombre like ?
         LIMIT ?,?`, 
         [tipoEvento, offset, config.listPerPage]
       );
