@@ -8,7 +8,7 @@ const {validarToken} = require ('../middelware/auth');
 async function getMultiple(page = 1){
       const offset = helper.getOffset(page, config.listPerPage);
       const rows = await db.query(
-        `SELECT normatividades.id as id_normatividad, concat(tipos_normatividades.nombre,' ',normatividades.nombre) as nombre,  normatividades.contenido AS contenido,normatividades.url_descarga AS url_descarga, normatividades.id_tipo_fk as id_tipo,tipos_normatividades.nombre AS tipo, normatividades.fecha as fecha
+        `SELECT n.id, normatividades.id as id_normatividad, concat(tipos_normatividades.nombre,' ',normatividades.nombre) as nombre,  normatividades.contenido AS contenido,normatividades.url_descarga AS url_descarga, normatividades.id_tipo_fk as id_tipo,tipos_normatividades.nombre AS tipo, normatividades.fecha as fecha
         FROM normatividades,tipos_normatividades
         WHERE normatividades.id_tipo_fk=tipos_normatividades.id_tipo LIMIT ?,?`, 
         [offset, config.listPerPage]
@@ -26,7 +26,7 @@ async function getNormatividadesCadena(page = 1, cadena){
         const offset = helper.getOffset(page, config.listPerPage);
         let cad= '%'+cadena+'%';
         const rows = await db.query(
-          `SELECT  concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
+          `SELECT  n.id, concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
           FROM tipos_normatividades as tn, normatividades n
           WHERE (n.id_tipo_fk=tn.id_tipo) and 
                 (tn.nombre  like ? or n.nombre like ? or n.contenido like ? )
@@ -46,7 +46,7 @@ async function getNormatividadesTipo(page = 1, tipo){
       const offset = helper.getOffset(page, config.listPerPage);
       let tipoNormatividad= '%'+tipo+'%';
       const rows = await db.query(
-        `SELECT  concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
+        `SELECT  n.id, concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
         FROM tipos_normatividades as tn, normatividades n
         WHERE n.id_tipo_fk=tn.id_tipo and 
               tn.nombre like ?
