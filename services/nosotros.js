@@ -30,10 +30,10 @@ async function registrarNosotros(nosotros,token){
                       if(tipo_user!='Administrador'){
                               throw createError(401,"Usted no tiene autorización para actualizar la información de nosotros");
                       }
-                      if(nosotros.identidad === undefined || 
+                      if(nosotros.entidad === undefined || 
                         nosotros.mision === undefined ||
                         nosotros.vision === undefined ||
-                        nosotros.imagen_identidad === undefined || 
+                        nosotros.imagen_entidad === undefined || 
                         nosotros.imagen_mision === undefined ||
                         nosotros.imagen_vision === undefined
                         ){
@@ -41,12 +41,12 @@ async function registrarNosotros(nosotros,token){
                         }
                       try{
                             const result = await db.query(
-                              `INSERT INTO nosotros(identidad,mision,vision,imagen_identidad,imagen_mision,imagen_vision) VALUES (?,?,?,?,?,?)`, 
+                              `INSERT INTO nosotros(entidad,mision,vision,imagen_entidad,imagen_mision,imagen_vision) VALUES (?,?,?,?,?,?)`, 
                               [
-                                nosotros.identidad,
+                                nosotros.entidad,
                                 nosotros.mision, 
                                 nosotros.vision,
-                                nosotros.imagen_identidad,
+                                nosotros.imagen_entidad,
                                 nosotros.imagen_mision,
                                 nosotros.imagen_vision
                               ]
@@ -78,10 +78,10 @@ async function registrarNosotros(nosotros,token){
                     if(tipo_user!='Administrador'){
                             throw createError(401,"Usted no tiene autorización para actualizar la información de nosotros");
                     }
-                  if(nosotros.identidad === undefined || 
+                  if(nosotros.entidad === undefined || 
                     nosotros.mision === undefined ||
                     nosotros.vision === undefined ||
-                    nosotros.imagen_identidad === undefined || 
+                    nosotros.imagen_entidad === undefined || 
                     nosotros.imagen_mision === undefined ||
                     nosotros.imagen_vision === undefined)
                     {
@@ -89,18 +89,18 @@ async function registrarNosotros(nosotros,token){
                     }
                     const result = await db.query(
                     `UPDATE nosotros
-                    SET identidad=?, 
+                    SET entidad=?, 
                         mision=?,
                         vision=?,
-                        imagen_identidad=?,
+                        imagen_entidad=?,
                         imagen_mision,
                         imagen_vision
                     WHERE id=?`,
                     [
-                      nosotros.identidad,
+                      nosotros.entidad,
                       nosotros.mision, 
                       nosotros.vision,
-                      nosotros.imagen_identidad,
+                      nosotros.imagen_entidad,
                       nosotros.imagen_mision,
                       nosotros.imagen_vision,
                       id
