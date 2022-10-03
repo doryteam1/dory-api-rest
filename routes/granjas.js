@@ -99,9 +99,9 @@ router.put('/parcial/:id', async function(req, res, next) {
     }
   });
 
-  router.get('/departamento', async function(req, res, next) { 
+  router.get('/departamento/:idDepartamento', async function(req, res, next) { 
     try { 
-         res.json(await granjas.getGranjasDepartamento(req.query.page));
+         res.json(await granjas.getGranjasDepartamento(req.query.page,req.params.idDepartamento));
     } catch (err) {
           console.error(`Error al traer las Granjas por Departamento `, err.message);
           next(err);

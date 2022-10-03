@@ -576,23 +576,24 @@ async function createGranja(body,token){
   }/*End eliminarGranja*/
 
   /*_____________getGranjaDepartamento ________________________________*/
-  async function getGranjasDepartamento(page = 1){ 
-    const offset = helper.getOffset(page, config.listPerPage);
-    const rows = await db.query(
-      `SELECT distinct  m.id_municipio, m.nombre, m.poblacion,
-                       (SELECT count(*) FROM municipios as m1, granjas as g1 WHERE m1.id_municipio=g1.id_municipio and m1.id_municipio=m.id_municipio) as count_granjas
-       FROM  municipios as m left join   granjas as g on (m.id_municipio=g.id_municipio)
-                left join corregimientos as c on (c.id_municipio=g.id_municipio)
-                left join veredas as v  on  (v.id_municipio=g.id_municipio) 
-               LIMIT ?,?`, 
-      [offset, config.listPerPage]
-    );
-    const data = helper.emptyOrRows(rows);
-    const meta = {page};  
-    return {
-      data,
-      meta
-    }
+  async function getGranjasDepartamento(page = 1,idDepartamento){ 
+          const offset = helper.getOffset(page, config.listPerPage);
+          const rows = await db.query(
+            `SELECT distinct  m.id_municipio, m.nombre, m.poblacion,
+                            (SELECT count(*) FROM municipios as m1, granjas as g1 WHERE m1.id_municipio=g1.id_municipio and m1.id_municipio=m.id_municipio) as count_granjas
+            FROM  municipios as m left join   granjas as g on (m.id_municipio=g.id_municipio)
+                                    left join corregimientos as c on (c.id_municipio=g.id_municipio)
+                                    left join veredas as v  on  (v.id_municipio=g.id_municipio) 
+            WHERE m.id_departamento_fk=?
+                    LIMIT ?,?`, 
+            [idDepartamento,offset, config.listPerPage]
+          );
+          const data = helper.emptyOrRows(rows);
+          const meta = {page};  
+          return {
+            data,
+            meta
+          }
   }/*End getGranjasDepartamento*/
 
   async function getGranjasMunicipio(page = 1,idMunicipio, token){
