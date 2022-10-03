@@ -288,7 +288,7 @@ async function update(idUser, usuario, token){
                         [idUser]
                       );
                       let message = 'Error borrando el registro del usuario';
-                      if (result.affectedRows) {
+                      if (result[0].affectedRows) {
                         message = 'Usuario borrado exitosamente';
                       }
                           conection.commit(); 
