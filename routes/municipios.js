@@ -65,9 +65,9 @@ router.delete('/:idMunicipio', async function(req, res, next) {
     }
   });
 
-  router.get('/consumo/especies/total/nuevo', async function(req, res, next) {
+  router.get('/consumo/especies/total/departamento/:idDepartamento', async function(req, res, next) {
     try {
-      res.json(await municipios.getConsumosEspeciesTotalNuevo());
+      res.json(await municipios.getConsumosEspeciesTotalDepartamento(req.params.idDepartamento));
     } catch (err) {
       console.error(`Error al traer el total del consumo de especies por municipio  `, err.message);
       next(err);

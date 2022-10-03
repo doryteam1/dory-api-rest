@@ -145,7 +145,7 @@ async function create(municipio){
           }/* End getConsumosEspecies*/
 
 /* ------------------------------------getConsumosEspeciesTotalNuevo------------------------------------*/
-async function getConsumosEspeciesTotalNuevo(){   
+async function getConsumosEspeciesTotalDepartamento(idDepartamento){   
   const rowsEspecies = await db.query(
     `SELECT e.*
     FROM especies as e
@@ -155,8 +155,9 @@ async function getConsumosEspeciesTotalNuevo(){
   const rowsMunicipios = await db.query(
     `SELECT m.*
     FROM municipios as m
+    WHERE m.id_departamento_fk=?
     `, 
-    []
+    [idDepartamento]
   );   
   let data=[];           
   let rowsConsumos;
@@ -187,8 +188,7 @@ async function getConsumosEspeciesTotalNuevo(){
         id_municipio:rowsMunicipios[i].id_municipio,
         consumo:arrayConsumo
       })
-    } /*end for municipios*/   
-          
+    } /*end for municipios*/             
 return {
 data
 }
@@ -202,5 +202,5 @@ module.exports = {
   update,
   remove,
   getConsumosEspecies,
-  getConsumosEspeciesTotalNuevo
+  getConsumosEspeciesTotalDepartamento
 }
