@@ -47,7 +47,7 @@ const publicacionesRouter = require('./routes/publicaciones');
 const etniasRouter = require('./routes/etnias');
 const sexosRouter = require('./routes/sexos');
 const nosotrosRouter = require('./routes/nosotros');
-
+const integrantesRouter = require('./routes/integrantes');
 var cors = require('cors');
 app.use(bodyParser.json());
 app.use(
@@ -116,7 +116,7 @@ app.use('/api/novedades/auth',verifyToken,novedadesLikesRouter)
 app.use('/api/etnias',etniasRouter)
 app.use('/api/sexos',sexosRouter)
 app.use('/api/nosotros',nosotrosRouter)
-
+app.use('/api/integrantes',integrantesRouter)
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
   const error= new Error('NOT FOUND');

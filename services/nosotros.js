@@ -53,7 +53,7 @@ async function registrarNosotros(nosotros,token){
                             );  
                             let message = 'Error registrando la información de nosotros';  
                             if (result.affectedRows) {
-                              message = 'Nosotros registrada exitosamente';
+                              message = 'Registro de nosotros exitoso';
                             }else {
                                   throw createError(500,"Ocurrió un problema al registrar la información de nosotros");
                             }
@@ -93,8 +93,8 @@ async function registrarNosotros(nosotros,token){
                         mision=?,
                         vision=?,
                         imagen_entidad=?,
-                        imagen_mision,
-                        imagen_vision
+                        imagen_mision=?,
+                        imagen_vision=?
                     WHERE id=?`,
                     [
                       nosotros.entidad,
@@ -108,7 +108,7 @@ async function registrarNosotros(nosotros,token){
                   );  
                   let message = 'Error actualizando la información de nosotros';  
                   if (result.affectedRows) {
-                    message = 'Nosotros actualizada exitosamente';
+                    message = 'Actualización de Nosotros exitoso';
                   }  
                   return {message};
                 }else{ 
