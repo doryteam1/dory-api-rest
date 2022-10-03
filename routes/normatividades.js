@@ -22,7 +22,7 @@ router.get('/buscar/:cadena', async function(req, res, next) {
 
  router.get('/tipos/buscar/:tipo', async function(req, res, next) {
       try {
-        res.json(await normatividades.getNormatividadesTipos(req.query.page,req.params.tipo));
+        res.json(await normatividades.getNormatividadesTipo(req.query.page,req.params.tipo));
       } catch (err) {
         console.error(`Error al traer las normatividades por tipo`, err.message);
         next(err);
