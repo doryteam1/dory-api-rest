@@ -347,6 +347,7 @@ async function createGranja(body,token){
       try {                 
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
+            const tipo_user=payload.rol;
             const rows = await db.query(
               `SELECT  ug.espropietario
               FROM usuarios_granjas as ug 
