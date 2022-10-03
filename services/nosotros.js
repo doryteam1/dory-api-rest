@@ -54,6 +54,7 @@ async function registrarNosotros(nosotros,token){
                             let message = 'Error registrando la información de nosotros';  
                             if (result.affectedRows) {
                               message = 'Registro de nosotros exitoso';
+                              return {message};
                             }else {
                                   throw createError(500,"Ocurrió un problema al registrar la información de nosotros");
                             }
