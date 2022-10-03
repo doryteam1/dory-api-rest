@@ -8,8 +8,8 @@ const {validarToken} = require ('../middelware/auth');
 async function getintegrantes(page = 1){
         const offset = helper.getOffset(page, config.listPerPage);
         const rows = await db.query(
-          `SELECT int.* 
-           FROM integrantes as int
+          `SELECT i.* 
+           FROM integrantes as i
            LIMIT ?,?`, 
           [offset, config.listPerPage]
         );
