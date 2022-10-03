@@ -8,9 +8,9 @@ const {validarToken} = require ('../middelware/auth');
 async function getMultiple(page = 1){
       const offset = helper.getOffset(page, config.listPerPage);
       const rows = await db.query(
-        `SELECT  n.id as id_normatividad, concat(tn.nombre,' ',n.nombre) as nombre,  n.contenido AS contenido,n.url_descarga AS url_descarga, n.id_tipo_fk as id_tipo, tn.nombre AS tipo, n.fecha as fecha
-        FROM normatividades as n, tipos_normatividades as tn
-        WHERE n.id_tipo_fk=tn.id_tipo
+        `SELECT  n.id as id_normatividad, concat(tn.nombre,' ',n.nombre) as nombre,  n.contenido AS contenido,n.url_descarga AS url_descarga,
+                 n.id_tipo_fk as id_tipo, tn.nombre AS tipo, n.fecha as fecha
+        FROM normatividades as n inner join tipos_normatividades as tn on n.id_tipo_fk=tn.id_tipo
          LIMIT ?,?`, 
         [offset, config.listPerPage]
       );
@@ -28,9 +28,8 @@ async function getNormatividadesCadena(page = 1, cadena){
         let cad= '%'+cadena+'%';
         const rows = await db.query(
           `SELECT  n.id, concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
-          FROM tipos_normatividades as tn, normatividades as n
-          WHERE (n.id_tipo_fk=tn.id_tipo) and 
-                (tn.nombre  like ? or n.nombre like ? or n.contenido like ? )
+          FROM  normatividades as n inner join tipos_normatividades as tn on n.id_tipo_fk=tn.id_tipo
+          WHERE tn.nombre  like ? or n.nombre like ? or n.contenido like ? 
           LIMIT ?,?`, 
           [cad,cad, cad, offset, config.listPerPage]
         );
@@ -48,9 +47,8 @@ async function getNormatividadesTipo(page = 1, tipo){
       let tipoNormatividad= '%'+tipo+'%';
       const rows = await db.query(
         `SELECT  n.id, concat(tn.nombre," ",n.nombre) as nombre, n.contenido, n.url_descarga, n.fecha, tn.id_tipo as tipo
-        FROM tipos_normatividades as tn, normatividades as n
-        WHERE n.id_tipo_fk=tn.id_tipo and 
-              tn.nombre like ?
+        FROM normatividades as n inner join tipos_normatividades as tn on n.id_tipo_fk=tn.id_tipo
+        WHERE tn.nombre like ?
         LIMIT ?,?`, 
         [tipoNormatividad, offset, config.listPerPage]
       );
