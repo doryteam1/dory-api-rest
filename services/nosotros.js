@@ -60,8 +60,7 @@ async function registrarNosotros(nosotros,token){
                             }
                       }catch(err){
                           throw err;
-                      }      
-                        return {message};
+                      } 
                 }else{ 
                     throw createError(401,"Usted no tiene autorización"); 
                 }
