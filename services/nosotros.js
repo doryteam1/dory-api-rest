@@ -158,7 +158,7 @@ async function actualizacionParcialNosotros(idNosotros, nosotros, token){
                         }      
                   const rows2 = await db.query(
                     `select nos.*
-                    from nosostros as nos
+                    from nosotros as nos
                     where nos.id= ? `, 
                     [
                       idNosotros
