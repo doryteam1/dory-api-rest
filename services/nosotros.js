@@ -145,9 +145,59 @@ async function registrarNosotros(nosotros,token){
           }
   }/*End eliminarNosotros*/
 
+
+  /*------------------------------actualizacionParcialNosotros-------------------------------------------------*/
+async function actualizacionParcialNosotros(idNosotros, nosotros, token){
+  
+                if(token && validarToken(token))
+                {
+                        const payload=helper.parseJwt(token);  
+                        const rol = payload.rol;
+                        if(rol != "Administrador"){
+                          throw createError('401', "Usted No esta autorizado para actualizar la información de nosotros.")
+                        }      
+                  const rows2 = await db.query(
+                    `select nos.*
+                    from nosostros as nos
+                    where nos.id= ? `, 
+                    [
+                      idNosotros
+                    ]
+                  );
+                  if(rows2.length < 1 ){
+                    throw createError('404', 'No existe registro de la información de nosotros con es ID.')
+                  }
+                  var atributos = Object.keys(nosotros);   
+                  if(atributos.length!=0)
+                  {    
+                        var params = Object.values(nosotros);   
+                        var query = "update nosotros set ";
+                        params.push(idNosotros);
+
+                        for(var i=0; i < atributos.length; i++) {
+                          query = query + atributos[i] + '=?,';
+                        }
+                        query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+                        query = query +' '+'where id=?'
+                        const result = await db.query(query,params);                      
+                        let message = '';
+                        if (result.affectedRows) {
+                          message = 'Nosotros actualizado exitosamente';
+                        }else{
+                          throw createError(500,"No se pudo actualizar el registro de nosotros");    
+                        }
+                        return {message};
+                  }
+                  throw createError(400,"No hay parametros para actualizar");
+              }else{
+                throw createError(401,"Usuario no autorizado");
+              }
+}/*End actualizacionParcialNosotros*/
+
 module.exports = {
   getNosotros,
   registrarNosotros,
   actualizarNosotros,
-  eliminarNosotros
+  eliminarNosotros,
+  actualizacionParcialNosotros
 }

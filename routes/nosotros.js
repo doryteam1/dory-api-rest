@@ -41,4 +41,14 @@ router.delete('/eliminar/:id', async function(req, res, next) {
     }
   });
 
+  router.put('/actualizacion/parcial/:idNosotros', async function(req, res, next) {
+    try {
+      var token=req.headers.authorization;
+      res.json(await nosotros.actualizacionParcialNosotros(req.params.idNosotros, req.body,token));
+    } catch (err) {
+      console.error(`Error al actualizar parcialmente la información de nosotros`, err.message);
+      next(err);
+    }
+});
+
 module.exports = router;
