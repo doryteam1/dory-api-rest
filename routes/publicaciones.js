@@ -62,8 +62,7 @@ router.put('/update/:idPublicacion', async function(req, res, next) {
 
   router.get('/detailed/:idPublicacion', async function(req, res, next) {
     try {
-      var token=req.headers.authorization;
-      res.json(await publicaciones.getDetailPublicacion(req.params.idPublicacion,token));
+      res.json(await publicaciones.getDetailPublicacion(req.params.idPublicacion));
     } catch (err) {
       console.error(`Error al traer la publicación detallada `, err.message);
       next(err);

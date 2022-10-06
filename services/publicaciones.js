@@ -281,27 +281,9 @@ async function createPublicacion(body,token){
   } //* updatePhotosPublicacion */
 
   /*_____________getDetailPublicacion ________________________________*/
-  async function getDetailPublicacion(idpublicacion, token){
+  async function getDetailPublicacion(idpublicacion){
     try{
-      let rows=[];  
-       if(token && validarToken(token)){
-                let payload=helper.parseJwt(token);
-                id_user= payload.sub; 
-                rows = await db.query(
-                  `SELECT p.*,
-                         (select concat(u.nombres," ",u.apellidos)  from usuarios as u where u.id = p.usuarios_id) as usuario,
-                         (select u.foto from usuarios as u where u.id = p.usuarios_id) as foto_perfil,
-                         (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
-                         (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio
-                  FROM publicaciones as p
-                  WHERE  p.usuarios_id=? and p.id_publicacion=?
-                  `, 
-                  [id_user,idpublicacion]
-                ); 
-                if(rows.length < 1){
-                  throw createError(404, "Usted no tiene ninguna publicación con el id "+idpublicacion+".")
-                }
-        }else{
+      let rows=[];
           rows = await db.query(
             `SELECT p.*,
                     (select concat(u.nombres," ",u.apellidos) from usuarios as u where u.id = p.usuarios_id) as usuario,
@@ -312,8 +294,7 @@ async function createPublicacion(body,token){
             WHERE p.id_publicacion=?
             `, 
             [idpublicacion]
-          ); 
-        }
+          );         
             if(rows.length < 1){
               throw createError(404, "No se encuentra la publicación con el id "+idpublicacion+".")
             }
