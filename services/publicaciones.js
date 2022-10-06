@@ -289,6 +289,9 @@ async function createPublicacion(body,token){
                     (select concat(u.nombres," ",u.apellidos) from usuarios as u where u.id = p.usuarios_id) as usuario,
                     (select u.email from usuarios as u where u.id = p.usuarios_id) as email,
                     (select u.celular from usuarios as u where u.id = p.usuarios_id) as celular,
+                    (select tu.nombre_tipo_usuario  
+                     from usuarios as u inner join tipos_usuarios as tu on u.id_tipo_usuario=tu.id_tipo_usuario
+                     where u.id= p.usuarios_id) as tipo_usuario,
                     (select u.foto from usuarios as u where u.id = p.usuarios_id) as foto_perfil,
                     (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
                     (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio
