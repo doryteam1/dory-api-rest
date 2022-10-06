@@ -616,7 +616,8 @@ async function updateMisconsumos(body, token){
                           throw createError(401,"Usted no tiene autorización, soló el propietario esta autorizado");
                         }
                            const rows = await db.query(
-                            `SELECT u.id , concat (u.nombres,' ', u.apellidos) as nombres, u.email, u.celular as telefono,u.foto,
+                            `SELECT u.id , concat (u.nombres,' ', u.apellidos) as nombres, u.email, u.celular as telefono,u.foto,u.id_municipio,
+                                    (select m.nombre from municipios as m where m.id_municipio = u.id_municipio) as municipio,
                                     (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
                                     (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
                                     (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,
