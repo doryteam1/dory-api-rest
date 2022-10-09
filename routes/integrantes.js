@@ -41,4 +41,14 @@ router.delete('/eliminar/:id', async function(req, res, next) {
     }
   });
 
+  router.put('/parcial/:idIntegrante', async function(req, res, next) {
+    try {
+      var token=req.headers.authorization;
+      res.json(await usuario.updateParcialIntegrante(req.params.idIntegrante, req.body, token));
+    } catch (err) {
+      console.error(`Error al actualizar el integrante`, err.message);
+      next(err);
+    }
+  });
+
 module.exports = router;

@@ -4,7 +4,7 @@ const enlaces = require('../services/enlaces');
 
 router.get('/obtener', async function(req, res, next) {
   try {
-    res.json(await enlaces.getLink(req.query.page));
+    res.json(await enlaces.obtenerLink(req.query.page));
   } catch (err) {
     console.error(`Error al traer los enlaces de interés`, err.message);
     next(err);
@@ -13,7 +13,7 @@ router.get('/obtener', async function(req, res, next) {
 
 router.post('/registrar', async function(req, res, next) {
     try {
-      res.json(await enlaces.createLink(req.body));
+      res.json(await enlaces.registrarLink(req.body));
     } catch (err) {
       console.error(`Error creando el enlace de interés`, err.message);
       next(err);
@@ -23,7 +23,7 @@ router.post('/registrar', async function(req, res, next) {
 router.put('/actualizar/:id', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await enlaces.updateLink(req.params.id, req.body,token));
+      res.json(await enlaces.actualizarLink(req.params.id, req.body,token));
     } catch (err) {
       console.error(`Error al actualizar el enlace de interés`, err.message);
       next(err);
@@ -33,7 +33,7 @@ router.put('/actualizar/:id', async function(req, res, next) {
 router.delete('/eliminar/:id', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await enlaces.removeLink(req.params.id,token));
+      res.json(await enlaces.eliminarLink(req.params.id,token));
     } catch (err) {
       console.error(`Error al borrar el enlace de interés`, err.message);
       next(err);

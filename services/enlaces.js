@@ -5,7 +5,7 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
 /*_____________________ getLink______________________________________________*/
-async function getLink(page = 1){
+async function obtenerLink(page = 1){
         const offset = helper.getOffset(page, config.listPerPage);
         const rows = await db.query(
           `SELECT link.* 
@@ -121,7 +121,7 @@ async function registrarLink(Link,token){
 
 
 module.exports = {
-  getLink,
+  obtenerLink,
   registrarLink,
   actualizarLink,
   eliminarLink
