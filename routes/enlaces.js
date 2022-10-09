@@ -13,7 +13,8 @@ router.get('/obtener', async function(req, res, next) {
 
 router.post('/registrar', async function(req, res, next) {
     try {
-      res.json(await enlaces.registrarLink(req.body));
+      var token=req.headers.authorization;
+      res.json(await enlaces.registrarLink(req.body,token));
     } catch (err) {
       console.error(`Error creando el enlace de interés`, err.message);
       next(err);

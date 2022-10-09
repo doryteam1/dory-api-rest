@@ -22,9 +22,9 @@ async function obtenerLink(page = 1){
 }/*End getLink*/
 
 /*_____________________ registrarLink______________________________________________*/
-async function registrarLink(Link,token){
+async function registrarLink(Link,token){ 
         try{
-                if(token && validarToken(token)){
+                if(token && validarToken(token)){  
                      let payload=helper.parseJwt(token);
                      let tipo_user= payload.rol; 
                       if(tipo_user!='Administrador'){
