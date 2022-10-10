@@ -64,8 +64,8 @@ async function registrarintegrantes(integrantes,token){
                             var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/        
                             for(var i=0;i<enlaces.length;i++){
                                 await db.query(
-                                  `INSERT INTO enlaces_integrantes(id_integrante,id_enlace) VALUES (?,?)`,
-                                  [rowsId[0].id, enlaces[i]]
+                                  `INSERT INTO enlaces(url_enlace,id_integrante) VALUES (?,?)`,
+                                  [enlaces[i], rowsId[0].id]
                                 );
                             }
                             await conection.commit(); 
@@ -132,13 +132,13 @@ async function registrarintegrantes(integrantes,token){
                           }
                           var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/      
                           await db.query(
-                            `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
+                            `DELETE from enlaces where id_integrante=?`,
                             [id]
                           );        
                           for(var i=0;i<enlaces.length;i++){
                               await db.query(
-                                `INSERT INTO enlaces_integrantes(id_integrante,id_enlace) VALUES (?,?)`,
-                                [id, enlaces[i]]
+                                `INSERT INTO enlaces(url_enlace,id_integrante) VALUES (?,?)`,
+                                [enlaces[i],id]
                               );
                           } 
                             conection.commit(); 
@@ -170,9 +170,9 @@ async function registrarintegrantes(integrantes,token){
                           conection.beginTransaction();
                     try {
                               await db.query(
-                              `DELETE from enlaces_integrantes where id_integrante=?`,
+                              `DELETE from enlaces where id_integrante=?`,
                                [id]
-                              );  /*Elimino la relación del integrante en la tabla enlaces_integrantes(id_integrante,id_enlace) */
+                              );  /*Elimino la relación del integrante en la tabla enlaces(id_enlace,url-enlaces,id_integrante) */
 
                           const result = await db.query(
                             `DELETE FROM integrantes WHERE id=?`, 
