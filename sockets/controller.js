@@ -1,6 +1,6 @@
 const { Socket } = require('socket.io');
 const { ValidarToken } = require('../middelware/auth');
-const { ChatMensajes } = require('../models/chat-mensajes');
+const ChatMensajes = require('../models/chat-mensajes');
 
 const chatMensajes = new ChatMensajes();
 
