@@ -249,12 +249,12 @@ async function actualizarEnlaces(idIntegrante,body,token){
               }else{
                   if(arrayenlaces){ 
                         try{
-                              await db.query(
+                              await conection.execute(
                               `DELETE from enlaces where id_integrante=?`,
                                 [idIntegrante]
                               );       
                               for(var i=0;i<arrayenlaces.length;i++){
-                                  await db.query(
+                                  await conection.execute(
                                     `INSERT INTO enlaces (url_enlace,id_integrante) VALUES (?,?)`,
                                     [arrayenlaces[i], idIntegrante]
                                   );
