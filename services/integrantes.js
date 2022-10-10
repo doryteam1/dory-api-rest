@@ -64,8 +64,8 @@ async function registrarintegrantes(integrantes,token){
                             var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/        
                             for(var i=0;i<enlaces.length;i++){
                                 await db.query(
-                                  `INSERT INTO enlaces_integrantes(id_integrante,id_enlace) VALUES (?,?)`,
-                                  [rowsId[0].id, enlaces[i]]
+                                  `INSERT INTO enlaces(url_enlace,id_integrante) VALUES (?,?)`,
+                                  [enlaces[i], rowsId[0].id]
                                 );
                             }
                             await conection.commit(); 
@@ -132,13 +132,13 @@ async function registrarintegrantes(integrantes,token){
                           }
                           var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/      
                           await db.query(
-                            `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
+                            `DELETE from enlaces where id_integrante=?`,
                             [id]
                           );        
                           for(var i=0;i<enlaces.length;i++){
                               await db.query(
-                                `INSERT INTO enlaces_integrantes(id_integrante,id_enlace) VALUES (?,?)`,
-                                [id, enlaces[i]]
+                                `INSERT INTO enlaces(url_enlace,id_integrante) VALUES (?,?)`,
+                                [enlaces[i],id]
                               );
                           } 
                             conection.commit(); 
@@ -170,9 +170,9 @@ async function registrarintegrantes(integrantes,token){
                           conection.beginTransaction();
                     try {
                               await db.query(
-                              `DELETE from enlaces_integrantes where id_integrante=?`,
+                              `DELETE from enlaces where id_integrante=?`,
                                [id]
-                              );  /*Elimino la relación del integrante en la tabla enlaces_integrantes(id_integrante,id_enlace) */
+                              );  /*Elimino la relación del integrante en la tabla enlaces(id_enlace,url-enlaces,id_integrante) */
 
                           const result = await db.query(
                             `DELETE FROM integrantes WHERE id=?`, 
@@ -233,10 +233,58 @@ async function registrarintegrantes(integrantes,token){
         }   
 }/*End updateParcialIntegrante*/
 
+
+/*_____________________ actualizarEnlaces______________________________________________*/
+async function actualizarEnlaces(idIntegrante,body,token){  
+      var arrayenlaces= body.arrayEnlaces;
+      let tipo_user=null; 
+      const conection= await db.newConnection();
+      await conection.beginTransaction();
+      if(token && validarToken(token)){
+          let payload=helper.parseJwt(token);
+          tipo_user= payload.rol;        
+          try{                    
+              if(tipo_user!="Administrador"){ 
+                throw createError(401,"Usted no tiene autorización");
+              }else{
+                  if(arrayenlaces){ 
+                        try{
+                              await db.query(
+                              `DELETE from enlaces where id_integrante=?`,
+                                [idIntegrante]
+                              );       
+                              for(var i=0;i<arrayenlaces.length;i++){
+                                  await db.query(
+                                    `INSERT INTO enlaces (url_enlace,id_integrante) VALUES (?,?)`,
+                                    [arrayenlaces[i], idIntegrante]
+                                  );
+                              }                         
+                        }catch(err) {
+                              throw createError(400,err.message);
+                        }
+                  }else{
+                    throw createError(400,"Usted no agrego los enlaces para actualizar"); 
+                  }
+            } 
+            await conection.commit(); 
+            conection.release();
+            message = "Enlaces actualizados correctamente";
+            return { message };
+          }catch (error) {
+            await conection.rollback(); 
+            conection.release();
+            throw error;
+        } 
+      }else{
+        throw createError(401,"Usuario no autorizado");
+      }
+}/*End actualizarEnlaces*/
+
 module.exports = {
   getintegrantes,
   registrarintegrantes,
   actualizarintegrantes,
   eliminarintegrantes,
-  updateParcialIntegrante
+  updateParcialIntegrante,
+  actualizarEnlaces
 }
