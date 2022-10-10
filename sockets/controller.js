@@ -26,10 +26,10 @@ const socketController = async( socket = new Socket(), io ) => {
         
 
         // Limpiar cuando alguien se desconeta
-        /* socket.on('disconnect', () => {
-            chatMensajes.desconectarUsuario( usuario.id );
+        socket.on('disconnect', () => {
+            chatMensajes.desconectarUsuario( usuario.sub );
             io.emit('usuarios-activos', chatMensajes.usuariosArr );
-        }) */
+        })
 
         /* socket.on('enviar-mensaje', ({ uid, mensaje }) => {
             
