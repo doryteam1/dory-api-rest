@@ -177,6 +177,10 @@ app.use((err, req, res, next) => {
   console.log(`Example app listening at http://localhost:${port}`)
 }); */
 
+io.use((socket,next)=>{
+  console.log(socket.handshake)
+})
+
 io.on('connection', (socket) => {
   console.log('a user connected');
   console.log(socket.handshake.headers['x-token']);
