@@ -17,9 +17,9 @@ const socketController = async( socket = new Socket(), io ) => {
         let usuario = helper.parseJwt(token)
         console.log(usuario)
         // Agregar el usuario conectado
-        chatMensajes.conectarUsuario( usuario );
+       /*  chatMensajes.conectarUsuario( usuario );
         io.emit('usuarios-activos',     chatMensajes.usuariosArr );
-        socket.emit('recibir-mensajes', chatMensajes.ultimos10 );
+        socket.emit('recibir-mensajes', chatMensajes.ultimos10 ); */
 
         // Conectarlo a una sala especial
         //socket.join( usuario.id ); // global, socket.id, usuario.id
