@@ -54,7 +54,7 @@ router.delete('/eliminar/:id', async function(req, res, next) {
   router.put('/actualizar/enlaces/:idIntegrante', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await integrantes.actualizarintegrantes(req.params.idIntegrante,req.body,token));
+      res.json(await integrantes.actualizarEnlaces(req.params.idIntegrante,req.body,token));
     } catch (err) {
       console.error(`Error al actualizar los enlaces de interés del integrante del equipo de trabajo`, err.message);
       next(err);
