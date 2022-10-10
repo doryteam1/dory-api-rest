@@ -179,7 +179,7 @@ app.use((err, req, res, next) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  console.log(socket)
+  console.log(socket.handshake.headers['x-token'])
 });
 
 server.listen(port, () => {
