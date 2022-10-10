@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server); 
 
-const socketController = require('./sockets/controller')
+const { socketController } = require('./sockets/controller')
 const departamentosRouter = require('./routes/departamentos');
 const tipos_usuariosRouter = require('./routes/tipos_usuarios');
 const infraestructurasRouter = require('./routes/infraestructuras');
