@@ -183,8 +183,8 @@ io.use((socket,next)=>{
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  console.log(socket.handshake.headers['x-token']);
-  console.log(socket)
+  /* console.log(socket.handshake.headers['x-token']);
+  console.log(socket) */
 });
 
 server.listen(port, () => {
