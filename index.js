@@ -194,7 +194,7 @@ app.use((err, req, res, next) => {
   console.log('a user connected');
 }); */
 
-io.on('connection', ( socket ) => socketController(socket, this.io ) )
+io.on('connection', ( socket ) => socketController(socket, io ) )
 
 server.listen(port, () => {
   console.log('listening on *:'+port);
