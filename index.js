@@ -177,7 +177,7 @@ app.use((err, req, res, next) => {
   console.log(`Example app listening at http://localhost:${port}`)
 }); */
 
-io.use((socket,next)=>{
+/* io.use((socket,next)=>{
   const token = socket.handshake.auth.token;
   console.log(token)
   let valid = validarToken(token);
@@ -187,11 +187,13 @@ io.use((socket,next)=>{
   }else{
     console.log("Usuario autorizado")
   }
-})
+}) */
 
-io.on('connection', (socket) => {
+/* io.on('connection', (socket) => {
   console.log('a user connected');
-});
+}); */
+
+io.on('connection', ( socket ) => socketController(socket, this.io ) )
 
 server.listen(port, () => {
   console.log('listening on *:'+port);
