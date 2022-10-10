@@ -1,4 +1,4 @@
-const usuario = require('../services/usuario');
+const usuarioService = require('../services/usuario');
 class Mensaje {
     constructor( uid, nombre, mensaje ) {
         this.uid     = uid;
@@ -31,7 +31,7 @@ class ChatMensajes {
     }
 
     async conectarUsuario( usuario ) {
-        let userDetail = await usuario.getUserId(1, idUser)
+        let userDetail = await usuarioService.getUserId(1, idUser)
         console.log(userDetail)
         this.usuarios[usuario.sub] = userDetail.data
     }
