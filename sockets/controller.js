@@ -1,5 +1,5 @@
 const { Socket } = require('socket.io');
-const { ValidarToken } = require('../middelware/auth');
+const { validarToken } = require('../middelware/auth');
 const ChatMensajes = require('../models/chat-mensajes');
 
 const chatMensajes = new ChatMensajes();
@@ -8,7 +8,7 @@ const chatMensajes = new ChatMensajes();
 const socketController = async( socket = new Socket(), io ) => {
     const token = socket.handshake.auth.token;
     console.log(token)
-    let valid = ValidarToken(token);
+    let valid = validarToken(token);
     if(!valid){
         socket.disconnect();
         console.log("Usuario no autorizado");
