@@ -178,7 +178,8 @@ app.use((err, req, res, next) => {
 }); */
 
 io.use((socket,next)=>{
-  console.log(socket.handshake)
+  const token = socket.handshake.auth.token;
+  console.log("token ",token)
 })
 
 io.on('connection', (socket) => {
