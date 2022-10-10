@@ -234,59 +234,57 @@ async function registrarintegrantes(integrantes,token){
 }/*End updateParcialIntegrante*/
 
 
-/*_____________________ actualizarLink______________________________________________
-async function actualizarLink(body,token){  
-  var arrayenlaces= body.arrayEnlaces;
-  let tipo_user=null; 
-  const conection= await db.newConnection();
-  await conection.beginTransaction();
-  if(token && validarToken(token)){
-      let payload=helper.parseJwt(token);
-      tipo_user= payload.rol;
-      let id_user=payload.sub;
-      try{                    
-          if(tipo_user!="Administrador"){ 
-            throw createError(401,"Usted no tiene autorización");
-          }else{
-              if(arrayenlaces){ 
-                    try{
-                          await db.query(
-                          `DELETE from enlaces_integrantes where id_enlace=?`,
-                            [idEnlace]
-                          );       
-                          for(var i=0;i<arrayenlaces.length;i++){
-                              await db.query(
-                                `INSERT INTO enlaces_integrantes(id_integrante,id_enlace) VALUES (?,?)`,
-                                [id_integrante,arrayenlaces[i]]
-                              );
-                          }                         
-                    }catch(err) {
-                          throw createError(400,err.message);
-                    }
+/*_____________________ actualizarEnlaces______________________________________________*/
+async function actualizarEnlaces(idIntegrante,body,token){  
+      var arrayenlaces= body.arrayEnlaces;
+      let tipo_user=null; 
+      const conection= await db.newConnection();
+      await conection.beginTransaction();
+      if(token && validarToken(token)){
+          let payload=helper.parseJwt(token);
+          tipo_user= payload.rol;        
+          try{                    
+              if(tipo_user!="Administrador"){ 
+                throw createError(401,"Usted no tiene autorización");
               }else{
-                throw createError(400,"Usted no agrego los enlaces para actualizar"); 
-              }
+                  if(arrayenlaces){ 
+                        try{
+                              await db.query(
+                              `DELETE from enlaces where id_integrante=?`,
+                                [idIntegrante]
+                              );       
+                              for(var i=0;i<arrayenlaces.length;i++){
+                                  await db.query(
+                                    `INSERT INTO enlaces (url_enlace,id_integrante) VALUES (?,?)`,
+                                    [arrayenlaces[i], idIntegrante]
+                                  );
+                              }                         
+                        }catch(err) {
+                              throw createError(400,err.message);
+                        }
+                  }else{
+                    throw createError(400,"Usted no agrego los enlaces para actualizar"); 
+                  }
+            } 
+            await conection.commit(); 
+            conection.release();
+            message = "Enlaces actualizados correctamente";
+            return { message };
+          }catch (error) {
+            await conection.rollback(); 
+            conection.release();
+            throw error;
         } 
-        await conection.commit(); 
-        conection.release();
-        message = "Fotos actualizadas correctamente";
-        return { message };
-      }catch (error) {
-        await conection.rollback(); 
-        conection.release();
-        throw error;
-    } 
-  }else{
-    throw createError(401,"Usuario no autorizado");
-  }
-
-
-}End actualizarLink*/
+      }else{
+        throw createError(401,"Usuario no autorizado");
+      }
+}/*End actualizarEnlaces*/
 
 module.exports = {
   getintegrantes,
   registrarintegrantes,
   actualizarintegrantes,
   eliminarintegrantes,
-  updateParcialIntegrante
+  updateParcialIntegrante,
+  actualizarEnlaces
 }
