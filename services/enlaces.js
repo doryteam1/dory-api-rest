@@ -72,7 +72,7 @@ async function registrarLink(Link,token){
                         throw createError(400,"Debe enviar el nombre del enlace de interés para su actualización");
                     }
                     const result = await db.query(
-                    `UPDATE Link
+                    `UPDATE enlaces_interes
                     SET nombre=?
                     WHERE id=?`,
                     [ 
