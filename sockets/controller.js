@@ -1,7 +1,7 @@
 const { Socket } = require('socket.io');
 const { validarToken } = require('../middelware/auth');
 const ChatMensajes = require('../models/chat-mensajes');
-
+const helper = require('../helper');
 const chatMensajes = new ChatMensajes();
 
 
@@ -14,36 +14,36 @@ const socketController = async( socket = new Socket(), io ) => {
         console.log("Usuario no autorizado");
     }else{
         console.log("Usuario autorizado")
-    }
+        let usuario = helper.parseJwt(token)
+        console.log(usuario)
+        // Agregar el usuario conectado
+        chatMensajes.conectarUsuario( usuario );
+        io.emit('usuarios-activos',     chatMensajes.usuariosArr );
+        socket.emit('recibir-mensajes', chatMensajes.ultimos10 );
 
-    // Agregar el usuario conectado
-    /* chatMensajes.conectarUsuario( usuario );
-    io.emit('usuarios-activos',     chatMensajes.usuariosArr );
-    socket.emit('recibir-mensajes', chatMensajes.ultimos10 ); */
-
-    // Conectarlo a una sala especial
-    //socket.join( usuario.id ); // global, socket.id, usuario.id
-    
-
-    // Limpiar cuando alguien se desconeta
-    /* socket.on('disconnect', () => {
-        chatMensajes.desconectarUsuario( usuario.id );
-        io.emit('usuarios-activos', chatMensajes.usuariosArr );
-    }) */
-
-    /* socket.on('enviar-mensaje', ({ uid, mensaje }) => {
+        // Conectarlo a una sala especial
+        //socket.join( usuario.id ); // global, socket.id, usuario.id
         
-        if ( uid ) {
-            // Mensaje privado
-            socket.to( uid ).emit( 'mensaje-privado', { de: usuario.nombre, mensaje });
-        } else {
-            chatMensajes.enviarMensaje(usuario.id, usuario.nombre, mensaje );
-            io.emit('recibir-mensajes', chatMensajes.ultimos10 );
-        }
 
-    })
- */
-    
+        // Limpiar cuando alguien se desconeta
+        /* socket.on('disconnect', () => {
+            chatMensajes.desconectarUsuario( usuario.id );
+            io.emit('usuarios-activos', chatMensajes.usuariosArr );
+        }) */
+
+        /* socket.on('enviar-mensaje', ({ uid, mensaje }) => {
+            
+            if ( uid ) {
+                // Mensaje privado
+                socket.to( uid ).emit( 'mensaje-privado', { de: usuario.nombre, mensaje });
+            } else {
+                chatMensajes.enviarMensaje(usuario.id, usuario.nombre, mensaje );
+                io.emit('recibir-mensajes', chatMensajes.ultimos10 );
+            }
+
+        })
+    */
+    }
 }
 
 
