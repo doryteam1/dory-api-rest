@@ -179,6 +179,7 @@ app.use((err, req, res, next) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected');
+  console.log(socket)
 });
 
 server.listen(port, () => {
