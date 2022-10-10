@@ -28,36 +28,53 @@ async function registrarintegrantes(integrantes,token){
                      let payload=helper.parseJwt(token);
                      let tipo_user= payload.rol; 
                       if(tipo_user!='Administrador'){
-                              throw createError(401,"Usted no tiene autorización para actualizar la información de los integrantes");
+                              throw createError(401,"Usted no tiene autorización para registrar la información de los integrantes");
                       }
+                      const conection= await db.newConnection(); /*conection of TRANSACTION */
+                      await conection.beginTransaction();
                       if(integrantes.nombres === undefined || 
                         integrantes.apellidos === undefined ||
                         integrantes.descripcion === undefined ||
-                        id_enlaces_interes === undefined || 
-                        integrantes.imagen === undefined 
+                        integrantes.imagen === undefined ||
+                        integrantes.fecha_nacimiento === undefined ||
+                        integrantes.cargo === undefined 
                         ){
                               throw createError(400,"Debe enviar todos los datos requeridos para el registro de la información de integrantes");
                         }
                       try{
                             const result = await db.query(
-                              `INSERT INTO integrantes(nombres,apellidos,descripcion,id_enlaces_interes_entidad,imagen) VALUES (?,?,?,?,?)`, 
+                              `INSERT INTO integrantes(nombres,apellidos,descripcion,imagen, fecha_nacimiento,cargo) VALUES (?,?,?,?,?,?)`, 
                               [
                                 integrantes.nombres,
                                 integrantes.apellidos, 
                                 integrantes.descripcion,
-                                integrantes.id_enlaces_interes,
-                                integrantes.imagen
+                                integrantes.imagen,
+                                integrantes.fecha_nacimiento,
+                                integrantes.cargo
                               ]
                             );  
-                            let message = 'Error registrando la información de integrantes';  
+                            let message = 'Error registrando la información del integrante';  
                             if (result.affectedRows) {
-                              message = 'integrantes registrada exitosamente';
-                              return {message};
-                            }else {
-                                  throw createError(500,"Ocurrió un problema al registrar la información de integrantes");
+                              message = 'integrante registrado exitosamente';
                             }
+                            const rowsId = await db.query(
+                              `SELECT MAX(id) as id FROM integrantes`
+                            ); /*ultimo Id_integrante que se creo con autoincremental*/
+                        
+                            var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/        
+                            for(var i=0;i<enlaces.length;i++){
+                                await db.query(
+                                  `INSERT INTO enlaces_integrantes(id_integrante,id_enlace) VALUES (?,?)`,
+                                  [rowsId[0].id, enlaces[i]]
+                                );
+                            }
+                            await conection.commit(); 
+                                  conection.release();
+                            return {message};
                       }catch(err){
-                          throw err;
+                            await conection.rollback(); /*Si hay algún error  */ 
+                                  conection.release();
+                                  throw err;
                       } 
                 }else{ 
                     throw createError(401,"Usted no tiene autorización"); 
@@ -76,38 +93,62 @@ async function registrarintegrantes(integrantes,token){
                     if(tipo_user!='Administrador'){
                             throw createError(401,"Usted no tiene autorización para actualizar la información de los integrantes");
                     }
+                    const conection= await db.newConnection(); 
+                          conection.beginTransaction();
                   if(
                     integrantes.nombres === undefined || 
                     integrantes.apellidos === undefined ||
-                    integrantes.descripcion === undefined ||
-                    integrantes.id_enlaces_interes === undefined || 
-                    integrantes.imagen === undefined 
+                    integrantes.descripcion === undefined ||                   
+                    integrantes.imagen === undefined ||
+                    integrantes.fecha_nacimiento === undefined ||
+                    integrantes.cargo === undefined 
                     )
                     {
-                        throw createError(400,"Debe enviar todos los datos requeridos para la actualización de la información de integrantes");
+                        throw createError(400,"Debe enviar todos los datos requeridos para la actualización de la información del integrante");
                     }
-                    const result = await db.query(
-                    `UPDATE integrantes
-                    SET nombres=?, 
-                        apellidos=?,
-                        descripcion=?,
-                        id_enlaces_interes=?,
-                        imagen=?
-                    WHERE id=?`,
-                    [
-                      integrantes.nombres,
-                      integrantes.apellidos, 
-                      integrantes.descripcion,
-                      integrantes.id_enlaces_interes,
-                      integrantes.imagen,
-                      id
-                    ] 
-                  );  
-                  let message = 'Error actualizando la información de integrantes';  
-                  if (result.affectedRows) {
-                    message = 'integrantes actualizada exitosamente';
-                  }  
-                  return {message};
+                    try{
+                            const result = await db.query(
+                            `UPDATE integrantes
+                            SET nombres=?, 
+                                apellidos=?,
+                                descripcion=?,
+                                imagen=?,
+                                fecha_nacimiento=?,
+                                cargo=?
+                            WHERE id=?`,
+                            [
+                              integrantes.nombres,
+                              integrantes.apellidos, 
+                              integrantes.descripcion,
+                              integrantes.imagen,
+                              integrantes.fecha_nacimiento,
+                              integrantes.cargo,
+                              id
+                            ] 
+                          );  
+                          let message = 'Error actualizando la información del integrante';  
+                          if (result.affectedRows) {
+                            message = 'integrante actualizado exitosamente';
+                          }
+                          var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/      
+                          await db.query(
+                            `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
+                            [id]
+                          );        
+                          for(var i=0;i<enlaces.length;i++){
+                              await db.query(
+                                `INSERT INTO enlaces_integrantes(id_integrante,id_enlace) VALUES (?,?)`,
+                                [id, enlaces[i]]
+                              );
+                          } 
+                            conection.commit(); 
+                            conection.release(); 
+                            return {message};
+                      }catch(error){
+                                conection.rollback(); 
+                                conection.release(); 
+                                throw error
+                      }
                 }else{ 
                   throw createError(401,"Usted no tiene autorización"); 
               }
@@ -125,15 +166,30 @@ async function registrarintegrantes(integrantes,token){
                     if(tipo_user!='Administrador'){
                             throw createError(401,"Usted no tiene autorización para eliminar la información de los integrantes");
                     }
-                    const result = await db.query(
-                      `DELETE FROM integrantes WHERE id=?`, 
-                      [id]
-                    );  
-                    let message = 'Error borrando la información de integrantes';  
-                    if (result.affectedRows) {
-                      message = 'integrante borrado exitosamente';
-                    }  
-                    return {message};
+                    const conection= await db.newConnection(); /*conection of TRANSACTION */
+                          conection.beginTransaction();
+                    try {
+                              await db.query(
+                              `DELETE from enlaces_integrantes where id_integrante=?`,
+                               [id]
+                              );  /*Elimino la relación del integrante en la tabla enlaces_integrantes(id_integrante,id_enlace) */
+
+                          const result = await db.query(
+                            `DELETE FROM integrantes WHERE id=?`, 
+                            [id]
+                          );  
+                          let message = 'Error borrando la información del integrante';  
+                          if (result.affectedRows) {
+                            message = 'integrante borrado exitosamente';
+                          }  
+                            conection.commit(); 
+                            conection.release();
+                            return {message};
+                        }catch(error){
+                                conection.rollback(); /*Si hay algún error  */ 
+                                conection.release();
+                                throw createError(500,"Error al eliminar el integrante");
+                        }
                 }else{ 
                     throw createError(401,"Usted no tiene autorización"); 
                 }
@@ -142,9 +198,45 @@ async function registrarintegrantes(integrantes,token){
           }
   }/*End eliminarintegrantes*/
 
+/*______________________________________updateparcialIntegrante___________________________________________*/
+  async function updateParcialIntegrante(idUser, integrante, token){  
+    try{
+          if(token && validarToken(token)){
+                  let payload=helper.parseJwt(token);
+                  let tipo_user= payload.rol; 
+                  if(tipo_user!='Administrador'){
+                    throw createError(401,"Usted no tiene autorización para actualizar integrantes");
+                  }                     
+                      var atributos=Object.keys(integrante); /*Arreglo de los keys del integrante*/ 
+                      if (atributos.length!=0){    
+                          var param=Object.values(integrante);
+                          var query = "UPDATE integrantes SET ";
+                          param.push(idUser);/*Agrego el id al final de los parametros*/ 
+                          for(var i=0; i<atributos.length;i++) {
+                            query= query+atributos[i]+'=?,';      }
+                          query= query.substring(0, query.length-1);/*eliminar la coma final*/ 
+                          query= query+' '+'WHERE id=?'
+                          const result = await db.query(query,param);    
+                          let message = 'Error actualizando el registro del integrante';    
+                          if (result.affectedRows) {
+                            message = 'Integrante actualizado exitosamente';
+                          }
+                          return {message};
+                    }
+                      throw createError(400,"No hay parametros para actualizar");
+          }else{
+            throw createError(401,"Usuario no autorizado"); 
+          }
+        } catch (error) {
+              console.log(error);
+              throw error;
+        }   
+}/*End updateParcialIntegrante*/
+
 module.exports = {
   getintegrantes,
   registrarintegrantes,
   actualizarintegrantes,
-  eliminarintegrantes
+  eliminarintegrantes,
+  updateParcialIntegrante
 }
