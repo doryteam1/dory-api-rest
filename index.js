@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
-const {verifyToken} = require ('./middelware/auth');
+const {verifyToken, validarToken} = require ('./middelware/auth');
 
 /*Socket.io con express*/
 const http = require('http');
@@ -179,13 +179,17 @@ app.use((err, req, res, next) => {
 
 io.use((socket,next)=>{
   const token = socket.handshake.auth.token;
-  console.log("token ",token)
+  let valid = validarToken(token);
+  if(!valid){
+    socket.disconnect();
+    console.log("Usuario no autorizado");
+  }else{
+    console.log("Usuario autorizado")
+  }
 })
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  /* console.log(socket.handshake.headers['x-token']);
-  console.log(socket) */
 });
 
 server.listen(port, () => {
