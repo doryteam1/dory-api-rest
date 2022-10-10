@@ -260,7 +260,7 @@ async function actualizarEnlaces(idIntegrante,body,token){
                                   );
                               }                         
                         }catch(err) {
-                              throw createError(400,err.message);
+                              throw err;
                         }
                   }else{
                     throw createError(400,"Usted no agrego los enlaces para actualizar"); 
