@@ -520,7 +520,7 @@ async function createGranja(body,token){
                   }
                   if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
                       const propiedad = await conection.execute(
-                        `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario='1' and ug.id_granja_pk_fk=?`,
+                        `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk=?`,
                         [id_user,id_granja]
                         );
                       if(propiedad.length>0){
