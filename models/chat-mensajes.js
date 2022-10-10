@@ -31,7 +31,7 @@ class ChatMensajes {
     }
 
     async conectarUsuario( usuario ) {
-        if(!this.usuarios.sub)
+        if(!has(this.usuarios,usuario.sub))
         {
             let userDetail = await usuarioService.getUserId(1, usuario.sub)
             console.log(userDetail)
