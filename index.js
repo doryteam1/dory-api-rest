@@ -179,6 +179,7 @@ app.use((err, req, res, next) => {
 
 io.use((socket,next)=>{
   const token = socket.handshake.auth.token;
+  console.log(token)
   let valid = validarToken(token);
   if(!valid){
     socket.disconnect();
