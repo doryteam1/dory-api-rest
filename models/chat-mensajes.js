@@ -33,7 +33,7 @@ class ChatMensajes {
     async conectarUsuario( usuario ) {
         let userDetail = await usuarioService.getUserId(1, usuario.sub)
         console.log(userDetail)
-        this.usuarios[usuario.sub] = userDetail.data
+        this.usuarios[usuario.sub] = userDetail.data[0]
     }
 
     desconectarUsuario( id ) {
