@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
-const {verifyToken} = require ('./middelware/auth');
+const {verifyToken, validarToken} = require ('./middelware/auth');
 
 /*Socket.io con express*/
 const http = require('http');
@@ -10,6 +10,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server); 
 
+const socketController = require('./sockets/controller')
 const departamentosRouter = require('./routes/departamentos');
 const tipos_usuariosRouter = require('./routes/tipos_usuarios');
 const infraestructurasRouter = require('./routes/infraestructuras');
@@ -177,9 +178,23 @@ app.use((err, req, res, next) => {
   console.log(`Example app listening at http://localhost:${port}`)
 }); */
 
-io.on('connection', (socket) => {
+io.use((socket,next)=>{
+  const token = socket.handshake.auth.token;
+  console.log(token)
+  let valid = validarToken(token);
+  if(!valid){
+    socket.disconnect();
+    console.log("Usuario no autorizado");
+  }else{
+    console.log("Usuario autorizado")
+  }
+})
+
+ io.on('connection', (socket) => {
   console.log('a user connected');
 });
+
+//io.on('connection', ( socket ) => socketController(socket, this.io ) )
 
 server.listen(port, () => {
   console.log('listening on *:'+port);
