@@ -61,16 +61,19 @@ async function registrarintegrantes(integrantes,token){
                               `SELECT MAX(id) as id FROM integrantes`
                             ); /*ultimo Id_integrante que se creo con autoincremental*/
                         
-                            var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/        
-                            for(var i=0;i<enlaces.length;i++){
-                                await db.query(
-                                  `INSERT INTO enlaces(url_enlace,id_integrante) VALUES (?,?)`,
-                                  [enlaces[i], rowsId[0].id]
-                                );
+                            var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/    
+                            if(!enlaces){ 
+                              throw createError(400,"Array de enlaces enviado erroneamente, no se han podido registrar los enlaces al integrante");
                             }
-                            await conection.commit(); 
-                                  conection.release();
-                            return {message};
+                                for(var i=0;i<enlaces.length;i++){
+                                    await db.query(
+                                      `INSERT INTO enlaces(url_enlace,id_integrante) VALUES (?,?)`,
+                                      [enlaces[i], rowsId[0].id]
+                                    );
+                                }
+                                await conection.commit(); 
+                                      conection.release();
+                                return {message};
                       }catch(err){
                             await conection.rollback(); /*Si hay algún error  */ 
                                   conection.release();
@@ -260,7 +263,7 @@ async function actualizarEnlaces(idIntegrante,body,token){
                                   );
                               }                         
                         }catch(err) {
-                              throw createError(400,err.message);
+                              throw err;
                         }
                   }else{
                     throw createError(400,"Usted no agrego los enlaces para actualizar"); 
