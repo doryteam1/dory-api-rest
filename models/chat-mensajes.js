@@ -31,13 +31,15 @@ class ChatMensajes {
     }
 
     async conectarUsuario( usuario ) {
+        let userDetail = await usuarioService.getUserId(1, usuario.sub);
         if(!(usuario.sub in this.usuarios))
         {
-            let userDetail = await usuarioService.getUserId(1, usuario.sub)
             this.usuarios[usuario.sub] = userDetail.data[0]
         }
         console.log("Usuarios conectados ",this.usuariosArr.length)
         this.printConectedUsers()
+
+        return userDetail;
     }
 
     printConectedUsers(){
