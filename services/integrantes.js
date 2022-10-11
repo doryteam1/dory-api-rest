@@ -40,7 +40,7 @@ async function getintegrantes(page = 1){
 }/*End getintegrantes*/
 
 /*_____________________ registrarintegrantes______________________________________________*/
-async function registrarintegrantes(integrantes,token){console.log(integrantes);   
+async function registrarintegrantes(integrantes,token){  
         try{
                 if(token && validarToken(token)){
                      let payload=helper.parseJwt(token);
@@ -55,20 +55,26 @@ async function registrarintegrantes(integrantes,token){console.log(integrantes);
                         integrantes.descripcion === undefined ||
                         integrantes.imagen === undefined ||
                         integrantes.fecha_nacimiento === undefined ||
-                        integrantes.cargo === undefined 
+                        integrantes.cargo === undefined ||
+                        integrantes.municipio === undefined ||
+                        integrantes.departamento=== undefined ||
+                        integrantes.pais === undefined 
                         ){
                               throw createError(400,"Debe enviar todos los datos requeridos para el registro de la información de integrantes");
                         }
                       try{
                             const result = await db.query(
-                              `INSERT INTO integrantes(nombres,apellidos,descripcion,imagen, fecha_nacimiento,cargo) VALUES (?,?,?,?,?,?)`, 
+                              `INSERT INTO integrantes(nombres,apellidos,descripcion,imagen, fecha_nacimiento,cargo,municipio,departamento,pais) VALUES (?,?,?,?,?,?,?,?,?)`, 
                               [
                                 integrantes.nombres,
                                 integrantes.apellidos, 
                                 integrantes.descripcion,
                                 integrantes.imagen,
                                 integrantes.fecha_nacimiento,
-                                integrantes.cargo
+                                integrantes.cargo,
+                                integrantes.municipio,
+                                integrantes.departamento,
+                                integrantes.pais
                               ]
                             );  
                             let message = 'Error registrando la información del integrante';  
@@ -120,7 +126,10 @@ async function registrarintegrantes(integrantes,token){console.log(integrantes);
                     integrantes.descripcion === undefined ||                   
                     integrantes.imagen === undefined ||
                     integrantes.fecha_nacimiento === undefined ||
-                    integrantes.cargo === undefined 
+                    integrantes.cargo === undefined ||
+                    integrantes.municipio === undefined ||
+                    integrantes.departamento=== undefined ||
+                    integrantes.pais === undefined
                     )
                     {
                         throw createError(400,"Debe enviar todos los datos requeridos para la actualización de la información del integrante");
@@ -133,7 +142,10 @@ async function registrarintegrantes(integrantes,token){console.log(integrantes);
                                 descripcion=?,
                                 imagen=?,
                                 fecha_nacimiento=?,
-                                cargo=?
+                                cargo=?,
+                                municipio=?,
+                                departamento=?,
+                                pais=?
                             WHERE id=?`,
                             [
                               integrantes.nombres,
@@ -142,6 +154,9 @@ async function registrarintegrantes(integrantes,token){console.log(integrantes);
                               integrantes.imagen,
                               integrantes.fecha_nacimiento,
                               integrantes.cargo,
+                              integrantes.municipio,
+                              integrantes.departamento,
+                              integrantes.pais,
                               id
                             ] 
                           );  
