@@ -8,7 +8,11 @@ const {verifyToken, validarToken} = require ('./middelware/auth');
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server); 
+const io = new Server(server,{
+  cors: {
+    origin:process.env.DORY_SERVER_URL
+  }
+}); 
 
 const { socketController } = require('./sockets/controller')
 const departamentosRouter = require('./routes/departamentos');
