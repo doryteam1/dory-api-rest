@@ -40,7 +40,7 @@ async function getintegrantes(page = 1){
 }/*End getintegrantes*/
 
 /*_____________________ registrarintegrantes______________________________________________*/
-async function registrarintegrantes(integrantes,token){
+async function registrarintegrantes(integrantes,token){console.log(integrantes);   
         try{
                 if(token && validarToken(token)){
                      let payload=helper.parseJwt(token);
@@ -79,7 +79,7 @@ async function registrarintegrantes(integrantes,token){
                               `SELECT MAX(id) as id FROM integrantes`
                             ); /*ultimo Id_integrante que se creo con autoincremental*/
                         
-                           /* var enlaces2=JSON.parse(integrantes.arrayEnlaces);Pasar el string a vector*/    
+                            /*var enlaces2=JSON.parse(integrantes.arrayEnlaces);Pasar el string a vector*/    
                             var enlaces=integrantes.arrayEnlaces; 
                                 for(var i=0;i<enlaces.length;i++){
                                     await db.query(
