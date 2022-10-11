@@ -120,4 +120,14 @@ router.get('/buscar/noticia/:cadena', async function(req, res, next) {
   }
 });
 
+router.put('/update/parcial/:idNovedad', async function(req, res, next) {
+  try {
+    var token=req.headers.authorization; 
+    res.json(await novedades.updateVisitas(req.params.idNovedad,req.body,token));
+  } catch (err) {
+    console.error(`Error al actualizar parcialmente la novedad.`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;

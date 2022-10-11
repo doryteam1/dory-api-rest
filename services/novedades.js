@@ -72,7 +72,7 @@ async function create(novedad,token){
                           let tipo_user= payload.rol; 
                           let id_user= payload.sub; 
                         if(tipo_user!='Administrador'){
-                                throw createError(401,"Usted no tiene autorización para registrar eventos");
+                                throw createError(401,"Usted no tiene autorización para registrar novedades");
                         }
                       const conection= await db.newConnection(); /*conection of TRANSACTION */
                       await conection.beginTransaction();
@@ -151,7 +151,7 @@ async function create(novedad,token){
                             let tipo_user= payload.rol; 
                             let id_user= payload.sub; 
                           if(tipo_user!='Administrador'){
-                                  throw createError(401,"Usted no tiene autorización para registrar eventos");
+                                  throw createError(401,"Usted no tiene autorización para actualizar novedades");
                           }
                           const conection= await db.newConnection(); /*conection of TRANSACTION */
                           conection.beginTransaction();
@@ -245,7 +245,7 @@ async function create(novedad,token){
                           let tipo_user= payload.rol; 
                           let id_user= payload.sub; 
                         if(tipo_user!='Administrador'){
-                                throw createError(401,"Usted no tiene autorización para registrar eventos");
+                                throw createError(401,"Usted no tiene autorización para eliminar novedades");
                         }
                       const conection= await db.newConnection(); /*conection of TRANSACTION */
                       conection.beginTransaction();
@@ -729,6 +729,60 @@ async function getNoticias(page = 1, cadena,token){
         }
 }//fin getNoticias
 
+/*------------------------------updateParcialNovedad-------------------------------------------------*/
+async function updateParcialNovedad(idNovedad, novedad, token){
+      try{
+            if(token && validarToken(token))
+            {
+                  const payload=helper.parseJwt(token);  
+                  const id_user=payload.sub;
+                  const rol = payload.rol;
+                  if(rol!='Administrador'){
+                        throw createError(401,"Usted no tiene autorización para actualizar la novedad");
+                  }     
+                  const rows2 = await db.query(
+                    `select n.*
+                    from novedades as n
+                    where n.usuarios_id = ? and n.id_novedad = ? `, 
+                    [
+                      id_user,
+                      idNovedad
+                    ]
+                  );
+                  if(rows2.length < 1 ){
+                    throw createError('401', 'El usuario no es propietario de la novedad y no esta autorizado para actualizarla.')
+                  }                
+                  var atributos = Object.keys(novedad);   
+                  if(atributos.length!=0)
+                  {    
+                    var params = Object.values(novedad);   
+                    var query = "update novedades set ";
+                    params.push(idNovedad);
+                    for(var i=0; i < atributos.length; i++) {
+                      query = query + atributos[i] + '=?,';
+                    }
+                    query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+                    query = query +' '+'where id_novedad=?'
+                    const result = await db.query(query,params);                  
+                    let message = '';
+                    if (result.affectedRows) {
+                      message = 'Neovedad actualizada exitosamente';
+                    }else{
+                      throw createError(500,"No se pudo actualizar la novedad");    
+                    }
+                    return {message};
+                  }
+                  throw createError(400,"No hay parámetros para actualizar");
+          }else{
+            throw createError(401,"Usuario no autorizado");
+          }
+      }catch(error){
+          throw error;
+      }
+}/*End updateParcialNovedad*/
+
+
+
 module.exports = {
   getMultiple,
   create,
@@ -743,5 +797,6 @@ module.exports = {
   getArticulos,
   getArticulosColombianos,
   getRevistas,
-  getNoticias
+  getNoticias,
+  updateParcialNovedad
 }
