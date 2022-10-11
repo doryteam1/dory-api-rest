@@ -123,7 +123,7 @@ async function create(normatividad,token){
                       normatividad.nombre, 
                       normatividad.contenido,
                       normatividad.url_descarga, 
-                      normatividad.id_tipo_fk,
+                      normatividad.id_tipo,
                       normatividad.fecha,
                       id
                     ] 
