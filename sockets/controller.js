@@ -15,7 +15,6 @@ const socketController = async( socket = new Socket(), io ) => {
     }else{
         console.log("Usuario autorizado")
         let usuario = helper.parseJwt(token)
-        console.log(usuario)
         // Agregar el usuario conectado
         chatMensajes.conectarUsuario( usuario );
         io.emit('usuarios-activos',     chatMensajes.usuariosArr );

@@ -37,6 +37,7 @@ class ChatMensajes {
             console.log(userDetail)
             this.usuarios[usuario.sub] = userDetail.data[0]
         }
+        console.log("Usuarios conectados ",this.usuarios)
     }
 
     desconectarUsuario( id ) {
