@@ -7,7 +7,10 @@ var createError = require('http-errors');
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT * FROM tipos_usuarios LIMIT ?,?`, 
+    `SELECT tu.* 
+    FROM tipos_usuarios AS tu
+    WHERE tu.id_tipo_usuario != 0
+    LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
   const data = helper.emptyOrRows(rows);
