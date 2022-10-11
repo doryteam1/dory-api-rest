@@ -8,12 +8,30 @@ const {validarToken} = require ('../middelware/auth');
 async function getintegrantes(page = 1){
         const offset = helper.getOffset(page, config.listPerPage);
         const rows = await db.query(
-          `SELECT i.* 
-           FROM integrantes as i
+          `SELECT i.*,e.url_enlace
+           FROM integrantes as i left join enlaces as e on (e.id_integrante = i.id) 
            LIMIT ?,?`, 
           [offset, config.listPerPage]
         );
-        const data = helper.emptyOrRows(rows);
+        let data = [];
+        var arrayenlaces= new Array();
+        var nuevoRows = new Array();  
+        var index= rows[0].id;
+        nuevoRows.push(rows[0]);        
+        rows.forEach((element)=>{           
+          if((index == element.id))
+          { 
+            arrayenlaces.push(element.url_enlace);
+          }else { 
+                    index= element.id;
+                    nuevoRows[nuevoRows.length-1].enlaces=arrayenlaces;/*Arreglo de fotos agregado al final del arreglo de granjas */
+                    nuevoRows.push(element);
+                    arrayenlaces=[];  
+                    arrayenlaces.push(element.url_enlace);
+          }
+        });
+          nuevoRows[nuevoRows.length-1].enlaces=arrayenlaces; 
+          data = helper.emptyOrRows(nuevoRows);
         const meta = {page};
         return {
           data,
@@ -61,10 +79,8 @@ async function registrarintegrantes(integrantes,token){
                               `SELECT MAX(id) as id FROM integrantes`
                             ); /*ultimo Id_integrante que se creo con autoincremental*/
                         
-                            var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/    
-                            if(!enlaces){ 
-                              throw createError(400,"Array de enlaces enviado erroneamente, no se han podido registrar los enlaces al integrante");
-                            }
+                            var enlaces2=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/    
+                            var enlaces=integrantes.arrayEnlaces;  console.log(enlaces);
                                 for(var i=0;i<enlaces.length;i++){
                                     await db.query(
                                       `INSERT INTO enlaces(url_enlace,id_integrante) VALUES (?,?)`,
