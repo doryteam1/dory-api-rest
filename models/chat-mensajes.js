@@ -36,7 +36,7 @@ class ChatMensajes {
             let userDetail = await usuarioService.getUserId(1, usuario.sub)
             this.usuarios[usuario.sub] = userDetail.data[0]
         }
-        //console.log("Usuarios conectados ",this.usuarios)
+        console.log("Usuarios conectados ",this.usuarios)
     }
 
     desconectarUsuario( id ) {
