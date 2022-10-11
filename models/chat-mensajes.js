@@ -34,13 +34,24 @@ class ChatMensajes {
         if(!(usuario.sub in this.usuarios))
         {
             let userDetail = await usuarioService.getUserId(1, usuario.sub)
-            console.log(userDetail)
             this.usuarios[usuario.sub] = userDetail.data[0]
         }
+        console.log("Usuarios conectados ",this.usuariosArr.length)
+        this.printConectedUsers()
+    }
+
+    printConectedUsers(){
+        console.log("\n\nconnected users...\n")
+        this.usuariosArr.forEach(
+            (u)=>{
+                console.log(u.nombre_completo)
+            }
+        )
     }
 
     desconectarUsuario( id ) {
         delete this.usuarios[id];
+        this.printConectedUsers()
     }
 
 }
