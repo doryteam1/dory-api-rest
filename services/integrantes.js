@@ -24,13 +24,13 @@ async function getintegrantes(page = 1){
             arrayenlaces.push(element.url_enlace);
           }else { 
                     index= element.id;
-                    nuevoRows[nuevoRows.length-1].enlaces=arrayenlaces;/*Arreglo de fotos agregado al final del arreglo de granjas */
+                    nuevoRows[nuevoRows.length-1].arrayEnlaces=arrayenlaces;/*Arreglo de fotos agregado al final del arreglo de granjas */
                     nuevoRows.push(element);
                     arrayenlaces=[];  
                     arrayenlaces.push(element.url_enlace);
           }
         });
-          nuevoRows[nuevoRows.length-1].enlaces=arrayenlaces; 
+          nuevoRows[nuevoRows.length-1].arrayEnlaces=arrayenlaces; 
           data = helper.emptyOrRows(nuevoRows);
         const meta = {page};
         return {
