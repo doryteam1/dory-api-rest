@@ -79,8 +79,8 @@ async function registrarintegrantes(integrantes,token){
                               `SELECT MAX(id) as id FROM integrantes`
                             ); /*ultimo Id_integrante que se creo con autoincremental*/
                         
-                            var enlaces2=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/    
-                            var enlaces=integrantes.arrayEnlaces;  console.log(enlaces);
+                           /* var enlaces2=JSON.parse(integrantes.arrayEnlaces);Pasar el string a vector*/    
+                            var enlaces=integrantes.arrayEnlaces; 
                                 for(var i=0;i<enlaces.length;i++){
                                     await db.query(
                                       `INSERT INTO enlaces(url_enlace,id_integrante) VALUES (?,?)`,
@@ -149,7 +149,8 @@ async function registrarintegrantes(integrantes,token){
                           if (result.affectedRows) {
                             message = 'integrante actualizado exitosamente';
                           }
-                          var enlaces=JSON.parse(integrantes.arrayEnlaces);/*Pasar el string a vector*/      
+                          /*var enlaces=JSON.parse(integrantes.arrayEnlaces);Pasar el string a vector*/ 
+                          var enlaces=integrantes.arrayEnlaces;     
                           await db.query(
                             `DELETE from enlaces where id_integrante=?`,
                             [id]
