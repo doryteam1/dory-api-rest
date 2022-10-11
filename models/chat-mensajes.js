@@ -41,8 +41,7 @@ class ChatMensajes {
     }
 
     printConectedUsers(){
-
-        console.log("\n\nconnected users\n")
+        console.log("\n\nconnected users...\n")
         this.usuariosArr.forEach(
             (u)=>{
                 console.log(u.nombre_completo)
@@ -52,6 +51,7 @@ class ChatMensajes {
 
     desconectarUsuario( id ) {
         delete this.usuarios[id];
+        this.printConectedUsers()
     }
 
 }
