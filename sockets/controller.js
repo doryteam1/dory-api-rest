@@ -6,6 +6,7 @@ const chatMensajes = new ChatMensajes();
 
 
 const socketController = async( socket = new Socket(), io ) => {
+    console.log(socket)
     const token = socket.handshake.auth.token;
     console.log(token)
     let valid = validarToken(token);
@@ -21,7 +22,7 @@ const socketController = async( socket = new Socket(), io ) => {
         socket.emit('recibir-mensajes', chatMensajes.ultimos10 );
 
         // Conectarlo a una sala especial
-        //socket.join( usuario.id ); // global, socket.id, usuario.id
+        socket.join( usuario.sub ); // global, socket.id, usuario.id
         
 
         // Limpiar cuando alguien se desconeta
@@ -30,18 +31,17 @@ const socketController = async( socket = new Socket(), io ) => {
             io.emit('usuarios-activos', chatMensajes.usuariosArr );
         })
 
-        /* socket.on('enviar-mensaje', ({ uid, mensaje }) => {
-            
+         socket.on('enviar-mensaje', ({ uid, mensaje }) => {
             if ( uid ) {
                 // Mensaje privado
                 socket.to( uid ).emit( 'mensaje-privado', { de: usuario.nombre, mensaje });
-            } else {
+            } 
+            /* else {
                 chatMensajes.enviarMensaje(usuario.id, usuario.nombre, mensaje );
                 io.emit('recibir-mensajes', chatMensajes.ultimos10 );
-            }
-
+            } */
         })
-    */
+    
     }
 }
 
