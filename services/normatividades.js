@@ -73,7 +73,7 @@ async function create(normatividad,token){
                       normatividad.nombre===undefined ||  
                       normatividad.contenido===undefined || 
                       normatividad.url_descarga===undefined || 
-                      normatividad.id_tipo_fk===undefined || 
+                      normatividad.id_tipo===undefined || 
                       normatividad.fecha===undefined                   
                     )
                     {
@@ -85,7 +85,7 @@ async function create(normatividad,token){
                     normatividad.nombre, 
                     normatividad.contenido,
                     normatividad.url_descarga, 
-                    normatividad.id_tipo_fk,
+                    normatividad.id_tipo,
                     normatividad.fecha       
                     ]
                   );  
@@ -167,11 +167,28 @@ async function create(normatividad,token){
             }     
   }/*End remove*/
 
+/*_______________________ ObtenerTiposNormatividades_________________________________*/
+async function obtenerTiposNormatividades(){          
+          const rows = await db.query(
+            `SELECT  tn.nombre as tipo, tn.id_tipo as id_tipo
+            FROM normatividades as n inner join tipos_normatividades as tn on n.id_tipo_fk=tn.id_tipo
+            `, 
+            []
+          );
+          const data = helper.emptyOrRows(rows);
+         return {
+            data
+          }
+}/*End obtenerTiposNormatividades*/
+
+
+
 module.exports = {
   getMultiple,
   getNormatividadesCadena,
   getNormatividadesTipo,
   create,
   update,
-  remove
+  remove,
+  obtenerTiposNormatividades
 }

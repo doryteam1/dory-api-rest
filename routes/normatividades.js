@@ -59,4 +59,13 @@ router.delete('/:id', async function(req, res, next) {
     }
   });
 
+  router.get('/obtener/tipos', async function(req, res, next) {
+    try {
+      res.json(await normatividades.obtenerTiposNormatividades());
+    } catch (err) {
+      console.error(`Error al traer los tipos de normatividades `, err.message);
+      next(err);
+    }
+  });
+
 module.exports = router;
