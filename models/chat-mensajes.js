@@ -39,6 +39,14 @@ class ChatMensajes {
         console.log("Usuarios conectados ",this.usuariosArr.length)
     }
 
+    printConectedUsers(){
+        this.usuariosArr.forEach(
+            (u)=>{
+                console.log(u)
+            }
+        )
+    }
+
     desconectarUsuario( id ) {
         delete this.usuarios[id];
     }
