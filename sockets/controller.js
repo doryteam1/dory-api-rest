@@ -16,12 +16,11 @@ const socketController = async( socket = new Socket(), io ) => {
         console.log("Usuario autorizado")
         let usuario = helper.parseJwt(token)
         // Agregar el usuario conectado
-        let userDetail = await chatMensajes.conectarUsuario( usuario );
+        await chatMensajes.conectarUsuario( usuario );
         io.emit('usuarios-activos',     chatMensajes.usuariosArr );
 
         // Conectarlo a una sala especial
-        console.log(userDetail.nombre_completo, "se a unido a la sala ", userDetail.id)
-        socket.join(userDetail.id ); // global, socket.id, usuario.id
+        socket.join(usuario.sub ); // global, socket.id, usuario.id
         
 
         // Limpiar cuando alguien se desconeta
