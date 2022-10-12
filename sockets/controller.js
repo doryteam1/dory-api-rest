@@ -6,7 +6,6 @@ const chatMensajes = new ChatMensajes();
 
 
 const socketController = async( socket = new Socket(), io ) => {
-    console.log(socket)
     const token = socket.handshake.auth.token;
     console.log(token)
     let valid = validarToken(token);
@@ -19,7 +18,7 @@ const socketController = async( socket = new Socket(), io ) => {
         // Agregar el usuario conectado
         let userDetail = await chatMensajes.conectarUsuario( usuario );
         io.emit('usuarios-activos',     chatMensajes.usuariosArr );
-        socket.emit('recibir-mensajes', chatMensajes.ultimos10 );
+        //socket.emit('recibir-mensajes', chatMensajes.ultimos10 );
 
         // Conectarlo a una sala especial
         socket.join( userDetail.id ); // global, socket.id, usuario.id
@@ -30,7 +29,7 @@ const socketController = async( socket = new Socket(), io ) => {
             chatMensajes.desconectarUsuario( usuario.sub );
             io.emit('usuarios-activos', chatMensajes.usuariosArr );
         })
-
+        
         socket.on('new-message', ({ uid, mensaje }) => {
             console.log("message recived! uid ", uid)
         if ( uid ) {
