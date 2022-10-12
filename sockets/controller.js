@@ -20,7 +20,8 @@ const socketController = async( socket = new Socket(), io ) => {
         io.emit('usuarios-activos',     chatMensajes.usuariosArr );
 
         // Conectarlo a una sala especial
-        socket.join(usuario.sub ); // global, socket.id, usuario.id
+        console.log("el usuario ",usuario.email," se ha conectado a la sala ",usuario.sub)
+        socket.join( usuario.sub ); // global, socket.id, usuario.id
         
 
         // Limpiar cuando alguien se desconeta
