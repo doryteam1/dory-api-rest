@@ -739,19 +739,8 @@ async function updateParcialNovedad(idNovedad, novedad, token){
                   const rol = payload.rol;
                   if(rol!='Administrador'){
                         throw createError(401,"Usted no tiene autorización para actualizar la novedad");
-                  }     
-                  const rows2 = await db.query(
-                    `select n.*
-                    from novedades as n
-                    where n.usuarios_id = ? and n.id_novedad = ? `, 
-                    [
-                      id_user,
-                      idNovedad
-                    ]
-                  );
-                  if(rows2.length < 1 ){
-                    throw createError('401', 'El usuario no es propietario de la novedad y no esta autorizado para actualizarla.')
-                  }                
+                  }    
+                                
                   var atributos = Object.keys(novedad);   
                   if(atributos.length!=0)
                   {    
