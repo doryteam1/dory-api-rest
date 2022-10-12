@@ -317,7 +317,7 @@ async function updateParcialEvento(idEvento, evento, token){
           const rows2 = await db.query(
             `select ev.*
             from eventos as ev
-            where ev.id_evento = ?=`, 
+            where ev.id_evento = ?`, 
             [
               idEvento
             ]
