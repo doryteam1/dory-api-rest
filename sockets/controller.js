@@ -32,6 +32,8 @@ const socketController = async( socket = new Socket(), io ) => {
         
         socket.on('new-message', ({ uid, mensaje }) => {
             console.log("message recived! uid ", uid)
+            console.log("message recived! mensaje ", mensaje)
+
         if ( uid ) {
             // Mensaje privado
             console.log("send message to ", uid)
