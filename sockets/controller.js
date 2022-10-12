@@ -21,7 +21,7 @@ const socketController = async( socket = new Socket(), io ) => {
         //socket.emit('recibir-mensajes', chatMensajes.ultimos10 );
 
         // Conectarlo a una sala especial
-        socket.join( userDetail.id ); // global, socket.id, usuario.id
+        socket.join( "some room" ); // global, socket.id, usuario.id
         
 
         // Limpiar cuando alguien se desconeta
@@ -35,7 +35,7 @@ const socketController = async( socket = new Socket(), io ) => {
         if ( uid ) {
             // Mensaje privado
             console.log("send message to ", uid)
-            socket.to( uid ).emit( 'new-message', { usuario, mensaje });
+            socket.to( "some room" ).emit( 'new-message', { usuario, mensaje });
         } 
         /* else {
             chatMensajes.enviarMensaje(usuario.id, usuario.nombre, mensaje );
