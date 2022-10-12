@@ -32,9 +32,10 @@ const socketController = async( socket = new Socket(), io ) => {
         })
 
         socket.on('new-message', ({ uid, mensaje }) => {
-            console.log("message recived!")
+            console.log("message recived! uid ", uid)
         if ( uid ) {
             // Mensaje privado
+            console.log("send message to ", uid)
             socket.to( uid ).emit( 'new-message', { usuario, mensaje });
         } 
         /* else {
