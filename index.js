@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server,{
   cors: {
-    origin:process.env.DORY_WEB_APP_URL
+    origin:"*.*"
   }
 }); 
 
