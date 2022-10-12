@@ -35,7 +35,7 @@ const socketController = async( socket = new Socket(), io ) => {
         if ( uid ) {
             // Mensaje privado
             console.log("send message to ", uid)
-            socket.to( uid ).emit( 'new-message', { usuario, mensaje });
+            io.to( uid ).emit( 'new-message', { usuario, mensaje });
         } 
         /* else {
             chatMensajes.enviarMensaje(usuario.id, usuario.nombre, mensaje );
