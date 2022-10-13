@@ -60,7 +60,7 @@ const sexosRouter = require('./routes/sexos');
 const nosotrosRouter = require('./routes/nosotros');
 const integrantesRouter = require('./routes/integrantes');
 const conocenosRouter = require('./routes/conocenos');
-
+const slidersRouter = require('./routes/sliders');
 var cors = require('cors');
 app.use(bodyParser.json());
 app.use(
@@ -131,6 +131,7 @@ app.use('/api/sexos',sexosRouter)
 app.use('/api/nosotros',nosotrosRouter)
 app.use('/api/integrantes',integrantesRouter)
 app.use('/api/conocenos',conocenosRouter)
+app.use('/api/sliders',slidersRouter)
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
   const error= new Error('NOT FOUND');
