@@ -4,27 +4,27 @@ const config = require('../config');
 var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
-/* ------------------------------------ObtenerSlid------------------------------------*/
-async function obtenerSlid(){      
+/* ------------------------------------ObtenerEnlaceR------------------------------------*/
+async function obtenerEnlaceR(){      
        const rows = await db.query(
         `SELECT * 
-         FROM sliders`,            
+         FROM enlaces_rapidos`,            
        []
        );  
        const data = helper.emptyOrRows(rows);
        return { data };
       
-}/* End obtenerSlid*/
+}/* End obtenerEnlaceR*/
 
 
-/* ------------------------------------crearSlid------------------------------------*/
-async function crearSlid(body,token){   
+/* ------------------------------------crearEnlaceR------------------------------------*/
+async function crearEnlaceR(body,token){   
   try{
           if(token && validarToken(token)){
               let payload=helper.parseJwt(token);
               let rol= payload.rol; 
                 if(rol!='Administrador'){
-                        throw createError(401,"Usted no tiene autorización para registrar el slid");
+                        throw createError(401,"Usted no tiene autorización para registrar el EnlaceR");
                 }
                 if(body.url_imagen === undefined || 
                    body.url_enlace === undefined || 
@@ -32,15 +32,15 @@ async function crearSlid(body,token){
                    body.time === undefined 
                 )
                 {
-                    throw createError(400,"Debe enviar todos los parámetros del slid para su registro");
+                    throw createError(400,"Debe enviar todos los parámetros del EnlaceR para su registro");
                 }
                 const result = await db.query(
-                `INSERT INTO sliders (url_imagen,url_enlace,titulo,time) VALUES (?,?,?,?)`,                
-                 [body.url_imagen,body.url_enlace,body.titulo,body.time] 
+                `INSERT INTO enlaces_rapidos (url_imagen,url_enlace,titulo) VALUES (?,?,?)`,                
+                 [body.url_imagen,body.url_enlace,body.titulo] 
                 );  
-              let message = 'Error registrando el slid';  
+              let message = 'Error registrando el EnlaceR';  
               if (result.affectedRows) {
-                message = 'Registro exitoso de Slid';
+                message = 'Registro exitoso de EnlaceR';
               }  
               return {message};
           }else{ 
@@ -49,43 +49,40 @@ async function crearSlid(body,token){
       }catch(error){
           throw error;
       }
-}/* End crearSlid*/
+}/* End crearEnlaceR*/
 
-/* ------------------------------------actualizarSlid------------------------------------*/
-async function actualizarSlid(idSlid,body,token){   
+/* ------------------------------------actualizarEnlaceR------------------------------------*/
+async function actualizarEnlaceR(idEnlaceR,body,token){   
         try{
                 if(token && validarToken(token)){
                     let payload=helper.parseJwt(token);
                     let rol= payload.rol; 
                       if(rol!='Administrador'){
-                              throw createError(401,"Usted no tiene autorización para actualizar slid");
+                              throw createError(401,"Usted no tiene autorización para actualizar EnlaceR");
                       }
                       if(body.url_imagen === undefined || 
                          body.url_enlace === undefined || 
-                         body.titulo === undefined || 
-                         body.time === undefined 
+                         body.titulo === undefined 
                       )
                       {
-                          throw createError(400,"Debe enviar todos los parámetros del slid para la actualización");
+                          throw createError(400,"Debe enviar todos los parámetros del enlace_rápido para la actualización");
                       }
                       const result = await db.query(
-                      `UPDATE sliders
+                      `UPDATE enlaces_rapidos
                       SET url_imagen=?,
                           url_enlace=?,
-                          titulo=?,
-                          time=?
-                      WHERE id_slid=?`,
+                          titulo=?
+                      WHERE id_enlace_rapido=?`,
                       [
                         body.url_imagen,   
                         body.url_enlace, 
-                        body.titulo, 
-                        body.time,                   
-                        idSlid
+                        body.titulo,                 
+                        idEnlaceR
                       ] 
                     );  
-                    let message = 'Error actualizando la información del slid';  
+                    let message = 'Error actualizando la información del EnlaceR';  
                     if (result.affectedRows) {
-                      message = 'Actualización de Slid exitoso';
+                      message = 'Actualización de EnlaceR exitoso';
                     }  
                     return {message};
                 }else{ 
@@ -94,24 +91,24 @@ async function actualizarSlid(idSlid,body,token){
             }catch(error){
                 throw error;
             }
-}/* End actualizarSlid*/
+}/* End actualizarEnlaceR*/
 
-/* ------------------------------------eliminarSlid------------------------------------*/
-async function eliminarSlid(idSlid,token){   
+/* ------------------------------------eliminarEnlaceR------------------------------------*/
+async function eliminarEnlaceR(idEnlaceR,token){   
      try{
           if(token && validarToken(token)){
               let payload=helper.parseJwt(token);
               let rol= payload.rol; 
                 if(rol!='Administrador'){
-                        throw createError(401,"Usted no tiene autorización para eliminar slid");
+                        throw createError(401,"Usted no tiene autorización para eliminar EnlaceR");
                 }
                  const result = await db.query(
-                 `DELETE from sliders where id_slid=?`,
-                  [idSlid]
+                 `DELETE from enlaces_rapidos where id_enlace_rapido=?`,
+                  [idEnlaceR]
                   );   
-                  let message='Error al eliminar slid';                  
+                  let message='Error al eliminar EnlaceR';                  
                   if (result.affectedRows) {
-                          message = 'Slid borrado exitosamente';
+                          message = 'EnlaceR borrado exitosamente';
                   } 
                   return {message};                              
           }else{ 
@@ -120,31 +117,31 @@ async function eliminarSlid(idSlid,token){
       }catch(error){
           throw error;
       }
-}/* End eliminarSlid*/
+}/* End eliminarEnlaceR*/
 
 
 
-/* ------------------------------------actualizarCarruselSlid------------------------------------*/
-async function actualizarCarruselSlid(body,token){   
+/* ------------------------------------actualizarCarruselEnlaceR------------------------------------*/
+async function actualizarCarruselEnlaceR(body,token){   
           try{
                   if(token && validarToken(token)){
                       let payload=helper.parseJwt(token);
                       let rol= payload.rol; 
                         if(rol!='Administrador'){
-                                throw createError(401,"Usted no tiene autorización para actualizar slider");
+                                throw createError(401,"Usted no tiene autorización para actualizar EnlaceRer");
                         }
                         const conection= await db.newConnection(); /*conection of TRANSACTION */
                           try{                                  
                                   await conection.beginTransaction();
-                                  var carrusel=body.arraySliders;
-                                  let message = 'Actualización exitosa del slid';                                 
+                                  var carrusel=body.arrayEnlaceRers;
+                                  let message = 'Actualización exitosa del enlace_rapido';                                 
                                   await db.query(
-                                    `DELETE FROM sliders`, 
+                                    `DELETE FROM enlaces_rapidos`, 
                                     []
                                   );                                 
                                   for(var i=0;i<carrusel.length;i++){
                                     await db.query(
-                                      `INSERT INTO sliders(url_imagen,url_enlace,titulo) VALUES (?,?,?)`,
+                                      `INSERT INTO enlaces_rapidos(url_imagen,url_enlace,titulo) VALUES (?,?,?)`,
                                       [carrusel[i].url_imagen, carrusel[i].url_enlace, carrusel[i].titulo]
                                     );
                                   }
@@ -162,13 +159,13 @@ async function actualizarCarruselSlid(body,token){
               }catch(error){
                   throw error;
               }
-}/* End actualizarCarruselSlid*/
+}/* End actualizarCarruselEnlaceR*/
 
 
 module.exports = {
-  obtenerSlid,
-  crearSlid,
-  actualizarSlid,
-  eliminarSlid,
-  actualizarCarruselSlid
+  obtenerEnlaceR,
+  crearEnlaceR,
+  actualizarEnlaceR,
+  eliminarEnlaceR,
+  actualizarCarruselEnlaceR
 }
