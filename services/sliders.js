@@ -28,15 +28,14 @@ async function crearSlid(body,token){
                 }
                 if(body.url_imagen === undefined || 
                    body.url_enlace === undefined || 
-                   body.titulo === undefined || 
-                   body.time === undefined 
+                   body.titulo === undefined 
                 )
                 {
                     throw createError(400,"Debe enviar todos los parámetros del slid para su registro");
                 }
                 const result = await db.query(
                 `INSERT INTO sliders (url_imagen,url_enlace,titulo,time) VALUES (?,?,?,?)`,                
-                 [body.url_imagen,body.url_enlace,body.titulo,body.time] 
+                 [body.url_imagen,body.url_enlace,body.titulo,0] 
                 );  
               let message = 'Error registrando el slid';  
               if (result.affectedRows) {
@@ -62,8 +61,7 @@ async function actualizarSlid(idSlid,body,token){
                       }
                       if(body.url_imagen === undefined || 
                          body.url_enlace === undefined || 
-                         body.titulo === undefined || 
-                         body.time === undefined 
+                         body.titulo === undefined 
                       )
                       {
                           throw createError(400,"Debe enviar todos los parámetros del slid para la actualización");
@@ -72,14 +70,12 @@ async function actualizarSlid(idSlid,body,token){
                       `UPDATE sliders
                       SET url_imagen=?,
                           url_enlace=?,
-                          titulo=?,
-                          time=?
+                          titulo=?
                       WHERE id_slid=?`,
                       [
                         body.url_imagen,   
                         body.url_enlace, 
-                        body.titulo, 
-                        body.time,                   
+                        body.titulo,                               
                         idSlid
                       ] 
                     );  
@@ -143,10 +139,13 @@ async function actualizarCarruselSlid(body,token){
                                     []
                                   );                                 
                                   for(var i=0;i<carrusel.length;i++){
-                                    await db.query(
-                                      `INSERT INTO sliders(url_imagen,url_enlace,titulo) VALUES (?,?,?)`,
-                                      [carrusel[i].url_imagen, carrusel[i].url_enlace, carrusel[i].titulo]
-                                    );
+                                      if(!(carrusel[i].url_imagen === undefined ||  carrusel[i].url_enlace === undefined || carrusel[i].titulo === undefined))
+                                       {
+                                          await db.query(
+                                          `INSERT INTO sliders(url_imagen,url_enlace,titulo) VALUES (?,?,?)`,
+                                                [carrusel[i].url_imagen, carrusel[i].url_enlace, carrusel[i].titulo]
+                                          );
+                                       }
                                   }
                                   await conection.commit(); 
                                   conection.release();
@@ -202,11 +201,46 @@ async function updateParcialSlid(idSlid, slid, token){
 }/*End updateParcialSlid*/
 
 
+/*----------------------updateTimeSlid--------------------------------------*/
+async function updateTimeSlider(body, token){  
+          if(token && validarToken(token))
+          {
+                const payload=helper.parseJwt(token);  
+                const rol = payload.rol;
+                if(rol !="Administrador"){
+                  throw createError('401', "Usted no esta autorizado para actualizar el tiempo del Slid.")
+                }                 
+                var carrusel=body.arraySliders;
+                const result =[];
+                for(var i=0;i<carrusel.length;i++){
+                    result = await db.query(
+                    `UPDATE sliders
+                     SET time=?
+                    WHERE id_slid=?`,
+                    [ 
+                      body.tiempo,                               
+                      carrusel[i].id_slid
+                    ] 
+                    );
+                }                                   
+                      let message = '';
+                      if (result.affectedRows) {
+                        message = 'Slider actualizado exitosamente';
+                      }else{
+                        throw createError(500,"No se pudo actualizar el slider");    
+                      }
+                      return {message};                
+          }else{
+            throw createError(401,"Usuario no autorizado");
+          }
+}/*End updateTimeSlid*/
+
 module.exports = {
   obtenerSlid,
   crearSlid,
   actualizarSlid,
   eliminarSlid,
   actualizarCarruselSlid,
-  updateParcialSlid
+  updateParcialSlid,
+  updateTimeSlider
 }

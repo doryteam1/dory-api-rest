@@ -61,5 +61,14 @@ router.put('/update/parcial/slid', async function(req, res, next) {
   }
 });
 
+router.put('/update/time/slider', async function(req, res, next) {
+  try {
+    var token=req.headers.authorization;
+    res.json(await sliders.updateParcialSlid(req.body,token));
+  } catch (err) {
+    console.error(`Error al actualizar el tiempo del slider`, err.message);
+    next(err);
+  }
+});
 
 module.exports = router;
