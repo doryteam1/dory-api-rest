@@ -129,7 +129,7 @@ async function create(novedad,token){
                           } catch (error) {
                             await conection.rollback(); /*Si hay algún error  */ 
                                   conection.release();
-                            throw createError(500,"Falla en el registro de novedad"); 
+                            throw error; 
                           }
                       }
                         throw createError(400,"Un problema con los parametros ingresados"); 
