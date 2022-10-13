@@ -2,6 +2,7 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 var createError = require('http-errors');
+const {validarToken} = require ('../middelware/auth');
 
 /* ------------------------------------actualizarSlider------------------------------------*/
 async function actualizarSlider(idSlider,body,token){   
