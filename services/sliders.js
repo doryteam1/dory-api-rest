@@ -164,11 +164,49 @@ async function actualizarCarruselSlid(body,token){
               }
 }/* End actualizarCarruselSlid*/
 
+/*----------------------updateParcialSlid--------------------------------------*/
+async function updateParcialSlid(idSlid, slid, token){
+  
+        if(token && validarToken(token))
+        {
+              const payload=helper.parseJwt(token);  
+              const id_user=payload.sub;
+              const rol = payload.rol;
+              if(rol !="Administrador"){
+                throw createError('401', "Usted no esta autorizado para actualizar el slid.")
+              }               
+              var atributos = Object.keys(slid);
+              if(atributos.length!=0)
+              {    
+                    var params = Object.values(slid);
+                    var query = "update sliders set ";
+                    params.push(idSlid);
+                    for(var i=0; i < atributos.length; i++) {
+                      query = query + atributos[i] + '=?,';
+                    }
+                    query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+                    query = query +' '+'where id_slid=?'
+                    const result = await db.query(query,params);              
+                    let message = '';
+                    if (result.affectedRows) {
+                      message = 'Slid actualizado exitosamente';
+                    }else{
+                      throw createError(500,"No se pudo actualizar el registro del slid");    
+                    }
+                    return {message};
+              }
+              throw createError(400,"No hay parámetros para actualizar");
+        }else{
+          throw createError(401,"Usuario no autorizado");
+        }
+}/*End updateParcialSlid*/
+
 
 module.exports = {
   obtenerSlid,
   crearSlid,
   actualizarSlid,
   eliminarSlid,
-  actualizarCarruselSlid
+  actualizarCarruselSlid,
+  updateParcialSlid
 }

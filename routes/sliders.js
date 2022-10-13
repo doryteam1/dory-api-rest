@@ -51,6 +51,15 @@ router.put('/update/carrusel/sliders', async function(req, res, next) {
   }
 });
 
+router.put('/update/parcial/slid', async function(req, res, next) {
+  try {
+    var token=req.headers.authorization;
+    res.json(await sliders.updateParcialSlid(req.body,token));
+  } catch (err) {
+    console.error(`Error al actualizar parcialmente el slid`, err.message);
+    next(err);
+  }
+});
 
 
 module.exports = router;
