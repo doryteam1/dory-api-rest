@@ -28,14 +28,15 @@ async function crearSlid(body,token){
                 }
                 if(body.url_imagen === undefined || 
                    body.url_enlace === undefined || 
-                   body.url_titulo === undefined 
+                   body.titulo === undefined || 
+                   body.time === undefined 
                 )
                 {
                     throw createError(400,"Debe enviar todos los parámetros del slid para su registro");
                 }
                 const result = await db.query(
-                `INSERT INTO sliders (url_imagen,url_enlace,titulo) VALUES (?,?,?)`,                
-                 [body.url_imagen,body.url_enlace,body.titulo] 
+                `INSERT INTO sliders (url_imagen,url_enlace,titulo,time) VALUES (?,?,?,?)`,                
+                 [body.url_imagen,body.url_enlace,body.titulo,body.time] 
                 );  
               let message = 'Error registrando el slid';  
               if (result.affectedRows) {
@@ -61,7 +62,8 @@ async function actualizarSlid(idSlid,body,token){
                       }
                       if(body.url_imagen === undefined || 
                          body.url_enlace === undefined || 
-                         body.url_titulo === undefined 
+                         body.url_titulo === undefined || 
+                         body.time === undefined 
                       )
                       {
                           throw createError(400,"Debe enviar todos los parámetros del slid para la actualización");
@@ -70,12 +72,14 @@ async function actualizarSlid(idSlid,body,token){
                       `UPDATE sliders
                       SET url_imagen=?,
                           url_enlace=?,
-                          titulo=?
+                          titulo=?,
+                          time=?
                       WHERE id_slid=?`,
                       [
                         body.url_imagen,   
                         body.url_enlace, 
-                        body.titulo,                    
+                        body.titulo, 
+                        body.time,                   
                         idSlid
                       ] 
                     );  
@@ -133,7 +137,7 @@ async function actualizarCarruselSlid(body,token){
                           try{                                  
                                   await conection.beginTransaction();
                                   var carrusel=body.arraySliders;
-                                  let message = 'Actualización exitosa del slid';    console.log(carrusel);                             
+                                  let message = 'Actualización exitosa del slid';                                 
                                   await db.query(
                                     `DELETE FROM sliders`, 
                                     []
