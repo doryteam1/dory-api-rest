@@ -4,38 +4,84 @@ const config = require('../config');
 var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
-/* ------------------------------------actualizarSlider------------------------------------*/
-async function actualizarSlider(idSlider,body,token){   
+/* ------------------------------------ObtenerSlid------------------------------------*/
+async function obtenerSlid(){      
+       const rows = await db.query(
+        `SELECT * 
+         FROM sliders`,            
+       []
+       );  
+       const data = helper.emptyOrRows(rows);
+       return { data };
+      
+}/* End obtenerSlid*/
+
+
+/* ------------------------------------crearSlid------------------------------------*/
+async function crearSlid(body,token){   
+  try{
+          if(token && validarToken(token)){
+              let payload=helper.parseJwt(token);
+              let rol= payload.rol; 
+                if(rol!='Administrador'){
+                        throw createError(401,"Usted no tiene autorización para registrar el slid");
+                }
+                if(body.url_imagen === undefined || 
+                   body.url_enlace === undefined || 
+                   body.url_titulo === undefined 
+                )
+                {
+                    throw createError(400,"Debe enviar todos los parámetros del slid para su registro");
+                }
+                const result = await db.query(
+                `INSERT INTO sliders (url_imagen,url_enlace,titulo) VALUES (?,?,?)`,                
+                 [body.url_imagen,body.url_enlace,body.titulo] 
+                );  
+              let message = 'Error registrando el slid';  
+              if (result.affectedRows) {
+                message = 'Registro exitoso de Slid';
+              }  
+              return {message};
+          }else{ 
+              throw createError(401,"Usted no tiene autorización"); 
+          }
+      }catch(error){
+          throw error;
+      }
+}/* End crearSlid*/
+
+/* ------------------------------------actualizarSlid------------------------------------*/
+async function actualizarSlid(idSlid,body,token){   
         try{
                 if(token && validarToken(token)){
                     let payload=helper.parseJwt(token);
                     let rol= payload.rol; 
                       if(rol!='Administrador'){
-                              throw createError(401,"Usted no tiene autorización para actualizar slider");
+                              throw createError(401,"Usted no tiene autorización para actualizar slid");
                       }
                       if(body.url_imagen === undefined || 
                          body.url_enlace === undefined || 
                          body.url_titulo === undefined 
                       )
                       {
-                          throw createError(400,"Debe enviar todos los parámetros del slider para la actualización");
+                          throw createError(400,"Debe enviar todos los parámetros del slid para la actualización");
                       }
                       const result = await db.query(
-                      `UPDATE slider
+                      `UPDATE sliders
                       SET url_imagen=?,
                           url_enlace=?,
                           titulo=?
-                      WHERE id_slider=?`,
+                      WHERE id_slid=?`,
                       [
                         body.url_imagen,   
                         body.url_enlace, 
                         body.titulo,                    
-                        idSlider
+                        idSlid
                       ] 
                     );  
-                    let message = 'Error actualizando la información del slider';  
+                    let message = 'Error actualizando la información del slid';  
                     if (result.affectedRows) {
-                      message = 'Actualización de Slider exitoso';
+                      message = 'Actualización de Slid exitoso';
                     }  
                     return {message};
                 }else{ 
@@ -44,10 +90,38 @@ async function actualizarSlider(idSlider,body,token){
             }catch(error){
                 throw error;
             }
-}/* End actualizarSlider*/
+}/* End actualizarSlid*/
 
-/* ------------------------------------actualizarCarruselSlider------------------------------------*/
-async function actualizarCarruselSliders(body,token){   
+/* ------------------------------------eliminarSlid------------------------------------*/
+async function eliminarSlid(idSlid,token){   
+     try{
+          if(token && validarToken(token)){
+              let payload=helper.parseJwt(token);
+              let rol= payload.rol; 
+                if(rol!='Administrador'){
+                        throw createError(401,"Usted no tiene autorización para eliminar slid");
+                }
+                 const result = await db.query(
+                 `DELETE from sliders where id_slid=?`,
+                  [idSlid]
+                  );   
+                  let message='Error al eliminar slid';                  
+                  if (result.affectedRows) {
+                          message = 'Slid borrado exitosamente';
+                  } 
+                  return {message};                              
+          }else{ 
+              throw createError(401,"Usted no tiene autorización"); 
+          }
+      }catch(error){
+          throw error;
+      }
+}/* End eliminarSlid*/
+
+
+
+/* ------------------------------------actualizarCarruselSlid------------------------------------*/
+async function actualizarCarruselSlid(body,token){   
           try{
                   if(token && validarToken(token)){
                       let payload=helper.parseJwt(token);
@@ -55,11 +129,11 @@ async function actualizarCarruselSliders(body,token){
                         if(rol!='Administrador'){
                                 throw createError(401,"Usted no tiene autorización para actualizar slider");
                         }
-                          try{
-                                  const conection= await db.newConnection(); /*conection of TRANSACTION */
+                        const conection= await db.newConnection(); /*conection of TRANSACTION */
+                          try{                                  
                                   await conection.beginTransaction();
                                   var carrusel=body.arraySliders;
-                                  let message = 'Actualización exitosa del slider';                                 
+                                  let message = 'Actualización exitosa del slid';    console.log(carrusel);                             
                                   await db.query(
                                     `DELETE FROM sliders`, 
                                     []
@@ -84,57 +158,13 @@ async function actualizarCarruselSliders(body,token){
               }catch(error){
                   throw error;
               }
-}/* End actualizarCarruselSlider*/
+}/* End actualizarCarruselSlid*/
 
 
 module.exports = {
-  actualizarSlider,
-  actualizarCarruselSliders
+  obtenerSlid,
+  crearSlid,
+  actualizarSlid,
+  eliminarSlid,
+  actualizarCarruselSlid
 }
-
-/*  const rowsEspecies = await db.query(
-                  `SELECT e.*
-                  FROM especies as e
-                  `, 
-                  []
-                );        
-                const rowsMunicipios = await db.query(
-                  `SELECT m.*
-                  FROM municipios as m
-                  WHERE m.id_departamento_fk=?
-                  `, 
-                  [idDepartamento]
-                );   
-                let data=[];           
-                let rowsConsumos;
-                let arrayConsumo=[];
-                  for(let i=0; i<rowsMunicipios.length;i++){   
-                    arrayConsumo=[];
-                    for(let j=0; j<rowsEspecies.length;j++){
-                          rowsConsumos= await db.query(
-                            `SELECT e.nombre as especie, sum(eu.cantidad_consumo) as consumo, count(eu.usuarios_id) as cantidad_usuario,
-                            ( select m.id_municipio from municipios as m where m.id_municipio=u.id_municipio ) as id_municipio
-                            FROM especies_usuarios as eu inner join especies as e on e.id_especie=eu.id_especie_pk_fk
-                                                        inner join usuarios as u on u.id=eu.usuarios_id
-                                                        inner join municipios as m on u.id_municipio=m.id_municipio
-                            WHERE eu.id_especie_pk_fk=? and u.id_municipio=?
-                            `, 
-                            [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio]
-                          );                                
-                          if(rowsConsumos[0].consumo==null){
-                                rowsConsumos[0].especie=rowsEspecies[j].nombre;
-                                rowsConsumos[0].consumo=0;
-                          }
-                          rowsConsumos[0].id_municipio = undefined;
-                          arrayConsumo.push(rowsConsumos[0]);
-                                
-                    }
-                    data.push({
-                      municipio:rowsMunicipios[i].nombre,
-                      id_municipio:rowsMunicipios[i].id_municipio,
-                      consumo:arrayConsumo
-                    })
-                  }             
-              return {
-              data
-              }*/
