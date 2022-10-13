@@ -512,12 +512,10 @@ async function createGranja(body,token){
                     `, 
                     [id_user,id_granja]
                   );
-                  if(rows.length<1){
+                  if(rows.length<1 && tipo_user!="Administrador"){
                     throw createError(401,"Usted no tiene autorización");
                   }
-                  if(tipo_user!="Administrador"){
-                    throw createError(401,"Usted no tiene autorización");
-                  }
+                  
                   if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
                       const propiedad = await conection.execute(
                         `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk=?`,
