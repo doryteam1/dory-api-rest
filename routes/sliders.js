@@ -31,7 +31,7 @@ router.put('/actualizar/:idSlid', async function(req, res, next) {
     }
 });
 
-router.delete('/eliminar/slid/:idSlid', async function(req, res, next) {
+router.delete('/delete/slid/:idSlid', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
     res.json(await sliders.eliminarSlid(req.params.idSlid,token));
