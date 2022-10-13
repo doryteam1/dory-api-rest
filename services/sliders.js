@@ -164,22 +164,21 @@ async function actualizarCarruselSlid(body,token){
 }/* End actualizarCarruselSlid*/
 
 /*----------------------updateParcialSlid--------------------------------------*/
-async function updateParcialSlid(idSlid, slid, token){
+async function updateParcialSlid(idSlide, slide, token){
   
         if(token && validarToken(token))
         {
               const payload=helper.parseJwt(token);  
-              const id_user=payload.sub;
               const rol = payload.rol;
               if(rol !="Administrador"){
                 throw createError('401', "Usted no esta autorizado para actualizar el slid.")
               }               
-              var atributos = Object.keys(slid);
+              var atributos = Object.keys(slide);
               if(atributos.length!=0)
               {    
-                    var params = Object.values(slid);
+                    var params = Object.values(slide);
                     var query = "update sliders set ";
-                    params.push(idSlid);
+                    params.push(idSlide);
                     for(var i=0; i < atributos.length; i++) {
                       query = query + atributos[i] + '=?,';
                     }
@@ -215,11 +214,9 @@ async function updateTimeSlider(body, token){
                 for(var i=0;i<carrusel.length;i++){
                     result = await db.query(
                     `UPDATE sliders
-                     SET time=?
-                    WHERE id_slid=?`,
+                     SET time=?`,
                     [ 
-                      body.tiempo,                               
-                      carrusel[i].id_slid
+                      body.tiempo
                     ] 
                     );
                 }                                   
