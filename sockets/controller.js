@@ -7,8 +7,12 @@ const chatMensajes = new ChatMensajes();
 
 const socketController = async( socket = new Socket(), io ) => {
     const token = socket.handshake.auth.token;
-    console.log(token)
-    let valid = validarToken(token);
+    let valid = false;
+    console.log("socket created")
+    if(token){
+        valid = validarToken(token)
+    }
+    
     if(!valid){
         socket.disconnect();
         console.log("Usuario no autorizado");
@@ -32,6 +36,8 @@ const socketController = async( socket = new Socket(), io ) => {
         
         socket.on('new-message', ({ uid, mensaje }) => {
             console.log("message recived! uid ", uid)
+            console.log("message recived! mensaje ", mensaje)
+
         if ( uid ) {
             // Mensaje privado
             console.log("send message to ", uid)
