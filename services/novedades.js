@@ -116,7 +116,7 @@ async function create(novedad,token){
                               `SELECT MAX(id_novedad) AS id FROM novedades`
                             ); /*ultimo Id_novedad que se creo con autoincremental*/
                         
-                            var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/        
+                            var categorias=novedad.arrayCategorias;      
                             for(var i=0;i<categorias.length;i++){
                                 await db.query(
                                   `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
