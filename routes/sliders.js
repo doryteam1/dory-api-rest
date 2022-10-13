@@ -51,7 +51,7 @@ router.put('/update/carrusel/sliders', async function(req, res, next) {
   }
 });
 
-router.put('/update/parcial/slide/idSlide', async function(req, res, next) {
+router.put('/update/parcial/slide/:idSlide', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
     res.json(await sliders.updateParcialSlid(req.params.idSlide,req.body,token));
