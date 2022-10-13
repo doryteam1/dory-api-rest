@@ -1,6 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+var createError = require('http-errors');
 
 /* ------------------------------------actualizarSlider------------------------------------*/
 async function actualizarSlider(idSlider,body,token){   
