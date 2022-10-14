@@ -210,7 +210,7 @@ async function updateTimeSlider(body, token){
                   throw createError('401', "Usted no esta autorizado para actualizar el tiempo del Slid.")
                 }                 
                 var carrusel=body.arraySliders;
-                const result =[];
+                let result =[];
                 for(var i=0;i<carrusel.length;i++){
                     result = await db.query(
                     `UPDATE sliders
