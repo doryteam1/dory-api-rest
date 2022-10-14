@@ -37,7 +37,7 @@ class ChatMensajes {
             this.usuarios[usuario.sub] = userDetail.data[0]
         }
         console.log("Usuarios conectados ",this.usuariosArr.length)
-        this.printConectedUsers()
+        //this.printConectedUsers()
 
         return userDetail;
     }
@@ -46,7 +46,7 @@ class ChatMensajes {
         console.log("\n\nconnected users...\n")
         this.usuariosArr.forEach(
             (u)=>{
-                console.log(u.nombre_completo)
+                //console.log(u.nombre_completo)
             }
         )
     }
