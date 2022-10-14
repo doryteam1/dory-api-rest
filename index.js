@@ -60,7 +60,7 @@ const sexosRouter = require('./routes/sexos');
 const nosotrosRouter = require('./routes/nosotros');
 const integrantesRouter = require('./routes/integrantes');
 const conocenosRouter = require('./routes/conocenos');
-const slidersRouter = require('./routes/sliders');
+const sliderRouter = require('./routes/slider');
 const enlacesRapidosRouter = require('./routes/enlacesRapidos');
 
 var cors = require('cors');
@@ -133,7 +133,7 @@ app.use('/api/sexos',sexosRouter)
 app.use('/api/nosotros',nosotrosRouter)
 app.use('/api/integrantes',integrantesRouter)
 app.use('/api/conocenos',conocenosRouter)
-app.use('/api/sliders',slidersRouter)
+app.use('/api/slider',sliderRouter)
 app.use('/api/enlacesRapidos',enlacesRapidosRouter)
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {

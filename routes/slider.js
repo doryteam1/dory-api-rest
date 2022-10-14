@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const sliders = require('../services/sliders');
+const slider = require('../services/slider');
 
 router.get('/obtener', async function(req, res, next) {
   try {
-    res.json(await sliders.obtenerSlid());
+    res.json(await slider.obtenerSlid());
   } catch (err) {
     console.error(`Error al obtener los slid`, err.message);
     next(err);
@@ -14,7 +14,7 @@ router.get('/obtener', async function(req, res, next) {
 router.post('/crear', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
-    res.json(await sliders.crearSlid(req.body,token));
+    res.json(await slider.crearSlid(req.body,token));
   } catch (err) {
     console.error(`Error al crear el slider`, err.message);
     next(err);
@@ -24,7 +24,7 @@ router.post('/crear', async function(req, res, next) {
 router.put('/actualizar/:idSlide', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await sliders.actualizarSlid(req.params.idSlide,req.body,token));
+      res.json(await slider.actualizarSlid(req.params.idSlide,req.body,token));
     } catch (err) {
       console.error(`Error al actualizar el slider`, err.message);
       next(err);
@@ -34,17 +34,17 @@ router.put('/actualizar/:idSlide', async function(req, res, next) {
 router.delete('/delete/slide/:idSlide', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
-    res.json(await sliders.eliminarSlid(req.params.idSlide,token));
+    res.json(await slider.eliminarSlid(req.params.idSlide,token));
   } catch (err) {
     console.error(`Error al eliminar el slid`, err.message);
     next(err);
   }
 });
 
-router.put('/update/carrusel/sliders', async function(req, res, next) {
+router.put('/update/carrusel/slider', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
-    res.json(await sliders.actualizarCarruselSlid(req.body,token));
+    res.json(await slider.actualizarCarruselSlid(req.body,token));
   } catch (err) {
     console.error(`Error al actualizar los slider`, err.message);
     next(err);
@@ -54,7 +54,7 @@ router.put('/update/carrusel/sliders', async function(req, res, next) {
 router.put('/update/parcial/slide/:idSlide', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
-    res.json(await sliders.updateParcialSlid(req.params.idSlide,req.body,token));
+    res.json(await slider.updateParcialSlid(req.params.idSlide,req.body,token));
   } catch (err) {
     console.error(`Error al actualizar parcialmente el slid`, err.message);
     next(err);
@@ -64,7 +64,7 @@ router.put('/update/parcial/slide/:idSlide', async function(req, res, next) {
 router.put('/update/time/slider', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
-    res.json(await sliders.updateTimeSlider(req.body,token));
+    res.json(await slider.updateTimeSlider(req.body,token));
   } catch (err) {
     console.error(`Error al actualizar el tiempo del slider`, err.message);
     next(err);
