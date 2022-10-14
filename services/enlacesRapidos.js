@@ -28,8 +28,7 @@ async function crearEnlaceR(body,token){
                 }
                 if(body.url_imagen === undefined || 
                    body.url_enlace === undefined || 
-                   body.titulo === undefined || 
-                   body.time === undefined 
+                   body.titulo === undefined 
                 )
                 {
                     throw createError(400,"Debe enviar todos los parámetros del EnlaceR para su registro");
