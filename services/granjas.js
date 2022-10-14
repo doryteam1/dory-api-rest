@@ -354,11 +354,8 @@ async function createGranja(body,token){
               WHERE ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk = ?
               `, 
               [id_user, idGranja]
-            );
-            if(rows.length<1){
-              throw createError(401,"Usted no tiene autorización");
-            }
-            if(tipo_user!="Piscicultor" && tipo_user!="Administrador"){ 
+            );            
+            if(rows.length<1 && tipo_user!="Piscicultor" && tipo_user!="Administrador"){ 
               throw createError(401,"Usted no tiene autorización");
             }else{
                         if(body.nombre_granja===undefined || 
@@ -512,12 +509,10 @@ async function createGranja(body,token){
                     `, 
                     [id_user,id_granja]
                   );
-                  if(rows.length<1){
+                  if(rows.length<1 && tipo_user!="Administrador"){
                     throw createError(401,"Usted no tiene autorización");
                   }
-                  if(tipo_user!="Administrador"){
-                    throw createError(401,"Usted no tiene autorización");
-                  }
+                  
                   if(id_granja!=undefined && id_user!=undefined && id_granja!=null && id_user!=null){ 
                       const propiedad = await conection.execute(
                         `SELECT * from usuarios_granjas ug where  ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk=?`,
@@ -784,11 +779,8 @@ async function createGranja(body,token){
                 WHERE ug.usuarios_id=? and ug.espropietario=1 and ug.id_granja_pk_fk = ?
                 `, 
                 [id_user, idGranja]
-              );
-              if(rows.length<1){
-                throw createError(401,"Usted no tiene autorización");
-              }
-            if(tipo_user!="Piscicultor" && tipo_user!="Administrador"){ 
+              );              
+            if(rows.length<1 && tipo_user!="Piscicultor" && tipo_user!="Administrador"){ 
               throw createError(401,"Usted no tiene autorización");
             }else{
                 if(arrayfotos){ 
@@ -831,10 +823,7 @@ async function createGranja(body,token){
     {
       const payload=helper.parseJwt(token);  
       const id_user=payload.sub;
-      const rol = payload.rol;
-      if(rol != "Piscicultor" && rol !="Administrador"){
-        throw createError('401', "Usted no esta autorizado para actualizar esta granja.")
-      }      
+      const rol = payload.rol;      
       const rows2 = await db.query(
         `select *
          from usuarios_granjas as ug
@@ -845,8 +834,8 @@ async function createGranja(body,token){
           1
         ]
       );
-      if(rows2.length < 1 ){
-        throw createError('401', 'El usuario no es propietario de esta granja y no esta autorizado para actualizarla.')
+      if(rows2.length < 1 && rol != "Piscicultor" && rol !="Administrador"){
+        throw createError('401', "Usted no esta autorizado para actualizar esta granja.")
       }
       delete granja.password; 
       var atributos = Object.keys(granja);

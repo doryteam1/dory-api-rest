@@ -116,7 +116,7 @@ async function create(novedad,token){
                               `SELECT MAX(id_novedad) AS id FROM novedades`
                             ); /*ultimo Id_novedad que se creo con autoincremental*/
                         
-                            var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/        
+                            var categorias=novedad.arrayCategorias;      
                             for(var i=0;i<categorias.length;i++){
                                 await db.query(
                                   `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
@@ -129,7 +129,7 @@ async function create(novedad,token){
                           } catch (error) {
                             await conection.rollback(); /*Si hay algún error  */ 
                                   conection.release();
-                            throw createError(500,"Falla en el registro de novedad"); 
+                            throw error; 
                           }
                       }
                         throw createError(400,"Un problema con los parametros ingresados"); 
@@ -206,7 +206,8 @@ async function create(novedad,token){
                                 if (result.affectedRows) {
                                   message = 'Novedad actualizada exitosamente';
                                 }        
-                                  var categorias=JSON.parse(novedad.arrayCategorias);/*Pasar el string a vector*/      
+                                  /*var categorias=JSON.parse(novedad.arrayCategorias);Pasar el string a vector*/ 
+                                var categorias=novedad.arrayCategorias;    
                                 await db.query(
                                   `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
                                   [id]
@@ -223,11 +224,11 @@ async function create(novedad,token){
                               } catch (error) {
                                 conection.rollback(); /*Si hay algún error  */ 
                                 conection.release();
-                                throw createError(500,"Error al actualizar la novedad");        
+                                throw error;        
                               }
                           }
                         throw createError(400,"Un problema con los parametros ingresados al actualizar"); 
-                      }else{ 
+                  }else{ 
                         throw createError(401,"Usted no tiene autorización"); 
                   }
               }catch(error){
