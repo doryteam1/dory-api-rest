@@ -46,7 +46,7 @@ class ChatMensajes {
         console.log("\n\nconnected users...\n")
         this.usuariosArr.forEach(
             (u)=>{
-                console.log(u.nombre_completo)
+                //console.log(u.nombre_completo)
             }
         )
     }
