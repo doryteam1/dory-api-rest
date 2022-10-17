@@ -209,7 +209,9 @@ async function updateTimeSlider(body, token){
                 if(rol !="Administrador"){
                   throw createError('401', "Usted no esta autorizado para actualizar el tiempo del Slid.")
                 }    
-                               
+                    if(body.tiempo === undefined){
+                                throw createError(400,"Se requiere el tiempo");
+                    }   
                     const result = await db.query(
                     `UPDATE sliders
                      SET time=?
