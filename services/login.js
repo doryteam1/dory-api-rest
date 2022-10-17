@@ -45,7 +45,8 @@ async function createLogin(user){
                         }
                       }
                         throw createError(404,"Usuario no existe");
-                }catch{
+                }catch(err){
+                        console.log(err)
                         throw createError(401,"Usuario No tiene autorización");
                 }
         }else{
