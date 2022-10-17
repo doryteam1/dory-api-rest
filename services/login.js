@@ -44,10 +44,11 @@ async function createLogin(user){
                             return {token:token, creadoCon};
                         }
                       }
-                        throw createError(404,"Usuario no existe");
+                        throw createError(404,"Usuario no existe o no la contraseña es incorrecta.");
                 }catch(err){
                         console.log(err)
-                        throw createError(401,"Usuario No tiene autorización");
+                        throw err;
+                        //throw createError(401,"Usuario No tiene autorización");
                 }
         }else{
               throw createError(401,message);
