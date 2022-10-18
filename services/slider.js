@@ -20,10 +20,13 @@ async function obtenerSlid(){
        []
        );   
       const slider = helper.emptyOrRows(rows);
+      let tiempo;
+      console.log('Arreglo de Tiempo', time);
       if(time.length<1){
-            tiempo=1000;
+            tiempo=1000;  
+      }else{
+            tiempo= time[0].tiempo;    
       }
-       tiempo= time[0].tiempo;
        let data={slider,tiempo}
        return { data };
       
