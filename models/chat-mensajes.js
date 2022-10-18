@@ -56,6 +56,9 @@ class ChatMensajes {
         this.printConectedUsers()
     }
 
+    ultimoConectado(){
+        
+    }
 }
 
 module.exports = ChatMensajes;
