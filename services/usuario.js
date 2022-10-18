@@ -40,7 +40,7 @@ async function getUserId(page = 1, idUser){
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT u.id, u.cedula,concat(u.nombres," ",u.apellidos) as nombre_completo,u.nombres, u.apellidos,u.celular,u.direccion,u.email,u.id_tipo_usuario,u.id_area_experticia,
+    `SELECT u.id, u.cedula,u.nombres, u.apellidos,concat(u.nombres,' ',u.apellidos) as nombre_completo,u.celular,u.direccion,u.email,u.id_tipo_usuario,u.id_area_experticia,
             (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
             (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
             (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,

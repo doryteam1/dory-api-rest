@@ -20,9 +20,9 @@ const socketController = async( socket = new Socket(), io ) => {
         console.log("Usuario autorizado")
         let usuario = helper.parseJwt(token)
         // Agregar el usuario conectado
-        await chatMensajes.conectarUsuario( usuario );
+        let userDetail = await chatMensajes.conectarUsuario( usuario );
         io.emit('usuarios-activos',     chatMensajes.usuariosArr );
-
+        io.emit('ultimo-conectado', usuario.sub)
         // Conectarlo a una sala especial
         console.log("el usuario ",usuario.email," se ha conectado a la sala ",usuario.sub)
         socket.join( usuario.sub ); // global, socket.id, usuario.id
@@ -32,6 +32,7 @@ const socketController = async( socket = new Socket(), io ) => {
         socket.on('disconnect', () => {
             chatMensajes.desconectarUsuario( usuario.sub );
             io.emit('usuarios-activos', chatMensajes.usuariosArr );
+            io.emit('ultimo-desconectado', usuario.sub)
         })
         
         socket.on('new-message', ({ uid, mensaje }) => {
