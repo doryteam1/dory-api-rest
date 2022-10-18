@@ -213,9 +213,9 @@ async function updateTimeSlider(body, token){
                                 throw createError(400,"Se requiere el tiempo");
                     }   
                     const result = await db.query(
-                    `UPDATE sliders
-                     SET time=?
-                     WHERE id_slid != -1`,
+                    `UPDATE tiempoSlider
+                     SET tiempo=?
+                     WHERE id != -1`,
                      [body.tiempo] 
                     );  
                                                                  
