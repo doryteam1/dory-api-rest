@@ -5,13 +5,20 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
 /* ------------------------------------ObtenerSlid------------------------------------*/
-async function obtenerSlid(){      
+async function obtenerSlid(){   
        const rows = await db.query(
         `SELECT * 
          FROM sliders`,            
        []
-       );  
-       const data = helper.emptyOrRows(rows);
+       ); 
+       const time = await db.query(
+        `SELECT ts.tiempo
+         FROM tiempoSlider as ts`,            
+       []
+       );   
+      const slider = helper.emptyOrRows(rows);
+       tiempo= time[0].tiempo;
+       let data={slider,tiempo}
        return { data };
       
 }/* End obtenerSlid*/
