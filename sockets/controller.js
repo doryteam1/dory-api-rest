@@ -22,8 +22,7 @@ const socketController = async( socket = new Socket(), io ) => {
         // Agregar el usuario conectado
         let userDetail = await chatMensajes.conectarUsuario( usuario );
         io.emit('usuarios-activos',     chatMensajes.usuariosArr );
-        console.log("userDetail ",userDetail)
-        io.emit('ultimo-conectado', userDetail)
+        io.emit('ultimo-conectado', usuario.sub)
         // Conectarlo a una sala especial
         console.log("el usuario ",usuario.email," se ha conectado a la sala ",usuario.sub)
         socket.join( usuario.sub ); // global, socket.id, usuario.id
