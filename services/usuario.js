@@ -61,88 +61,97 @@ async function getMultiple(page = 1){
 }/*End getMultiple*/
 
 /* ----------------------------------CREATE-----------------------------*/
-async function create(usuario){
-  if(usuario.nombres === undefined || 
-    usuario.apellidos === undefined ||
-    usuario.id_tipo_usuario === undefined ||
-    usuario.email === undefined ||
-    usuario.password === undefined ||
-    usuario.foto === undefined ||
-    usuario.latitud === undefined ||
-    usuario.longitud === undefined ||
-    usuario.creadoCon === undefined ||
-    usuario.id_sexo === undefined ||
-    usuario.id_etnia === undefined ){
-      throw createError(400,"Debe enviar todos los datos requeridos para el registro del usuario");
-  }
-  let contentHtml=""; 
-  let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del Departamento de Sucre, en alianza con los grupos de investigación, Gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
-  if(usuario.creadoCon && usuario.creadoCon=="google"){
-        contentHtml = `<center>
-        <img src="https://firebasestorage.googleapis.com/v0/b/dory-prod-d7a48.appspot.com/o/logo.jpeg?alt=media&token=acfe727e-ec68-4d85-ae90-b6fdddd6fe2c" width="100" height="100" />
-        <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
-        <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
-        <form>
-        </center>
-        </br>
-        `;
-  }else{              
-        let mensaje2="Sólo falta verificar su cuenta.   Has click en el siguiente enlace para confirmar su correo electrónico";
-        let token=helper.createToken(usuario,4320);/*token de 3 días*/
-        usuario.creadoCon="email";
-        contentHtml = `<center>
-        <img src="https://firebasestorage.googleapis.com/v0/b/dory-prod-d7a48.appspot.com/o/logo.jpeg?alt=media&token=acfe727e-ec68-4d85-ae90-b6fdddd6fe2c" width="100" height="100" />
-        <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
-        <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
-        <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje2}</p> 
-        <form>
-        <a href="${process.env.DORY_WEB_APP_URL}/verify-account?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Verificar cuenta de usuario </a></form>
-        </center>
-        </br>
-        `;
- }
-let message='Registro fallido';
-  try {
-    const saltRounds= 10;
-    const salt= bcrypt.genSaltSync(saltRounds);//generate a salt
-    const passwordHash= bcrypt.hashSync( usuario.password , salt);//generate a password Hash (salt+hash)
-    usuario.password=passwordHash;//Re-assign hashed generate a salt version over original, plain text password 
-    usuario.estaVerificado=0;   
-  } catch  {
-    throw createError(500,"Un problema al crear el usuario");
-  }
-    try{
-      const result = await db.query(
-        `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado,creadoCon,id_sexo,id_etnia) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, 
-        [
-          usuario.nombres, 
-          usuario.apellidos, 
-          usuario.id_tipo_usuario,
-          usuario.email,
-          usuario.password, 
-          usuario.foto,
-          usuario.latitud,
-          usuario.longitud,
-          usuario.estaVerificado,
-          usuario.creadoCon,
-          usuario.id_sexo,
-          usuario.id_etnia
-        ]
-      );
-      if (result.affectedRows) {
-        message = 'Usuario registrado exitosamente';
-        let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del departamento de sucre, en alianza con los grupos de investigación, gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
-        let mensaje2="Sólo falta verificar su cuenta.   Has click en el siguiente enlace para confirmar su correo electrónico";
-        let token=helper.createToken(usuario,4320);/*token de 3 días*/
-        let tema="Bienvenido a Dory";             
-        helper.sendEmail(usuario.email,tema,contentHtml);
-      }else {
-        throw createError(500,"Ocurrió un problema al registrar un usuario");
-      }
-    }catch(err){
-        throw err;
-    }
-    return {message};  
+async function create(usuario,token){
+       if(usuario.id_tipo_usuario == -1){
+              if(token && validarToken(token)){
+                    let payload=helper.parseJwt(token);
+                    let rol= payload.rol; 
+                    if(rol!="Administrador"){
+                           throw createError(401,"Usted no tiene autorización");
+                    }   
+                  }
+        }    
+            if(usuario.nombres === undefined || 
+              usuario.apellidos === undefined ||
+              usuario.id_tipo_usuario === undefined ||
+              usuario.email === undefined ||
+              usuario.password === undefined ||
+              usuario.foto === undefined ||
+              usuario.latitud === undefined ||
+              usuario.longitud === undefined ||
+              usuario.creadoCon === undefined ||
+              usuario.id_sexo === undefined ||
+              usuario.id_etnia === undefined ){
+                throw createError(400,"Debe enviar todos los datos requeridos para el registro del usuario");
+            }
+            let contentHtml=""; 
+            let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del Departamento de Sucre, en alianza con los grupos de investigación, Gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
+            if(usuario.creadoCon && usuario.creadoCon=="google"){
+                  contentHtml = `<center>
+                  <img src="https://firebasestorage.googleapis.com/v0/b/dory-prod-d7a48.appspot.com/o/logo.jpeg?alt=media&token=acfe727e-ec68-4d85-ae90-b6fdddd6fe2c" width="100" height="100" />
+                  <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
+                  <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
+                  <form>
+                  </center>
+                  </br>
+                  `;
+            }else{              
+                  let mensaje2="Sólo falta verificar su cuenta.   Has click en el siguiente enlace para confirmar su correo electrónico";
+                  let token=helper.createToken(usuario,4320);/*token de 3 días*/
+                  usuario.creadoCon="email";
+                  contentHtml = `<center>
+                  <img src="https://firebasestorage.googleapis.com/v0/b/dory-prod-d7a48.appspot.com/o/logo.jpeg?alt=media&token=acfe727e-ec68-4d85-ae90-b6fdddd6fe2c" width="100" height="100" />
+                  <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
+                  <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
+                  <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje2}</p> 
+                  <form>
+                  <a href="${process.env.DORY_WEB_APP_URL}/verify-account?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Verificar cuenta de usuario </a></form>
+                  </center>
+                  </br>
+                  `;
+          }
+          let message='Registro fallido';
+            try {
+              const saltRounds= 10;
+              const salt= bcrypt.genSaltSync(saltRounds);//generate a salt
+              const passwordHash= bcrypt.hashSync( usuario.password , salt);//generate a password Hash (salt+hash)
+              usuario.password=passwordHash;//Re-assign hashed generate a salt version over original, plain text password 
+              usuario.estaVerificado=0;   
+            } catch  {
+              throw createError(500,"Un problema al crear el usuario");
+            }
+              try{
+                const result = await db.query(
+                  `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado,creadoCon,id_sexo,id_etnia) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                  [
+                    usuario.nombres, 
+                    usuario.apellidos, 
+                    usuario.id_tipo_usuario,
+                    usuario.email,
+                    usuario.password, 
+                    usuario.foto,
+                    usuario.latitud,
+                    usuario.longitud,
+                    usuario.estaVerificado,
+                    usuario.creadoCon,
+                    usuario.id_sexo,
+                    usuario.id_etnia
+                  ]
+                );
+                    if (result.affectedRows) {
+                            message = 'Usuario registrado exitosamente';
+                            let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del departamento de sucre, en alianza con los grupos de investigación, gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
+                            let mensaje2="Sólo falta verificar su cuenta.   Has click en el siguiente enlace para confirmar su correo electrónico";
+                            let token=helper.createToken(usuario,4320);/*token de 3 días*/
+                            let tema="Bienvenido a Dory";             
+                            helper.sendEmail(usuario.email,tema,contentHtml);
+                    }else {
+                      throw createError(500,"Ocurrió un problema al registrar un usuario");
+                    }
+              }catch(err){
+                  throw err;
+              }
+                return {message};              
 }/*End create*/
 
 /* ----------------------------------UPDATE-----------------------------*/
