@@ -227,14 +227,15 @@ async function updateTimeSlider(body, token){
                 }    
                     if(body.tiempo === undefined){
                                 throw createError(400,"Se requiere el tiempo");
-                    }   
+                    } 
+
                     const result = await db.query(
                     `UPDATE tiempoSlider
                      SET tiempo=?
-                     WHERE id != -1`,
+                     WHERE id=0`,
                      [body.tiempo] 
-                    );  
-                                                                 
+                    ); 
+
                       let message = '';
                       if (result.affectedRows) {
                         message = 'Slider actualizado exitosamente';

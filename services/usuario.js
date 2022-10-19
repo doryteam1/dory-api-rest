@@ -87,7 +87,7 @@ async function create(usuario){
         </br>
         `;
   }else{              
-        let mensaje2="Solo falta que verifiques tu cuenta.   Haz click en el siguiente enlace para verificar tu correo electrónico";
+        let mensaje2="Sólo falta verificar su cuenta.   Has click en el siguiente enlace para confirmar su correo electrónico";
         let token=helper.createToken(usuario,4320);/*token de 3 días*/
         usuario.creadoCon="email";
         contentHtml = `<center>
@@ -131,8 +131,8 @@ let message='Registro fallido';
       );
       if (result.affectedRows) {
         message = 'Usuario registrado exitosamente';
-        let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del Departamento de Sucre, en alianza con los grupos de investigación, Gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
-        let mensaje2="Solo falta que verifiques tu cuenta.   Haz click en el siguiente enlace para verificar tu correo electrónico";
+        let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del departamento de sucre, en alianza con los grupos de investigación, gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
+        let mensaje2="Sólo falta verificar su cuenta.   Has click en el siguiente enlace para confirmar su correo electrónico";
         let token=helper.createToken(usuario,4320);/*token de 3 días*/
         let tema="Bienvenido a Dory";             
         helper.sendEmail(usuario.email,tema,contentHtml);
@@ -238,7 +238,7 @@ async function update(idUser, usuario, token){
                               }
                               return {message};
                               }  
-                                  throw createError(400,"Un problema con los parametros ingresados al actualizar");                                   
+                                  throw createError(400,"Un problema con los parámetros ingresados al actualizar");                                   
                 }else{
                       throw createError(401,"Usuario no autorizado"); 
                 }
@@ -323,7 +323,7 @@ async function updateParcialUsuario(idUser, usuario, token){
                             if (atributos.length!=0){    
                                 var param=Object.values(usuario);
                                 var query = "UPDATE usuarios SET ";
-                                param.push(idUser);/*Agrego el id al final de los parametros*/ 
+                                param.push(idUser);/*Agrego el id al final de los á*/ 
                             for(var i=0; i<atributos.length;i++) {
                               query= query+atributos[i]+'=?,';      }
                             query= query.substring(0, query.length-1);/*eliminar la coma final*/ 
@@ -335,7 +335,7 @@ async function updateParcialUsuario(idUser, usuario, token){
                             }
                             return {message};
                           }
-                        throw createError(400,"No hay parametros para actualizar");
+                        throw createError(400,"No ingresado los parámetros que desea actualizar");
                 }else{
                   throw createError(401,"Usuario no autorizado"); 
                 }
@@ -385,7 +385,7 @@ async function updatePassword(datos){
                       message = 'Contraseña de Usuario actualizado exitosamente';
                     }          
      } catch {
-              throw createError(500,"Actualización de password de usuario fallída");
+              throw createError(500,"Actualización del password fallida");
              }            
             return {message};
    }     
@@ -406,7 +406,7 @@ async function recoverPassword(datos){
           );             
           if(userbd[0]){
                   const token=helper.createToken(userbd[0],15);
-                  const mensaje="Hola, Nos acabas de informar que no recuerdas tu contraseña. Para volver a acceder a tu cuenta, haz click en actualizar contraseña.";
+                  const mensaje="Hola, Nos acabas de informar que no recuerdas tu contraseña. Para volver a acceder a tu cuenta, has click en actualizar contraseña.";
                   let tema="Recuperar Contraseña";
                   contentHtml = `<center> 
                   <img src="http://sharpyads.com/wp-content/uploads/2022/03/logo-no-name-320x320.png" width="100" height="100" />
@@ -421,7 +421,7 @@ async function recoverPassword(datos){
                 throw createError(404,"El usuario no se encuentra registrado en la bd");
                }
     }else{
-          throw createError(400,"Un problema con los parametros ingresados"); 
+          throw createError(400,"Un problema con los parámetros ingresados"); 
          }
 }/* End recoverPassword*/
 
