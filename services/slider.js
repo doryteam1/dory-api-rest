@@ -55,7 +55,7 @@ async function crearSlid(body,token){
                 }
                 const result = await db.query(
                 `INSERT INTO sliders (url_imagen,url_enlace,titulo) VALUES (?,?,?)`,                
-                 [body.url_imagen,body.url_enlace,body.titulo,0] 
+                 [body.url_imagen,body.url_enlace,body.titulo] 
                 );  
               let message = 'Error registrando el slid';  
               if (result.affectedRows) {
