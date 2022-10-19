@@ -44,22 +44,22 @@ async function crearSlid(body,token){
               let payload=helper.parseJwt(token);
               let rol= payload.rol; 
                 if(rol!='Administrador'){
-                        throw createError(401,"Usted no tiene autorización para registrar el slid");
+                        throw createError(401,"Usted no tiene autorización para registrar el slide");
                 }
                 if(body.url_imagen === undefined || 
                    body.url_enlace === undefined || 
                    body.titulo === undefined 
                 )
                 {
-                    throw createError(400,"Debe enviar todos los parámetros del slid para su registro");
+                    throw createError(400,"Debe enviar todos los parámetros del slide para su registro");
                 }
                 const result = await db.query(
                 `INSERT INTO sliders (url_imagen,url_enlace,titulo) VALUES (?,?,?)`,                
                  [body.url_imagen,body.url_enlace,body.titulo] 
                 );  
-              let message = 'Error registrando el slid';  
+              let message = 'Error registrando el slide';  
               if (result.affectedRows) {
-                message = 'Registro exitoso de Slid';
+                message = 'Registro exitoso de Slide';
               }  
               return {message};
           }else{ 
@@ -77,14 +77,14 @@ async function actualizarSlid(idSlid,body,token){
                     let payload=helper.parseJwt(token);
                     let rol= payload.rol; 
                       if(rol!='Administrador'){
-                              throw createError(401,"Usted no tiene autorización para actualizar slid");
+                              throw createError(401,"Usted no tiene autorización para actualizar slide");
                       }
                       if(body.url_imagen === undefined || 
                          body.url_enlace === undefined || 
                          body.titulo === undefined 
                       )
                       {
-                          throw createError(400,"Debe enviar todos los parámetros del slid para la actualización");
+                          throw createError(400,"Debe enviar todos los parámetros del slide para la actualización");
                       }
                       const result = await db.query(
                       `UPDATE sliders
@@ -99,9 +99,9 @@ async function actualizarSlid(idSlid,body,token){
                         idSlid
                       ] 
                     );  
-                    let message = 'Error actualizando la información del slid';  
+                    let message = 'Error actualizando la información del slide';  
                     if (result.affectedRows) {
-                      message = 'Actualización de Slid exitoso';
+                      message = 'Actualización de Slide exitoso';
                     }  
                     return {message};
                 }else{ 
@@ -119,7 +119,7 @@ async function eliminarSlid(idSlid,token){
               let payload=helper.parseJwt(token);
               let rol= payload.rol; 
                 if(rol!='Administrador'){
-                        throw createError(401,"Usted no tiene autorización para eliminar slid");
+                        throw createError(401,"Usted no tiene autorización para eliminar slide");
                 }
                  const result = await db.query(
                  `DELETE from sliders where id_slid=?`,
@@ -127,7 +127,7 @@ async function eliminarSlid(idSlid,token){
                   );   
                   let message='Error al eliminar slid';                  
                   if (result.affectedRows) {
-                          message = 'Slid borrado exitosamente';
+                          message = 'Slide borrado exitosamente';
                   } 
                   return {message};                              
           }else{ 
@@ -153,7 +153,7 @@ async function actualizarCarruselSlid(body,token){
                           try{                                  
                                   await conection.beginTransaction();
                                   var carrusel=body.arraySliders;
-                                  let message = 'Actualización exitosa del slid';                                 
+                                  let message = 'Actualización exitosa del slide';                                 
                                   await db.query(
                                     `DELETE FROM sliders`, 
                                     []
@@ -191,7 +191,7 @@ async function updateParcialSlid(idSlide, slide, token){
               const payload=helper.parseJwt(token);  
               const rol = payload.rol;
               if(rol !="Administrador"){
-                throw createError('401', "Usted no esta autorizado para actualizar el slid.")
+                throw createError('401', "Usted no esta autorizado para actualizar el slide.")
               }               
               var atributos = Object.keys(slide);
               if(atributos.length!=0)
@@ -207,9 +207,9 @@ async function updateParcialSlid(idSlide, slide, token){
                     const result = await db.query(query,params);              
                     let message = '';
                     if (result.affectedRows) {
-                      message = 'Slid actualizado exitosamente';
+                      message = 'Slide actualizado exitosamente';
                     }else{
-                      throw createError(500,"No se pudo actualizar el registro del slid");    
+                      throw createError(500,"No se pudo actualizar el registro del slide");    
                     }
                     return {message};
               }
@@ -227,7 +227,7 @@ async function updateTimeSlider(body, token){
                 const payload=helper.parseJwt(token);  
                 const rol = payload.rol;
                 if(rol !="Administrador"){
-                  throw createError('401', "Usted no esta autorizado para actualizar el tiempo del Slid.")
+                  throw createError('401', "Usted no esta autorizado para actualizar el tiempo del Slide.")
                 }    
                     if(body.tiempo === undefined){
                                 throw createError(400,"Se requiere el tiempo");
