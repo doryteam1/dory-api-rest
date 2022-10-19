@@ -44,7 +44,7 @@ async function createLogin(user){
                             return {token:token, creadoCon};
                         }
                       }
-                        throw createError(404,"Usuario no existe o no la contraseña es incorrecta.");
+                        throw createError(404,"Usuario no existe ó la contraseña es incorrecta.");
                 }catch(err){
                         console.log(err)
                         throw err;
