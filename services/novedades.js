@@ -116,13 +116,15 @@ async function create(novedad,token){
                               `SELECT MAX(id_novedad) AS id FROM novedades`
                             ); /*ultimo Id_novedad que se creo con autoincremental*/
                         
-                            var categorias=novedad.arrayCategorias;      
-                            for(var i=0;i<categorias.length;i++){
-                                await db.query(
-                                  `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
-                                  [categorias[i], rowsId[0].id]
-                                );
-                            }
+                            var categorias=novedad.arrayCategorias; 
+                            if(categorias){  
+                                      for(var i=0;i<categorias.length;i++){
+                                          await conection.execute(
+                                            `INSERT INTO categorias_novedades(id_categoria_pk_fk,id_novedad_pk_fk) VALUES (?,?)`,
+                                            [categorias[i], rowsId[0].id]
+                                          );
+                                      }
+                             }  
                             await conection.commit(); 
                                   conection.release();
                             return {message};
@@ -132,7 +134,7 @@ async function create(novedad,token){
                             throw error; 
                           }
                       }
-                        throw createError(400,"Un problema con los parametros ingresados"); 
+                        throw createError(400,"Un problema con los parámetros ingresados"); 
               }else{ 
                     throw createError(401,"Usted no tiene autorización"); 
               }
@@ -255,13 +257,11 @@ async function create(novedad,token){
                               await db.query(
                                 `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
                                   [id]
-                                  );  /*Elimino la relación de la novedad en la tabla categorias_novedades */
-                        
+                                  );  /*Elimino la relación de la novedad en la tabla categorias_novedades */                        
                             const result = await db.query(
                               `DELETE FROM novedades WHERE id_novedad=?`, 
                               [id]
-                            );  
-                              
+                            );                                
                             if (result.affectedRows) {
                               message = 'Novedad borrado exitosamente';
                             }            
