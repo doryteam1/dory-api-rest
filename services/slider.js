@@ -12,7 +12,11 @@ async function obtenerSlid(){
        []
        ); 
        if(rows.length<1){
-        throw createError(404,"No se encuentra ningún slider");
+          let data = {
+            slider:[],
+            tiempo:0
+          }
+        return { data };
        }
        const time = await db.query(
         `SELECT ts.tiempo
