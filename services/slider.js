@@ -12,7 +12,11 @@ async function obtenerSlid(){
        []
        ); 
        if(rows.length<1){
-        throw createError(404,"No se encuentra ningún slider");
+          let data = {
+            slider:[],
+            tiempo:0
+          }
+        return { data };
        }
        const time = await db.query(
         `SELECT ts.tiempo
@@ -50,7 +54,7 @@ async function crearSlid(body,token){
                     throw createError(400,"Debe enviar todos los parámetros del slid para su registro");
                 }
                 const result = await db.query(
-                `INSERT INTO sliders (url_imagen,url_enlace,titulo,time) VALUES (?,?,?,?)`,                
+                `INSERT INTO sliders (url_imagen,url_enlace,titulo) VALUES (?,?,?)`,                
                  [body.url_imagen,body.url_enlace,body.titulo,0] 
                 );  
               let message = 'Error registrando el slid';  
