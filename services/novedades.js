@@ -257,7 +257,11 @@ async function create(novedad,token){
                               await db.query(
                                 `DELETE from categorias_novedades where id_novedad_pk_fk=?`,
                                   [id]
-                                  );  /*Elimino la relación de la novedad en la tabla categorias_novedades */                        
+                                  );  /*Elimino la relación de la novedad en la tabla categorias_novedades */  
+                                  await db.query(
+                                    `DELETE from me_gustas where id_novedad_pk_fk=?`,
+                                      [id]
+                                  );  /*Elimino la relación de la novedad en la tabla me_gustas */                       
                             const result = await db.query(
                               `DELETE FROM novedades WHERE id_novedad=?`, 
                               [id]
