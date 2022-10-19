@@ -9,7 +9,7 @@ async function getMultiple(page = 1){
   const rows = await db.query(
     `SELECT tu.* 
     FROM tipos_usuarios AS tu
-    WHERE tu.id_tipo_usuario != 0
+    WHERE tu.id_tipo_usuario != -1
     LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
