@@ -21,6 +21,7 @@ async function createMessage(message, token) {
         throw createError(400, "Se requieren todos los parámetros!");
       }
 
+      console.log("message ",message)
       const result = await db.query(
         `INSERT INTO mensajes(contenido,fecha_creacion,usuario_emisor_id,usuario_receptor_id,tipo_mensaje_id,grupos_id) VALUES (?,?,?,?,?,?)`,
         [
