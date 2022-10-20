@@ -33,6 +33,7 @@ async function createMessage(message, token) {
           message.grupos_id
         ]
       );
+      console.log("result ",result)
       if (result[0]['affectedRows']) {
         return { message: 'mensaje guardado' };
       }else{
