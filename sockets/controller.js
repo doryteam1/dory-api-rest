@@ -1,6 +1,7 @@
 const { Socket } = require('socket.io');
 const { validarToken } = require('../middelware/auth');
 const ChatMensajes = require('../models/chat-mensajes');
+const ChatDbService = require('../services/chat');
 const helper = require('../helper');
 const chatMensajes = new ChatMensajes();
 
@@ -35,13 +36,20 @@ const socketController = async( socket = new Socket(), io ) => {
             io.emit('ultimo-desconectado', usuario.sub)
         })
         
-        socket.on('new-message', ({ uid, mensaje }) => {
+        socket.on('new-message', async({ uid, mensaje }) => {
             console.log("message recived! uid ", uid)
             console.log("message recived! mensaje ", mensaje)
 
         if ( uid ) {
             // Mensaje privado
             console.log("send message to ", uid)
+            let message = {
+                contenido: mensaje,
+                usuario_receptor_id:uid,
+                tipo_mensaje_id:1,
+                grupos_id:null,
+            }
+            await ChatDbService.createMessage(message)
             socket.to( uid ).emit( 'new-message', { de:usuario.sub, mensaje });
         } 
         /* else {
