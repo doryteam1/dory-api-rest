@@ -9,9 +9,10 @@ async function createMessage(message, token) {
   if (token && validarToken(token)) {
     const payload = helper.parseJwt(token);
     message.usuario_emisor_id = payload.sub;
-    var now = dayjs()
-    message.fecha_creacion = 343543543;
-    console.log("fecha creacion mensaje",dayjs(now))
+    const currentDate = new Date();
+    const timestamp = currentDate.getTime();
+    message.fecha_creacion = timestamp;
+    console.log("fecha creacion mensaje",dayjs(timestamp))
     try {
       if (message.contenido === undefined ||
         message.usuario_receptor_id === undefined ||
