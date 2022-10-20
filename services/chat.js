@@ -22,7 +22,7 @@ async function createMessage(message, token) {
       }
 
       const result = await db.query(
-        `INSERT INTO mensajes(contenido, fecha_creacion,usuario_emisor_id,usuario_receptor_id,tipo_mensaje_id,grupos_id) VALUES (?,?,?,?,?,?)`,
+        `INSERT INTO mensajes(contenido,fecha_creacion,usuario_emisor_id,usuario_receptor_id,tipo_mensaje_id,grupos_id) VALUES (?,?,?,?,?,?)`,
         [
           message.contenido,
           message.fecha_creacion,
