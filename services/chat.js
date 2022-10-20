@@ -6,7 +6,6 @@ const dayjs = require('dayjs');
 
 
 async function createMessage(message, token) {
-  let message = 'Error creando mensaje';
   if (token && validarToken(token)) {
     const payload = helper.parseJwt(token);
     const tipo_user = payload.rol;
@@ -35,9 +34,10 @@ async function createMessage(message, token) {
         ]
       );
       if (result[0]['affectedRows']) {
-        message = { message: 'mensaje guardado' };
+        return { message: 'mensaje guardado' };
+      }else{
+        return { message: 'error guardando mensaje' }
       }
-      return { message };
     } catch (error) {
       throw error;
     }
