@@ -48,10 +48,32 @@ async function createMessage(message, token) {
   } else {
     throw createError(401, "Usted no tiene autorización");
   }
-}
+}/*End createMessage*/
 
+
+async function getMensajesPrivados(token, idUser2) {
+            if(token && validarToken(token)){
+                    const payload=helper.parseJwt(token);  
+                    const id_user=payload.sub;
+                    const rows = await db.query(
+                      `SELECT *
+                      FROM mensajes as m
+                      WHERE (m.usuario_emisor_id=? || m.usuario_receptor_id=?) and (m.usuario_emisor_id=? || m.usuario_receptor_id=?)
+                      order by fecha_creacion desc`, 
+                      [id_user, idUser2]
+                    );
+                    if(rows.length<1){
+                      return {message:'No hay mensajes'};
+                    }
+                    const data = helper.emptyOrRows(rows);
+                    return {data};                
+            }else{
+                  throw createError(401,"Usted no tiene autorización"); 
+            }
+}/*End getMensajesPrivados*/
 
 
 module.exports = {
   createMessage,
+  getMensajesPrivados
 }
