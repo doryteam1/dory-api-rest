@@ -60,7 +60,7 @@ async function getMensajesPrivados(token, idUser2) {
                       FROM mensajes as m
                       WHERE (m.usuario_emisor_id=? || m.usuario_receptor_id=?) and (m.usuario_emisor_id=? || m.usuario_receptor_id=?)
                       order by fecha_creacion desc`, 
-                      [id_user, idUser2]
+                      [id_user, id_user, idUser2, idUser2]
                     );
                     if(rows.length<1){
                       return {message:'No hay mensajes'};
