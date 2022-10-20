@@ -10,7 +10,7 @@ async function createMessage(message, token) {
     const payload = helper.parseJwt(token);
     message.usuario_emisor_id = payload.sub;
     var now = dayjs()
-    message.fecha_creacion = now;
+    message.fecha_creacion = 343543543;
     console.log("fecha creacion mensaje",dayjs(now))
     try {
       if (message.contenido === undefined ||
