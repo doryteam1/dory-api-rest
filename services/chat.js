@@ -11,9 +11,9 @@ async function createMessage(message, token) {
     message.usuario_emisor_id = payload.sub;
     const currentDate = new Date();
     const timestamp = currentDate.getTime();
-    message.fecha_creacion = timestamp;
+    message.fecha_creacion = dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss');
     console.log("timestamp ",timestamp)
-    console.log("fecha creacion mensaje",dayjs(timestamp))
+    console.log("fecha creacion mensaje",essage.fecha_creacion)
     try {
       if (message.contenido === undefined ||
         message.usuario_receptor_id === undefined ||
