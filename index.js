@@ -62,6 +62,7 @@ const integrantesRouter = require('./routes/integrantes');
 const conocenosRouter = require('./routes/conocenos');
 const sliderRouter = require('./routes/slider');
 const enlacesRapidosRouter = require('./routes/enlacesRapidos');
+const dashboardRouter = require('./routes/dashboard');
 
 var cors = require('cors');
 app.use(bodyParser.json());
@@ -135,6 +136,8 @@ app.use('/api/integrantes',integrantesRouter)
 app.use('/api/conocenos',conocenosRouter)
 app.use('/api/slider',sliderRouter)
 app.use('/api/enlacesRapidos',enlacesRapidosRouter)
+app.use('/api/dashboard',dashboardRouter)
+
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
   const error= new Error('NOT FOUND');
