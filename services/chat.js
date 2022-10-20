@@ -54,18 +54,24 @@ async function createMessage(message, token) {
 async function getMensajesPrivados(token, idUser2) {
             if(token && validarToken(token)){
                     const payload=helper.parseJwt(token);  
-                    const id_user=payload.sub;
+                    const idUser1=payload.sub;
                     const rows = await db.query(
                       `SELECT *
                       FROM mensajes as m
-                      WHERE (m.usuario_emisor_id=? || m.usuario_receptor_id=?) and (m.usuario_emisor_id=? || m.usuario_receptor_id=?)
+                      WHERE (m.usuario_emisor_id=? and m.usuario_receptor_id=?) || (m.usuario_emisor_id=? and m.usuario_receptor_id=?)
                       order by fecha_creacion desc`, 
-                      [id_user, id_user, idUser2, idUser2]
+                      [idUser1, idUser2, idUser2, idUser1]
                     );
+                    let data;
                     if(rows.length<1){
-                      return {message:'No hay mensajes'};
+                      data = {
+                        mensajes:[]
+                      }
+                      return {
+                        data
+                      }
                     }
-                    const data = helper.emptyOrRows(rows);
+                    data = helper.emptyOrRows(rows);
                     return {data};                
             }else{
                   throw createError(401,"Usted no tiene autorización"); 
