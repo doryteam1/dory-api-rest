@@ -53,6 +53,7 @@ const socketController = async (socket = new Socket(), io) => {
                     await ChatDbService.createMessage(message, token)
                     socket.to(uid).emit('new-message', { de: usuario.sub, mensaje });
                 } catch (err) {
+                    console.log(err)
                     throw err;
                 }
             }
