@@ -49,7 +49,7 @@ const socketController = async( socket = new Socket(), io ) => {
                 tipo_mensaje_id:1,
                 grupos_id:null,
             }
-            await ChatDbService.createMessage(message)
+            await ChatDbService.createMessage(message,token)
             socket.to( uid ).emit( 'new-message', { de:usuario.sub, mensaje });
         } 
         /* else {

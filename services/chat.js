@@ -8,7 +8,6 @@ const dayjs = require('dayjs');
 async function createMessage(message, token) {
   if (token && validarToken(token)) {
     const payload = helper.parseJwt(token);
-    const tipo_user = payload.rol;
     message.usuario_emisor_id = payload.sub;
     var now = dayjs()
     message.fecha_creacion = now;
