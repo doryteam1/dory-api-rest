@@ -34,7 +34,8 @@ async function createMessage(message, token) {
         ]
       );
       console.log("result ",result)
-      if (result[0]['affectedRows']) {
+      if (result['affectedRows']) {
+        console.log("mensaje guardado")
         return { message: 'mensaje guardado' };
       }else{
         return { message: 'error guardando mensaje' }
