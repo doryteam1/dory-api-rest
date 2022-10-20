@@ -11,7 +11,8 @@ async function createMessage(message, token) {
     message.usuario_emisor_id = payload.sub;
     const currentDate = new Date();
     const timestamp = currentDate.getTime();
-    message.fecha_creacion = dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss');
+    //message.fecha_creacion = dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss');
+    message.fecha_creacion = currentDate.toISOString();
     console.log("timestamp ",timestamp)
     console.log("fecha creacion mensaje",message.fecha_creacion)
     console.log("UTC time ",currentDate.toISOString())
