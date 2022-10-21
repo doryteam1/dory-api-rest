@@ -40,9 +40,9 @@ async function createMessage(message, token) {
       console.log("result ",result)
       if (result['affectedRows']) {
         console.log("mensaje guardado")
-        return { message: 'mensaje guardado' };
+        return { message: message, result:'ok' };
       }else{
-        return { message: 'error guardando mensaje' }
+        throw createError(500, "No se pudo guardar el mensaje");
       }
     } catch (error) {
       throw error;

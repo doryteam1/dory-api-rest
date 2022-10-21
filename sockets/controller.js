@@ -50,7 +50,9 @@ const socketController = async (socket = new Socket(), io) => {
                         tipo_mensaje_id: 1,
                         grupos_id: null,
                     }
-                    await ChatDbService.createMessage(message, token)
+                    let result = await ChatDbService.createMessage(message, token)
+                    console.log("Resultado guardado de mensaje->> ",result)
+                    socket.to(uid).emit('new-message', { de: usuario.sub, mensaje });
                     socket.to(uid).emit('new-message', { de: usuario.sub, mensaje });
                     //TODO: enviar confirmacion
                 } catch (err) {
