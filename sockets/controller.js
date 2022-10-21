@@ -52,9 +52,9 @@ const socketController = async (socket = new Socket(), io) => {
                     }
                     let result = await ChatDbService.createMessage(message, token)
                     console.log("Resultado guardado de mensaje->> ",result)
+                    console.log("Enviar mensaje a usuario.sub", usuario.sub)
                     socket.to(uid).emit('new-message', { de: usuario.sub, mensaje, metadata:result });
                     socket.to(usuario.sub).emit('new-message', { de: usuario.sub, mensaje,metadata:result });
-                    //TODO: enviar confirmacion
                 } catch (err) {
                     console.log(err)
                     throw err;
