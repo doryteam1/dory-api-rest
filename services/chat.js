@@ -61,7 +61,7 @@ async function getMensajesPrivados(token, idUser2) {
                       `SELECT *
                       FROM mensajes as m
                       WHERE (m.usuario_emisor_id=? and m.usuario_receptor_id=?) || (m.usuario_emisor_id=? and m.usuario_receptor_id=?)
-                      order by fecha_creacion desc`, 
+                      order by fecha_creacion asc`, 
                       [idUser1, idUser2, idUser2, idUser1]
                     );
                     let data;
