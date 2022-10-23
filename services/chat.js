@@ -80,8 +80,36 @@ async function getMensajesPrivados(token, idUser2) {
             }
 }/*End getMensajesPrivados*/
 
+async function getUltimos(token){
+  if(token && validarToken(token)){
+    const payload=helper.parseJwt(token);  
+    const idUser=payload.sub;
+    const rows = await db.query(
+      `select m.*, m.usuario_emisor_id + m.usuario_receptor_id as chat_id
+      from mensajes as m
+      where usuario_emisor_id = ? || usuario_receptor_id = ?
+      order by chat_id asc, m.fecha_creacion desc`, 
+      [idUser, idUser]
+    );
+    console.log("ultimos--->",rows)
+    let data;
+    if(rows.length<1){
+      data = {
+        mensajes:[]
+      }
+      return {
+        data
+      }
+    }
+    data = helper.emptyOrRows(rows);
+    return {data};                
+}else{
+  throw createError(401,"Usted no tiene autorización"); 
+}
+}
 
 module.exports = {
   createMessage,
-  getMensajesPrivados
+  getMensajesPrivados,
+  getUltimos
 }
