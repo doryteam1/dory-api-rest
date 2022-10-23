@@ -85,14 +85,6 @@ async function getUltimos(token){
     );
     console.log("ultimos--->",rows)
     let data;
-    if(rows.length<1){
-      data = {
-        mensajes:[]
-      }
-      return {
-        data
-      }
-    }
     data = helper.emptyOrRows(rows);
     return {data};                
 }else{
