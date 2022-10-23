@@ -65,14 +65,6 @@ async function getMensajesPrivados(token, idUser2) {
                       [idUser1, idUser2, idUser2, idUser1]
                     );
                     let data;
-                    if(rows.length<1){
-                      data = {
-                        mensajes:[]
-                      }
-                      return {
-                        data
-                      }
-                    }
                     data = helper.emptyOrRows(rows);
                     return {data};                
             }else{
