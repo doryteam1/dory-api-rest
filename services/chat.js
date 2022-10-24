@@ -83,9 +83,29 @@ async function getUltimos(token){
       order by chat_id asc, m.fecha_creacion desc`, 
       [idUser, idUser]
     );
-    console.log("ultimos--->",rows)
     let data;
     data = helper.emptyOrRows(rows);
+    let added = -1;
+    data = data.filter(
+      (element)=>{
+        if(element.chat_id == added){
+          return false;
+        }else{
+          added = element.chat_id;
+          return true;
+        }
+      }
+    )
+
+    data = data.sort(
+      (a,b)=>{
+        if(a.fecha_creacion > b.fecha_creacion){
+          return -1;
+        }else{
+          return 1;
+        }
+      }
+    )
     return {data};                
 }else{
   throw createError(401,"Usted no tiene autorización"); 
