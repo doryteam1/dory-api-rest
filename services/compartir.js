@@ -25,7 +25,7 @@ async function compartir(datos){
 
         // send mail with defined transport object
         let info = await transporter.sendMail({
-          from: '"Remitente 👻" <plataforma.piscicola@gmail.com>', // user
+          from: '"Remitente" <plataforma.piscicola@gmail.com>', // user
           to: "ginelect@unisucre.edu.co", //ginelect@unisucre.edu.co 
           html: contentHtml, // html body
         });
@@ -36,7 +36,7 @@ async function compartir(datos){
         let message = 'Se Compartió el enlace con éxito';
         return {message};
   }
-  throw createError(400,"Un problema con los parametros ingresados"); 
+  throw createError(400,"Un problema con los parámetros ingresados"); 
 } 
 
 module.exports = {
