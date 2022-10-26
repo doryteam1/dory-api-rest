@@ -296,6 +296,10 @@ async function update(idUser, usuario, token){
                         `DELETE FROM asociaciones_usuarios WHERE usuarios_id=?`, 
                         [idUser]
                       );
+                      await conection.execute(
+                        `DELETE FROM mensajes WHERE usuarios_emisor_id=? or usuarios_receptor_id=?`, 
+                        [idUser]
+                      );
                       const result = await conection.execute(
                         `DELETE FROM usuarios WHERE id=?`, 
                         [idUser]
