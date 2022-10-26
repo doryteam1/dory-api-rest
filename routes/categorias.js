@@ -3,7 +3,7 @@ const router = express.Router();
 const categorias = require('../services/categorias');
 
 
-router.get('/', async function(req, res, next) {
+router.get('/obtener', async function(req, res, next) {
   try {
     res.json(await categorias.getMultiple(req.query.page));
   } catch (err) {
@@ -13,7 +13,7 @@ router.get('/', async function(req, res, next) {
 });
 
 
-router.post('/', async function(req, res, next) {
+router.post('/registrar', async function(req, res, next) {
     try {
       res.json(await categorias.create(req.body));
     } catch (err) {
@@ -23,7 +23,7 @@ router.post('/', async function(req, res, next) {
   });
 
 
-router.put('/:id', async function(req, res, next) {
+router.put('/actualizar/:id', async function(req, res, next) {
     try {
       res.json(await categorias.update(req.params.id, req.body));
     } catch (err) {
@@ -33,7 +33,7 @@ router.put('/:id', async function(req, res, next) {
 });
 
 
-router.delete('/:id', async function(req, res, next) {
+router.delete('/eliminar/:id', async function(req, res, next) {
     try {
       res.json(await categorias.remove(req.params.id));
     } catch (err) {
