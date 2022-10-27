@@ -6,7 +6,7 @@ router.get('/', async function(req, res, next) {
   try {
     res.json(await dashboard.getDashboard());
   } catch (err) {
-    console.error(`Error el dashboard de Dory `, err.message);
+    console.error(`Error en el dashboard de Dory `, err.message);
     next(err);
   }
 });
