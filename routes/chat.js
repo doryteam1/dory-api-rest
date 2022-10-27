@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const chat = require('../services/chat');
-const { socketController } = require('../sockets/controller')
+const socketController  = require('../sockets/controller')
 
 router.get('/mensajes/privados/:idUser2', async function(req, res, next) {
   try {
