@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const chat = require('../services/chat');
-const socketController  = require('../sockets/controller')
 
 router.get('/mensajes/privados/:idUser2', async function(req, res, next) {
   try {
@@ -23,12 +22,4 @@ router.get('/ultimos/', async function(req, res, next) {
   }
 });
 
-router.get('/conected/all', async function(req, res, next) {
-  try {
-        res.json({data:socketController.getAllConnected()});
-  } catch (err) {
-    console.error(`Error al traer usuarios activos`, err.message);
-    next(err);
-  }
-});
 module.exports = router;

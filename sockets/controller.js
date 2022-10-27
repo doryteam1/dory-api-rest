@@ -20,14 +20,20 @@ const socketController = async (socket = new Socket(), io) => {
     } else {
         console.log("Usuario autorizado")
         let usuario = helper.parseJwt(token)
+
         // Agregar el usuario conectado
         let userDetail = await chatMensajes.conectarUsuario(usuario);
         io.emit('usuarios-activos', chatMensajes.usuariosArr);
         io.emit('ultimo-conectado', usuario.sub)
+
         // Conectarlo a una sala especial
         console.log("el usuario ", usuario.email, " se ha conectado a la sala ", usuario.sub)
         socket.join(usuario.sub); // global, socket.id, usuario.id
 
+        //El usuario puede solicitar la lista de usuarios conectados
+        socket.on('usuarios-activos', () => {
+            io.to(usuario.sub).emit('usuarios-activos', chatMensajes.usuariosArr);
+        })
 
         // Limpiar cuando alguien se desconeta
         socket.on('disconnect', () => {
@@ -69,11 +75,6 @@ const socketController = async (socket = new Socket(), io) => {
     }
 }
 
-function getAllConnected(){
-    return chatMensajes.usuariosArr;
-}
-
 module.exports = {
-    socketController,
-    getAllConnected
+    socketController
 }
