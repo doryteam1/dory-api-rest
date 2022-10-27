@@ -69,8 +69,11 @@ const socketController = async (socket = new Socket(), io) => {
     }
 }
 
-
+function getAllConnected(){
+    return chatMensajes.usuariosArr;
+}
 
 module.exports = {
-    socketController
+    socketController,
+    getAllConnected
 }
