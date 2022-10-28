@@ -132,9 +132,26 @@ async function getNoReaded(token) {
   }
 }
 
+async function setReadedAll(token, usuarioEmisorId) {
+  if (token && validarToken(token)) {
+    const payload = helper.parseJwt(token);
+    const idUser = payload.sub;
+    await db.query(
+      `update mensajes as m set readed = 1 where m.usuario_receptor_id = ? and m.usuario_emisor_id = ?`,
+      [idUser,usuarioEmisorId]
+    );
+  
+    return { 
+      message:"mensajes setados como leidos"
+     };
+  } else {
+    throw createError(401, "Usted no tiene autorización");
+  }
+}
 module.exports = {
   createMessage,
   getMensajesPrivados,
   getUltimos,
-  getNoReaded
+  getNoReaded,
+  setReadedAll
 }
