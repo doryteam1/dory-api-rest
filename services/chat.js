@@ -78,7 +78,7 @@ async function getUltimos(token) {
     const payload = helper.parseJwt(token);
     const idUser = payload.sub;
     const rows = await db.query(
-      `select m.*, m.usuario_emisor_id + m.usuario_receptor_id as chat_id
+      `select m.contenido, m.fecha_creacion, m.usuario_emisor_id, m.usuario_receptor_id, m.tipo_mensaje_id,  , m.usuario_emisor_id + m.usuario_receptor_id as chat_id
       from mensajes as m
       where usuario_emisor_id = ? || usuario_receptor_id = ?
       order by chat_id asc, m.fecha_creacion desc`,
@@ -113,7 +113,7 @@ async function getUltimos(token) {
       ultimos:res,
       unreads:unreads,     
     }
-    return { data: res };
+    return { data };
   } else {
     throw createError(401, "Usted no tiene autorización");
   }
