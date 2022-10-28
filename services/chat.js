@@ -118,7 +118,7 @@ async function getNoReaded(token) {
     const payload = helper.parseJwt(token);
     const idUser = payload.sub;
     const rows = await db.query(
-      `SELECT count(*), (m.m.usuario_emisor_id + usuario_receptor_id) as chat_id
+      `SELECT count(*), (m.usuario_emisor_id + m.usuario_receptor_id) as chat_id
       FROM mensajes as m 
       WHERE m.usuario_receptor_id=? and readed = 0
       group by chat_id`,
