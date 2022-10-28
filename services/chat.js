@@ -111,7 +111,7 @@ async function getUltimos(token) {
     let unreads = await getUnreaded(token);
     let data = {
       ultimos:res,
-      unreads:unreads,     
+      unreads:unreads.data,     
     }
     return { data };
   } else {
