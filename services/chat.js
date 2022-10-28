@@ -84,10 +84,10 @@ async function getUltimos(token) {
       order by chat_id asc, m.fecha_creacion desc`,
       [idUser, idUser]
     );
-    let data;
-    data = helper.emptyOrRows(rows);
+    let res;
+    res = helper.emptyOrRows(rows);
     let added = -1;
-    data = data.filter(
+    res = res.filter(
       (element) => {
         if (element.chat_id == added) {
           return false;
@@ -98,7 +98,7 @@ async function getUltimos(token) {
       }
     )
 
-    data = data.sort(
+    res = res.sort(
       (a, b) => {
         if (a.fecha_creacion > b.fecha_creacion) {
           return -1;
@@ -107,13 +107,19 @@ async function getUltimos(token) {
         }
       }
     )
-    return { data };
+    
+    let unreads = await getUnreaded(token);
+    let data = {
+      ultimos:res,
+      unreads:unreads,     
+    }
+    return { data: res };
   } else {
     throw createError(401, "Usted no tiene autorización");
   }
 }
 
-async function getNoReaded(token) {
+async function getUnreaded(token) {
   if (token && validarToken(token)) {
     const payload = helper.parseJwt(token);
     const idUser = payload.sub;
@@ -152,6 +158,6 @@ module.exports = {
   createMessage,
   getMensajesPrivados,
   getUltimos,
-  getNoReaded,
+  getUnreaded,
   setReadedAll
 }
