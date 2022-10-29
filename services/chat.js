@@ -108,10 +108,14 @@ async function getUltimos(token) {
       }
     )
     
-    let unreads = await getUnreaded(token);
+    let unreads = await getUnreads(token);
+    let totalCount = unreads.data.reduce(
+      (a,b)=> a.count + b.count,0
+    )
     let data = {
       ultimos:res,
-      unreads:unreads.data,     
+      unreads:unreads.data,  
+      totalCount:totalCount   
     }
     return { data };
   } else {
@@ -119,7 +123,7 @@ async function getUltimos(token) {
   }
 }
 
-async function getUnreaded(token) {
+async function getUnreads(token) {
   if (token && validarToken(token)) {
     const payload = helper.parseJwt(token);
     const idUser = payload.sub;
@@ -158,6 +162,6 @@ module.exports = {
   createMessage,
   getMensajesPrivados,
   getUltimos,
-  getUnreaded,
+  getUnreads,
   setReadedAll
 }
