@@ -114,8 +114,10 @@ async function getUltimos(token) {
     )
     let data = {
       ultimos:res,
-      unreads:unreads.data,  
-      totalCount:totalCount   
+      unreads:{
+        chats:unreads.data,
+        totalCount:totalCount
+      }  
     }
     return { data };
   } else {
