@@ -113,7 +113,10 @@ async function getUltimos(token) {
     console.log("unreads--> ",unreads)
     console.log("unreads.data--> ",unreads.data)
     let totalCount = unreads.data.reduce(
-      (a,b)=> a.count + b.count,initialValue
+      (a,b)=> {
+        console.log(a.count + '+' + b.count )
+        return a.count + b.count
+      },initialValue
     )
     let data = {
       ultimos:res,
