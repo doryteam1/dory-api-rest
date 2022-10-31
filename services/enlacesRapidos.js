@@ -127,12 +127,12 @@ async function actualizarCarruselEnlaceR(body,token){
                       let payload=helper.parseJwt(token);
                       let rol= payload.rol; 
                         if(rol!='Administrador'){
-                                throw createError(401,"Usted no tiene autorización para actualizar EnlaceRer");
+                                throw createError(401,"Usted no tiene autorización para actualizar EnlaceR");
                         }
                         const conection= await db.newConnection(); /*conection of TRANSACTION */
                           try{                                  
                                   await conection.beginTransaction();
-                                  var carrusel=body.arrayEnlaceRers;
+                                  var carrusel=body.arrayEnlaceR;
                                   let message = 'Actualización exitosa del enlace_rapido';                                 
                                   await db.query(
                                     `DELETE FROM enlaces_rapidos`, 

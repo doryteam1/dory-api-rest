@@ -44,9 +44,9 @@ router.delete('/eliminar/enlaceRapido/:idEnlaceRapido', async function(req, res,
 router.put('/update/enlacesRapidos', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
-    res.json(await enlacesRapidos.actualizarEnlaceR(req.body,token));
+    res.json(await enlacesRapidos.actualizarCarruselEnlaceR(req.body,token));
   } catch (err) {
-    console.error(`Error al actualizar los enlaces rápidos`, err.message);
+    console.error(`Error al actualizar carrusel de los enlaces rápidos`, err.message);
     next(err);
   }
 });
