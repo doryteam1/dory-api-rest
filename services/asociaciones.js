@@ -566,10 +566,14 @@ async function createAsociacion(asociacion,token){
                 if(row.length > 0){
                   const idRepresentante = row.usuarios_id;
                   res.io.to(idRepresentante).emit('new-solicitud', 'reload');
+                  console.log("solicitud enviada a representante!")
                 }
+                console.log("salio de if envio rep")
               }else if(body.quienEnvia == 'asociacion'){
                 res.io.to(id_user).emit('new-solicitud', 'reload');
+                console.log("solicitud enviada a usuario!")
               }
+              console.log("salio if envio usuario!")
               return {message, insertId:result.insertId};
           } catch(error){
               throw error; 
