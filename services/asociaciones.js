@@ -470,15 +470,16 @@ async function createAsociacion(asociacion,token){
   }/*End remove*/
 
   /*------------------------------enviarSolicitudAdicion---------------------------------------------*/
-  async function enviarSolicitudAdicion(nit, token,body){
-          let id_usuario_creador= null;/*Creador de la solicitud; cuando la solicitud es enviada por una asociación este es el nit del representante legal*/
+  async function enviarSolicitudAdicion(res, nit, token,body){
+          let id_usuario_creador= null;/*Creador de la solicitud; cuando la solicitud es enviada por una asociación este es el id del representante legal*/
           let id_user=null;
           let tipo_user='';
           let rowVerificar=[];
+          let payload;
         if(token && validarToken(token)){
-              const payload=helper.parseJwt(token);                
-               tipo_user= payload.rol; 
-               id_usuario_creador= payload.sub;
+              payload=helper.parseJwt(token);                
+              tipo_user= payload.rol; 
+              id_usuario_creador= payload.sub;
               if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
                 throw createError(401,"Tipo de usuario no Válido");
               }
@@ -504,7 +505,6 @@ async function createAsociacion(asociacion,token){
                 /*------fin-->--verificar que el usuario no este en otra asociación------*/
                 id_sender = 1;
                 id_user = id_usuario_creador;
-
             }else if(body.quienEnvia=='asociacion'){                    
                    if(!body.id_usuario_receptor){
                          throw createError(400,"No se especificó el ID del usuario receptor de la solicitud");
@@ -553,6 +553,23 @@ async function createAsociacion(asociacion,token){
               if(result.affectedRows){
                 message="Solicitud de adición enviada exitosamente"
               };
+
+              if(body.quienEnvia == 'usuario'){
+                 /*Obtener el id del representante legal para enviar una notificacion via socket de que se le envio una solicitud de adicion a su asociacion*/
+                 const row = await db.query(
+                  `SELECT au.*
+                   FROM asociaciones_usuarios as au
+                   WHERE au.nit_asociacion_pk_fk=?`, 
+                   [nit]
+                );
+
+                if(row.length > 0){
+                  const idRepresentante = row.usuarios_id;
+                  res.io.to(idRepresentante).emit('new-solicitud', 'reload');
+                }
+              }else if(body.quienEnvia == 'asociacion'){
+                res.io.to(id_user).emit('new-solicitud', 'reload');
+              }
               return {message, insertId:result.insertId};
           } catch(error){
               throw error; 
