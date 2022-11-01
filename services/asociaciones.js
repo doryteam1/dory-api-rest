@@ -564,7 +564,7 @@ async function createAsociacion(asociacion,token){
                 );
 
                 if(row.length > 0){
-                  const idRepresentante = row.usuarios_id;
+                  const idRepresentante = row[0].usuarios_id;
                   res.io.to(idRepresentante).emit('new-solicitud', 'reload');
                   console.log("solicitud enviada a representante!")
                 }
