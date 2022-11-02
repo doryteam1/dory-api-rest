@@ -275,6 +275,33 @@ async function createAsociacion(asociacion,token){
                           {
                             throw createError(400,"Se requieren todos los parámetros!");
                           }
+
+                           /*El usuario solo puede ser representante legal de una asociacion*/
+                          const represetanteEn = await db.query(
+                            `SELECT au.*
+                            FROM asociaciones_usuarios as au
+                            WHERE au.usuarios_id=?`, 
+                            [id_user]
+                          );
+
+                          if(represetanteEn.length > 0){
+                            throw createError(401,"El usuario ya es representante de una asociación"); 
+                          }
+                          /**********************************************************************/
+                          
+                           /*------verificar que el usuario no este en otra asociación------*/
+                          const miembroEn = await db.query(
+                            `SELECT s.*
+                            FROM solicitudes as s
+                            WHERE s.usuarios_id=? and id_estado_fk=2`, 
+                            [id_user]
+                          );
+                          if(miembroEn.length>0){
+                            throw createError(401,"Usuario es miembro de una asociación"); 
+                          }    
+                          /***************************************************************************/
+
+
                           const result = await conection.execute(
                             `INSERT INTO asociaciones(nit, nombre,direccion,legalconstituida,fecha_renovacion_camarac,foto_camarac,id_tipo_asociacion_fk,id_departamento,id_municipio,informacion_adicional_direccion,corregimiento_vereda,telefono, url_rut ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                             [
@@ -477,7 +504,7 @@ async function createAsociacion(asociacion,token){
           let rowVerificar=[];
           let payload;
         if(token && validarToken(token)){
-              payload=helper.parseJwt(token);                
+              payload=helper.parseJwt(token);             
               tipo_user= payload.rol; 
               id_usuario_creador= payload.sub;
               if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
@@ -490,6 +517,26 @@ async function createAsociacion(asociacion,token){
          if(!body.quienEnvia || (body.quienEnvia!='usuario' && body.quienEnvia!='asociacion')){
                        throw createError(400,"No ha enviado la información correcta"); 
          }else{
+            /*verificar que el usuario no sea un representante legal. Si es representante ya es miembro y no se le permite 
+            estar en otra asociacion como miembro*/
+            let userId;
+            if(body.quienEnvia=='usuario'){
+              userId = payload.sub;
+            }else if(body.quienEnvia=='asociacion'){
+              userId = body.id_usuario_receptor;
+            }
+            const represetanteEn = await db.query(
+              `SELECT au.*
+               FROM asociaciones_usuarios as au
+               WHERE au.usuarios_id=?`, 
+               [userId]
+            );
+
+            if(represetanteEn.length > 0){
+              throw createError(401,"El usuario es representante de una asociación"); 
+            }
+            /**********************************************************************/
+
             if(body.quienEnvia=='usuario'){                
                 /*------verificar que el usuario no este en otra asociación------*/
                 rowVerificar = await db.query(
