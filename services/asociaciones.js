@@ -628,7 +628,7 @@ async function createAsociacion(asociacion,token){
   }/*End enviarSolicitudAdicion*/
 
     /*------------------------------removeSolicitudAdicion---------------------------------------------*/
-    async function removeSolicitudAdicion(id_solicitud, token){
+    async function removeSolicitudAdicion(res,id_solicitud, token){
         let message="Error al eliminar la solicitud de la asociación";  
         if(token && validarToken(token)){
                   const payload = helper.parseJwt(token); 
@@ -656,12 +656,26 @@ async function createAsociacion(asociacion,token){
                     if(consulta1.length < 1 && consulta2.length < 1  && consulta3.length < 1){  
                       throw createError(401,"Usuario no autorizado, usted no realizó la solicitud");                  
                     }
-                      const result = await db.query(
-                        `DELETE FROM solicitudes WHERE id_solicitud=?`, 
-                        [id_solicitud]
-                      );                     
+                    
+                    const consulta4 = await db.query(
+                      `select * FROM solicitudes WHERE id_solicitud=?`, 
+                      [id_solicitud]
+                    );
+
+                    const result = await db.query(
+                      `DELETE FROM solicitudes WHERE id_solicitud=?`, 
+                      [id_solicitud]
+                    );                     
                     if(result.affectedRows){
                       message="Eliminación de solicitud exitoso"
+                      const userId = consulta4[0].usuarios_id;
+                      //notificar que se borro la solicitud al usuario o al representante legal
+                      if(userId == payload.sub){//si la borro el usuario notificar al representante
+                        if(consulta3.length > 0)
+                        res.io.to(consulta3[0].usuarios_id).emit('new-solicitud', 'reload');
+                      }else{//la borro el representante notificar al usuario
+                        res.io.to(userId).emit('new-solicitud', 'reload');
+                      }
                     };
                     return {message};
                 } catch(error){
