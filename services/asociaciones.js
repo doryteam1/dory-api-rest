@@ -491,7 +491,6 @@ async function createAsociacion(asociacion,token){
                        throw createError(400,"No ha enviado la información correcta"); 
          }else{
             if(body.quienEnvia=='usuario'){                
-
                 /*------verificar que el usuario no este en otra asociación------*/
                 rowVerificar = await db.query(
                   `SELECT s.*
@@ -536,7 +535,8 @@ async function createAsociacion(asociacion,token){
                 throw createError(400,"Debe especificar correctamente quien envia la solicitud");
             }
          }    
-        const fecha= dayjs().format('YYYY-MM-DD')+"T"+dayjs().hour()+":"+dayjs().minute()+":"+dayjs().second();
+        const currentDate = new Date();
+        const fecha = currentDate.toISOString();
         let message="Error al enviar la solicitud de adición a la asociación ";              
         try{   
               const result = await db.query(
@@ -670,9 +670,9 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
       const tipo_user= payload.rol; 
       const id_user=payload.sub;
         try{      
-          if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
-              throw createError(401,"Tipo de usuario no Válido");
-          }
+                  if(!(tipo_user==='Piscicultor' || tipo_user==='Pescador')){
+                      throw createError(401,"Tipo de usuario no Válido");
+                  }
                   if( id_solicitud===undefined)
                   {
                     throw createError(400,"Se requiere el identificador de la solicitud");
@@ -685,6 +685,18 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                     [id_solicitud]
                   );                  
                   let idSender = solicitud[0].id_sender_solicitud;
+                  let userId = solicitud[0].usuarios_id;
+                  /*Primero se debe verificar que este usuario con identificador userId no tenga una solicitud aceptada*/
+                  const solicitudesAceptadas = await db.query(
+                    `SELECT * 
+                     FROM solicitudes as s
+                     WHERE s.id_solicitud=? and s.usuarios_id = ? and id_estado_fk = 2
+                    `, 
+                    [id_solicitud, userId]
+                  );
+                  if(solicitudesAceptadas.length > 0){
+                    throw createError(401,"El usuario que se esta intentando ingresar como miembro de la asociación ya se encuentra en otra");
+                  }
                   /*solicitud enviada por usuario solo puede ser aceptada por el representante*/
                   if(idSender == 1){
                     const rows = await db.query(
