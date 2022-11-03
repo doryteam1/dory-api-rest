@@ -752,9 +752,9 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                   const solicitudesAceptadas = await db.query(
                     `SELECT * 
                      FROM solicitudes as s
-                     WHERE s.id_solicitud=? and s.usuarios_id = ? and id_estado_fk = 2
+                     WHERE s.usuarios_id = ? and id_estado_fk = 2
                     `, 
-                    [id_solicitud, userId]
+                    [userId]
                   );
                   console.log("usuario relacionado con la solicitud ",userId)
                   console.log(solicitudesAceptadas)
