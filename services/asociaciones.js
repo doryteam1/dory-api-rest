@@ -759,7 +759,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                   console.log("usuario relacionado con la solicitud ",userId)
                   console.log(solicitudesAceptadas)
                   if(solicitudesAceptadas.length > 0){
-                    throw createError(401,"El usuario que se esta intentando ingresar como miembro de la asociación ya se encuentra en otra");
+                    throw createError(401,"El usuario ya se encuentra en una asociación");
                   }
                   /*solicitud enviada por usuario solo puede ser aceptada por el representante*/
                   if(idSender == 1){
