@@ -747,7 +747,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                   );                  
                   let idSender = solicitud[0].id_sender_solicitud;
                   let userId = solicitud[0].usuarios_id;
-                  
+
                   /*Primero se debe verificar que este usuario con identificador userId no tenga una solicitud aceptada*/
                   const solicitudesAceptadas = await db.query(
                     `SELECT * 
@@ -756,6 +756,7 @@ async function getSolicitudesNoaceptadasPorAsociacion(token){
                     `, 
                     [id_solicitud, userId]
                   );
+                  console.log("usuario relacionado con la solicitud ",userId)
                   console.log(solicitudesAceptadas)
                   if(solicitudesAceptadas.length > 0){
                     throw createError(401,"El usuario que se esta intentando ingresar como miembro de la asociación ya se encuentra en otra");
