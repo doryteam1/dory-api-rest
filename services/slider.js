@@ -5,7 +5,7 @@ var createError = require('http-errors');
 const {validarToken} = require ('../middelware/auth');
 
 /* ------------------------------------ObtenerSlid------------------------------------*/
-async function obtenerSlid(){   
+async function obtenerSlide(){   
        const rows = await db.query(
         `SELECT * 
          FROM sliders`,            
@@ -38,7 +38,7 @@ async function obtenerSlid(){
 
 
 /* ------------------------------------crearSlid------------------------------------*/
-async function crearSlid(body,token){   
+async function crearSlide(body,token){   
   try{
           if(token && validarToken(token)){
               let payload=helper.parseJwt(token);
@@ -48,14 +48,15 @@ async function crearSlid(body,token){
                 }
                 if(body.url_imagen === undefined || 
                    body.url_enlace === undefined || 
-                   body.titulo === undefined 
+                   body.titulo === undefined || 
+                   body.mostrar_titulo === undefined 
                 )
                 {
                     throw createError(400,"Debe enviar todos los parámetros del slide para su registro");
                 }
                 const result = await db.query(
-                `INSERT INTO sliders (url_imagen,url_enlace,titulo) VALUES (?,?,?)`,                
-                 [body.url_imagen,body.url_enlace,body.titulo] 
+                `INSERT INTO sliders (url_imagen,url_enlace,titulo,mostrar_titulo) VALUES (?,?,?,?)`,                
+                 [body.url_imagen,body.url_enlace,body.titulo,body.mostrar_titulo] 
                 );  
               let message = 'Error registrando el slide';  
               if (result.affectedRows) {
@@ -71,7 +72,7 @@ async function crearSlid(body,token){
 }/* End crearSlid*/
 
 /* ------------------------------------actualizarSlid------------------------------------*/
-async function actualizarSlid(idSlid,body,token){   
+async function actualizarSlide(idSlide,body,token){   
         try{
                 if(token && validarToken(token)){
                     let payload=helper.parseJwt(token);
@@ -81,7 +82,8 @@ async function actualizarSlid(idSlid,body,token){
                       }
                       if(body.url_imagen === undefined || 
                          body.url_enlace === undefined || 
-                         body.titulo === undefined 
+                         body.titulo === undefined || 
+                         body.mostrar_titulo === undefined 
                       )
                       {
                           throw createError(400,"Debe enviar todos los parámetros del slide para la actualización");
@@ -90,13 +92,15 @@ async function actualizarSlid(idSlid,body,token){
                       `UPDATE sliders
                       SET url_imagen=?,
                           url_enlace=?,
-                          titulo=?
+                          titulo=?,
+                          mostrar_titulo=?
                       WHERE id_slid=?`,
                       [
                         body.url_imagen,   
                         body.url_enlace, 
-                        body.titulo,                               
-                        idSlid
+                        body.titulo, 
+                        body.mostrar_titulo,                              
+                        idSlide
                       ] 
                     );  
                     let message = 'Error actualizando la información del slide';  
@@ -113,7 +117,7 @@ async function actualizarSlid(idSlid,body,token){
 }/* End actualizarSlid*/
 
 /* ------------------------------------eliminarSlid------------------------------------*/
-async function eliminarSlid(idSlid,token){   
+async function eliminarSlide(idSlid,token){   
      try{
           if(token && validarToken(token)){
               let payload=helper.parseJwt(token);
@@ -125,7 +129,7 @@ async function eliminarSlid(idSlid,token){
                  `DELETE from sliders where id_slid=?`,
                   [idSlid]
                   );   
-                  let message='Error al eliminar slid';                  
+                  let message='Error al eliminar slide';                  
                   if (result.affectedRows) {
                           message = 'Slide borrado exitosamente';
                   } 
@@ -141,7 +145,7 @@ async function eliminarSlid(idSlid,token){
 
 
 /* ------------------------------------actualizarCarruselSlid------------------------------------*/
-async function actualizarCarruselSlid(body,token){   
+async function actualizarCarruselSlide(body,token){   
           try{
                   if(token && validarToken(token)){
                       let payload=helper.parseJwt(token);
@@ -159,11 +163,11 @@ async function actualizarCarruselSlid(body,token){
                                     []
                                   );                                 
                                   for(var i=0;i<carrusel.length;i++){
-                                      if(!(carrusel[i].url_imagen === undefined ||  carrusel[i].url_enlace === undefined || carrusel[i].titulo === undefined))
+                                      if(!(carrusel[i].url_imagen === undefined ||  carrusel[i].url_enlace === undefined || carrusel[i].titulo === undefined || carrusel[i].mostrar_titulo === undefined))
                                        {
                                           await db.query(
-                                          `INSERT INTO sliders(url_imagen,url_enlace,titulo) VALUES (?,?,?)`,
-                                                [carrusel[i].url_imagen, carrusel[i].url_enlace, carrusel[i].titulo]
+                                          `INSERT INTO sliders(url_imagen,url_enlace,titulo,mostrar_titulo) VALUES (?,?,?,?)`,
+                                                [carrusel[i].url_imagen, carrusel[i].url_enlace, carrusel[i].titulo, carrusel[i].mostrar_titulo]
                                           );
                                        }
                                   }
@@ -184,7 +188,7 @@ async function actualizarCarruselSlid(body,token){
 }/* End actualizarCarruselSlid*/
 
 /*----------------------updateParcialSlid--------------------------------------*/
-async function updateParcialSlid(idSlide, slide, token){
+async function updateParcialSlide(idSlide, slide, token){
   
         if(token && validarToken(token))
         {
@@ -251,11 +255,11 @@ async function updateTimeSlider(body, token){
 }/*End updateTimeSlid*/
 
 module.exports = {
-  obtenerSlid,
-  crearSlid,
-  actualizarSlid,
-  eliminarSlid,
-  actualizarCarruselSlid,
-  updateParcialSlid,
+  obtenerSlide,
+  crearSlide,
+  actualizarSlide,
+  eliminarSlide,
+  actualizarCarruselSlide,
+  updateParcialSlide,
   updateTimeSlider
 }
