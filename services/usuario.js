@@ -311,9 +311,10 @@ async function update(idUser, usuario, token){
                         [idUser]
                       );
                       for(let i=0;i<idVehiculos.length;i++){
+                        let veh=idVehiculos[i];
                         await conection.execute(
                           `DELETE FROM fotosVehiculos WHERE id_vehiculo_fk=?`, 
-                          [idVehiculos[i]]
+                          [veh]
                         );
                       }
                       await conection.execute(
