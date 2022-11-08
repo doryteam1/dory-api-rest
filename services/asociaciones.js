@@ -671,9 +671,11 @@ async function createAsociacion(asociacion,token){
                       const userId = consulta4[0].usuarios_id;
                       //notificar que se borro la solicitud al usuario o al representante legal
                       if(userId == payload.sub){//si la borro el usuario notificar al representante
+                        console.log("la borro el usuario")
                         if(consulta3.length > 0)
-                        res.io.to(consulta3[0].usuarios_id).emit('new-solicitud', 'reload');
+                          res.io.to(consulta3[0].usuarios_id).emit('new-solicitud', 'reload');
                       }else{//la borro el representante notificar al usuario
+                        console.log("la borro el representante")
                         res.io.to(userId).emit('new-solicitud', 'reload');
                       }
                     };
