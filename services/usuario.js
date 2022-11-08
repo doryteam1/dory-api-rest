@@ -304,6 +304,18 @@ async function update(idUser, usuario, token){
                         `DELETE FROM mensajes WHERE usuario_emisor_id=? or usuario_receptor_id=?`, 
                         [idUser,idUser]
                       );
+                      const idVehiculos = await conection.execute(
+                        `SELECT v.id_vehiculo
+                        FROM vehiculos as v 
+                        where v.usuarios_id=?`, 
+                        [idUser]
+                      );
+                      for(let i=0;i<idVehiculos.length;i++){
+                        await conection.execute(
+                          `DELETE FROM fotosVehiculos WHERE id_vehiculo_fk=?`, 
+                          [idVehiculos[i]]
+                        );
+                      }
                       await conection.execute(
                         `DELETE FROM vehiculos WHERE usuarios_id=?`, 
                         [idUser]
