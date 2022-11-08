@@ -96,7 +96,7 @@ async function create(resena, token){
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
           try{
-                if(resena.id_granja===undefined || resena.descripcion===undefined ||  resena.fecha===undefined ||  resena.calificacion===undefined)
+                if(resena.id_granja===undefined || resena.descripcion===undefined ||  resena.calificacion===undefined)
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
@@ -113,13 +113,15 @@ async function create(resena, token){
                 if(validarUsuario.length>0){
                   throw createError(400,"Usuario ya tiene una reseña con esa granja");
                 }
+                const currentDate = new Date();
+                const fecha = currentDate.toISOString();
                 const result = await db.query(
                   `INSERT INTO reseñas(id_granja_pk_fk, usuarios_id, descripcion, fecha, calificacion) VALUES (?,?,?,?,?)`, 
                   [
                     resena.id_granja,
                     id_user,
                     resena.descripcion,
-                    resena.fecha,
+                    fecha,
                     resena.calificacion
                   ]
                 );              
