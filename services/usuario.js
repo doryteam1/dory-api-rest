@@ -297,6 +297,10 @@ async function update(idUser, usuario, token){
                         [idUser]
                       );
                       await conection.execute(
+                        `DELETE FROM especies_usuarios WHERE usuarios_id=?`, 
+                        [idUser]
+                      );
+                      await conection.execute(
                         `DELETE FROM mensajes WHERE usuario_emisor_id=? or usuario_receptor_id=?`, 
                         [idUser,idUser]
                       );
