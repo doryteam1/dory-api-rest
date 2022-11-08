@@ -310,8 +310,8 @@ async function update(idUser, usuario, token){
                         where v.usuarios_id=?`, 
                         [idUser]
                       );
-                      for(let i=0;i<idVehiculos.length;i++){
-                        let veh=idVehiculos[0][i].id_vehiculo; console.log(idVehiculos,">>>>>>>>>");
+                      for(let i=0;i<idVehiculos[0].length;i++){
+                        let veh=idVehiculos[0][i].id_vehiculo;
                         await conection.execute(
                           `DELETE FROM fotosVehiculos WHERE id_vehiculo_fk=?`, 
                           [veh]
