@@ -11,7 +11,7 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.put('/', async function(req, res, next) {
+router.put('/total', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
     res.json(await topalert.updateTopAlert(req.body,token));
