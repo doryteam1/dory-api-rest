@@ -50,7 +50,50 @@ async function updateTopAlert(body, token){
           }
 }/*End updateTopAlert*/
 
+async function updateParcialTopAlert(idTopAlert, body, token){  
+      if(token && validarToken(token))
+      {
+            const payload=helper.parseJwt(token);  
+            const rol = payload.rol;
+            if(rol !="Administrador"){
+              throw createError('401', "Usted no esta autorizado para actualizar el top alert.")
+            }         
+            var atributos = Object.keys(body);
+            if(atributos.length!=0)
+            {    
+                  var params = Object.values(body);
+                  var query = "update top_alert set ";
+                  params.push(idTopAlert);
+                  for(var i=0; i < atributos.length; i++) {
+                    query = query + atributos[i] + '=?,';
+                  }
+                  query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+                  query = query +' '+'where id=?'
+                  const result = await db.query(query,params);              
+                  let message = '';
+                  if (result.affectedRows) {
+                    message = 'Top Alert actualizado exitosamente';
+                  }else{
+                    throw createError(500,"No se pudo actualizar el registro del top alert");    
+                  }
+                  return {message};
+            }
+            throw createError(400,"No hay parámetros para actualizar");
+      }else{
+        throw createError(401,"Usuario no autorizado");
+      }
+
+
+
+               
+        
+ 
+
+
+}/*End updateTopAlert*/
+
 module.exports = {
   getTopAlert,
-  updateTopAlert
+  updateTopAlert,
+  updateParcialTopAlert
 }

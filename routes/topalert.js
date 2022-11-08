@@ -21,4 +21,14 @@ router.put('/', async function(req, res, next) {
   }
 });
 
+router.put('/parcial/:idTopAlert', async function(req, res, next) {
+  try {
+    var token=req.headers.authorization;
+    res.json(await topalert.updateParcialTopAlert(req.params.idTopAlert,req.body,token));
+  } catch (err) {
+    console.error(`Error al actualizar el top alert`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;

@@ -304,7 +304,7 @@ async function create(producto,token){
       ); 
   
       if(rows.length < 1){
-        throw createError(404, "No se encuentra el producto con el código "+codigoProducto+".")
+        throw createError(404, "No se encuentra el producto con el código "+codigoProducto+".");
       }
       const rowsfotos = await db.query(
         `SELECT fp.id_foto_producto, fp.foto
