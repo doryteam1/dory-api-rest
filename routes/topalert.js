@@ -21,12 +21,12 @@ router.put('/total', async function(req, res, next) {
   }
 });
 
-router.put('/parcial/:idTopAlert', async function(req, res, next) {
+router.put('/parcial', async function(req, res, next) {
   try {
     var token=req.headers.authorization;
-    res.json(await topalert.updateParcialTopAlert(req.params.idTopAlert,req.body,token));
+    res.json(await topalert.updateParcialTopAlert(req.body,token));
   } catch (err) {
-    console.error(`Error al actualizar el top alert`, err.message);
+    console.error(`Error al actualizar el top alert parcialmente`, err.message);
     next(err);
   }
 });

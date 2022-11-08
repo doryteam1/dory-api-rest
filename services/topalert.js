@@ -50,7 +50,7 @@ async function updateTopAlert(body, token){
           }
 }/*End updateTopAlert*/
 
-async function updateParcialTopAlert(idTopAlert, body, token){  
+async function updateParcialTopAlert( body, token){  
       if(token && validarToken(token))
       {
             const payload=helper.parseJwt(token);  
@@ -63,12 +63,11 @@ async function updateParcialTopAlert(idTopAlert, body, token){
             {    
                   var params = Object.values(body);
                   var query = "update top_alert set ";
-                  params.push(idTopAlert);
                   for(var i=0; i < atributos.length; i++) {
                     query = query + atributos[i] + '=?,';
                   }
                   query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
-                  query = query +' '+'where id=?'
+                  query = query +' '+'where id=0'
                   const result = await db.query(query,params);              
                   let message = '';
                   if (result.affectedRows) {
