@@ -1,6 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+const createHttpError = require('http-errors');
 
 /*--------------------- GetMunicipio X Id--------------------------------*/
 async function getMunicipio(page = 1,id_municipio){
@@ -145,7 +146,11 @@ async function create(municipio){
           }/* End getConsumosEspecies*/
 
 /* ------------------------------------getConsumosEspeciesTotalNuevo------------------------------------*/
-async function getConsumosEspeciesTotalDepartamento(idDepartamento){   
+async function getConsumosEspeciesDepartamento(body){  
+  let  {idDepartamento, year } = body;
+  if(!idDepartamento || !year){
+    throw createError(400, "Se requieren todos los párametros");
+  }
   const rowsEspecies = await db.query(
     `SELECT e.*
     FROM especies as e
@@ -171,9 +176,9 @@ async function getConsumosEspeciesTotalDepartamento(idDepartamento){
               FROM especies_usuarios as eu inner join especies as e on e.id_especie=eu.id_especie_pk_fk
                                            inner join usuarios as u on u.id=eu.usuarios_id
                                            inner join municipios as m on u.id_municipio=m.id_municipio
-              WHERE eu.id_especie_pk_fk=? and u.id_municipio=?
+              WHERE eu.id_especie_pk_fk=? and u.id_municipio=? and year(eu.fecha_consumo)=?
               `, 
-              [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio]
+              [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio, year]
             );                                
             if(rowsConsumos[0].consumo==null){
                   rowsConsumos[0].especie=rowsEspecies[j].nombre;
@@ -202,5 +207,5 @@ module.exports = {
   update,
   remove,
   getConsumosEspecies,
-  getConsumosEspeciesTotalDepartamento
+  getConsumosEspeciesDepartamento
 }
