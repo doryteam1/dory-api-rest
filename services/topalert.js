@@ -24,14 +24,19 @@ async function updateTopAlert(body, token){
                 if(rol !="Administrador"){
                   throw createError('401', "Usted no esta autorizado para actualizar el top alert.")
                 }    
-                    if(body.texto === undefined){
-                                throw createError(400,"Se requiere el texto");
+                    if(body.texto === undefined ||
+                       body.status === undefined ||
+                       body.color === undefined
+                      ){
+                                throw createError(400,"Se requiere todos los párametros");
                     } 
                     const result = await db.query(
                     `UPDATE top_alert
-                     SET texto=?
+                     SET texto=?,
+                         status=?,
+                         color=?
                      WHERE id=0`,
-                     [body.texto] 
+                     [body.texto, body.status, body.color] 
                     ); 
                       let message = '';
                       if (result.affectedRows) {
