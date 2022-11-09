@@ -61,7 +61,7 @@ async function createIndex(body,token){
 }/* End createIndex*/
 
 /* ------------------------------------addCreateIndex------------------------------------*/
-async function createIndex(body,token){   
+async function addCreateIndex(body,token){   
   try{
           if(token && validarToken(token)){
               let payload=helper.parseJwt(token);
