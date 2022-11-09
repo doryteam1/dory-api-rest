@@ -109,8 +109,7 @@ async function deleteIndex(id_index,token){
               let rol= payload.rol; 
                 if(rol!='Administrador'){
                         throw createError(401,"Usted no esta autorizado");
-                }  
-                try{ 
+                }
                       await db.query(
                       `DELETE  FROM indexs WHERE id=?`,
                        [id_index]
@@ -119,10 +118,7 @@ async function deleteIndex(id_index,token){
                       if (result.affectedRows) {
                         message = 'search borrado exitosamente';
                       }  
-                      return {message};
-                  }catch{
-                    throw createError(500,"Error Eliminando search");
-                 }
+                      return {message};                 
           }else{ 
               throw createError(401,"Usted no tiene autorización"); 
           }
