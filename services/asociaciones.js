@@ -682,7 +682,7 @@ async function createAsociacion(asociacion,token){
                         console.log("consulta 5",consulta5)
                         if(consulta5.length > 0){
                           res.io.to(consulta5[0].rep_id).emit('new-solicitud', 'reload');
-                          console.log("notificacion enviada a usuario ",consulta5[0].usuarios_id)
+                          console.log("notificacion enviada a usuario ",consulta5[0].rep_id)
                         }
                       }else{//la borro el representante notificar al usuario
                         console.log("la borro el representante")
