@@ -662,6 +662,13 @@ async function createAsociacion(asociacion,token){
                       [id_solicitud]
                     );
 
+                    const consulta5 = await db.query(
+                      `select * from asociaciones_usuarios au 
+                      inner join solicitudes as s on au.nit_asociacion_pk_fk = s.nit_asociacion_fk 
+                      where s.id_solicitud = ?`, 
+                      [id_solicitud]
+                    );
+
                     const result = await db.query(
                       `DELETE FROM solicitudes WHERE id_solicitud=?`, 
                       [id_solicitud]
@@ -672,17 +679,11 @@ async function createAsociacion(asociacion,token){
                       //notificar que se borro la solicitud al usuario o al representante legal
                       if(userId == payload.sub){//si la borro el usuario notificar al representante
                         console.log("la borro el usuario")
-                        const consulta4 = await db.query(
-                          `select * from asociaciones_usuarios au 
-                          inner join solicitudes as s on au.nit_asociacion_pk_fk = s.nit_asociacion_fk WHERE s.id_solicitud = ?`, 
-                          [id_solicitud]
-                        );
-                        console.log("consulta 4",consulta4)
-                        if(consulta4.length > 0){
-                          res.io.to(consulta4[0].usuarios_id).emit('new-solicitud', 'reload');
-                          console.log("notificacion enviada a usuario ",consulta4[0].usuarios_id)
+                        console.log("consulta 4",consulta5)
+                        if(consulta5.length > 0){
+                          res.io.to(consulta5[0].usuarios_id).emit('new-solicitud', 'reload');
+                          console.log("notificacion enviada a usuario ",consulta5[0].usuarios_id)
                         }
-                          
                       }else{//la borro el representante notificar al usuario
                         console.log("la borro el representante")
                         res.io.to(userId).emit('new-solicitud', 'reload');
