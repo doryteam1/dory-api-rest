@@ -32,13 +32,15 @@ async function createIndex(body,token){
                                   await db.query(
                                     `DELETE FROM indexs`, 
                                     []
-                                  );                                 
+                                  );  
+                                  const currentDate = new Date();
+                                  const fecha = currentDate.toISOString();                               
                                   for(var i=0;i<indices.length;i++){
-                                      if(!(indices[i].title === undefined ||  indices[i].href === undefined || indices[i].lastmodified === undefined))
-                                       {
+                                      if(!(indices[i].title === undefined ||  indices[i].href === undefined))
+                                       {    
                                           await db.query(
                                           `INSERT INTO indexs(title,href,lastmodified) VALUES (?,?,?)`,
-                                                [indices[i].title, indices[i].href, indices[i].lastmodified]
+                                                [indices[i].title, indices[i].href, fecha]
                                           );
                                        }
                                   }
