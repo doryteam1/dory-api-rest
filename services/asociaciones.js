@@ -677,6 +677,7 @@ async function createAsociacion(asociacion,token){
                           inner join solicitudes as s on au.nit_asociacion_pk_fk = s.nit_asociacion_fk WHERE s.id_solicitud = ?`, 
                           [id_solicitud]
                         );
+                        console.log("consulta 4",consulta4)
                         if(consulta4.length > 0){
                           res.io.to(consulta4[0].usuarios_id).emit('new-solicitud', 'reload');
                           console.log("notificacion enviada a usuario ",consulta4[0].usuarios_id)
