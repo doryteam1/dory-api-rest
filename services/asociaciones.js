@@ -663,7 +663,7 @@ async function createAsociacion(asociacion,token){
                     );
 
                     const consulta5 = await db.query(
-                      `select * from asociaciones_usuarios au 
+                      `select *,au.usuarios_id as rep_id from asociaciones_usuarios au 
                       inner join solicitudes as s on au.nit_asociacion_pk_fk = s.nit_asociacion_fk 
                       where s.id_solicitud = ?`, 
                       [id_solicitud]
@@ -679,9 +679,9 @@ async function createAsociacion(asociacion,token){
                       //notificar que se borro la solicitud al usuario o al representante legal
                       if(userId == payload.sub){//si la borro el usuario notificar al representante
                         console.log("la borro el usuario")
-                        console.log("consulta 4",consulta5)
+                        console.log("consulta 5",consulta5)
                         if(consulta5.length > 0){
-                          res.io.to(consulta5[0].usuarios_id).emit('new-solicitud', 'reload');
+                          res.io.to(consulta5[0].rep_id).emit('new-solicitud', 'reload');
                           console.log("notificacion enviada a usuario ",consulta5[0].usuarios_id)
                         }
                       }else{//la borro el representante notificar al usuario
