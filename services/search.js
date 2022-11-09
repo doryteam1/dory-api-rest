@@ -131,9 +131,47 @@ async function deleteIndex(id_index,token){
       }
 }/* End addCreateIndex*/
 
+/*------------------------------updateParcialIndex-------------------------------------------------*/
+async function updateParcialIndex(id_index, index, token){
+  
+        if(token && validarToken(token))
+        {
+          const payload=helper.parseJwt(token);  
+          const id_user=payload.sub;
+          const rol = payload.rol;
+          if(rol!='Administrador'){
+                  throw createError(401,"Usted no esta autorizado");
+          } 
+          var atributos = Object.keys(index);   
+          if(atributos.length!=0)
+          {    
+            var params = Object.values(index);   
+            var query = "update indexs set ";
+            params.push(id_index);
+            for(var i=0; i < atributos.length; i++) {
+              query = query + atributos[i] + '=?,';
+            }
+            query = query.substring(0, query.length-1);/*eliminar la coma final*/ 
+            query = query +' '+'where id=?'
+            const result = await db.query(query,params);          
+            let message = '';
+            if (result.affectedRows) {
+                  message = 'Search del index actualizado exitosamente';
+            }else{
+              throw createError(500,"No se pudo actualizar el registro del search");    
+            }
+            return {message};
+          }
+          throw createError(400,"No hay parámetros para actualizar");
+      }else{
+        throw createError(401,"Usuario no autorizado");
+      }
+}/*End updateParcialIndex*/
+
 module.exports = {
   getIndex,
   createIndex,
   addCreateIndex,
-  deleteIndex
+  deleteIndex,
+  updateParcialIndex
 }
