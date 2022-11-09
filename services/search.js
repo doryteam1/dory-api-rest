@@ -110,7 +110,7 @@ async function deleteIndex(id_index,token){
                 if(rol!='Administrador'){
                         throw createError(401,"Usted no esta autorizado");
                 }
-                      await db.query(
+                      const result = await db.query(
                       `DELETE  FROM indexs WHERE id=?`,
                        [id_index]
                       );  
