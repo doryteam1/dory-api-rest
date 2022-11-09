@@ -101,9 +101,39 @@ async function addCreateIndex(body,token){
       }
 }/* End addCreateIndex*/
 
+/* ------------------------------------addCreateIndex------------------------------------*/
+async function deleteIndex(id_index,token){   
+  try{
+        if(token && validarToken(token)){
+              let payload=helper.parseJwt(token);
+              let rol= payload.rol; 
+                if(rol!='Administrador'){
+                        throw createError(401,"Usted no tiene autorización");
+                }  
+                try{ 
+                      await db.query(
+                      `DELETE  FROM indexs WHERE id=?`,
+                       [id_index]
+                      );  
+                      let message = 'Error borrando search del index';  
+                      if (result.affectedRows) {
+                        message = 'search borrado exitosamente';
+                      }  
+                      return {message};
+                  }catch{
+                    throw createError(500,"Error Eliminando search");
+                 }
+          }else{ 
+              throw createError(401,"Usted no tiene autorización"); 
+          }
+      }catch(error){
+          throw error;
+      }
+}/* End addCreateIndex*/
 
 module.exports = {
   getIndex,
   createIndex,
-  addCreateIndex
+  addCreateIndex,
+  deleteIndex
 }

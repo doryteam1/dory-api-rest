@@ -31,4 +31,14 @@ router.post('/add/entries', async function(req, res, next) {
   }
 });
 
+router.post('/delete/:idIndex', async function(req, res, next) {
+  try {
+    var token=req.headers.authorization;
+    res.json(await search.deleteIndex(req.params.idIndex,req.body,token));
+  } catch (err) {
+    console.error(`Error al eliminar search de index`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;
