@@ -65,6 +65,7 @@ const enlacesRapidosRouter = require('./routes/enlacesRapidos');
 const dashboardRouter = require('./routes/dashboard');
 const chatRouter = require('./routes/chat');
 const topalertRouter = require('./routes/topalert');
+const searchRouter = require('./routes/search');
 
 var cors = require('cors');
 app.use(bodyParser.json());
@@ -146,6 +147,7 @@ app.use('/api/enlacesRapidos',enlacesRapidosRouter)
 app.use('/api/dashboard',dashboardRouter)
 app.use('/api/chat',chatRouter)
 app.use('/api/topalert',topalertRouter)
+app.use('/api/search',searchRouter)
 
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
