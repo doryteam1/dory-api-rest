@@ -108,7 +108,7 @@ async function deleteIndex(id_index,token){
               let payload=helper.parseJwt(token);
               let rol= payload.rol; 
                 if(rol!='Administrador'){
-                        throw createError(401,"Usted no tiene autorización");
+                        throw createError(401,"Usted no esta autorizado");
                 }  
                 try{ 
                       await db.query(
