@@ -1,7 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
-const createHttpError = require('http-errors');
+const createError = require('http-errors');
 
 /*--------------------- GetMunicipio X Id--------------------------------*/
 async function getMunicipio(page = 1,id_municipio){
