@@ -146,8 +146,8 @@ async function create(municipio){
           }/* End getConsumosEspecies*/
 
 /* ------------------------------------getConsumosEspeciesTotalNuevo------------------------------------*/
-async function getConsumosEspeciesDepartamento(body){  
-  let  {idDepartamento, year } = body;
+async function getConsumosEspeciesDepartamento(params){  
+  let  {idDepartamento, year } = params;
   if(!idDepartamento || !year){
     throw createError(400, "Se requieren todos los párametros");
   }
