@@ -36,11 +36,11 @@ async function createIndex(body,token){
                                   const currentDate = new Date();
                                   const fecha = currentDate.toISOString();                               
                                   for(var i=0;i<indices.length;i++){
-                                      if(!(indices[i].title === undefined ||  indices[i].href === undefined))
+                                      if(!(indices[i].title === undefined ||  indices[i].href === undefined ||  indices[i].description === undefined))
                                        {    
                                           await db.query(
-                                          `INSERT INTO indexs(title,href,lastmodified) VALUES (?,?,?)`,
-                                                [indices[i].title, indices[i].href, fecha]
+                                          `INSERT INTO indexs(title,href,lastmodified,description) VALUES (?,?,?,?)`,
+                                                [indices[i].title, indices[i].href, fecha, indices[i].description]
                                           );
                                        }
                                   }
@@ -77,11 +77,11 @@ async function addCreateIndex(body,token){
                           const currentDate = new Date();
                           const fecha = currentDate.toISOString();                               
                           for(var i=0;i<indices.length;i++){
-                              if(!(indices[i].title === undefined ||  indices[i].href === undefined))
+                              if(!(indices[i].title === undefined ||  indices[i].href === undefined ||  indices[i].description === undefined))
                                {    
                                   await db.query(
-                                  `INSERT INTO indexs(title,href,lastmodified) VALUES (?,?,?)`,
-                                        [indices[i].title, indices[i].href, fecha]
+                                  `INSERT INTO indexs(title,href,lastmodified,description) VALUES (?,?,?,?)`,
+                                        [indices[i].title, indices[i].href, fecha, indices[i].description]
                                   );
                                }
                           }
