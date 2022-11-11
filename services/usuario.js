@@ -602,7 +602,9 @@ async function updateMisconsumos(body, token){
                         await conection.execute(
                         `DELETE 
                          from especies_usuarios as eu
-                         where eu.usuarios_id=? and year(eu.fecha_consumo)=? and month(eu.fecha_consumo)=?`,
+                         where eu.usuarios_id=? and 
+                               Year(eu.fecha_consumo)=? and 
+                               Month(eu.fecha_consumo)=?`,
                           [id_user,year,month]
                         );       
                         for(var i=0;i<arrayconsumos.length;i++){  
