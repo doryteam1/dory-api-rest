@@ -580,7 +580,11 @@ async function misConsumos(token){
 }/*End misConsumos*/
 
 async function updateMisconsumos(body, token){
-    var arrayconsumos= body.arrayConsumos;     
+    var arrayconsumos= body.arrayConsumos;
+    let year = body.year;   
+    let month = body.month; 
+    let day = 1; 
+    let fecha_entrada = new Date(year, month, day);
     let tipo_user=null; 
     let id_user=null; 
     const conection= await db.newConnection();
@@ -596,13 +600,15 @@ async function updateMisconsumos(body, token){
                 if(arrayconsumos){ 
                   try{
                         await conection.execute(
-                        `DELETE from especies_usuarios where usuarios_id=?`,
-                          [id_user]
+                        `DELETE 
+                         from especies_usuarios as eu
+                         where eu.usuarios_id=? and year(eu.fecha_consumo)=? and month(eu.fecha_consumo)=?`,
+                          [id_user,year,month]
                         );       
                         for(var i=0;i<arrayconsumos.length;i++){  
                               await conection.execute(
-                              `INSERT INTO especies_usuarios(id_especie_pk_fk,usuarios_id,cantidad_consumo) VALUES (?,?,?)`,
-                              [arrayconsumos[i].id_especie, id_user, arrayconsumos[i].cantidad_consumo]
+                              `INSERT INTO especies_usuarios(id_especie_pk_fk,usuarios_id,cantidad_consumo, fecha_consumo) VALUES (?,?,?,?)`,
+                              [arrayconsumos[i].id_especie, id_user, arrayconsumos[i].cantidad_consumo, fecha_entrada]
                             );
                         }                                           
                       }catch(err) {
