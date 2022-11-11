@@ -548,7 +548,10 @@ async function verifyAccount(body){
     }
 }/*End verifyAccount*/
 
-async function misConsumos(token){
+async function misConsumos(token,query){
+      if(!query || !query.year || !query.month ){
+        throw createError(401,"Se requieren todos los parametros")
+      }
       if(token && validarToken(token)){
           const payload=helper.parseJwt(token);
           const id_user=payload.sub;
@@ -560,9 +563,9 @@ async function misConsumos(token){
                 const rows = await db.query(
                   `SELECT eu.id_especie_pk_fk as id_especie, e.nombre, eu.cantidad_consumo,eu.fecha_consumo
                   FROM especies_usuarios as eu left join especies e on (eu.id_especie_pk_fk=e.id_especie)
-                  WHERE  eu.usuarios_id=?
+                  WHERE eu.usuarios_id=? and year(eu.fecha_consumo) = ? and month(eu.fecha_consumo) = ?
                   `, 
-                  [id_user]
+                  [id_user,year,month]
                 );
                 if(rows.length<1){
                   throw createError(404,"Usted no tiene ningún consumo");
