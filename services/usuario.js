@@ -601,10 +601,8 @@ async function updateMisconsumos(body, token){
                   try{
                         await conection.execute(
                         `DELETE 
-                         from especies_usuarios as eu
-                         where eu.usuarios_id=? and 
-                               Year(eu.fecha_consumo)=? and 
-                               Month(eu.fecha_consumo)=?`,
+                         from especies_usuarios 
+                         where usuarios_id=? and year(fecha_consumo)=? and month(fecha_consumo)=?`,
                           [id_user,year,month]
                         );       
                         for(var i=0;i<arrayconsumos.length;i++){  
