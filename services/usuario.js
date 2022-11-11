@@ -582,9 +582,9 @@ async function misConsumos(token){
 async function updateMisconsumos(body, token){
     var arrayconsumos= body.arrayConsumos;
     let year = body.year;   
-    let month = body.month-1; 
+    let month = body.month; 
     let day = 1; 
-    let fecha_entrada = new Date(year, month, day);
+    let fecha_entrada = new Date(year, month-1, day);
     let tipo_user=null; 
     let id_user=null; 
     const conection= await db.newConnection();
