@@ -150,7 +150,7 @@ async function getConsumosEspeciesDepartamento(params){
   console.log("params ",params)
   let  {idDepartamento, year } = params;
   if(!idDepartamento || !year){
-    throw createError(400, "Se requieren todos los párametros");
+    throw createError(400, "Se requieren todos los parámetros");
   }
   const rowsEspecies = await db.query(
     `SELECT e.*
