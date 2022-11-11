@@ -88,7 +88,7 @@ async function create(usuario,token){
             let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del Departamento de Sucre, en alianza con los grupos de investigación, Gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
             if(usuario.creadoCon && usuario.creadoCon=="google"){
                   contentHtml = `<center>
-                  <img src="https://firebasestorage.googleapis.com/v0/b/dory-prod-d7a48.appspot.com/o/logo.jpeg?alt=media&token=acfe727e-ec68-4d85-ae90-b6fdddd6fe2c" width="100" height="100" />
+                  <img src="http://ginelect.net/logo.png" width="100" height="100" />
                   <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
                   <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
                   <form>
@@ -100,7 +100,7 @@ async function create(usuario,token){
                   let token=helper.createToken(usuario,4320);/*token de 3 días*/
                   usuario.creadoCon="email";
                   contentHtml = `<center>
-                  <img src="https://firebasestorage.googleapis.com/v0/b/dory-prod-d7a48.appspot.com/o/logo.jpeg?alt=media&token=acfe727e-ec68-4d85-ae90-b6fdddd6fe2c" width="100" height="100" />
+                  <img src="http://ginelect.net/logo.png" width="100" height="100" />
                   <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
                   <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
                   <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje2}</p> 
