@@ -567,10 +567,12 @@ async function misConsumos(token,query){
                   `, 
                   [id_user,query.year,query.month]
                 );
+                let data;
                 if(rows.length<1){
-                  throw createError(404,"Usted no tiene ningún consumo");
+                  data = []
+                }else{
+                  data = helper.emptyOrRows(rows);  
                 }
-                const data = helper.emptyOrRows(rows);  
                 return {
                   data
                 }
