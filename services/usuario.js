@@ -565,7 +565,7 @@ async function misConsumos(token,query){
                   FROM especies_usuarios as eu left join especies e on (eu.id_especie_pk_fk=e.id_especie)
                   WHERE eu.usuarios_id=? and year(eu.fecha_consumo) = ? and month(eu.fecha_consumo) = ?
                   `, 
-                  [id_user,year,month]
+                  [id_user,query.year,query.month]
                 );
                 if(rows.length<1){
                   throw createError(404,"Usted no tiene ningún consumo");
