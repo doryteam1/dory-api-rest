@@ -21,16 +21,15 @@ async function getAreasExperticia(page = 1){
 
 /*_____________________ createAreaExperticia______________________________________________*/
 async function createAreaExperticia(area_experticia){
-        if(area_experticia.id_area === undefined || 
+        if(
            area_experticia.nombre === undefined ||
            area_experticia.descripcion === undefined ){
                 throw createError(400,"Debe enviar todos los datos requeridos para el registro del área de experticia");
         }
           try{
                 const result = await db.query(
-                  `INSERT INTO areas_experticias(id_area,nombre,descripcion) VALUES (?,?,?)`, 
-                  [
-                    area_experticia.id_area,
+                  `INSERT INTO areas_experticias(nombre,descripcion) VALUES (?,?)`, 
+                  [                    
                     area_experticia.nombre, 
                     area_experticia.descripcion
                   ]
