@@ -100,7 +100,7 @@ router.delete('/:idUser', async function(req, res, next) {
 router.get('/misconsumos', async function(req, res, next) {
   try {
         var token=req.headers.authorization;
-        res.json(await usuario.misConsumos(token));
+        res.json(await usuario.misConsumos(token,req.query));
   } catch (err) {
         console.error(`Error al mostrar los consumos del usuario`, err.message);
         next(err);

@@ -81,14 +81,6 @@ async function updateParcialTopAlert( body, token){
       }else{
         throw createError(401,"Usuario no autorizado");
       }
-
-
-
-               
-        
- 
-
-
 }/*End updateTopAlert*/
 
 module.exports = {
