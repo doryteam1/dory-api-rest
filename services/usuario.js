@@ -585,6 +585,13 @@ async function misConsumos(token,query){
 }/*End misConsumos*/
 
 async function updateMisconsumos(body, token){
+
+      if(
+          body.arrayConsumos === undefined || 
+          body.year === undefined ||
+          body.month === undefined ){
+          throw createError(400,"Debe enviar todos los datos requeridos para actualizar los consumos");
+      }
     var arrayconsumos= body.arrayConsumos;
     let year = body.year;   
     let month = body.month; 
