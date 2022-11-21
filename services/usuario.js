@@ -440,13 +440,13 @@ async function recoverPassword(datos){
           );             
           if(userbd[0]){
                   const token=helper.createToken(userbd[0],15);
-                  const mensaje="Hola, Nos acabas de informar que no recuerdas tu contraseña. Para volver a acceder a tu cuenta, has click en actualizar contraseña.";
+                  const mensaje="Hola, nos acabas de informar que no recuerdas tu contraseña. Para volver a acceder a tu cuenta, has clic en actualizar contraseña.";
                   let tema="Recuperar Contraseña";
                   contentHtml = `<center> 
                   <img src="http://sharpyads.com/wp-content/uploads/2022/03/logo-no-name-320x320.png" width="100" height="100" />
                   <p>${mensaje}</p>   
                   <form>
-                  <a href="${process.env.DORY_WEB_APP_URL}/reset-password?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Actualizar Password </a></form>
+                  <a href="${process.env.DORY_WEB_APP_URL}/reset-password?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Actualizar contraseña </a></form>
                   </center>
                   </br>
                   `;
