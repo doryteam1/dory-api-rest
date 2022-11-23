@@ -228,7 +228,8 @@ async function getAsociacionesMiembros(page = 1, id_user){
                        from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id 
                                                          inner join asociaciones as a1 on au.nit_asociacion_pk_fk = a1.nit
                        where  s.nit_asociacion_fk=a1.nit ) as propietario,
-                      (select ta.nombre from tipos_asociaciones as ta where ta.id_tipo_asociacion = a.id_tipo_asociacion_fk) as tipo_asociacion
+                      (select ta.nombre from tipos_asociaciones as ta where ta.id_tipo_asociacion = a.id_tipo_asociacion_fk) as tipo_asociacion,
+                      s.id_solicitud
               FROM asociaciones as a inner join solicitudes as s on s.nit_asociacion_fk=a.nit
                                       inner join estados_solicitudes as e on s.id_estado_fk=e.id_estado
                                       inner join sender_solicitud as ss on s.id_sender_solicitud=ss.id_sender_solicitud
