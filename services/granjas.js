@@ -990,7 +990,7 @@ async function misFavoritas(token){
                             g.latitud, g.longitud, g.descripcion, g.id_departamento, 
                             (select d1.nombre_departamento from departamentos as d1 where d1.id_departamento=g.id_departamento) as departamento,
                             g.id_municipio,
-                            (select m1.nombre from municipios as m1 where m1.id_municipio=g.id_munipio) as municipio,
+                            (select m1.nombre from municipios as m1 where m1.id_municipio=g.id_municipio) as municipio,
                             g.id_corregimiento, 
                             (select c1.nombre from corregimientos as c1 where c1.id_corregimiento=g.id_corregimiento) as corregimiento,
                             g.id_vereda, g.corregimiento_vereda,g.informacion_adicional_direccion,ug.usuarios_id, ug.esfavorita as favorita, ug.espropietario, 
