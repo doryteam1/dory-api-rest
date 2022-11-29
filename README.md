@@ -4,19 +4,19 @@
 
 Las versiones y los nombres de las librerías utilizadas en el desarrollo del api rest son las siguientes:
 
-*Node.js v14.17.3  
-*MySQL versión 2.35.1.  
-*bcrypt: 5.0.1   
-*cors: 2.8.5  
-*dayjs: 1.11.3  
-*express: 4.17.2   
-*google-auth-library: 7.14.1  
-*http-errors: 2.0.0  
-*jwt-simple: 0.5.6   
-*moment: 2.29.1  
-*mysql2: 2.2.5  
-*nodemailer: 6.7.2    
-*socket.io: 4.5.2  
+* Node.js v14.17.3  
+* MySQL versión 2.35.1.  
+* bcrypt: 5.0.1   
+* cors: 2.8.5  
+* dayjs: 1.11.3  
+* express: 4.17.2   
+* google-auth-library: 7.14.1  
+* http-errors: 2.0.0  
+* jwt-simple: 0.5.6   
+* moment: 2.29.1  
+* mysql2: 2.2.5  
+* nodemailer: 6.7.2    
+* socket.io: 4.5.2  
 
      
 	Herramientas 
