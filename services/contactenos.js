@@ -36,7 +36,7 @@ async function contactenos(formulario){
               html: contentHtml, // html body
             });
 
-            let message = 'Formulario enviado al correo eléctronico con éxito';
+            let message = 'Formulario enviado al correo electrónico con éxito';
           return {message};
    }
      
