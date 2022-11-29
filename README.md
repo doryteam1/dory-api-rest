@@ -154,31 +154,19 @@ Cree una cuenta en GitHub en https://github.com  o ingrese si ya tiene una.
 
 
 ## 4. Cree un nuevo repositorio privado
+![image](https://user-images.githubusercontent.com/118612137/204652250-2a79b4ee-3c19-4bf8-8fb4-aaac8d068811.png)
+![image](https://user-images.githubusercontent.com/118612137/204652354-b1b017c5-8ff3-4852-aecf-54fca9e4d521.png)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 Guarde la dirección del nuevo repositorio será usada más adelante.
 
 ## 5. Acceda al código fuente
 
-Alternativa 1 (recomendada): 
+* Alternativa 1 (recomendada): 
 
 git clone https://github.com/doryteam1/dory-api-rest.git
 cd dory-api-rest
 
-Alternativa 2:
+* Alternativa 2:
 
 cd src/dory-api-rest
 git init
@@ -217,74 +205,60 @@ Cree una cuenta en Heroku en https://signup.heroku.com/login o ingrese si ya tie
 
 
 ## 10. Cree una app en Heroku
- 
-
-
-
-
-
-
-
-
-
+ ![image](https://user-images.githubusercontent.com/118612137/204652564-a46c75f9-6b0f-49f1-9e08-473a98142de4.png)
+![image](https://user-images.githubusercontent.com/118612137/204652624-1d1e418a-0494-4e69-afce-4a7ace689fb0.png)
 
 Heroku usa contenedores para ejecutar y escalar todas las aplicaciones. Estos contenedores se denominan Dynos. 
 
 Remplace el nombre de la aplicación (App name) por el de su preferencia.
 Diligencie el formulario y haga clic en el botón Create app
 
-
-
-
-
 ## 11. Configurar App 
 
 Para configurar la app en Heroku realice los siguientes pasos:
 	
 1. Seleccione GitHub como método de despliegue.
-	
-		
-
+![image](https://user-images.githubusercontent.com/118612137/204652723-26073aa2-0afb-413a-945d-612c1da5b70a.png)
 
 2. Presione el botón Connect to GitHub
-
+![image](https://user-images.githubusercontent.com/118612137/204652765-c288031a-0b06-409c-9a63-abbcaf4c41d9.png)
 	
 3. Inicie sesión con su usuario y contraseña de GitHub para conectarse a Heroku
 
 4. Conecte la App con el nuevo repositorio
+![image](https://user-images.githubusercontent.com/118612137/204652834-54b4098a-a0f7-4750-bf7b-08cf725bb295.png)
 
 Seleccione el nuevo repositorio creado en el punto 3
 
 5. Seleccione la rama master para despliegues automáticos.
-
+![image](https://user-images.githubusercontent.com/118612137/204652871-8e29e608-266e-4079-8cd5-66ef8377219d.png)
  
 Presione el botón Enable Automatic Deploys para activar los despliegues automáticos.
 
 12. Despliegue la App
-
+![image](https://user-images.githubusercontent.com/118612137/204652962-f883ac89-142d-4040-b1d7-097b5ca83735.png)
 
 Presione el botón Deploy Branch para realizar un despliegue manual de la rama master.
 Una vez terminado el proceso la app se encuentra online.
 
 13. Configure las Variables de entorno en Heroku
-
-
+![image](https://user-images.githubusercontent.com/118612137/204653009-c72b2e56-b418-4042-a7ed-6b533251eb1e.png)
 En la pestaña “Settings” de la aplicación en la sección “Config Vars” configurar las siguientes variables de entorno:
 
-DB_HOST: Host donde se encuentra alojado el servidor de bases de datos mysql.
+* DB_HOST: Host donde se encuentra alojado el servidor de bases de datos mysql.
  
-DB_NAME: Nombre de la base de datos.
+* DB_NAME: Nombre de la base de datos.
 
-DB_USER:  Usuario de la base de datos.
+* DB_USER:  Usuario de la base de datos.
 
-DB_PASSWORD: Password de usuario de la base de datos
+* DB_PASSWORD: Password de usuario de la base de datos
 
-DORY_WEB_APP_URL: Url de la aplicación web dory (La puede obtener una vez termine la guía de instalación de la aplicación web).
++ DORY_WEB_APP_URL: Url de la aplicación web dory (La puede obtener una vez termine la guía de instalación de la aplicación web).
 
 
 
 14. Verifique
-
+![image](https://user-images.githubusercontent.com/118612137/204653139-90ff5942-0e70-4a06-9994-f1c87f3555a4.png)
  
 En la sección Settings de la app encontrará la sección “Domains”. En esta encontrará la url base para acceder al api rest. Añada el sufijo api al final de la dirección y verifique su funcionamiento en postman.
 
