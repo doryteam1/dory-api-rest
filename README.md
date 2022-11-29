@@ -146,7 +146,8 @@ Instale el servidor de base de datos en un servicio de la nube de su preferencia
 	2. Ejecutar el script NewCreateDB.sql en la base de datos creada en el punto anterior. 
 
 Nota: Debe ingresar al script y cambiar el nombre de la base de datos.
- 
+ ![image](https://user-images.githubusercontent.com/118612137/204650017-d7aab7bf-8388-43f6-a6f8-e02e74332296.png)
+
 
 	3. Ejecutar el script PoblarBD.sql en la base de datos creada en el punto 1, para establecer los datos iniciales.
 
