@@ -11,7 +11,7 @@ async function getUserId(page = 1, idUser){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT distinctrow   u.id,u.cedula,concat(u.nombres," ",u.apellidos) as nombre_completo,
-                          u.celular,u.direccion,u.email,tu.id_tipo_usuario,tu.nombre_tipo_usuario as tipo_usuario,u.id_area_experticia,u.url_sisben,url_imagen_cedula,
+                          u.celular,u.direccion,u.email,tu.id_tipo_usuario,tu.nombre_tipo_usuario as tipo_usuario,u.id_area_experticia,u.url_sisben,u.url_imagen_cedula,u.carnet,
                           (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
                           (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
                           (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,
@@ -40,7 +40,7 @@ async function getUserId(page = 1, idUser){
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT u.id, u.cedula,u.nombres, u.apellidos,concat(u.nombres,' ',u.apellidos) as nombre_completo,u.celular,u.direccion,u.email,u.id_tipo_usuario,u.id_area_experticia,
+    `SELECT u.id, u.cedula,u.nombres, u.apellidos,concat(u.nombres,' ',u.apellidos) as nombre_completo,u.celular,u.direccion,u.email,u.id_tipo_usuario,u.id_area_experticia,u.url_sisben,u.url_imagen_cedula,u.carnet,
             (select s.nombre from sexos as s  where s.id=u.id_sexo) as sexo,
             (select s.id from sexos as s  where s.id=u.id_sexo) as id_sexo,
             (select et.nombre from etnias as et  where et.id=u.id_etnia) as etnia,
@@ -213,7 +213,11 @@ async function update(idUser, usuario, token){
                                     otra_area_experticia=?,
                                     otra_area_experticia_descripcion=?,
                                     sobre_mi=?,
-                                    informacion_adicional_direccion=?
+                                    informacion_adicional_direccion=?,
+                                    id_sexo=?,
+                                    id_etnia=?,
+                                    url_sisben=?,
+                                    url_imagen_cedula=?
                               WHERE id=?`,
                               [
                                 usuario.cedula,
@@ -238,6 +242,10 @@ async function update(idUser, usuario, token){
                                 usuario.otra_area_experticia_descripcion,
                                 usuario.sobre_mi,
                                 usuario.informacion_adicional_direccion,
+                                usuario.id_sexo,
+                                usuario.id_etnia,
+                                usuario.url_sisben,
+                                usuario.url_imagen_cedula,
                                 idUser
                               ] 
                               );
