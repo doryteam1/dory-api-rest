@@ -994,7 +994,7 @@ async function misFavoritas(token){
                             g.id_corregimiento, 
                             (select c1.nombre from corregimientos as c1 where c1.id_corregimiento=g.id_corregimiento) as corregimiento,
                             g.id_vereda, g.corregimiento_vereda,g.informacion_adicional_direccion,ug.usuarios_id, ug.esfavorita as favorita, ug.espropietario, 
-                            (select count(*) from reseñas as r where g.id_granja=r.id_granja_pk_fk) as cantidad_resenas,
+                            (select count(*) from reseñas as r where g.id_granja=r.id_granja_pk_fk) as count_resenas,
                             (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion
                   FROM granjas as g, usuarios_granjas as ug, usuarios as u
                   WHERE u.id=ug.usuarios_id  and ug.usuarios_id=? and g.id_granja=ug.id_granja_pk_fk  and ug.esfavorita=1`, 
