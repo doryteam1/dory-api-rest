@@ -5,7 +5,7 @@ const config = {
   host: env.DB_HOST || 'localhost',
   user: env.DB_USER || 'root',
   password: env.DB_PASSWORD || '',
-  database: env.DB_NAME || 'piscicola',
+  database: env.DB_NAME || 'mydb',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
