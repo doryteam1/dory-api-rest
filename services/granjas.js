@@ -604,7 +604,8 @@ async function createGranja(body,token){
                                     (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
                                     WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
                                     (select ug2.esfavorita from usuarios_granjas as ug2 where ug2.id_granja_pk_fk=g.id_granja and ug2.usuarios_id=?) as favorita,
-                                    (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion
+                                    (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion,
+                                    (select m.nombre from municipios as m inner join granjas as gr on m.id_municipio = gr.id_municipio where gr.id_granja = g.id_granja) as nombre_municipio
                   FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
                                     left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk)      
                   WHERE   g.id_municipio=? 
@@ -618,7 +619,8 @@ async function createGranja(body,token){
                                 (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2 left join usuarios_granjas as ug2 on (u2.id = ug2.usuarios_id  and ug2.espropietario=1)  
                                 WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
                                 0 as favorita,
-                                (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion
+                                (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion,
+                                (select m.nombre from municipios as m inner join granjas as gr on m.id_municipio = gr.id_municipio where gr.id_granja = g.id_granja) as nombre_municipio
               FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
                                 left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk)      
               WHERE   g.id_municipio=? 
