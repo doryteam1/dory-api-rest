@@ -61,13 +61,15 @@ async function getAsociacionesDepartamento(page = 1, idDepartamento){
         const offset = helper.getOffset(page, config.listPerPage);
         const rows = await db.query(
         `SELECT distinctrow  m.id_municipio, m.nombre, m.poblacion,
-            (SELECT count(*) 
-            FROM municipios as m1, asociaciones as a1
-            WHERE m1.id_municipio=a1.id_municipio and  m1.id_municipio=m.id_municipio ) as count_asociaciones
-        FROM  asociaciones as a, municipios as m, corregimientos as c,veredas as v, departamentos as d
-        WHERE ( m.id_departamento_fk=d.id_departamento) and 
-              (m.id_municipio=a.id_municipio or c.id_municipio=a.id_municipio or v.id_municipio=a.id_municipio)  and
-              d.id_departamento=?
+                (select count(*) 
+                 from municipios as m1, asociaciones as a1
+                 where m1.id_municipio=a1.id_municipio and  m1.id_municipio=m.id_municipio ) as count_asociaciones
+        FROM   municipios as m
+                                 left join departamentos as d on m.id_departamento_fk = d.id_departamento
+                                 left join asociaciones as a on  a.id_municipio = m.id_municipio                                                             
+                                 left join corregimientos as c on c.id_municipio = m.id_municipio
+                                 left join veredas as v on v.id_municipio = m.id_municipio        
+        WHERE  d.id_departamento=?
               LIMIT ?,?`, 
             [idDepartamento, offset, config.listPerPage]
        );
