@@ -67,28 +67,25 @@ async function getPublicacionesMultiple(page = 1){
         FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
         order by p.id_publicacion asc`, 
         []
-      );
-      let resultSet = rows;
-      if(rows.length > 0){
-        let publicaciones = [];
-        let currentPublicacion = { ...rows[0], fotos:[]}
-        for(let i=0; i<rows.length; i++){
-            if(rows[i].id_publicacion == currentPublicacion.id_publicacion){
-              if(rows[i].fotop){
-                currentPublicacion.fotos.push(rows[i].fotop)
-              }
-            }else{
-              currentPublicacion.foto = undefined;
-              publicaciones.push(currentPublicacion);
-              currentPublicacion = { ...rows[i], fotos:[] };
-              if(rows[i].fotop){
-                currentPublicacion.fotos.push(rows[i].fotop)
-              }
-            }
+      );     
+      var fotosN= new Array();
+      var publicaciones = new Array();
+      var index= rows[0].id_publicacion;
+      publicaciones.push(rows[0]);        
+      rows.forEach((element)=>{           
+        if((index == element.id_publicacion))
+        { 
+          fotosN.push(element.fotop);
+        }else { 
+                  index= element.id_publicacion;
+                  publicaciones[publicaciones.length-1].fotos=fotosN;
+                  publicaciones.push(element);
+                  fotosN=[];  
+                  fotosN.push(element.fotop);
         }
-        resultSet = publicaciones;
-      }      
-      const data = helper.emptyOrRows(resultSet);
+      });
+        publicaciones[publicaciones.length-1].fotos=fotosN;          
+      const data = helper.emptyOrRows(publicaciones); 
       const meta = {page};
       return {
         data,
