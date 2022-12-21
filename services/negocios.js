@@ -51,46 +51,38 @@ async function getNegocioUsuario(id_user){
 
 /*_____________getMultiple ________________________________*/
 async function getMultiple(page = 1){
-  const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
-    `select *,
-    (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
-    (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento,
-    fn.foto_negocio as foto
-    from negocios as n
-    left join fotosNegocios as fn on n.id_negocio = fn.id_negocio_fk
-    order by n.id_negocio asc`, 
-    []
-  );
-
-  let resultSet = rows;
-
-  if(rows.length > 0){
-    let negocios = [];
-    let currentNegocio = { ...rows[0], fotos:[]}
-    for(let i=0; i<rows.length; i++){
-      if(rows[i].id_negocio == currentNegocio.id_negocio){
-        if(rows[i].foto){
-          currentNegocio.fotos.push(rows[i].foto)
-        }
-      }else{
-        currentNegocio.foto = undefined;
-        negocios.push(currentNegocio);
-        currentNegocio = { ...rows[i], fotos:[] };
-        if(rows[i].foto){
-          currentNegocio.fotos.push(rows[i].foto)
-        }
+      const offset = helper.getOffset(page, config.listPerPage);
+      const rows = await db.query(
+        `SELECT *,
+                (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
+                (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento
+        FROM negocios as n left join fotosNegocios as fn on n.id_negocio = fn.id_negocio_fk
+        order by n.id_negocio asc`, 
+        []
+      );
+              var fotosN= new Array();
+              var negocios = new Array();
+              var index= rows[0].id_negocio;
+              negocios.push(rows[0]);        
+              rows.forEach((element)=>{           
+                if((index == element.id_negocio))
+                { 
+                  fotosN.push(element.foto_negocio);
+                }else { 
+                          index= element.id_negocio;
+                          negocios[negocios.length-1].fotos=fotosN;
+                          negocios.push(element);
+                          fotosN=[];  
+                          fotosN.push(element.foto_negocio);
+                }
+              });
+                negocios[negocios.length-1].fotos=fotosN;          
+      const data = helper.emptyOrRows(negocios);  
+      const meta = {page};
+      return {
+        data,
+        meta
       }
-    }
-    resultSet = negocios;
-  }
-  
-  const data = helper.emptyOrRows(resultSet);
-  const meta = {page};
-  return {
-    data,
-    meta
-  }
 }/*End GetMultiple*/
 
 /*_____________Create Negocio________________________________*/
