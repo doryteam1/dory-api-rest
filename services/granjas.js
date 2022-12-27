@@ -119,7 +119,7 @@ async function getGranjasTodas(page = 1,token){
                               WHERE   ug2.id_granja_pk_fk=g.id_granja) as propietario, 
                               0 as favorita,
                               (select avg(r.calificacion) from reseñas as r where id_granja_pk_fk = g.id_granja) as puntuacion,
-                              (select m.nombre from municipios as m  where m.id_municipio=g.id_municipio) as municipio
+                              (select m.nombre from municipios as m  where m.id_municipio=g.id_municipio) as nombre_municipio
             FROM  granjas as g left join fotos as f on (f.id_granja_fk = g.id_granja)
                               left join usuarios_granjas as ug on (g.id_granja = ug.id_granja_pk_fk) 
                   LIMIT ?,?`, 
