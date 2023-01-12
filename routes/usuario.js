@@ -23,7 +23,8 @@ router.get('/all', async function(req, res, next) {
 
 router.post('/create', async function(req, res, next) {
   try {
-    res.json(await usuario.create(req.body));
+    var token=req.headers.authorization;
+    res.json(await usuario.create(req.body,token));
   } catch (err) {
     console.error(`Error al registrar el usuario`, err.message);
     next(err);
