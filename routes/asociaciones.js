@@ -133,7 +133,7 @@ router.get('/granjas/asociadas/:nit', async function(req, res, next) {
        var token=req.headers.authorization;
         res.json(await asociaciones.ObtenerTodasGranjasAsociadas(req.params.nit,token));
   } catch (err) {
-        console.error(`Error al retornar todas las granjas asociadas a la asociación ingreasada`, err.message);
+        console.error(`Error al retornar todas las granjas asociadas a la asociación ingresada`, err.message);
         next(err);
   }
 });
