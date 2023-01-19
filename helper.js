@@ -42,7 +42,7 @@ function getOffset(currentPage = 1, listPerPage) {
     secure: false, // true for 465, false for other ports --color gris #343A40
     auth: {
     user: "plataforma.piscicola@gmail.com", // generated ethereal user
-    pass: "krxg hgff tfqc bcry", // generated ethereal password
+    pass: process.env.GOOGLE_PASSWORD_APP, // generated ethereal password
     },
     });
     // send mail with defined transport object
