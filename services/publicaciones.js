@@ -12,6 +12,7 @@ async function getPublicacionesUsuario(id_user){
                 (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
                 (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
                 (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
+                p.titulo, p.descripcion,
                 fp.fotop,
                 p.id_especie_fk as id_especie
         FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
@@ -62,6 +63,7 @@ async function getPublicacionesMultiple(page = 1){
                 (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
                 (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
                 (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
+                p.titulo, p.descripcion,
                 fp.fotop,
                 p.id_especie_fk as id_especie
         FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
@@ -102,19 +104,23 @@ async function createPublicacion(body,token){
                 if(body.cantidad===undefined || 
                    body.preciokilogramo===undefined ||                   
                    body.id_especie===undefined || 
-                   body.id_municipio===undefined 
+                   body.id_municipio===undefined ||                   
+                   body.titulo===undefined || 
+                   body.descripcion===undefined 
                   )
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO publicaciones (cantidad,preciokilogramo,id_especie_fk,id_municipio_fk,usuarios_id) VALUES (?,?,?,?,?)`, 
+                    `INSERT INTO publicaciones (cantidad,preciokilogramo,id_especie_fk,id_municipio_fk,usuarios_id,p.titulo, p.descripcion,) VALUES (?,?,?,?,?,?,?)`, 
                     [
                       body.cantidad,
                       body.preciokilogramo,                      
                       body.id_especie,
                       body.id_municipio,
-                      id_user
+                      id_user,
+                      body.titulo,
+                      body.descripcion
                     ]
                 ); 
                 if (result.affectedRows) {              
@@ -151,7 +157,9 @@ async function createPublicacion(body,token){
               body.preciokilogramo===undefined ||                   
               body.id_especie===undefined || 
               body.id_municipio===undefined ||                   
-              body.usuarios_id===undefined
+              body.usuarios_id===undefined ||                   
+              body.titulo===undefined || 
+              body.descripcion===undefined 
              )
             {
               throw createError(400,"Se requieren todos los parámetros!");
@@ -162,7 +170,9 @@ async function createPublicacion(body,token){
                    preciokilogramo=?,                   
                    id_especie_fk=?,
                    id_municipio_fk=?,
-                   usuarios_id=?
+                   usuarios_id=?,
+                   titulo=?,
+                   descripcion=?
                WHERE id_publicacion=?`,
                [
                 body.cantidad,
@@ -170,6 +180,8 @@ async function createPublicacion(body,token){
                 body.id_especie,
                 body.id_municipio,
                 id_user,
+                body.titulo,
+                body.descripcion,
                 idpublicacion
                ] 
             );          
