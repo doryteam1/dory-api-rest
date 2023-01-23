@@ -157,7 +157,6 @@ async function createPublicacion(body,token){
               body.preciokilogramo===undefined ||                   
               body.id_especie===undefined || 
               body.id_municipio===undefined ||                   
-              body.usuarios_id===undefined ||                   
               body.titulo===undefined || 
               body.descripcion===undefined 
              )
