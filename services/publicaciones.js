@@ -112,7 +112,7 @@ async function createPublicacion(body,token){
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
                  const result = await db.query(
-                    `INSERT INTO publicaciones (cantidad,preciokilogramo,id_especie_fk,id_municipio_fk,usuarios_id,titulo, descripcion,) VALUES (?,?,?,?,?,?,?)`, 
+                    `INSERT INTO publicaciones (cantidad,preciokilogramo,id_especie_fk,id_municipio_fk,usuarios_id,titulo, descripcion) VALUES (?,?,?,?,?,?,?)`, 
                     [
                       body.cantidad,
                       body.preciokilogramo,                      
