@@ -67,7 +67,7 @@ async function getPublicacionesMultiple(page = 1){
                 fp.fotop,
                 p.id_especie_fk as id_especie
         FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
-        order by p.id_publicacion asc`, 
+        order by p.fecha asc`, 
         []
       );     
       var fotosN= new Array();
@@ -96,7 +96,8 @@ async function getPublicacionesMultiple(page = 1){
 }/*End getPublicacionesMultiple*/
 
 /*_____________Create Publicación________________________________*/
-async function createPublicacion(body,token){          
+async function createPublicacion(body,token){  
+     
     if(token && validarToken(token)){
           try {                   
                 const payload=helper.parseJwt(token);
@@ -111,8 +112,10 @@ async function createPublicacion(body,token){
                 {
                   throw createError(400,"Se requieren todos los parámetros!");
                 }
+                const currentDate = new Date();    
+                const fecha = currentDate.toISOString();
                  const result = await db.query(
-                    `INSERT INTO publicaciones (cantidad,preciokilogramo,id_especie_fk,id_municipio_fk,usuarios_id,titulo, descripcion) VALUES (?,?,?,?,?,?,?)`, 
+                    `INSERT INTO publicaciones (cantidad,preciokilogramo,id_especie_fk,id_municipio_fk,usuarios_id,titulo, descripcion, fecha) VALUES (?,?,?,?,?,?,?,?)`, 
                     [
                       body.cantidad,
                       body.preciokilogramo,                      
@@ -120,7 +123,8 @@ async function createPublicacion(body,token){
                       body.id_municipio,
                       id_user,
                       body.titulo,
-                      body.descripcion
+                      body.descripcion,
+                      fecha
                     ]
                 ); 
                 if (result.affectedRows) {              
