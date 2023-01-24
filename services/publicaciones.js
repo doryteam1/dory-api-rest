@@ -67,7 +67,7 @@ async function getPublicacionesMultiple(page = 1){
                 fp.fotop,
                 p.id_especie_fk as id_especie
         FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
-        order by p.fecha asc`, 
+        order by p.fecha desc`, 
         []
       );     
       var fotosN= new Array();
