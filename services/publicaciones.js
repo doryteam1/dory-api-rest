@@ -12,7 +12,7 @@ async function getPublicacionesUsuario(id_user){
                 (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
                 (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
                 (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
-                p.titulo, p.descripcion,
+                p.titulo, p.descripcion, p.fecha,
                 fp.fotop,
                 p.id_especie_fk as id_especie
         FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
@@ -63,7 +63,7 @@ async function getPublicacionesMultiple(page = 1){
                 (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
                 (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
                 (select concat (u.nombres,' ',u.apellidos) from usuarios as u where u.id= p.usuarios_id) as publicado_por,
-                p.titulo, p.descripcion,
+                p.titulo, p.descripcion, p.fecha,
                 fp.fotop,
                 p.id_especie_fk as id_especie
         FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
