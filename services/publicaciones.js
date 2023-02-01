@@ -306,7 +306,9 @@ async function createPublicacion(body,token){
                      where u.id= p.usuarios_id) as tipo_usuario,
                     (select u.foto from usuarios as u where u.id = p.usuarios_id) as foto_perfil,
                     (select e.nombre from especies as e where e.id_especie= p.id_especie_fk) as especie,
-                    (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio
+                    (select m.nombre from municipios as m where m.id_municipio = p.id_municipio_fk) as municipio,
+                    (select d.nombre_departamento from departamentos as d inner join municipios as m on d.id_departamento=m.id_departamento_fk
+                      where m.id_municipio = p.id_municipio_fk) as departamento
             FROM publicaciones as p
             WHERE p.id_publicacion=?
             `, 
