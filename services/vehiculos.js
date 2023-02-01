@@ -304,7 +304,12 @@ async function create(vehiculo,token){
     async function getDetailVehiculo(idVehiculo){ 
       try{
            const rows = await db.query(
-              `SELECT v.*,(select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=v.usuarios_id) as municipio_propietario
+              `SELECT v.*,
+                      (select concat(u.nombres,' ',u.apellidos) from usuarios as u where u.id=v.usuarios_id)as propietario,
+                      (select u.email from usuarios as u where u.id=v.usuarios_id)as email,
+                      (select u.celular from usuarios as u where u.id=v.usuarios_id)as celular,
+                      (select m.nombre from municipios as m , usuarios as u where m.id_municipio=u.id_municipio and u.id=v.usuarios_id) as municipio_propietario,
+                      (select d.nombre_departamento from departamentos as d inner join usuarios as u on d.id_departamento=u.id_departamento and u.id=v.usuarios_id) as departamento_propietario
               FROM vehiculos as v
               WHERE v.id_vehiculo=?
               `, 
