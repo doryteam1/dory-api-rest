@@ -295,8 +295,11 @@ async function createNegocio(body,token){
     try{
       let rows=[];  
       rows = await db.query(
-        `SELECT neg.*, ( select m.nombre from municipios as m where m.id_municipio=neg.id_municipio ) as municipio,
-                (SELECT Concat(u2.nombres,' ',u2.apellidos) FROM  usuarios as u2  WHERE   u2.id=neg.usuarios_id) as propietario
+        `SELECT neg.*, ( select m.nombre from municipios as m where m.id_municipio=neg.id_municipio) as municipio,
+                (select d.nombre_departamento from departamentos as d where d.id_departamento=neg.id_departamento) as departamento,
+                (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=neg.usuarios_id) as propietario,
+                (select u.email from  usuarios as u2  where   u2.id=neg.usuarios_id) as email,
+                (select u.celular from  usuarios as u2  where   u2.id=neg.usuarios_id) as celular
         FROM negocios as neg
         WHERE neg.id_negocio=?
         `, 
