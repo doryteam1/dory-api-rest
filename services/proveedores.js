@@ -12,8 +12,8 @@ async function ObtenerTodosProductos(){
                 f.foto,
                 (select concat(u.nombres,'',u.apellidos))as proveedor,
                 m.nombre as municipio_proveedor
-                FROM productos as p inner join usuarios as u on p.usuarios_id = u.id
-                                    inner join fotosProductos as f on (f.codigo_producto_fk = p.codigo)
+                FROM productos as p left join usuarios as u on p.usuarios_id = u.id
+                                    left join fotosProductos as f on (f.codigo_producto_fk = p.codigo)
                                     left join municipios as m on u.id_municipio = m.id_municipio
                 `,               
                 []
