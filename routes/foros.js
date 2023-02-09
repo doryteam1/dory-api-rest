@@ -20,6 +20,14 @@ router.get('/obtener/respuestas/:idpregunta', async function(req, res, next) {
   }
 });
 
+router.get('/obtener/todas/respuestas', async function(req, res, next) {
+  try {
+    res.json(await foros.getTodasRespuestas());
+  } catch (err) {
+    console.error(`Error al traer las respuestas de todos los foros`, err.message);
+    next(err);
+  }
+});
 
 /*
 router.post('/', async function(req, res, next) {

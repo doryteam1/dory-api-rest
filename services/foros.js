@@ -58,6 +58,23 @@ async function getRespuestasPregunta(idPregunta){
 }/*End getRespuestasPregunta */
 
 
+/*_____________getTodasRespuestas ________________________________*/
+async function getTodasRespuestas(){
+  const rows = await db.query(
+    `SELECT  r.id_preguntaf as preguntaId, p.titulo ,r.idrespuestaf as id, r.respuesta, r.fecha, r.usuarios_id as usuarioId,  
+            (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
+            (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
+    FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
+    `, 
+    []
+  );                     
+  const data = helper.emptyOrRows(rows);       
+  return {
+    data
+  }
+}/*End getTodasRespuestas */
+
+
 
 /*Agregar respuestas a una pregunta*/
 
@@ -66,7 +83,8 @@ async function getRespuestasPregunta(idPregunta){
 
 module.exports = {
   getPreguntasForos,
-  getRespuestasPregunta
+  getRespuestasPregunta,
+  getTodasRespuestas
   /*
   createForo,
   updateForo,
