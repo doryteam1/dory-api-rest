@@ -76,109 +76,60 @@ async function getTodasRespuestas(){
 
 
 
-/*Agregar respuestas a una pregunta*/
-
+/*_________________registrarRespuesta_________________________________*/
+async function registrarRespuesta(body,token){          
+  if(token && validarToken(token)){
+        try {                   
+              const payload=helper.parseJwt(token);
+              const id_user=payload.sub;              
+              if(body.idpregunta===undefined || 
+                 body.respuesta===undefined || 
+                 body.cargar_archivo===undefined 
+                )
+              {
+                throw createError(400,"Se requieren todos los parámetros!");
+              }
+              const currentDate = new Date();    
+              const fecha = currentDate.toISOString();
+              const result = await db.query(
+                  `INSERT INTO respuestasforos (usuarios_id,id_preguntaf,fecha,respuesta,cargar_archivo) VALUES (?,?,?,?,?)`, 
+                  [
+                    id_user,
+                    body.idpregunta,
+                    fecha,
+                    body.respuesta,
+                    body.cargar_archivo
+                  ]
+              ); 
+              if (result.affectedRows) {              
+                  return {
+                          message:'Respuesta registrada exitosamente',
+                          insertId:result.insertId
+                  };
+              }
+                 throw createError(500,"Se presento un problema al registrar la respuesta");
+        }catch (error) {
+              throw error;
+        } 
+   }else{
+        throw createError(401,"Usted no tiene autorización"); 
+   }
+}/*End registrarRespuesta*/
 
 
 
 module.exports = {
   getPreguntasForos,
   getRespuestasPregunta,
-  getTodasRespuestas
-  /*
-  createForo,
-  updateForo,
-  eliminarForo,
-  getNegocioForo,
-  updatePhotosForo,
-  getDetailForo,
-  updateParcialForo*/
-}
+  getTodasRespuestas,
+  registrarRespuesta
+ }
 
 
 
 
 
-/*_____________getForoUsuario ________________________________
-async function getForoUsuario(id_user){
-    try{ 
-      const rows = await db.query(
-        `SELECT n.*, f.foto_negocio,
-        (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
-        (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento
-        FROM negocios as n left join fotosNegocios as f on (f.id_negocio_fk = n.id_negocio)
-        WHERE n.usuarios_id=?
-        `, 
-        [id_user]
-      );
-    if(rows.length<1){
-      throw createError(404,"Usuario sin negocios");
-    }
-      var arrayfotos= new Array();
-      var nuevoRows = new Array();
-      var index= rows[0].id_negocio;
-      nuevoRows.push(rows[0]);        
-      rows.forEach((element)=>{           
-        if((index == element.id_negocio))
-        { 
-          if(element.foto_negocio){
-                arrayfotos.push(element.foto_negocio);
-          }          
-        }else { 
-                  index= element.id_negocio;
-                  nuevoRows[nuevoRows.length-1].fotos=arrayfotos;
-                  nuevoRows.push(element);
-                  arrayfotos=[];  
-                  if(element.foto_negocio){
-                      arrayfotos.push(element.foto_negocio);
-                  } 
-        }
-      });        
-      nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
-      const data = helper.emptyOrRows(nuevoRows);  
-      return {
-        data
-      }
-    }catch(err){
-      throw err;
-    }
-}/*End getNegocioUsuario*/
-
-/*_____________getMultiple ________________________________
-async function getForos(page = 1){
-      const offset = helper.getOffset(page, config.listPerPage);
-      const rows = await db.query(
-        `SELECT *,
-                (select m.nombre from municipios as m where m.id_municipio = n.id_municipio) as nombre_municipio, 
-                (select d.nombre_departamento from departamentos as d where d.id_departamento = n.id_departamento) as nombre_departamento
-        FROM negocios as n left join fotosNegocios as fn on n.id_negocio = fn.id_negocio_fk
-        order by n.id_negocio asc`, 
-        []
-      );
-              var fotosN= new Array();
-              var negocios = new Array();
-              var index= rows[0].id_negocio;
-              negocios.push(rows[0]);        
-              rows.forEach((element)=>{           
-                if((index == element.id_negocio))
-                { 
-                  fotosN.push(element.foto_negocio);
-                }else { 
-                          index= element.id_negocio;
-                          negocios[negocios.length-1].fotos=fotosN;
-                          negocios.push(element);
-                          fotosN=[];  
-                          fotosN.push(element.foto_negocio);
-                }
-              });
-                negocios[negocios.length-1].fotos=fotosN;          
-      const data = helper.emptyOrRows(negocios);  
-      const meta = {page};
-      return {
-        data,
-        meta
-      }
-}/*End GetForos*/
+/*
 
 /*_____________Create Foro________________________________
 async function createForo(body,token){          

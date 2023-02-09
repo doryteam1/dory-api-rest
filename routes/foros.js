@@ -29,17 +29,18 @@ router.get('/obtener/todas/respuestas', async function(req, res, next) {
   }
 });
 
-/*
-router.post('/', async function(req, res, next) {
+
+router.post('/registrar/respuesta', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await foros.createForo(req.body, token));
+      res.json(await foros.registrarRespuesta(req.body, token));
     } catch (err) {
-      console.error(`Error creando foro`, err.message);
+      console.error(`Error al registrar la respuesta de la pregunta del foro`, err.message);
       next(err);
     }
   });
 
+/*
 router.put('/actualizar/:id', async function(req, res, next) {
     try {
       res.json(await foros.updateForo(req.params.id, req.body));
