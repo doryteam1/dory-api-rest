@@ -6,7 +6,6 @@ const {validarToken} = require ('../middelware/auth');
 
 /*_____________getPreguntasForos ________________________________*/
 async function getPreguntasForos(){
-      
       const rows = await db.query(
         `SELECT p.id_preguntaf as id, p.titulo, p.descripcion, p.fecha, p.usuarios_id as usuarioId, fp.fotopf as foto, 
                 (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as nombreUsuario,
@@ -39,16 +38,36 @@ async function getPreguntasForos(){
       }
 }/*End getPreguntasForos*/
 
-/*Devolver todas las preguntas de un foro*/
-/*Devolver todas las respuestas a una pregunta*/
+
+
+/*_____________getRespuestasPregunta ________________________________*/
+async function getRespuestasPregunta(idPregunta){
+        const rows = await db.query(
+          `SELECT r.idrespuestaf as id, r.id_preguntaf as preguntaId, r.respuesta, r.fecha, r.usuarios_id as usuarioId,  
+                  (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
+                  (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
+          FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
+          WHERE r.id_preguntaf=?
+          `, 
+          [idPregunta]
+        );                     
+        const data = helper.emptyOrRows(rows);       
+        return {
+          data
+        }
+}/*End getRespuestasPregunta */
+
+
+
 /*Agregar respuestas a una pregunta*/
 
 
 
 
 module.exports = {
-  getPreguntasForos
-  /*getForos, 
+  getPreguntasForos,
+  getRespuestasPregunta
+  /*
   createForo,
   updateForo,
   eliminarForo,

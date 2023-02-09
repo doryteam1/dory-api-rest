@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const foros = require('../services/foros');
 
-
 router.get('/obtener/preguntas', async function(req, res, next) {
   try {
     res.json(await foros.getPreguntasForos());
@@ -12,18 +11,17 @@ router.get('/obtener/preguntas', async function(req, res, next) {
   }
 });
 
-
-
-/*
-router.get('/', async function(req, res, next) {
+router.get('/obtener/respuestas/:idpregunta', async function(req, res, next) {
   try {
-    res.json(await foros.getForos(req.query.page));
+    res.json(await foros.getRespuestasPregunta(req.params.idpregunta));
   } catch (err) {
-    console.error(`Error al traer los foros`, err.message);
+    console.error(`Error al traer las respuestas a pregunta del foro`, err.message);
     next(err);
   }
 });
 
+
+/*
 router.post('/', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
