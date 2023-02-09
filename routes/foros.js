@@ -13,7 +13,7 @@ router.get('/obtener/todas/preguntas', async function(req, res, next) {
 
 router.get('/obtener/preguntas/usuario/:idusuario', async function(req, res, next) {
   try {
-        res.json(await foros.getPreguntasUsuario(idusuario));
+        res.json(await foros.getPreguntasUsuario(req.params.idusuario));
   } catch (err) {
         console.error(`Error al traer las preguntas del usuario`, err.message);
         next(err);
