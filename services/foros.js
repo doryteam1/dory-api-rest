@@ -42,17 +42,20 @@ async function getPreguntasForos(){
 
 /*_____________getPreguntasUsuario ________________________________*/
 async function getPreguntasUsuario(idusuario){
-  const rows = await db.query(
-    `SELECT p.id_preguntaf as id, p.titulo, p.descripcion, p.fecha, p.usuarios_id as usuarioId, fp.fotopf as foto, 
-            (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as nombreUsuario,
-            (select u2.foto from  usuarios as u2  where   u2.id=p.usuarios_id) as fotoUsuario,
-            (select count(*) from  respuestasforos as rf left join usuarios as u2 on ( u2.id=rf.usuarios_id) where rf.id_preguntaf=p.id_preguntaf) as countRespuestas
-     FROM preguntasforos as p left join fotospreguntas as fp on p.id_preguntaf = fp.id_preguntaf
-     WHERE p.usuarios_id=?
-     order by p.fecha desc
-    `, 
-    [idusuario]
-  );
+          const rows = await db.query(
+            `SELECT p.id_preguntaf as id, p.titulo, p.descripcion, p.fecha, p.usuarios_id as usuarioId, fp.fotopf as foto, 
+                    (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as nombreUsuario,
+                    (select u2.foto from  usuarios as u2  where   u2.id=p.usuarios_id) as fotoUsuario,
+                    (select count(*) from  respuestasforos as rf left join usuarios as u2 on ( u2.id=rf.usuarios_id) where rf.id_preguntaf=p.id_preguntaf) as countRespuestas
+            FROM preguntasforos as p left join fotospreguntas as fp on p.id_preguntaf = fp.id_preguntaf
+            WHERE p.usuarios_id=?
+            order by p.fecha desc
+            `, 
+            [idusuario]
+          );
+          if(rows.length<1){
+            return {message:'El usuario ingresado no tiene preguntas en el foro'};
+          }
           var fotosN= new Array();
           var preguntas = new Array();
           var index= rows[0].id;
