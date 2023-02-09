@@ -131,7 +131,7 @@ async function registrarPregunta(body,token){
               const currentDate = new Date();    
               const fecha = currentDate.toISOString();
               const result = await db.query(
-                  `INSERT INTO respuestasforos (titulo,descripcion,fecha,usuarios_id) VALUES (?,?,?,?)`, 
+                  `INSERT INTO preguntasforos (titulo,descripcion,fecha,usuarios_id) VALUES (?,?,?,?)`, 
                   [
                     body.titulo,
                     body.descripcion,
