@@ -2,12 +2,21 @@ const express = require('express');
 const router = express.Router();
 const foros = require('../services/foros');
 
-router.get('/obtener/preguntas', async function(req, res, next) {
+router.get('/obtener/todas/preguntas', async function(req, res, next) {
   try {
     res.json(await foros.getPreguntasForos());
   } catch (err) {
-    console.error(`Error al traer las preguntas del foro`, err.message);
+    console.error(`Error al traer todas las preguntas del sistema`, err.message);
     next(err);
+  }
+});
+
+router.get('/obtener/preguntas/usuario/:idusuario', async function(req, res, next) {
+  try {
+        res.json(await foros.getPreguntasUsuario(idusuario));
+  } catch (err) {
+        console.error(`Error al traer las preguntas del usuario`, err.message);
+        next(err);
   }
 });
 
