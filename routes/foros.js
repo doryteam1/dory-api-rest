@@ -59,16 +59,18 @@ router.post('/registrar/respuesta', async function(req, res, next) {
     }
   });
 
-/*
-router.put('/actualizar/:id', async function(req, res, next) {
+
+router.put('/actualizar/pregunta/:idpregunta', async function(req, res, next) {
     try {
-      res.json(await foros.updateForo(req.params.id, req.body));
+      var token=req.headers.authorization;
+      res.json(await foros.actualizarPregunta(req.params.idpregunta, req.body, token));
     } catch (err) {
-      console.error(`Error al actualizar foro`, err.message);
+      console.error(`Error al actualizar la pregunta del foro`, err.message);
       next(err);
     }
 });
 
+/*
 router.delete('/eliminar/:id', async function(req, res, next) {
     try {
       res.json(await foros.removeAreaForo(req.params.id));

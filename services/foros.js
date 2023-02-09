@@ -38,13 +38,11 @@ async function getPreguntasForos(){
                 }
               });
                 preguntas[preguntas.length-1].fotos=arrayfotos; 
-                data = helper.emptyOrRows(preguntas);
-                
+                data = helper.emptyOrRows(preguntas);                
               return {
                 data
               }
 }/*End getPreguntasForos*/
-
 
 /*_____________getPreguntasUsuario ________________________________*/
 async function getPreguntasUsuario(idusuario){
@@ -59,9 +57,10 @@ async function getPreguntasUsuario(idusuario){
             `, 
             [idusuario]
           );
-          if(rows.length<1){
-            return {message:'El usuario ingresado no tiene preguntas en el foro'};
-          }
+          let data = [];
+            if(rows.length<1){
+              return {data};
+            }
           var fotosN= new Array();
           var preguntas = new Array();
           var index= rows[0].id;
@@ -79,19 +78,11 @@ async function getPreguntasUsuario(idusuario){
             }
           });
           preguntas[preguntas.length-1].fotos=fotosN;                       
-  const data = helper.emptyOrRows(preguntas);       
-  return {
-    data
-  }
+          data = helper.emptyOrRows(preguntas);       
+          return {
+            data
+          }
 }/*End getPreguntasUsuario*/
-
-
-
-
-
-
-
-
 
 /*_____________getRespuestasPregunta ________________________________*/
 async function getRespuestasPregunta(idPregunta){
@@ -111,7 +102,6 @@ async function getRespuestasPregunta(idPregunta){
         }
 }/*End getRespuestasPregunta */
 
-
 /*_____________getTodasRespuestas ________________________________*/
 async function getTodasRespuestas(){
   const rows = await db.query(
@@ -128,8 +118,6 @@ async function getTodasRespuestas(){
     data
   }
 }/*End getTodasRespuestas */
-
-
 
 /*_________________registrarRespuesta_________________________________*/
 async function registrarRespuesta(body,token){          
@@ -209,13 +197,57 @@ async function registrarPregunta(body,token){
    }
 }/*End registrarPregunta*/
 
+/*____________________________actualizarPregunta__________________________*/
+  async function actualizarPregunta(idpregunta, body, token){     
+          if(token && validarToken(token)){
+                    const payload=helper.parseJwt(token);  
+                    const id_user=payload.sub;
+                    const rows = await db.query(
+                      `SELECT p.usuarios_id
+                        FROM preguntasforos as p
+                        WHERE p.usuarios_id=?`, 
+                        [id_user]
+                     );
+                    if(rows.length<1){
+                      return {message:'Usted no tiene autorización para éste proceso'};
+                    }   
+              try{ 
+                  if(body.titulo===undefined || body.descripcion===undefined)
+                   {
+                     throw createError(400,"Se requieren todos los parámetros!");
+                   }
+                  const result = await db.query(
+                    `UPDATE preguntasforos 
+                     SET titulo=?,
+                        descripcion=?
+                     WHERE id_preguntaf=?`,
+                     [
+                      body.titulo,
+                      body.descripcion,
+                      idpregunta
+                    ] 
+                    );          
+                    if (result.affectedRows) {              
+                      return {message:'Pregunta Actualizada exitosamente'};
+                    }
+                    throw createError(500,"Se presento un problema al actualizar la pregunta del foro");
+                }catch (error) {           
+                      throw error;
+                } 
+              }else{
+                throw createError(401,"Usted no tiene autorización"); 
+              }
+  }/*End actualizarPregunta*/
+
+
 module.exports = {
   getPreguntasForos,
   getPreguntasUsuario,
   getRespuestasPregunta,
   getTodasRespuestas,
   registrarRespuesta,
-  registrarPregunta
+  registrarPregunta,
+  actualizarPregunta
  }
 
 
@@ -224,69 +256,7 @@ module.exports = {
 
 /*
 
-  /*____________________________updateNegocio__________________________
-  async function updateForo(idNegocio, body, token){     
-    if(token && validarToken(token)){
-              const payload=helper.parseJwt(token);  
-              const id_user=payload.sub;
-        const rows = await db.query(
-          `SELECT n.usuarios_id
-          FROM negocios as n
-          WHERE n.usuarios_id=?`, 
-          [id_user]
-        );
-        if(rows.length<=0){
-          return {message:'Usted no tiene autorización para éste proceso'};
-        }   
-      try { 
-            if(body.nombre_negocio===undefined || 
-              body.descripcion_negocio===undefined ||
-              body.id_departamento===undefined || 
-              body.id_municipio===undefined || 
-              body.direccion===undefined ||
-              body.latitud===undefined || 
-              body.longitud===undefined ||
-              body.informacion_adicional_direccion===undefined
-             )
-            {
-              throw createError(400,"Se requieren todos los parámetros!");
-            }
-            const result = await db.query(
-              `UPDATE negocios 
-               SET nombre_negocio=?,
-                   descripcion_negocio=?,                   
-                   usuarios_id=?,
-                   id_departamento=?,
-                   id_municipio=?,
-                   direccion=?,
-                   latitud=?,
-                   longitud=?,
-                   informacion_adicional_direccion=?
-               WHERE id_negocio=?`,
-               [
-                body.nombre_negocio,
-                body.descripcion_negocio,
-                id_user,
-                body.id_departamento,
-                body.id_municipio,
-                body.direccion,
-                body.latitud,
-                body.longitud,
-                body.informacion_adicional_direccion,
-                idNegocio
-               ] 
-            );          
-            if (result.affectedRows) {              
-              return {message:'Negocio Actualizado exitosamente'};
-            }
-             throw createError(500,"Se presento un problema al actualizar el negocio");
-      }catch (error) {           
-            throw error;
-      } 
-    }else{
-      throw createError(401,"Usted no tiene autorización"); 
-    }
-  }/*End updateNegocio*/
+  
   
    /*_____________eliminarNegocio ________________________________
   async function eliminarForo(id_negocio,token){
