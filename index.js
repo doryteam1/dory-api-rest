@@ -66,6 +66,7 @@ const dashboardRouter = require('./routes/dashboard');
 const chatRouter = require('./routes/chat');
 const topalertRouter = require('./routes/topalert');
 const searchRouter = require('./routes/search');
+const forosRouter = require('./routes/foros');
 
 var cors = require('cors');
 app.use(bodyParser.json());
@@ -148,6 +149,7 @@ app.use('/api/dashboard',dashboardRouter)
 app.use('/api/chat',chatRouter)
 app.use('/api/topalert',topalertRouter)
 app.use('/api/search',searchRouter)
+app.use('/api/foros',forosRouter)
 
 /* Error de direccionamiento  */
  app.use(( req, res, next) => {
