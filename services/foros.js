@@ -12,6 +12,7 @@ async function getPreguntasForos(){
                 (select u2.foto from  usuarios as u2  where   u2.id=p.usuarios_id) as fotoUsuario,
                 (select count(*) from  respuestasforos as rf left join usuarios as u2 on ( u2.id=rf.usuarios_id) where rf.id_preguntaf=p.id_preguntaf) as countRespuestas
          FROM preguntasforos as p left join fotospreguntas as fp on p.id_preguntaf = fp.id_preguntaf
+         order by p.fecha desc
         `, 
         []
       );
@@ -48,6 +49,7 @@ async function getRespuestasPregunta(idPregunta){
                   (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
           FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
           WHERE r.id_preguntaf=?
+          order by p.fecha desc
           `, 
           [idPregunta]
         );                     
@@ -65,6 +67,7 @@ async function getTodasRespuestas(){
             (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
             (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
     FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
+    order by p.fecha desc
     `, 
     []
   );                     
