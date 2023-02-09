@@ -116,13 +116,50 @@ async function registrarRespuesta(body,token){
    }
 }/*End registrarRespuesta*/
 
-
+/*_________________registrarPregunta_________________________________*/
+async function registrarPregunta(body,token){          
+  if(token && validarToken(token)){
+        try {                   
+              const payload=helper.parseJwt(token);
+              const id_user=payload.sub;              
+              if(body.titulo===undefined || 
+                 body.descripcion===undefined 
+                )
+              {
+                throw createError(400,"Se requieren todos los parámetros!");
+              }
+              const currentDate = new Date();    
+              const fecha = currentDate.toISOString();
+              const result = await db.query(
+                  `INSERT INTO respuestasforos (titulo,descripcion,fecha,usuarios_id) VALUES (?,?,?,?)`, 
+                  [
+                    body.titulo,
+                    body.descripcion,
+                    fecha,
+                    id_user
+                  ]
+              ); 
+              if (result.affectedRows) {              
+                  return {
+                          message:'Pregunta registrada exitosamente',
+                          insertId:result.insertId
+                  };
+              }
+                 throw createError(500,"Se presento un problema al registrar la pregunta");
+        }catch (error) {
+              throw error;
+        } 
+   }else{
+        throw createError(401,"Usted no tiene autorización"); 
+   }
+}/*End registrarPregunta*/
 
 module.exports = {
   getPreguntasForos,
   getRespuestasPregunta,
   getTodasRespuestas,
-  registrarRespuesta
+  registrarRespuesta,
+  registrarPregunta
  }
 
 
@@ -130,53 +167,6 @@ module.exports = {
 
 
 /*
-
-/*_____________Create Foro________________________________
-async function createForo(body,token){          
-    if(token && validarToken(token)){
-          try {                   
-                const payload=helper.parseJwt(token);
-                const id_user=payload.sub;              
-                if(body.nombre_negocio===undefined || 
-                   body.descripcion_negocio===undefined ||                   
-                   body.id_departamento===undefined || 
-                   body.id_municipio===undefined || 
-                   body.direccion===undefined ||
-                   body.latitud===undefined || 
-                   body.longitud===undefined ||
-                   body.informacion_adicional_direccion===undefined
-                  )
-                {
-                  throw createError(400,"Se requieren todos los parámetros!");
-                }
-                 const result = await db.query(
-                    `INSERT INTO negocios (nombre_negocio,descripcion_negocio,usuarios_id,id_departamento,id_municipio,direccion,latitud,longitud,informacion_adicional_direccion) VALUES (?,?,?,?,?,?,?,?,?)`, 
-                    [
-                      body.nombre_negocio,
-                      body.descripcion_negocio,
-                      id_user,
-                      body.id_departamento,
-                      body.id_municipio,
-                      body.direccion,
-                      body.latitud,
-                      body.longitud,
-                      body.informacion_adicional_direccion
-                    ]
-                ); 
-                if (result.affectedRows) {              
-                    return {
-                            message:'Negocio creado exitosamente',
-                            insertId:result.insertId
-                    };
-                }
-                   throw createError(500,"Se presento un problema al registrar el negocio");
-          }catch (error) {
-                throw error;
-          } 
-     }else{
-          throw createError(401,"Usted no tiene autorización"); 
-     }
-  }/*End Create*/
 
   /*____________________________updateNegocio__________________________
   async function updateForo(idNegocio, body, token){     

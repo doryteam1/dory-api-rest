@@ -40,6 +40,16 @@ router.post('/registrar/respuesta', async function(req, res, next) {
     }
   });
 
+  router.post('/registrar/pregunta', async function(req, res, next) {
+    try {
+      var token=req.headers.authorization;
+      res.json(await foros.registrarPregunta(req.body, token));
+    } catch (err) {
+      console.error(`Error al registrar la pregunta del foro`, err.message);
+      next(err);
+    }
+  });
+
 /*
 router.put('/actualizar/:id', async function(req, res, next) {
     try {
