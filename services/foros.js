@@ -16,27 +16,33 @@ async function getPreguntasForos(){
         `, 
         []
       );
-              var fotosN= new Array();
-              var preguntas = new Array();
+            let data = [];
+            if(rows.length<1){
+              return {data};
+            }
+
+              var arrayfotos= new Array();
+              var preguntas = new Array();  
               var index= rows[0].id;
               preguntas.push(rows[0]);        
               rows.forEach((element)=>{           
                 if((index == element.id))
                 { 
-                  fotosN.push(element.foto);
+                  arrayfotos.push(element.foto);
                 }else { 
                           index= element.id;
-                          preguntas[preguntas.length-1].fotos=fotosN;
+                          preguntas[preguntas.length-1].fotos=arrayfotos;/*Arreglo de fotos agregado al final del arreglo de granjas */
                           preguntas.push(element);
-                          fotosN=[];  
-                          fotosN.push(element.fotopf);
+                          arrayfotos=[];  
+                          arrayfotos.push(element.foto);
                 }
               });
-              preguntas[preguntas.length-1].fotos=fotosN;                       
-      const data = helper.emptyOrRows(preguntas);       
-      return {
-        data
-      }
+                preguntas[preguntas.length-1].fotos=arrayfotos; 
+                data = helper.emptyOrRows(preguntas);
+                
+              return {
+                data
+              }
 }/*End getPreguntasForos*/
 
 
@@ -69,7 +75,7 @@ async function getPreguntasUsuario(idusuario){
                       preguntas[preguntas.length-1].fotos=fotosN;
                       preguntas.push(element);
                       fotosN=[];  
-                      fotosN.push(element.fotopf);
+                      fotosN.push(element.foto);
             }
           });
           preguntas[preguntas.length-1].fotos=fotosN;                       
@@ -406,11 +412,11 @@ module.exports = {
       rowsfotos.forEach((element)=>{ 
           arrayfotos.push(element.foto_negocio);
       });      
-      var nuevoRows = new Array();
-      nuevoRows.push(rows[0]);
-      nuevoRows[nuevoRows.length-1].fotos_negocio=arrayfotos; 
+      var preguntas = new Array();
+      preguntas.push(rows[0]);
+      preguntas[preguntas.length-1].fotos_negocio=arrayfotos; 
 
-      const data = helper.emptyOrRows(nuevoRows);                      
+      const data = helper.emptyOrRows(preguntas);                      
       return {
         data
       }
