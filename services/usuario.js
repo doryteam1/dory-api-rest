@@ -88,7 +88,7 @@ async function create(usuario,token){
             let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del Departamento de Sucre, en alianza con los grupos de investigación, Gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
             if(usuario.creadoCon && usuario.creadoCon=="google"){
                   contentHtml = `<center>
-                  <img src="https://firebasestorage.googleapis.com/v0/b/dory-prod-d7a48.appspot.com/o/logo.png?alt=media&token=e23d7c7b-1b3e-495b-bfd4-2737e5cfa1ec" style='width: 100px; height: 100px;'/>
+                  <img src="${process.env.URL_LOGO}" style='width: 100px; height: 100px;'/>
                   <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
                   <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
                   <form>
@@ -100,7 +100,7 @@ async function create(usuario,token){
                   let token=helper.createToken(usuario,4320);/*token de 3 días*/
                   usuario.creadoCon="email";
                   contentHtml = `<center>
-                  <img src="https://firebasestorage.googleapis.com/v0/b/dory-prod-d7a48.appspot.com/o/logo.png?alt=media&token=e23d7c7b-1b3e-495b-bfd4-2737e5cfa1ec" style='width: 100px; height: 100px;' />
+                  <img src="${process.env.URL_LOGO}" style='width: 100px; height: 100px;' />
                   <h2 style='color:grey'>Bienvenido a la plataforma piscícola Dory</h2>
                   <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje}</p>
                   <p style='color:grey; text-align:justify; margin-bottom:20px'>${mensaje2}</p> 
@@ -451,7 +451,7 @@ async function recoverPassword(datos){
                   const mensaje="Hola, nos acabas de informar que no recuerdas tu contraseña. Para volver a acceder a tu cuenta, has clic en actualizar contraseña.";
                   let tema="Recuperar Contraseña";
                   contentHtml = `<center> 
-                  <img src="http://sharpyads.com/wp-content/uploads/2022/03/logo-no-name-320x320.png" width="100" height="100" />
+                  <img src="${process.env.URL_LOGO}" width="100" height="100" />
                   <p>${mensaje}</p>   
                   <form>
                   <a href="${process.env.DORY_WEB_APP_URL}/reset-password?token=${token}" style=" color:#ffffff; text-decoration:none;  border-radius:20px; border: 1px solid #19A3A6; background-color:#19A3A6; font-family:Arial,Helvetica,sans-serif; width: 205px;     margin-top: 20px; height: fit-content; padding:5px 40px; font-weight:normal;  font-size:12px;">Actualizar contraseña </a></form>

@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
 const {verifyToken, validarToken} = require ('./middelware/auth');
+require('dotenv').config();
 
 /*Socket.io con express*/
 const http = require('http');
