@@ -239,6 +239,41 @@ async function registrarPregunta(body,token){
               }
   }/*End actualizarPregunta*/
 
+ /*_____________eliminarPregunta________________________________*/
+  async function eliminarPregunta(idpregunta,token){
+    
+    if(token && validarToken(token)){
+            const payload=helper.parseJwt(token);  
+            const id_user=payload.sub;
+            const rows = await db.query(
+              `SELECT p.usuarios_id
+               FROM preguntasforos as p
+               WHERE p.usuarios_id=?`, 
+               [id_user]
+            );
+            if(rows.length<1){
+              return {message:'Usted no tiene autorización para éste proceso'};
+            }
+          try {
+                await db.query(
+                  `DELETE FROM fotospreguntas WHERE id_preguntaf=?`, 
+                  [idpregunta]
+                );
+                const result = await db.query(
+                  `DELETE FROM preguntasforos WHERE id_preguntaf=?`, 
+                  [idpregunta]
+                );       
+                if (result.affectedRows) {              
+                  return {message:'Pregunta de foro eliminada exitosamente'};
+                }
+                throw createError(500,"Se presento un problema al eliminar la pregunta del foro");
+           }catch (error) {           
+                 throw error;
+           } 
+    }else{
+      throw createError(401,"Usted no tiene autorización"); 
+    }
+  }/*End eliminarPregunta*/
 
 module.exports = {
   getPreguntasForos,
@@ -247,7 +282,8 @@ module.exports = {
   getTodasRespuestas,
   registrarRespuesta,
   registrarPregunta,
-  actualizarPregunta
+  actualizarPregunta,
+  eliminarPregunta
  }
 
 
@@ -258,41 +294,7 @@ module.exports = {
 
   
   
-   /*_____________eliminarNegocio ________________________________
-  async function eliminarForo(id_negocio,token){
-    
-    if(token && validarToken(token)){
-            const payload=helper.parseJwt(token);  
-            const id_user=payload.sub;
-            const rows = await db.query(
-              `SELECT n.usuarios_id
-              FROM negocios as n
-              WHERE n.usuarios_id=?`, 
-              [id_user]
-            );
-            if(rows.length<1){
-              return {message:'Usted no tiene autorización para éste proceso'};
-            }
-          try {
-                await db.query(
-                  `DELETE FROM fotosNegocios WHERE id_negocio_fk=?`, 
-                  [id_negocio]
-                );
-                const result = await db.query(
-                  `DELETE FROM negocios WHERE id_negocio=?`, 
-                  [id_negocio]
-                );       
-                if (result.affectedRows) {              
-                  return {message:'Negocio eliminado exitosamente'};
-                }
-                throw createError(500,"Se presento un problema al eliminar el negocio");
-           }catch (error) {           
-                 throw error;
-           } 
-    }else{
-      throw createError(401,"Usted no tiene autorización"); 
-    }
-  }/*End eliminarNegocio*/
+  
 
    /*_____________updatePhotosNegocio ________________________________
   async function updatePhotosForo(idNegocio,body,token){  

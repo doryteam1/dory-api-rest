@@ -70,14 +70,14 @@ router.put('/actualizar/pregunta/:idpregunta', async function(req, res, next) {
     }
 });
 
-/*
-router.delete('/eliminar/:id', async function(req, res, next) {
+router.delete('/eliminar/pregunta/:idpregunta', async function(req, res, next) {
     try {
-      res.json(await foros.removeAreaForo(req.params.id));
+      var token=req.headers.authorization;
+      res.json(await foros.eliminarPregunta(req.params.idpregunta, token));
     } catch (err) {
       console.error(`Error al borrar foro`, err.message);
       next(err);
     }
   });
-*/
+
 module.exports = router;
