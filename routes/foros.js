@@ -70,6 +70,16 @@ router.put('/actualizar/pregunta/:idpregunta', async function(req, res, next) {
     }
 });
 
+router.put('/actualizar/respuesta/:idrespuesta', async function(req, res, next) {
+  try {
+    var token=req.headers.authorization;
+    res.json(await foros.actualizarRespuesta(req.params.idrespuesta, req.body, token));
+  } catch (err) {
+    console.error(`Error al actualizar la respuesta del foro`, err.message);
+    next(err);
+  }
+});
+
 router.delete('/eliminar/pregunta/:idpregunta', async function(req, res, next) {
     try {
       var token=req.headers.authorization;

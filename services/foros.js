@@ -248,6 +248,49 @@ async function registrarPregunta(body,token){
               }
   }/*End actualizarPregunta*/
 
+/*____________________________actualizarRespuesta__________________________*/
+async function actualizarRespuesta(idrespuesta, body, token){     
+          if(token && validarToken(token)){
+                    const payload=helper.parseJwt(token);  
+                    const id_user=payload.sub;
+                    const rows = await db.query(
+                      `SELECT r.respuesta
+                        FROM respuestasforos as r
+                        WHERE r.usuarios_id=? and r.idrespuestaf=?`, 
+                        [id_user,idrespuesta]
+                    );
+                    if(rows.length<1){
+                      return {message:'Usted no tiene autorización para éste proceso'};
+                    }                 
+              try{ 
+                  if(body.respuesta===undefined || body.foto===undefined)
+                  {
+                    throw createError(400,"Se requieren todos los parámetros!");
+                  }
+                  const result = await db.query(
+                    `UPDATE respuestasforos 
+                    SET respuesta=?,
+                        foto=?
+                    WHERE idrespuestaf=?`,
+                    [
+                      body.respuesta,
+                      body.foto,
+                      idrespuesta
+                    ] 
+                    );          
+                    if (result.affectedRows) {              
+                      return {message:'Respuesta Actualizada exitosamente'};
+                    }
+                    throw createError(500,"Se presento un problema al actualizar la respuesta a pregunta del foro");
+                }catch (error) {           
+                      throw error;
+                } 
+              }else{
+                throw createError(401,"Usted no tiene autorización"); 
+      }
+}/*End actualizarRespuesta*/
+
+
  /*_____________eliminarPregunta________________________________*/
   async function eliminarPregunta(idpregunta,token){
     const conection= await db.newConnection();
@@ -394,6 +437,7 @@ module.exports = {
   registrarRespuesta,
   registrarPregunta,
   actualizarPregunta,
+  actualizarRespuesta,
   eliminarPregunta,
   eliminarRespuesta,
   actualizarFotosPregunta
