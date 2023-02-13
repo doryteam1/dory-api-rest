@@ -214,10 +214,10 @@ async function registrarPregunta(body,token){
                     const norespuesta = await db.query(
                       `SELECT count(r.usuarios_id)
                         FROM respuestasforos as r
-                        WHERE p.id_preguntaf=?`, 
+                        WHERE r.id_preguntaf=?`, 
                         [idpregunta]
                      ); 
-                    if(norespuesta.length>0){
+                    if(norespuesta.length<1){
                       throw createError(500,"Pregunta de foro no puede ser editada, se han asignado respuestas a la pregunta");
                     }  
                try{ 
