@@ -80,4 +80,14 @@ router.delete('/eliminar/pregunta/:idpregunta', async function(req, res, next) {
     }
   });
 
+  router.put('/actualizar/fotos/pregunta/:idpregunta', async function(req, res, next) {
+    try {
+      var token=req.headers.authorization;
+      res.json(await foros.actualizarFotosPregunta(req.params.idpregunta, req.body, token));
+    } catch (err) {
+      console.error(`Error al actualizar las fotos de la pregunta en foro`, err.message);
+      next(err);
+    }
+});
+
 module.exports = router;
