@@ -75,7 +75,17 @@ router.delete('/eliminar/pregunta/:idpregunta', async function(req, res, next) {
       var token=req.headers.authorization;
       res.json(await foros.eliminarPregunta(req.params.idpregunta, token));
     } catch (err) {
-      console.error(`Error al borrar foro`, err.message);
+      console.error(`Error al borrar la pregunta del foro`, err.message);
+      next(err);
+    }
+  });
+
+  router.delete('/eliminar/respuesta/:idpregunta', async function(req, res, next) {
+    try {
+      var token=req.headers.authorization;
+      res.json(await foros.eliminarRespuesta(req.params.idpregunta, token));
+    } catch (err) {
+      console.error(`Error al borrar la respuesta de la pregunta del foro`, err.message);
       next(err);
     }
   });

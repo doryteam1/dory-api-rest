@@ -297,6 +297,40 @@ async function registrarPregunta(body,token){
     }
   }/*End eliminarPregunta*/
 
+ /*_____________eliminarRespuesta________________________________*/
+ async function eliminarRespuesta(idpregunta,token){
+          if(token && validarToken(token)){
+                  const payload=helper.parseJwt(token);  
+                  const id_user=payload.sub;
+                  const rows = await db.query(
+                    `SELECT r.usuarios_id
+                    FROM respuestasforos as r
+                    WHERE r.usuarios_id=? and r.id_preguntaf=?`, 
+                    [id_user, idpregunta]
+                  );
+                  if(rows.length<1){
+                    return {message:'Usted no tiene autorización para éste proceso'};
+                  }
+                try {                    
+                      const result = await conection.execute(
+                        `DELETE FROM respuestasforos WHERE id_preguntaf=? and r.usuarios_id=?`, 
+                        [idpregunta, id_user]
+                      );
+                      if (result.affectedRows) {  
+                           return{message:'Respuesta de foro eliminada exitosamente'};
+                        }else{
+                              throw createError(500,'Se presento un problema al eliminar la respuesta del foro');
+                        }    
+                      }catch (error) {   
+                              throw error;
+                      }         
+          }else{
+            throw createError(401,"Usted no tiene autorización"); 
+          }
+}/*End eliminarRespuesta*/
+
+
+
      /*_____________actualizarFotosPregunta ________________________________*/
   async function actualizarFotosPregunta(idpregunta,body,token){ 
      if(body.arrayFotos.length>5){
@@ -361,6 +395,7 @@ module.exports = {
   registrarPregunta,
   actualizarPregunta,
   eliminarPregunta,
+  eliminarRespuesta,
   actualizarFotosPregunta
  }
 
