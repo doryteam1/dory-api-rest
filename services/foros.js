@@ -241,43 +241,55 @@ async function registrarPregunta(body,token){
 
  /*_____________eliminarPregunta________________________________*/
   async function eliminarPregunta(idpregunta,token){
-    
+    const conection= await db.newConnection();
+    await conection.beginTransaction();
     if(token && validarToken(token)){
             const payload=helper.parseJwt(token);  
             const id_user=payload.sub;
             const rows = await db.query(
               `SELECT p.usuarios_id
                FROM preguntasforos as p
-               WHERE p.usuarios_id=?`, 
-               [id_user]
+               WHERE p.usuarios_id=? and p.id_preguntaf=?`, 
+               [id_user, idpregunta]
             );
             if(rows.length<1){
               return {message:'Usted no tiene autorización para éste proceso'};
             }
           try {
-                await db.query(
+               await conection.execute(
                   `DELETE FROM fotospreguntas WHERE id_preguntaf=?`, 
                   [idpregunta]
                 );
-                const result = await db.query(
+                await conection.execute(
+                  `DELETE FROM respuestasforos WHERE id_preguntaf=?`, 
+                  [idpregunta]
+                );
+                const result = await conection.execute(
                   `DELETE FROM preguntasforos WHERE id_preguntaf=?`, 
                   [idpregunta]
-                );       
-                if (result.affectedRows) {              
-                  return {message:'Pregunta de foro eliminada exitosamente'};
-                }
-                throw createError(500,"Se presento un problema al eliminar la pregunta del foro");
+                );
+                let message = '';   
+                 if (result[0]['affectedRows'] > 0)
+                  {
+                       message = 'Pregunta de foro eliminada exitosamente';
+                   }else{
+                        throw createError(500,'Se presento un problema al eliminar la pregunta del foro');
+                   }                                  
+                await conection.commit(); 
+                conection.release();                
+                return { message };
            }catch (error) {           
-                 throw error;
-           } 
+                  await conection.rollback(); 
+                  conection.release();
+                  throw error;
+           }         
     }else{
       throw createError(401,"Usted no tiene autorización"); 
     }
   }/*End eliminarPregunta*/
 
      /*_____________actualizarFotosPregunta ________________________________*/
-  async function actualizarFotosPregunta(idpregunta,body,token){  
-    console.log("Fotos?"," ",body.arrayFotos);
+  async function actualizarFotosPregunta(idpregunta,body,token){ 
     var arrayfotos= body.arrayFotos; 
     const conection= await db.newConnection();
     await conection.beginTransaction();
