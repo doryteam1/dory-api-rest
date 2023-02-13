@@ -290,6 +290,9 @@ async function registrarPregunta(body,token){
 
      /*_____________actualizarFotosPregunta ________________________________*/
   async function actualizarFotosPregunta(idpregunta,body,token){ 
+     if(body.arrayFotos.length>5){
+         throw createError(400,"Capacidad de almacenamiento sobrepasado, cinco es la cantidad máxima");
+     }
     var arrayfotos= body.arrayFotos; 
     const conection= await db.newConnection();
     await conection.beginTransaction();
