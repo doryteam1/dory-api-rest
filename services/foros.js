@@ -205,13 +205,22 @@ async function registrarPregunta(body,token){
                     const rows = await db.query(
                       `SELECT p.usuarios_id
                         FROM preguntasforos as p
-                        WHERE p.usuarios_id=?`, 
-                        [id_user]
+                        WHERE p.usuarios_id=? and p.id_preguntaf=?`, 
+                        [id_user,idpregunta]
                      );
                     if(rows.length<1){
                       return {message:'Usted no tiene autorización para éste proceso'};
-                    }   
-              try{ 
+                    }
+                    const norespuesta = await db.query(
+                      `SELECT count(r.usuarios_id)
+                        FROM respuestasforos as r
+                        WHERE p.id_preguntaf=?`, 
+                        [idpregunta]
+                     ); 
+                    if(norespuesta.length>0){
+                      throw createError(500,"Pregunta de foro no puede ser editada, se han asignado respuestas a la pregunta");
+                    }  
+               try{ 
                   if(body.titulo===undefined || body.descripcion===undefined)
                    {
                      throw createError(400,"Se requieren todos los parámetros!");
