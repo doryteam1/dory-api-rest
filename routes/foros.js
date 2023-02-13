@@ -80,10 +80,10 @@ router.delete('/eliminar/pregunta/:idpregunta', async function(req, res, next) {
     }
   });
 
-  router.delete('/eliminar/respuesta/:idpregunta', async function(req, res, next) {
+  router.delete('/eliminar/respuesta/:idrespuesta', async function(req, res, next) {
     try {
       var token=req.headers.authorization;
-      res.json(await foros.eliminarRespuesta(req.params.idpregunta, token));
+      res.json(await foros.eliminarRespuesta(req.params.idrespuesta, token));
     } catch (err) {
       console.error(`Error al borrar la respuesta de la pregunta del foro`, err.message);
       next(err);

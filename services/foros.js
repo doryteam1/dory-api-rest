@@ -298,23 +298,23 @@ async function registrarPregunta(body,token){
   }/*End eliminarPregunta*/
 
  /*_____________eliminarRespuesta________________________________*/
- async function eliminarRespuesta(idpregunta,token){
+ async function eliminarRespuesta(idrespuesta,token){
           if(token && validarToken(token)){
                   const payload=helper.parseJwt(token);  
                   const id_user=payload.sub;
                   const rows = await db.query(
                     `SELECT r.usuarios_id
                     FROM respuestasforos as r
-                    WHERE r.usuarios_id=? and r.id_preguntaf=?`, 
-                    [id_user, idpregunta]
+                    WHERE r.usuarios_id=? and r.idrespuestaf=?`, 
+                    [id_user, idrespuesta]
                   );
                   if(rows.length<1){
                     return {message:'Usted no tiene autorización para éste proceso'};
                   }
                 try {                    
-                      const result = await conection.execute(
-                        `DELETE FROM respuestasforos WHERE id_preguntaf=? and r.usuarios_id=?`, 
-                        [idpregunta, id_user]
+                      const result = await db.query(
+                        `DELETE FROM respuestasforos WHERE idrespuestaf=? and usuarios_id=?`, 
+                        [idrespuesta, id_user]
                       );
                       if (result.affectedRows) {  
                            return{message:'Respuesta de foro eliminada exitosamente'};
