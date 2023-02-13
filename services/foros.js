@@ -87,7 +87,7 @@ async function getPreguntasUsuario(idusuario){
 /*_____________getRespuestasPregunta ________________________________*/
 async function getRespuestasPregunta(idPregunta){
         const rows = await db.query(
-          `SELECT r.idrespuestaf as id, r.id_preguntaf as preguntaId, r.respuesta, r.fecha, r.usuarios_id as usuarioId,  
+          `SELECT r.idrespuestaf as id, r.id_preguntaf as preguntaId, r.respuesta, r.fecha, r.usuarios_id as usuarioId, r.foto,
                   (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
                   (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
           FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
@@ -105,7 +105,7 @@ async function getRespuestasPregunta(idPregunta){
 /*_____________getTodasRespuestas ________________________________*/
 async function getTodasRespuestas(){
   const rows = await db.query(
-    `SELECT  r.id_preguntaf as preguntaId, p.titulo ,r.idrespuestaf as id, r.respuesta, r.fecha, r.usuarios_id as usuarioId,  
+    `SELECT  r.id_preguntaf as preguntaId, p.titulo ,r.idrespuestaf as id, r.respuesta, r.fecha, r.usuarios_id as usuarioId, r.foto, 
             (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
             (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
     FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
@@ -127,7 +127,7 @@ async function registrarRespuesta(body,token){
               const id_user=payload.sub;              
               if(body.idpregunta===undefined || 
                  body.respuesta===undefined || 
-                 body.cargar_archivo===undefined 
+                 body.foto===undefined 
                 )
               {
                 throw createError(400,"Se requieren todos los parámetros!");
@@ -135,13 +135,13 @@ async function registrarRespuesta(body,token){
               const currentDate = new Date();    
               const fecha = currentDate.toISOString();
               const result = await db.query(
-                  `INSERT INTO respuestasforos (usuarios_id,id_preguntaf,fecha,respuesta,cargar_archivo) VALUES (?,?,?,?,?)`, 
+                  `INSERT INTO respuestasforos (usuarios_id,id_preguntaf,fecha,respuesta,foto) VALUES (?,?,?,?,?)`, 
                   [
                     id_user,
                     body.idpregunta,
                     fecha,
                     body.respuesta,
-                    body.cargar_archivo
+                    body.foto
                   ]
               ); 
               if (result.affectedRows) {              
