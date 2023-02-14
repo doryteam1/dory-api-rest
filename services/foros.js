@@ -25,17 +25,19 @@ async function getPreguntasForos(){
               var preguntas = new Array();  
               var index= rows[0].id;
               preguntas.push(rows[0]);        
-              rows.forEach((element)=>{           
-                if((index == element.id))
-                { 
-                  arrayfotos.push(element.foto);
-                }else { 
-                          index= element.id;
-                          preguntas[preguntas.length-1].fotos=arrayfotos;/*Arreglo de fotos agregado al final del arreglo de granjas */
-                          preguntas.push(element);
-                          arrayfotos=[];  
-                          arrayfotos.push(element.foto);
-                }
+              rows.forEach((element)=>{  
+                  if(element.foto){        
+                      if((index == element.id))
+                      { 
+                        arrayfotos.push(element.foto);
+                      }else { 
+                                index= element.id;
+                                preguntas[preguntas.length-1].fotos=arrayfotos;/*Arreglo de fotos agregado al final del arreglo de granjas */
+                                preguntas.push(element);
+                                arrayfotos=[];  
+                                arrayfotos.push(element.foto);
+                      }
+                  } 
               });
                 preguntas[preguntas.length-1].fotos=arrayfotos; 
                 data = helper.emptyOrRows(preguntas);                
@@ -442,113 +444,3 @@ module.exports = {
   eliminarRespuesta,
   actualizarFotosPregunta
  }
-
-
-
-
-
-/*
-
-  
-  
-  
-
-
-
-  /*_____________getDetailNegocio ________________________________
-  async function getDetailForo(idNegocio, token){
-    try{
-      let rows=[];  
-      rows = await db.query(
-        `SELECT neg.*, ( select m.nombre from municipios as m where m.id_municipio=neg.id_municipio) as municipio,
-                (select d.nombre_departamento from departamentos as d where d.id_departamento=neg.id_departamento) as departamento,
-                (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=neg.usuarios_id) as propietario,
-                (select u2.email from  usuarios as u2  where   u2.id=neg.usuarios_id) as email,
-                (select u2.celular from  usuarios as u2  where   u2.id=neg.usuarios_id) as celular
-        FROM negocios as neg
-        WHERE neg.id_negocio=?
-        `, 
-        [idNegocio]
-      ); 
-    
-        if(rows.length < 1){
-          throw createError(404, "No se encuentra el negocio con el id "+idNegocio+".")
-        }
-      const rowsfotos = await db.query(
-        `SELECT fn.id_foto_negocio, fn.foto_negocio
-        FROM  fotosNegocios as fn
-        WHERE fn.id_negocio_fk =?
-        `, 
-      [idNegocio]
-      );  
-      var arrayfotos= new Array();  
-      rowsfotos.forEach((element)=>{ 
-          arrayfotos.push(element.foto_negocio);
-      });      
-      var preguntas = new Array();
-      preguntas.push(rows[0]);
-      preguntas[preguntas.length-1].fotos_negocio=arrayfotos; 
-
-      const data = helper.emptyOrRows(preguntas);                      
-      return {
-        data
-      }
-    } catch(err){        
-          console.log(err);
-          throw err;
-    }
-}/*getDetailNegocio*/
-
-
-/*------------------------------updateParcialNegocio-------------------------------------------------
-async function updateParcialForo(idNegocio, negocio, token){
-  
-  if(token && validarToken(token))
-  {
-    const payload=helper.parseJwt(token);  
-    const id_user=payload.sub;
-    const rol = payload.rol;
-    if(rol != "Comerciante"){
-      throw createError('401', "Usted no es un usuario Comerciante. No esta autorizado para actualizar el negocio.")
-    }      
-    const rows2 = await db.query(
-      `select neg.*
-       from negocios as neg
-       where neg.usuarios_id = ? and neg.id_negocio = ? `, 
-      [
-        id_user,
-        idNegocio
-      ]
-    );
-    if(rows2.length < 1 ){
-      throw createError('401', 'El usuario no es propietario del negocio y no esta autorizado para actualizarla.')
-    }
-  
-    var atributos = Object.keys(negocio);   
-    if(atributos.length!=0)
-    {    
-      var params = Object.values(negocio);   
-      var query = "update negocios set ";
-      params.push(idNegocio);
-
-      for(var i=0; i < atributos.length; i++) {
-        query = query + atributos[i] + '=?,';
-      }
-      query = query.substring(0, query.length-1);
-      query = query +' '+'where id_negocio=?'
-
-      const result = await db.query(query,params);
-    
-      let message = '';
-      if (result.affectedRows) {
-        message = 'Negocio actualizado exitosamente';
-      }else{
-        throw createError(500,"No se pudo actualizar el registro del negocio");    
-      }
-      return {message};
-    }
-    throw createError(400,"No hay parametros para actualizar");
-}else{
-  throw createError(401,"Usuario no autorizado");
-}
-}/*End updateParcialForo*/
