@@ -440,9 +440,9 @@ async function actualizarRespuesta(idrespuesta, body, token){
           try{
                 let rows=[];  
                 rows = await db.query(
-                  `SELECT p.id_preguntaf as id, p.titulo, p.descripcion, p.fecha, p.usuarios_id as id_usuario,
-                          (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as usuario,
-                          (select u2.foto from  usuarios as u2  where   u2.id=p.usuarios_id) as foto_usuario,
+                  `SELECT p.id_preguntaf as id, p.titulo, p.descripcion, p.fecha, p.usuarios_id as usuarioId,
+                          (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as nombreUsuario,
+                          (select u2.foto from  usuarios as u2  where   u2.id=p.usuarios_id) as fotoUsuario,
                           (select u2.email from  usuarios as u2  where   u2.id=p.usuarios_id) as email,
                           (select count(*) from  respuestasforos as rf left join usuarios as u2 on ( u2.id=rf.usuarios_id) where rf.id_preguntaf=p.id_preguntaf) as countRespuestas
                   FROM preguntasforos as p
@@ -466,7 +466,7 @@ async function actualizarRespuesta(idrespuesta, body, token){
                 });      
                 var nuevoRows = new Array();
                 nuevoRows.push(rows[0]);
-                nuevoRows[nuevoRows.length-1].fotos_pregunta=arrayfotos; 
+                nuevoRows[nuevoRows.length-1].fotos=arrayfotos; 
                 const data = helper.emptyOrRows(nuevoRows);                      
                 return {
                   data
