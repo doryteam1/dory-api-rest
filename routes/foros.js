@@ -110,4 +110,24 @@ router.delete('/eliminar/pregunta/:idpregunta', async function(req, res, next) {
     }
 });
 
+
+router.get('/detalle/pregunta/:idpregunta', async function(req, res, next) {
+  try {    
+    res.json(await foros.obtenerDetallePregunta(req.params.idpregunta));
+  } catch (err) {
+    console.error(`Error al traer el detalle de la pregunta `, err.message);
+    next(err);
+  }
+});
+
+router.put('/actualizar/parcial/respuesta/:idrespuesta', async function(req, res, next) {
+  try {
+       var token=req.headers.authorization;
+       res.json(await foros.updateParcialRespuesta(req.params.idrespuesta, req.body,token));
+  } catch (err) {
+       console.error(`Error al actualizar la respuesta parcialmente`, err.message);
+       next(err);
+  }
+});
+
 module.exports = router;

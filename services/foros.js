@@ -435,6 +435,93 @@ async function actualizarRespuesta(idrespuesta, body, token){
     }
   }/* End actualizarFotosPregunta */
 
+ /*_____________obtenerDetallePregunta ________________________________ */    
+ async function obtenerDetallePregunta(idpregunta){
+          try{
+                let rows=[];  
+                rows = await db.query(
+                  `SELECT p.id_preguntaf as id, p.titulo, p.descripcion, p.fecha, p.usuarios_id as id_usuario,
+                          (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as usuario,
+                          (select u2.email from  usuarios as u2  where   u2.id=p.usuarios_id) as email
+                  FROM preguntasforos as p
+                  WHERE p.id_preguntaf=?
+                  `, 
+                  [idpregunta]
+                );   
+                  if(rows.length < 1){
+                    throw createError(404, "No se encuentra la pregunta con el id "+idpregunta+".");
+                  }
+                const rowsfotos = await db.query(
+                  `SELECT f.idfotopf as id_foto, f.fotopf as foto
+                  FROM  fotospreguntas as f
+                  WHERE f.id_preguntaf=?
+                  `, 
+                [idpregunta]
+                );  
+                var arrayfotos= new Array();  
+                rowsfotos.forEach((element)=>{ 
+                    arrayfotos.push(element.foto);
+                });      
+                var nuevoRows = new Array();
+                nuevoRows.push(rows[0]);
+                nuevoRows[nuevoRows.length-1].fotos_pregunta=arrayfotos; 
+                const data = helper.emptyOrRows(nuevoRows);                      
+                return {
+                  data
+                }
+          } catch(err){        
+                console.log(err);
+                throw err;
+          }
+}/*obtenerDetallePregunta*/
+
+
+/*------------------------------updateParcialRespuesta-------------------------------------------------*/
+async function updateParcialRespuesta(idrespuesta, respuesta, token){
+
+          if(token && validarToken(token))
+          {
+                const payload=helper.parseJwt(token);  
+                const id_user=payload.sub;                     
+                const rows2 = await db.query(
+                  `SELECT r.idrespuestaf as id, r.usuarios_id as id_usuario, r.id_preguntaf as id_pregunta, r.fecha, r.respuesta, r.foto
+                   FROM respuestasforos as r
+                   WHERE r.usuarios_id = ? and r.idrespuestaf = ? `, 
+                  [
+                    id_user,
+                    idrespuesta
+                  ]
+                );
+                if(rows2.length < 1 ){
+                  throw createError('401', 'Usuario no autorizado.')
+                }
+                var atributos = Object.keys(respuesta);   
+                if(atributos.length!=0)
+                {    
+                  var params = Object.values(respuesta);   
+                  var query = "update respuestasforos set ";
+                  params.push(idrespuesta);
+                  for(var i=0; i < atributos.length; i++) {
+                    query = query + atributos[i] + '=?,';
+                  }
+                  query = query.substring(0, query.length-1);
+                  query = query +' '+'where idrespuestaf=?'
+                  const result = await db.query(query,params);                
+                  let message = '';
+                  if (result.affectedRows) {
+                    message = 'Respuesta actualizada exitosamente';
+                  }else{
+                    throw createError(500,"Actualización de respuesta fallida");    
+                  }
+                  return {message};
+                }
+                throw createError(400,"No hay parámetros para actualizar");
+          }else{
+             throw createError(401,"Usuario no autorizado");
+          }
+}/*End updateParcialRespuesta*/
+
+
 module.exports = {
   getPreguntasForos,
   getPreguntasUsuario,
@@ -446,5 +533,7 @@ module.exports = {
   actualizarRespuesta,
   eliminarPregunta,
   eliminarRespuesta,
-  actualizarFotosPregunta
+  actualizarFotosPregunta,
+  obtenerDetallePregunta,
+  updateParcialRespuesta
  }
