@@ -98,7 +98,7 @@ async function getRespuestasPregunta(idPregunta){
                   (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
           FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
           WHERE r.id_preguntaf=?
-          order by p.fecha desc
+          order by r.fecha desc
           `, 
           [idPregunta]
         );                     
@@ -115,7 +115,7 @@ async function getTodasRespuestas(){
             (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
             (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
     FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
-    order by p.fecha desc
+    order by r.fecha desc
     `, 
     []
   );                     
