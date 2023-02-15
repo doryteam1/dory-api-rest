@@ -25,21 +25,25 @@ async function getPreguntasForos(){
               var preguntas = new Array();  
               var index= rows[0].id;
               preguntas.push(rows[0]);        
-              rows.forEach((element)=>{  
-                  if(element.foto){        
+              rows.forEach((element)=>{                      
                       if((index == element.id))
                       { 
                         arrayfotos.push(element.foto);
                       }else { 
                                 index= element.id;
-                                preguntas[preguntas.length-1].fotos=arrayfotos;/*Arreglo de fotos agregado al final del arreglo de granjas */
+                                preguntas[preguntas.length-1].fotos=arrayfotos;
                                 preguntas.push(element);
                                 arrayfotos=[];  
                                 arrayfotos.push(element.foto);
-                      }
-                  } 
+                      }                  
               });
                 preguntas[preguntas.length-1].fotos=arrayfotos; 
+                preguntas.forEach((element)=>{                      
+                  if((element.foto==null))
+                  { 
+                    element.fotos=[];
+                  }              
+                });
                 data = helper.emptyOrRows(preguntas);                
               return {
                 data
