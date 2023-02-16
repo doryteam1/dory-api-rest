@@ -20,7 +20,6 @@ async function getPreguntasForos(){
             if(rows.length<1){
               return {data};
             }
-
               var arrayfotos= new Array();
               var preguntas = new Array();  
               var index= rows[0].id;
@@ -93,36 +92,92 @@ async function getPreguntasUsuario(idusuario){
 /*_____________getRespuestasPregunta ________________________________*/
 async function getRespuestasPregunta(idPregunta){
         const rows = await db.query(
-          `SELECT r.idrespuestaf as id, r.id_preguntaf as preguntaId, r.respuesta, r.fecha, r.usuarios_id as usuarioId, r.foto,
+          `SELECT r.idrespuestaf as id, r.id_preguntaf as preguntaId, r.respuesta, r.fecha, r.usuarios_id as usuarioId, fr.fotorf as foto,
                   (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
                   (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
           FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
-          WHERE r.id_preguntaf=?
+                                    left join fotosrespuestas as fr on r.idrespuestaf = fr.id_respuestaf
+          WHERE r.id_preguntaf=?   
           order by r.fecha desc
           `, 
           [idPregunta]
-        );                     
-        const data = helper.emptyOrRows(rows);       
-        return {
-          data
-        }
+        ); 
+        let data = [];
+            if(rows.length<1){
+              return {data};
+            }
+            var arrayfotos= new Array();
+            var respuestas = new Array();  
+            var index= rows[0].id;
+            respuestas.push(rows[0]);        
+            rows.forEach((element)=>{                      
+                    if((index == element.id))
+                    { 
+                      arrayfotos.push(element.foto);
+                    }else { 
+                              index= element.id;
+                              respuestas[respuestas.length-1].fotos=arrayfotos;
+                              respuestas.push(element);
+                              arrayfotos=[];  
+                              arrayfotos.push(element.foto);
+                    }                  
+            });
+              respuestas[respuestas.length-1].fotos=arrayfotos; 
+              respuestas.forEach((element)=>{                      
+                if((element.foto==null))
+                { 
+                  element.fotos=[];
+                }              
+              });
+              data = helper.emptyOrRows(respuestas);    
+            return {
+              data
+            }
 }/*End getRespuestasPregunta */
 
 /*_____________getTodasRespuestas ________________________________*/
 async function getTodasRespuestas(){
-  const rows = await db.query(
-    `SELECT  r.id_preguntaf as preguntaId, p.titulo ,r.idrespuestaf as id, r.respuesta, r.fecha, r.usuarios_id as usuarioId, r.foto, 
-            (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
-            (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
-    FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
-    order by r.fecha desc
-    `, 
-    []
-  );                     
-  const data = helper.emptyOrRows(rows);       
-  return {
-    data
-  }
+          const rows = await db.query(
+            `SELECT  r.id_preguntaf as preguntaId, p.titulo ,r.idrespuestaf as id, r.respuesta, r.fecha, r.usuarios_id as usuarioId, fr.fotorf as foto,
+                    (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
+                    (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
+            FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
+                                      left join fotosrespuestas as fr on r.idrespuestaf = fr.id_respuestaf
+            order by r.fecha desc
+            `, 
+            []
+          ); 
+          let data = [];
+            if(rows.length<1){
+              return {data};
+            }
+            var arrayfotos= new Array();
+            var respuestas = new Array();  
+            var index= rows[0].id;
+            respuestas.push(rows[0]);        
+            rows.forEach((element)=>{                      
+                    if((index == element.id))
+                    { 
+                      arrayfotos.push(element.foto);
+                    }else { 
+                              index= element.id;
+                              respuestas[respuestas.length-1].fotos=arrayfotos;
+                              respuestas.push(element);
+                              arrayfotos=[];  
+                              arrayfotos.push(element.foto);
+                    }                  
+            });
+              respuestas[respuestas.length-1].fotos=arrayfotos; 
+              respuestas.forEach((element)=>{                      
+                if((element.foto==null))
+                { 
+                  element.fotos=[];
+                }              
+              });
+              data = helper.emptyOrRows(respuestas);           
+      return {
+        data
+      }
 }/*End getTodasRespuestas */
 
 /*_________________registrarRespuesta_________________________________*/
@@ -132,8 +187,7 @@ async function registrarRespuesta(body,token){
               const payload=helper.parseJwt(token);
               const id_user=payload.sub;              
               if(body.idpregunta===undefined || 
-                 body.respuesta===undefined || 
-                 body.foto===undefined 
+                 body.respuesta===undefined 
                 )
               {
                 throw createError(400,"Se requieren todos los parámetros!");
@@ -141,13 +195,12 @@ async function registrarRespuesta(body,token){
               const currentDate = new Date();    
               const fecha = currentDate.toISOString();
               const result = await db.query(
-                  `INSERT INTO respuestasforos (usuarios_id,id_preguntaf,fecha,respuesta,foto) VALUES (?,?,?,?,?)`, 
+                  `INSERT INTO respuestasforos (usuarios_id,id_preguntaf,fecha,respuesta) VALUES (?,?,?,?)`, 
                   [
                     id_user,
                     body.idpregunta,
                     fecha,
-                    body.respuesta,
-                    body.foto
+                    body.respuesta
                   ]
               ); 
               if (result.affectedRows) {              
@@ -269,18 +322,16 @@ async function actualizarRespuesta(idrespuesta, body, token){
                       return {message:'Usted no tiene autorización para éste proceso'};
                     }                 
               try{ 
-                  if(body.respuesta===undefined || body.foto===undefined)
+                  if(body.respuesta===undefined)
                   {
-                    throw createError(400,"Se requieren todos los parámetros!");
+                    throw createError(400,"Se requiere la respuesta!");
                   }
                   const result = await db.query(
                     `UPDATE respuestasforos 
-                    SET respuesta=?,
-                        foto=?
+                    SET respuesta=?
                     WHERE idrespuestaf=?`,
                     [
                       body.respuesta,
-                      body.foto,
                       idrespuesta
                     ] 
                     );          
@@ -348,6 +399,8 @@ async function actualizarRespuesta(idrespuesta, body, token){
 
  /*_____________eliminarRespuesta________________________________*/
  async function eliminarRespuesta(idrespuesta,token){
+          const conection= await db.newConnection();
+          await conection.beginTransaction();
           if(token && validarToken(token)){
                   const payload=helper.parseJwt(token);  
                   const id_user=payload.sub;
@@ -360,18 +413,29 @@ async function actualizarRespuesta(idrespuesta, body, token){
                   if(rows.length<1){
                     return {message:'Usted no tiene autorización para éste proceso'};
                   }
-                try {                    
-                      const result = await db.query(
-                        `DELETE FROM respuestasforos WHERE idrespuestaf=? and usuarios_id=?`, 
-                        [idrespuesta, id_user]
-                      );
-                      if (result.affectedRows) {  
-                           return{message:'Respuesta de foro eliminada exitosamente'};
-                        }else{
-                              throw createError(500,'Se presento un problema al eliminar la respuesta del foro');
-                        }    
+                try {  
+                          await conection.execute(
+                            `DELETE FROM fotosrespuestas WHERE id_respuestaf=?`, 
+                            [idrespuesta]
+                          );                  
+                          const result = await conection.execute(
+                            `DELETE FROM respuestasforos WHERE idrespuestaf=? and usuarios_id=?`, 
+                            [idrespuesta, id_user]
+                          );
+                          let message = '';   
+                          if (result[0]['affectedRows'] > 0)
+                          {
+                                message = 'Respuesta de foro eliminada exitosamente';
+                            }else{
+                                throw createError(500,'Se presento un problema al eliminar la respuesta del foro');
+                            }                                  
+                          await conection.commit(); 
+                          conection.release();                
+                          return { message };  
                       }catch (error) {   
-                              throw error;
+                          await conection.rollback(); 
+                          conection.release();
+                          throw error;
                       }         
           }else{
             throw createError(401,"Usted no tiene autorización"); 
@@ -523,6 +587,56 @@ async function updateParcialRespuesta(idrespuesta, respuesta, token){
           }
 }/*End updateParcialRespuesta*/
 
+/*_____________actualizarFotosRespuesta ________________________________*/
+async function actualizarFotosRespuesta(idrespuesta,body,token){  
+  var arrayfotos= body.arrayFotos;    
+  const conection= await db.newConnection();
+  await conection.beginTransaction();
+  if(token && validarToken(token)){
+      let payload=helper.parseJwt(token);
+      tipo_user= payload.rol;
+      let userN= payload.sub;         
+      try{         
+            if(arrayfotos){ 
+                try{  
+                      const respuestasDeUsuario= await db.query(
+                      `SELECT *
+                      FROM respuestasforos as r
+                      WHERE r.usuarios_id=? and r.idrespuestaf=? `,
+                        [userN,idrespuesta]
+                      );                       
+                      if(respuestasDeUsuario.length<1){
+                         throw createError(401,"Usuario no autorizado");
+                      }
+                      await db.query(
+                      `DELETE from fotosrespuestas where idrespuestaf=?`,
+                        [idrespuesta]
+                      );       
+                      for(var i=0;i<arrayfotos.length;i++){
+                          await db.query(
+                            `INSERT INTO fotosrespuestas(fotorf,id_respuestaf) VALUES (?,?)`,
+                            [arrayfotos[i], idrespuesta]
+                          );
+                      }                         
+                }catch(err) {
+                      throw createError(400,err.message);
+                }
+              }else{
+                throw createError(400,"Usted no agregó las fotos para actualizarlas"); 
+              }        
+        await conection.commit(); 
+        conection.release();
+        message = "Fotos actualizadas correctamente";
+        return { message };
+      }catch (error) {
+        await conection.rollback(); 
+        conection.release();
+        throw error;
+    } 
+  }else{
+    throw createError(401,"Usuario no autorizado");
+  }
+} //* actualizarFotosRespuesta */
 
 module.exports = {
   getPreguntasForos,
@@ -537,5 +651,6 @@ module.exports = {
   eliminarRespuesta,
   actualizarFotosPregunta,
   obtenerDetallePregunta,
-  updateParcialRespuesta
+  updateParcialRespuesta,
+  actualizarFotosRespuesta
  }

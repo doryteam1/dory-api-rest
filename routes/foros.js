@@ -20,7 +20,7 @@ router.get('/obtener/preguntas/usuario/:idusuario', async function(req, res, nex
   }
 });
 
-router.get('/obtener/respuestas/:idpregunta', async function(req, res, next) {
+router.get('/obtener/respuestas/pregunta/:idpregunta', async function(req, res, next) {
   try {
     res.json(await foros.getRespuestasPregunta(req.params.idpregunta));
   } catch (err) {
@@ -127,6 +127,16 @@ router.put('/actualizar/parcial/respuesta/:idrespuesta', async function(req, res
   } catch (err) {
        console.error(`Error al actualizar la respuesta parcialmente`, err.message);
        next(err);
+  }
+});
+
+router.put('/actualizar/fotos/respuesta/:idrespuesta', async function(req, res, next) {
+  try {
+    var token=req.headers.authorization;
+    res.json(await foros.actualizarFotosRespuesta(req.params.idrespuesta, req.body, token));
+  } catch (err) {
+    console.error(`Error al actualizar las fotos de la respuesta`, err.message);
+    next(err);
   }
 });
 
