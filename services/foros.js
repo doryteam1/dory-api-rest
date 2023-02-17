@@ -609,7 +609,7 @@ async function actualizarFotosRespuesta(idrespuesta,body,token){
                          throw createError(401,"Usuario no autorizado");
                       }
                       await db.query(
-                      `DELETE from fotosrespuestas where idrespuestaf=?`,
+                      `DELETE from fotosrespuestas where id_respuestaf=?`,
                         [idrespuesta]
                       );       
                       for(var i=0;i<arrayfotos.length;i++){
