@@ -385,6 +385,20 @@ async function actualizarRespuesta(idrespuesta, body, token){
                   `DELETE FROM fotospreguntas WHERE id_preguntaf=?`, 
                   [idpregunta]
                 );
+                /*-------------------------------Eliminación de las fotos de la respuesta-----------------------*/
+                const idRespuesta = await db.query(
+                  `SELECT r.id_respuestaf
+                   FROM respuestasforos as r left join preguntasforos as p on r.id_preguntaf=p.id_respuestaf
+                                             left join fotosrespuestas as fr on r.idrespuestaf = fr.id_respuestaf
+                   WHERE p.usuarios_id=? and p.id_preguntaf=?`, 
+                   [id_user, idpregunta]
+                );
+
+                await conection.execute(
+                  `DELETE FROM fotosrespuestas WHERE id_respuestaf=?`, 
+                  [idRespuesta]
+                );
+                /*---------------------------------------------------------------------*/
                 await conection.execute(
                   `DELETE FROM respuestasforos WHERE id_preguntaf=?`, 
                   [idpregunta]
