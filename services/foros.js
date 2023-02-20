@@ -10,6 +10,8 @@ async function getPreguntasForos(){
         `SELECT p.id_preguntaf as id, p.titulo, p.descripcion, p.fecha, p.usuarios_id as usuarioId, fp.fotopf as foto, 
                 (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as nombreUsuario,
                 (select u2.foto from  usuarios as u2  where   u2.id=p.usuarios_id) as fotoUsuario,
+                (select tu.nombre_tipo_usuario from usuarios as u2 inner join tipos_usuarios as tu on u2.id_tipo_usuario=tu.id_tipo_usuario
+                  where u2.id= p.usuarios_id) as tipoUsuario,
                 (select count(*) from  respuestasforos as rf left join usuarios as u2 on ( u2.id=rf.usuarios_id) where rf.id_preguntaf=p.id_preguntaf) as countRespuestas
          FROM preguntasforos as p left join fotospreguntas as fp on p.id_preguntaf = fp.id_preguntaf
          order by p.fecha desc
@@ -55,6 +57,8 @@ async function getPreguntasUsuario(idusuario){
             `SELECT p.id_preguntaf as id, p.titulo, p.descripcion, p.fecha, p.usuarios_id as usuarioId, fp.fotopf as foto, 
                     (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as nombreUsuario,
                     (select u2.foto from  usuarios as u2  where   u2.id=p.usuarios_id) as fotoUsuario,
+                    (select tu.nombre_tipo_usuario from usuarios as u2 inner join tipos_usuarios as tu on u2.id_tipo_usuario=tu.id_tipo_usuario
+                      where u2.id= p.usuarios_id) as tipoUsuario,
                     (select count(*) from  respuestasforos as rf left join usuarios as u2 on ( u2.id=rf.usuarios_id) where rf.id_preguntaf=p.id_preguntaf) as countRespuestas
             FROM preguntasforos as p left join fotospreguntas as fp on p.id_preguntaf = fp.id_preguntaf
             WHERE p.usuarios_id=?
@@ -94,7 +98,9 @@ async function getRespuestasPregunta(idPregunta){
         const rows = await db.query(
           `SELECT r.idrespuestaf as id, r.id_preguntaf as preguntaId, r.respuesta, r.fecha, r.usuarios_id as usuarioId, fr.fotorf as foto,
                   (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
-                  (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
+                  (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario,
+                  (select tu.nombre_tipo_usuario from usuarios as u2 inner join tipos_usuarios as tu on u2.id_tipo_usuario=tu.id_tipo_usuario
+                    where u2.id= r.usuarios_id) as tipoUsuario
           FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
                                     left join fotosrespuestas as fr on r.idrespuestaf = fr.id_respuestaf
           WHERE r.id_preguntaf=?   
@@ -140,7 +146,9 @@ async function getTodasRespuestas(){
           const rows = await db.query(
             `SELECT  r.id_preguntaf as preguntaId, p.titulo ,r.idrespuestaf as id, r.respuesta, r.fecha, r.usuarios_id as usuarioId, fr.fotorf as foto,
                     (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=r.usuarios_id) as nombreUsuario,
-                    (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario
+                    (select u2.foto from  usuarios as u2  where   u2.id=r.usuarios_id) as fotoUsuario,
+                    (select tu.nombre_tipo_usuario from usuarios as u2 inner join tipos_usuarios as tu on u2.id_tipo_usuario=tu.id_tipo_usuario
+                      where u2.id= p.usuarios_id) as tipoUsuario
             FROM respuestasforos as r left join preguntasforos as p on (p.id_preguntaf = r.id_preguntaf)
                                       left join fotosrespuestas as fr on r.idrespuestaf = fr.id_respuestaf
             order by r.fecha desc
@@ -200,7 +208,7 @@ async function registrarRespuesta(body,token){
                       [body.idpregunta]
                       );
                     if(rows.length<1){
-                      throw createError(400,"La pregunta no existe");
+                      throw createError(404,"La pregunta no existe");
                     }                    
                     const result = await db.query(
                         `INSERT INTO respuestasforos (usuarios_id,id_preguntaf,fecha,respuesta) VALUES (?,?,?,?)`, 
@@ -516,6 +524,8 @@ async function actualizarRespuesta(idrespuesta, body, token){
                           (select Concat(u2.nombres,' ',u2.apellidos) from  usuarios as u2  where   u2.id=p.usuarios_id) as nombreUsuario,
                           (select u2.foto from  usuarios as u2  where   u2.id=p.usuarios_id) as fotoUsuario,
                           (select u2.email from  usuarios as u2  where   u2.id=p.usuarios_id) as email,
+                          (select tu.nombre_tipo_usuario from usuarios as u2 inner join tipos_usuarios as tu on u2.id_tipo_usuario=tu.id_tipo_usuario
+                            where u2.id= p.usuarios_id) as tipoUsuario,
                           (select count(*) from  respuestasforos as rf left join usuarios as u2 on ( u2.id=rf.usuarios_id) where rf.id_preguntaf=p.id_preguntaf) as countRespuestas
                   FROM preguntasforos as p
                   WHERE p.id_preguntaf=?
