@@ -181,46 +181,54 @@ async function getTodasRespuestas(){
 }/*End getTodasRespuestas */
 
 /*_________________registrarRespuesta_________________________________*/
-async function registrarRespuesta(body,token){          
-  if(token && validarToken(token)){
-        try {                   
-              const payload=helper.parseJwt(token);
-              const id_user=payload.sub;              
-              if(body.idpregunta===undefined || 
-                 body.respuesta===undefined 
-                )
-              {
-                throw createError(400,"Se requieren todos los parámetros!");
-              }
-              const currentDate = new Date();    
-              const fecha = currentDate.toISOString();
-              const result = await db.query(
-                  `INSERT INTO respuestasforos (usuarios_id,id_preguntaf,fecha,respuesta) VALUES (?,?,?,?)`, 
-                  [
-                    id_user,
-                    body.idpregunta,
-                    fecha,
-                    body.respuesta
-                  ]
-              ); 
-              if (result.affectedRows) {              
-                  return {
-                          message:'Respuesta registrada exitosamente',
-                          insertId:result.insertId
-                  };
-              }
-                 throw createError(500,"Se presento un problema al registrar la respuesta");
-        }catch (error) {
-              throw error;
-        } 
-   }else{
-        throw createError(401,"Usted no tiene autorización"); 
-   }
+async function registrarRespuesta(body,token){     
+          if(body.idpregunta===undefined || body.respuesta===undefined)
+          {
+            throw createError(400,"Se requiere la respuesta y el ID de de la pregunta");
+          } 
+        if(token && validarToken(token)){
+              try {
+                      const payload=helper.parseJwt(token);
+                      const id_user=payload.sub; 
+                      const currentDate = new Date();    
+                      const fecha = currentDate.toISOString();                     
+                      const rows = await db.query(
+                      `SELECT p.id_preguntaf as preguntaId
+                      FROM preguntasforos as p 
+                      WHERE p.id_preguntaf=? 
+                      `, 
+                      [body.idpregunta]
+                      );
+                    if(rows.length<1){
+                      throw createError(400,"La pregunta no existe");
+                    }                    
+                    const result = await db.query(
+                        `INSERT INTO respuestasforos (usuarios_id,id_preguntaf,fecha,respuesta) VALUES (?,?,?,?)`, 
+                        [
+                          id_user,
+                          body.idpregunta,
+                          fecha,
+                          body.respuesta
+                        ]
+                    ); 
+                    if (result.affectedRows) {              
+                        return {
+                                message:'Respuesta registrada exitosamente',
+                                insertId:result.insertId
+                        };
+                    }
+                      throw createError(500,"Se presento un problema al registrar la respuesta");
+              }catch (error) {
+                    throw error;
+              } 
+        }else{
+              throw createError(401,"Usted no tiene autorización"); 
+        }
 }/*End registrarRespuesta*/
 
 /*_________________registrarPregunta_________________________________*/
 async function registrarPregunta(body,token){          
-  if(token && validarToken(token)){
+    if(token && validarToken(token)){
         try {                   
               const payload=helper.parseJwt(token);
               const id_user=payload.sub;              
