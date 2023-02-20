@@ -387,17 +387,22 @@ async function actualizarRespuesta(idrespuesta, body, token){
                 );
                 /*-------------------------------Eliminación de las fotos de la respuesta-----------------------*/
                 const idRespuesta = await db.query(
-                  `SELECT r.idrespuestaf
+                  `SELECT DISTINCT r.idrespuestaf
                    FROM respuestasforos as r left join preguntasforos as p on r.id_preguntaf=p.id_preguntaf
                                              left join fotosrespuestas as fr on r.idrespuestaf = fr.id_respuestaf
                    WHERE p.usuarios_id=? and p.id_preguntaf=?`, 
                    [id_user, idpregunta]
-                );
-
-                await conection.execute(
-                  `DELETE FROM fotosrespuestas WHERE id_respuestaf=?`, 
-                  [idRespuesta]
-                );
+                );                
+                
+                  for(let i=0; i< idRespuesta.length; i++){
+                     const idBorrar= idRespuesta[i].idrespuestaf;
+                      if (idBorrar){ 
+                            await db.query(
+                              `DELETE FROM fotosrespuestas WHERE id_respuestaf=?`, 
+                              [idBorrar]
+                            ); 
+                      }               
+                   }
                 /*---------------------------------------------------------------------*/
                 await conection.execute(
                   `DELETE FROM respuestasforos WHERE id_preguntaf=?`, 
