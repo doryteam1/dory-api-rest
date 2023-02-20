@@ -388,7 +388,7 @@ async function actualizarRespuesta(idrespuesta, body, token){
                 /*-------------------------------Eliminación de las fotos de la respuesta-----------------------*/
                 const idRespuesta = await db.query(
                   `SELECT r.id_respuestaf
-                   FROM respuestasforos as r left join preguntasforos as p on r.id_preguntaf=p.id_respuestaf
+                   FROM respuestasforos as r left join preguntasforos as p on r.id_preguntaf=p.id_preguntaf
                                              left join fotosrespuestas as fr on r.idrespuestaf = fr.id_respuestaf
                    WHERE p.usuarios_id=? and p.id_preguntaf=?`, 
                    [id_user, idpregunta]
