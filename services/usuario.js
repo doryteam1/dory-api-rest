@@ -353,6 +353,7 @@ async function update(idUser, usuario, token){
   
 /* ----------------------------------UPDATE PARCIAL DEL USUARIO-----------------------------*/
 async function updateParcialUsuario(idUser, usuario, token){  
+              console.log(usuario,+" "+"USUARIO ");
           try{
                 if(token && validarToken(token)){
                         let payload=helper.parseJwt(token);
