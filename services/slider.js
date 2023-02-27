@@ -25,7 +25,6 @@ async function obtenerSlide(){
        );   
       const slider = helper.emptyOrRows(rows);
       let tiempo;
-      console.log('Arreglo de Tiempo', time);
       if(time.length<1){
             tiempo=1000;  
       }else{
@@ -49,14 +48,15 @@ async function crearSlide(body,token){
                 if(body.url_imagen === undefined || 
                    body.url_enlace === undefined || 
                    body.titulo === undefined || 
-                   body.mostrar_titulo === undefined 
+                   body.mostrar_titulo === undefined ||
+                   body.url_imagen_movil === undefined
                 )
                 {
                     throw createError(400,"Debe enviar todos los parámetros del slide para su registro");
                 }
                 const result = await db.query(
-                `INSERT INTO sliders (url_imagen,url_enlace,titulo,mostrar_titulo) VALUES (?,?,?,?)`,                
-                 [body.url_imagen,body.url_enlace,body.titulo,body.mostrar_titulo] 
+                `INSERT INTO sliders (url_imagen,url_enlace,titulo,mostrar_titulo,url_imagen_movil) VALUES (?,?,?,?,?)`,                
+                 [body.url_imagen,body.url_enlace,body.titulo,body.mostrar_titulo,body.url_imagen_movil] 
                 );  
               let message = 'Error registrando el slide';  
               if (result.affectedRows) {
@@ -83,7 +83,8 @@ async function actualizarSlide(idSlide,body,token){
                       if(body.url_imagen === undefined || 
                          body.url_enlace === undefined || 
                          body.titulo === undefined || 
-                         body.mostrar_titulo === undefined 
+                         body.mostrar_titulo === undefined ||
+                         body.url_imagen_movil === undefined
                       )
                       {
                           throw createError(400,"Debe enviar todos los parámetros del slide para la actualización");
@@ -93,13 +94,15 @@ async function actualizarSlide(idSlide,body,token){
                       SET url_imagen=?,
                           url_enlace=?,
                           titulo=?,
-                          mostrar_titulo=?
+                          mostrar_titulo=?,
+                          url_imagen_movil=?
                       WHERE id_slid=?`,
                       [
                         body.url_imagen,   
                         body.url_enlace, 
                         body.titulo, 
-                        body.mostrar_titulo,                              
+                        body.mostrar_titulo, 
+                        body.url_imagen_movil,                             
                         idSlide
                       ] 
                     );  
@@ -163,11 +166,12 @@ async function actualizarCarruselSlide(body,token){
                                     []
                                   );                                 
                                   for(var i=0;i<carrusel.length;i++){
-                                      if(!(carrusel[i].url_imagen === undefined ||  carrusel[i].url_enlace === undefined || carrusel[i].titulo === undefined || carrusel[i].mostrar_titulo === undefined))
+                                      if(!(carrusel[i].url_imagen === undefined ||  carrusel[i].url_enlace === undefined || carrusel[i].titulo === undefined || carrusel[i].mostrar_titulo === undefined ||
+                                           carrusel[i].url_imagen_movil === undefined))
                                        {
                                           await db.query(
-                                          `INSERT INTO sliders(url_imagen,url_enlace,titulo,mostrar_titulo) VALUES (?,?,?,?)`,
-                                                [carrusel[i].url_imagen, carrusel[i].url_enlace, carrusel[i].titulo, carrusel[i].mostrar_titulo]
+                                          `INSERT INTO sliders(url_imagen,url_enlace,titulo,mostrar_titulo,url_imagen_movil) VALUES (?,?,?,?,?)`,
+                                                [carrusel[i].url_imagen, carrusel[i].url_enlace, carrusel[i].titulo, carrusel[i].mostrar_titulo, carrusel[i].url_imagen_movil]
                                           );
                                        }
                                   }
