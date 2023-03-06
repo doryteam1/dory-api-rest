@@ -286,20 +286,36 @@ async function create(evento,token){
                           let payload=helper.parseJwt(token);
                           let tipo_user= payload.rol; 
                         if(tipo_user!='Administrador'){
-                                throw createError(401,"Usted no tiene autorización para actualizar eventos");
+                                throw createError(401,"Usted no tiene autorización para eliminar los eventos");
                         }
-                        const result = await db.query(
-                          `DELETE FROM eventos WHERE id_evento=?`, 
-                          [idEvento]
-                        );  
-                        let message = 'Error borrando la evento';  
-                        if (result.affectedRows) {
-                          message = 'evento borrada exitosamente';
-                        }  
-                        return {message};
-                  }else{ 
-                        throw createError(401,"Usted no tiene autorización"); 
-                  }
+                        const conection= await db.newConnection(); /*conection of TRANSACTION */
+                        conection.beginTransaction();
+                        let message = 'Error borrando el evento';  
+                        try {   
+                                  await db.query(
+                                    `DELETE from categorias_eventos where id_evento_pk_fk=?`,
+                                      [idEvento]
+                                  );
+                                      const result = await db.query(
+                                        `DELETE FROM eventos WHERE id_evento=?`, 
+                                        [idEvento]
+                                      );  
+                                      
+                                      if (result.affectedRows) {
+                                        message = 'evento borrado exitosamente';
+                                      }  
+                                      conection.commit(); 
+                                      conection.release();
+                                     return {message};                                
+                              } catch (error) {
+                                conection.rollback(); /*Si hay algún error  */ 
+                                conection.release();
+                                throw createError(500,"Error al eliminar la novedad");
+                              }
+                    }else{ 
+                         throw createError(401,"Usted no tiene autorización"); 
+                    }
+
                 }catch(error){
                       throw error;
                 }
