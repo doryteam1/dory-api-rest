@@ -59,8 +59,9 @@ async function getProductosUsuarioProveedor(id_user){
      WHERE p.usuarios_id = ?`, 
     [id_user]
   );
+  let data=[];
   if(rows.length<1){
-    throw createError(404,"Productos No Encontrados");
+    return {data};
   }
   var arrayfotos= new Array();
   var nuevoRows = new Array();
@@ -84,7 +85,7 @@ async function getProductosUsuarioProveedor(id_user){
     }  
   });        
   nuevoRows[nuevoRows.length-1].fotos=arrayfotos;         
-  const data = helper.emptyOrRows(nuevoRows);
+   data = helper.emptyOrRows(nuevoRows);
   return {
     data
   }
