@@ -13,7 +13,10 @@ async function getintegrantes(page = 1){
            LIMIT ?,?`, 
           [offset, config.listPerPage]
         );
-        let data = [];
+        let data=[];
+                if(rows.length<1){
+                  return {data};
+                }
         var arrayenlaces= new Array();
         var nuevoRows = new Array();  
         var index= rows[0].id;
