@@ -16,9 +16,10 @@ async function getNegocioUsuario(id_user){
         `, 
         [id_user]
       );
-    if(rows.length<1){
-      throw createError(404,"Usuario sin negocios");
-    }
+      let data=[];
+      if(rows.length<1){
+        return {data};
+      }
       var arrayfotos= new Array();
       var nuevoRows = new Array();
       var index= rows[0].id_negocio;
@@ -40,7 +41,7 @@ async function getNegocioUsuario(id_user){
         }
       });        
       nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
-      const data = helper.emptyOrRows(nuevoRows);  
+      data = helper.emptyOrRows(nuevoRows);  
       return {
         data
       }
@@ -60,6 +61,10 @@ async function getMultiple(page = 1){
         order by n.id_negocio asc`, 
         []
       );
+      let data=[];
+      if(rows.length<1){
+        return {data};
+      }
               var fotosN= new Array();
               var negocios = new Array();
               var index= rows[0].id_negocio;
@@ -77,7 +82,7 @@ async function getMultiple(page = 1){
                 }
               });
                 negocios[negocios.length-1].fotos=fotosN;          
-      const data = helper.emptyOrRows(negocios);  
+       data = helper.emptyOrRows(negocios);  
       const meta = {page};
       return {
         data,
