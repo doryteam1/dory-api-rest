@@ -15,9 +15,10 @@ async function getMultiple(page = 1){
            LIMIT ?,?`, 
           [offset, config.listPerPage]
         );
-        if(rows.length<1){
-          throw createError(404,"No hay vehiculos registrados");
-        }
+            let data=[];
+             if(rows.length<1){
+                  return {data};
+             }
           var arrayfotos= new Array();
           var nuevoRows = new Array();
           var index= rows[0].id_vehiculo;
@@ -39,7 +40,7 @@ async function getMultiple(page = 1){
             }
           });        
           nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
-          const data = helper.emptyOrRows(nuevoRows); 
+          data = helper.emptyOrRows(nuevoRows); 
           const meta = {page};
         return {
           data,
@@ -56,9 +57,10 @@ async function getVehiculoUser(page = 1, id_user){
      LIMIT ?,?`, 
     [id_user, offset, config.listPerPage]
   );
-  if(rows.length<1){
-    throw createError(404,"Usuario sin vehiculos");
-  }
+      let data=[];
+      if(rows.length<1){
+        return {data};
+      }
     var arrayfotos= new Array();
     var nuevoRows = new Array();
     var index= rows[0].id_vehiculo;
@@ -80,7 +82,7 @@ async function getVehiculoUser(page = 1, id_user){
       }
     });        
     nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
-    const data = helper.emptyOrRows(nuevoRows); 
+    data = helper.emptyOrRows(nuevoRows); 
     const meta = {page};
     return {
       data,
