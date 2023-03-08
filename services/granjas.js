@@ -126,6 +126,10 @@ async function getGranjasTodas(page = 1,token){
             [offset, config.listPerPage]
           );
         }
+              let data=[];         
+              if(rows.length<1){
+                      return{data};
+                }           
               var arrayfotos= new Array();
               var nuevoRows = new Array();
               var index= rows[0].id_granja;
@@ -143,7 +147,7 @@ async function getGranjasTodas(page = 1,token){
                 }
               });
                 nuevoRows[nuevoRows.length-1].fotos=arrayfotos;          
-              const data = helper.emptyOrRows(nuevoRows);
+               data = helper.emptyOrRows(nuevoRows);
               const meta = {page};      
               return {
                 data,
@@ -151,7 +155,6 @@ async function getGranjasTodas(page = 1,token){
               }
           } catch(err){        
                 console.log(err);
-                throw createError(404,"No hay granjas en el sistema");
           }
 }/*End GetGranjasTodas*/
 
