@@ -23,7 +23,7 @@ async function contactenos(formulario){
               secure: true, // true for 465, false for other ports
               auth: {
                 user: "plataforma.piscicola@gmail.com", // generated ethereal user
-                pass: "krxg hgff tfqc bcry", // generated ethereal password
+                pass: process.env.GOOGLE_PASSWORD_APP, // generated ethereal password
               },
             });
 
