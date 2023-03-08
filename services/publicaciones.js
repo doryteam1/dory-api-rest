@@ -69,7 +69,11 @@ async function getPublicacionesMultiple(page = 1){
         FROM publicaciones as p left join fotospublicaciones as fp on (fp.id_publicacion_fk = p.id_publicacion)
         order by p.fecha desc`, 
         []
-      );     
+      );  
+        let data=[];
+      if(rows.length<1){
+         return {data};
+      }   
       var fotosN= new Array();
       var publicaciones = new Array();
       var index= rows[0].id_publicacion;
@@ -87,11 +91,9 @@ async function getPublicacionesMultiple(page = 1){
         }
       });
         publicaciones[publicaciones.length-1].fotos=fotosN;          
-      const data = helper.emptyOrRows(publicaciones); 
-      const meta = {page};
+      data = helper.emptyOrRows(publicaciones); 
       return {
-        data,
-        meta
+        data
       }
 }/*End getPublicacionesMultiple*/
 
