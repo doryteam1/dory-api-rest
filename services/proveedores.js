@@ -18,8 +18,9 @@ async function ObtenerTodosProductos(){
                 `,               
                 []
                 );
+                let data=[];
                 if(rows.length<1){
-                  throw createError(404,"Productos No Encontrados");
+                  return {data};
                 }
                 var arrayfotos= new Array();
                 var nuevoRows = new Array();
@@ -43,7 +44,7 @@ async function ObtenerTodosProductos(){
                   }  
                 });        
                 nuevoRows[nuevoRows.length-1].fotos=arrayfotos;         
-                const data = helper.emptyOrRows(nuevoRows); 
+                data = helper.emptyOrRows(nuevoRows); 
                 return {
                   data
                 }
