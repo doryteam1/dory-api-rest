@@ -3,8 +3,8 @@ const helper = require('../helper');
 const bcrypt= require('bcrypt');
 var createError = require('http-errors');
 const {OAuth2Client} = require('google-auth-library');
-const CLIENT_ID_1 = '170816600260-ivu404khqeskg17esu4esl9244s0dt2m.apps.googleusercontent.com';
-const CLIENT_ID_2 = '170816600260-esagcgasnv4kkfdtl8ejftb5kiar6pkj.apps.googleusercontent.com';
+const CLIENT_ID_1 = process.env.OAUTH_CLIENT_ID_WEB;
+const CLIENT_ID_2 = process.env.OAUTH_CLIENT_ID_MOBILE;
 const client = new OAuth2Client(CLIENT_ID_1);
 const ONE_YEAR_MILLISECONDS = 525600;
 
