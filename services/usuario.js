@@ -316,35 +316,66 @@ async function update(idUser, usuario, token){
                         `DELETE FROM publicaciones WHERE usuarios_id=?`, 
                         [idUser]
                       );
-                      await conection.execute(
-                        `DELETE FROM respuestasforos WHERE usuarios_id=?`, 
+                      /*----------------Borrar negocios------------*/
+                      const idnegocios=await conection.execute(
+                        `SELECT n.id_negocio FROM negocios as n WHERE n.usuarios_id=?`, 
                         [idUser]
                       );
-                      await conection.execute(
-                        `DELETE FROM preguntasforos WHERE usuarios_id=?`, 
+                      if(idnegocios.length>1){
+                              for(let i=0;i<idnegocios[0].length;i++){
+                                let neg=idnegocios[0][i].id_vehiculo;
+                                await conection.execute(
+                                  `DELETE FROM fotosnegocios WHERE id_negocio_fk=?`, 
+                                  [neg]
+                                );
+                              }                     
+                            await conection.execute(
+                            `DELETE FROM negocios WHERE usuarios_id=?`, 
+                            [idUser]
+                            );
+                        }                        
+                      /*----------------Borrar respuestasforos-----------------*/
+                         borrarRespuestas(conection, idUser);
+                      /*----------------Borrar preguntas------------*/
+                      const idpreguntas=await conection.execute(
+                        `SELECT p.id_preguntaf FROM preguntasforos as p WHERE p.usuarios_id=?`, 
                         [idUser]
                       );
+                      if(idpreguntas.length>1){
+                           for(let i=0;i<idpreguntas[0].length;i++){
+                            let idpreg=idpreguntas[0][i].id_preguntaf;
+                            await conection.execute(
+                              `DELETE FROM fotospreguntas WHERE id_preguntaf=?`, 
+                              [idpreg]
+                            );
+                            borrarRespuestasPorPregunta(conection,idpreg)
+                          }                               
+                            await conection.execute(
+                              `DELETE FROM preguntasforos WHERE usuarios_id=?`, 
+                              [idUser]
+                            );
+                      }
+                      /*----------Borrar Vehículos-----------------*/
                       const idVehiculos = await conection.execute(
                         `SELECT v.id_vehiculo
                         FROM vehiculos as v 
                         where v.usuarios_id=?`, 
                         [idUser]
                       );
-                      await conection.execute(
-                        `DELETE FROM negocios WHERE usuarios_id=?`, 
-                        [idUser]
-                      );
-                      for(let i=0;i<idVehiculos[0].length;i++){
-                        let veh=idVehiculos[0][i].id_vehiculo;
-                        await conection.execute(
-                          `DELETE FROM fotosVehiculos WHERE id_vehiculo_fk=?`, 
-                          [veh]
-                        );
+                      if(idVehiculos.length>1){
+                          for(let i=0;i<idVehiculos[0].length;i++){
+                            let veh=idVehiculos[0][i].id_vehiculo;
+                            await conection.execute(
+                              `DELETE FROM fotosVehiculos WHERE id_vehiculo_fk=?`, 
+                              [veh]
+                            );
+                          }
+                          await conection.execute(
+                            `DELETE FROM vehiculos WHERE usuarios_id=?`, 
+                            [idUser]
+                          );
                       }
-                      await conection.execute(
-                        `DELETE FROM vehiculos WHERE usuarios_id=?`, 
-                        [idUser]
-                      );
+                      /*-----------------------------------------------------*/
                       const result = await conection.execute(
                         `DELETE FROM usuarios WHERE id=?`, 
                         [idUser]
@@ -366,7 +397,49 @@ async function update(idUser, usuario, token){
             throw error;
           }
   }/*End Remove*/
-  
+
+  /*----------------------borrarRespuestas--------------------------------------*/
+  async  function borrarRespuestas(conection, idUser){
+    const idrespuestas=await conection.execute(
+      `SELECT rf.idrespuestaf FROM respuestasforos as rf WHERE rf.usuarios_id=?`, 
+      [idUser]
+    );
+    if(idrespuestas.length>1){
+        for(let i=0;i<idrespuestas[0].length;i++){
+          let res=idrespuestas[0][i].idrespuestaf;
+          await conection.execute(
+            `DELETE FROM fotosrespuestas WHERE id_respuestaf=?`, 
+            [res]
+          );
+        } 
+        await conection.execute(
+          `DELETE FROM respuestasforos WHERE usuarios_id=?`, 
+          [idUser]
+        );
+    }
+  }/*End borrarRespuestas*/
+
+  /*----------------------borrarRespuestasPorPregunta-------------------------------*/
+  async  function borrarRespuestasPorPregunta(conection, idPreg){
+    const idrespuestas=await conection.execute(
+      `SELECT rf.idrespuestaf FROM respuestasforos as rf WHERE rf.id_preguntaf=?`, 
+      [idPreg]
+    );
+    if(idrespuestas.length>1){
+        for(let i=0;i<idrespuestas[0].length;i++){
+          let res=idrespuestas[0][i].idrespuestaf;
+          await conection.execute(
+            `DELETE FROM fotosrespuestas WHERE id_respuestaf=?`, 
+            [res]
+          );
+        } 
+        await conection.execute(
+          `DELETE FROM respuestasforos WHERE id_preguntaf=?`, 
+          [idPreg]
+        );
+    }
+  }/*End borrarRespuestasPorPregunta*/
+
 /* ----------------------------------UPDATE PARCIAL DEL USUARIO-----------------------------*/
 async function updateParcialUsuario(idUser, usuario, token){  
               console.log(usuario,+" "+"USUARIO ");
