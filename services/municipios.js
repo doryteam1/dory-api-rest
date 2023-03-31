@@ -151,12 +151,7 @@ async function getConsumosEspeciesDepartamento(params){
   if(!idDepartamento || !year){
     throw createError(400, "Se requieren todos los parámetros");
   }
-  const rowsEspecies = await db.query(
-    `SELECT e.*
-    FROM especies as e
-    `, 
-    []
-  );        
+
   const rowsMunicipios = await db.query(
     `SELECT m.*
     FROM municipios as m
@@ -165,35 +160,39 @@ async function getConsumosEspeciesDepartamento(params){
     [idDepartamento]
   );   
   let data=[];           
-  let rowsConsumos;
-  let arrayConsumo=[];
-    for(let i=0; i<rowsMunicipios.length;i++){   
-      arrayConsumo=[];
-      for(let j=0; j<rowsEspecies.length;j++){
-            rowsConsumos= await db.query(
-              `SELECT e.nombre as especie, sum(eu.cantidad_consumo) as consumo, count(eu.usuarios_id) as cantidad_usuario,
-              ( select m.id_municipio from municipios as m where m.id_municipio=u.id_municipio ) as id_municipio
-              FROM especies_usuarios as eu inner join especies as e on e.id_especie=eu.id_especie_pk_fk
-                                           inner join usuarios as u on u.id=eu.usuarios_id
-                                           inner join municipios as m on u.id_municipio=m.id_municipio
-              WHERE eu.id_especie_pk_fk=? and u.id_municipio=? and year(eu.fecha_consumo)=?
+  let arrayConsumo=[]; 
+  
+  arrayConsumo= await db.query(
+              `select m.nombre as municipio, m.id_municipio as id_municipio, m.id_departamento_fk as id_departamento, e.nombre as especie, sum(eu.cantidad_consumo) as consumo, count(eu.usuarios_id)as cantidad_usuario, year(eu.fecha_consumo)  as año
+              from especies_usuarios as eu inner join especies as e on e.id_especie = eu.id_especie_pk_fk inner join usuarios as u on u.id = eu.usuarios_id inner join municipios as m on m.id_municipio = u.id_municipio
+              group by municipio, especie, año
+              having año = ? and id_departamento = ?;
               `, 
-              [rowsEspecies[j].id_especie,rowsMunicipios[i].id_municipio, year]
-            );                                
-            if(rowsConsumos[0].consumo==null){
-                  rowsConsumos[0].especie=rowsEspecies[j].nombre;
-                  rowsConsumos[0].consumo=0;
-            }
-            rowsConsumos[0].id_municipio = undefined;
-            arrayConsumo.push(rowsConsumos[0]);
-                  
-      }/*end for especies*/
-      data.push({
-        municipio:rowsMunicipios[i].nombre,
-        id_municipio:rowsMunicipios[i].id_municipio,
-        consumo:arrayConsumo
-      })
-    } /*end for municipios*/             
+              [ year, idDepartamento]
+            );          
+  
+  
+    // Estos for se utilizan para convertir la respuesta del query en json con la estructura de la respuesta anterior
+    for(let i=0; i<rowsMunicipios.length;i++){ 
+      let consumoEspecie=[];
+      for(let j=0; j<arrayConsumo.length;j++){ 
+        if(rowsMunicipios[i].id_municipio == arrayConsumo[j].id_municipio){
+          delete arrayConsumo[j]['año']
+          delete arrayConsumo[j]['municipio']
+          delete arrayConsumo[j]['id_municipio']
+          delete arrayConsumo[j]['id_departamento']
+          consumoEspecie.push(arrayConsumo[j]);  
+        }
+      } 
+      if(consumoEspecie.length>0){
+        data.push({
+              municipio:rowsMunicipios[i].nombre,
+              id_municipio:rowsMunicipios[i].id_municipio,
+              consumo:consumoEspecie
+         });
+      }
+      
+    }
 return {
 data
 }
