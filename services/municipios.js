@@ -145,7 +145,7 @@ async function create(municipio){
                 }
           }/* End getConsumosEspecies*/
 
-/* ------------------------------------getConsumosEspeciesTotalNuevo------------------------------------*/
+/*------------------------------------getConsumosEspeciesTotalNuevo------------------------------------*/
 async function getConsumosEspeciesDepartamento(params){ 
   let  {idDepartamento, year } = params;
   if(!idDepartamento || !year){
