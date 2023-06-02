@@ -77,6 +77,8 @@ async function create(usuario,token){
               usuario.email === undefined ||
               usuario.password === undefined ||
               usuario.foto === undefined ||
+              usuario.id_departamento === undefined ||
+              usuario.id_municipio === undefined ||
               usuario.latitud === undefined ||
               usuario.longitud === undefined ||
               usuario.creadoCon === undefined ||
@@ -122,7 +124,7 @@ async function create(usuario,token){
             }
               try{
                 const result = await db.query(
-                  `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,latitud,longitud,estaVerificado,creadoCon,id_sexo,id_etnia) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, 
+                  `INSERT INTO usuarios(nombres,apellidos,id_tipo_usuario,email,password,foto,id_departamento,id_municipio,latitud,longitud,estaVerificado,creadoCon,id_sexo,id_etnia) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
                   [
                     usuario.nombres, 
                     usuario.apellidos, 
@@ -130,6 +132,8 @@ async function create(usuario,token){
                     usuario.email,
                     usuario.password, 
                     usuario.foto,
+                    usuario.id_departamento,
+                    usuario.id_municipio,
                     usuario.latitud,
                     usuario.longitud,
                     usuario.estaVerificado,
