@@ -19,9 +19,9 @@ async function compartir(datos){
           secure: false, // true for 465, false for other ports
           auth: {
             user: "plataforma.piscicola@gmail.com", 
-            pass: "krxg hgff tfqc bcry", 
+            pass: process.env.GOOGLE_PASSWORD_APP, 
           },
-        });
+        }); 
 
         // send mail with defined transport object
         let info = await transporter.sendMail({
