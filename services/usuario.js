@@ -112,7 +112,8 @@ async function create(usuario,token){
                   </br>
                   `;
           }
-          let message='Registro fallido';
+           let message='Registro fallido';
+           let insertId=-100;
             try {
               const saltRounds= 10;
               const salt= bcrypt.genSaltSync(saltRounds);//generate a salt
@@ -141,8 +142,9 @@ async function create(usuario,token){
                     usuario.id_sexo,
                     usuario.id_etnia
                   ]
-                );
+                );                 
                     if (result.affectedRows) {
+                            insertId=result.insertId;
                             message = 'Usuario registrado exitosamente';
                             let mensaje="Bienvenido(a), "+usuario.nombres+" "+"estamos emocionados de que te hayas registrado con nosotros, somos un equipo conformado por emprendedores y profesionales que trabajan día a día para promover la productividad y competitividad de la cadena piscícola del departamento de sucre, en alianza con los grupos de investigación, gestión de la Producción y la Calidad y GINTEING, de la Universidad de Sucre y la Corporación Universitaria Antonio José de Sucre.";
                             let mensaje2="Sólo falta verificar su cuenta.   Has clic en el siguiente enlace para confirmar su correo electrónico";
@@ -154,8 +156,8 @@ async function create(usuario,token){
                     }
               }catch(err){
                   throw err;
-              }
-                return {message};              
+              }  
+                return {message, insertId};              
 }/*End create*/
 
 /* ----------------------------------UPDATE-----------------------------*/
