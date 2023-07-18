@@ -318,10 +318,25 @@ async function update(idUser, usuario, token){
                         `DELETE FROM mensajes WHERE usuario_emisor_id=? or usuario_receptor_id=?`, 
                         [idUser,idUser]
                       );
-                      await conection.execute(
-                        `DELETE FROM publicaciones WHERE usuarios_id=?`, 
+                       /*----------------Borrar publicaciones------------*/
+                       const idpublicaciones=await conection.execute(
+                        `SELECT p.id_publicacion FROM publicaciones as p WHERE p.usuarios_id=?`, 
                         [idUser]
                       );
+                      if(idpublicaciones.length>1){
+                              for(let i=0;i<idpublicaciones[0].length;i++){
+                                let pub=idpublicaciones[0][i].id_publicacion;
+                                await conection.execute(
+                                  `DELETE FROM fotospublicaciones WHERE id_publicacion_fk=?`, 
+                                  [pub]
+                                );
+                              }                     
+                              await conection.execute(
+                                `DELETE FROM publicaciones WHERE usuarios_id=?`, 
+                                [idUser]
+                              );
+                        } 
+                      
                       /*----------------Borrar negocios------------*/
                       const idnegocios=await conection.execute(
                         `SELECT n.id_negocio FROM negocios as n WHERE n.usuarios_id=?`, 
@@ -329,7 +344,7 @@ async function update(idUser, usuario, token){
                       );
                       if(idnegocios.length>1){
                               for(let i=0;i<idnegocios[0].length;i++){
-                                let neg=idnegocios[0][i].id_vehiculo;
+                                let neg=idnegocios[0][i].id_negocio;
                                 await conection.execute(
                                   `DELETE FROM fotosnegocios WHERE id_negocio_fk=?`, 
                                   [neg]
