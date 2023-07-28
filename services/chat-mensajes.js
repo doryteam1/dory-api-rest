@@ -1,4 +1,4 @@
-const usuarioService = require('../services/usuario');
+const usuarioService = require('./usuario');
 class Mensaje {
     constructor( uid, nombre, mensaje ) {
         this.uid     = uid;
