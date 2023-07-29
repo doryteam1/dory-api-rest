@@ -181,12 +181,32 @@ async function getDetailAsociacion(nit,token){
                             (select u.url_sisben 
                               from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_sisben,
                             (select u.url_imagen_cedula 
-                                from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_imagen_cedula
+                                from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit) as url_imagen_cedula,
+                                (select count(*)  
+                                from solicitudes as s
+                                where s.id_estado_fk=2 and s.nit_asociacion_fk=?
+                                )  as count_miembros, 
+                                (select count(*)  
+                                from solicitudes as s inner join usuarios as u on s.usuarios_id=u.id
+                                where s.id_estado_fk=2 and s.nit_asociacion_fk=? and u.id_sexo=2) count_miembros_masculinos,
+                                (select count(*)  
+                                from solicitudes as s inner join usuarios as u on s.usuarios_id=u.id
+                                where s.id_estado_fk=2 and s.nit_asociacion_fk=? and u.id_sexo=1) count_miembros_femeninos,
+                                (select count(*)  
+                                from solicitudes as s inner join usuarios as u on s.usuarios_id=u.id
+                                                      inner join tipos_usuarios as tu on u.id_tipo_usuario=tu.id_tipo_usuario
+                                where s.id_estado_fk=2 and s.nit_asociacion_fk=? and u.id_tipo_usuario=tu.id_tipo_usuario 
+                                                       and tu.nombre_tipo_usuario like('Pescador')) as count_pescadores,
+                                (select count(*)  
+                                 from solicitudes as s inner join usuarios as u on s.usuarios_id=u.id
+                                                       inner join tipos_usuarios as tu on u.id_tipo_usuario=tu.id_tipo_usuario
+                                 where s.id_estado_fk=2 and s.nit_asociacion_fk=? and u.id_tipo_usuario=tu.id_tipo_usuario 
+                                                                              and tu.nombre_tipo_usuario like('Piscicultor')) as count_piscicultores 
                   FROM asociaciones as a inner join departamentos as d on a.id_departamento = d.id_departamento
                                          inner join municipios as m on a.id_municipio = m.id_municipio
                                          inner join tipos_asociaciones as ta on a.id_tipo_asociacion_fk = ta.id_tipo_asociacion                                         
                   where a.nit = ? `,               
-                [nit,nit]
+                [nit,nit,nit,nit,nit,nit,nit]
                 );
         }  
             const data = helper.emptyOrRows(row);
