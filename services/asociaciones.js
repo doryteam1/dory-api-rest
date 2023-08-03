@@ -226,6 +226,7 @@ async function getAsociacionesUser(page = 1, id_user){
                           (select m.nombre from municipios as m  where m.id_municipio=a.id_municipio) as municipio,
                           a.id_corregimiento,a.id_vereda, a.informacion_adicional_direccion,a.corregimiento_vereda,au.usuarios_id,
                           (SELECT concat (u.nombres,' ',u.apellidos) from usuarios u where u.id=au.usuarios_id) as propietario,
+                          (SELECT u.email from usuarios u where u.id=au.usuarios_id) as email_propietario,
                           (select tu.nombre_tipo_usuario 
                             from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id and au.nit_asociacion_pk_fk = a.nit
                                                              inner join tipos_usuarios as tu on tu.id_tipo_usuario = u.id_tipo_usuario 
