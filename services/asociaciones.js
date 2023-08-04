@@ -256,7 +256,11 @@ async function getAsociacionesMiembros(page = 1, id_user){
                       (select au.usuarios_id
                        from asociaciones_usuarios as au inner join usuarios as u1 on au.usuarios_id = u1.id 
                                                          inner join asociaciones as a1 on au.nit_asociacion_pk_fk = a1.nit
-                       where  s.nit_asociacion_fk=a1.nit and u1.id=au.usuarios_id) as id_propietario,                         
+                       where  s.nit_asociacion_fk=a1.nit and u1.id=au.usuarios_id) as id_propietario, 
+                       (select u1.email
+                        from asociaciones_usuarios as au inner join usuarios as u1 on au.usuarios_id = u1.id 
+                                                          inner join asociaciones as a1 on au.nit_asociacion_pk_fk = a1.nit
+                        where  s.nit_asociacion_fk=a1.nit and u1.id=au.usuarios_id) as email_propietario,                          
                       (select concat (u.nombres,' ',u.apellidos)
                        from asociaciones_usuarios as au inner join usuarios as u on au.usuarios_id = u.id 
                                                          inner join asociaciones as a1 on au.nit_asociacion_pk_fk = a1.nit
