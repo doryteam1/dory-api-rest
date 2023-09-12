@@ -62,7 +62,7 @@ async function getMultiple(page = 1){
 
 /* ----------------------------------CREATE-----------------------------*/
 async function create(usuario,token){
-       if(usuario.id_tipo_usuario == -1){
+       if(usuario.id_tipo_usuario == -1){ /* un usuario administrador solo puede ser creado por un usario administrador*/
               if(token && validarToken(token)){
                     let payload=helper.parseJwt(token);
                     let rol= payload.rol; 

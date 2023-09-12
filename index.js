@@ -5,6 +5,35 @@ const port = process.env.PORT || 3000;
 const {verifyToken, validarToken} = require ('./middelware/auth');
 require('dotenv').config();
 
+/*------------------------------------swagger-------------------------------------------------*/
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+const options = {
+  definition: {
+    openapi: '3.0.0', // Versión de Swagger/OpenAPI
+    info: {
+      title: 'API REST DE LA PLATAFORMA WEB DORY',
+      version: '1.0.0',
+      description: 'Descripción del API REST DORY',
+    },
+    servers: [
+      {         
+        url: process.env.THIS_SERVER_URL, // Cambia esto a la URL de tu servidor
+      },
+    ],
+  },  
+  apis: ['./docs/docSwagger.yaml'], // Ruta al archivo de especificación Swagger (YAML o JSON)
+};
+const swaggerSpec = swaggerJSDoc(options);
+// Configurar Swagger UI
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api/docs', (req,res)=>{
+  res.setHeader("Content-Type", "aplication/json");
+  res.send(swaggerSpec);
+});
+/*-----------------------------------------------------------------------------------------*/
+
+
 /*Socket.io con express*/
 const http = require('http');
 const server = http.createServer(app);
@@ -225,3 +254,4 @@ io.on('connection', ( socket ) => socketController(socket, io ) )
 server.listen(port, () => {
   console.log('listening on *:'+port);
 });
+
