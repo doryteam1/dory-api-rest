@@ -5,7 +5,7 @@ const config = {
   host: env.DB_HOST || 'localhost',
   user: env.DB_USER || 'root',
   password: env.DB_PASSWORD || '12345678',
-  database: env.DB_NAME || 'u192229785_demo',
+  database: env.DB_NAME || 'bd_prod',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

@@ -20,7 +20,7 @@ async function getMultiple(page = 1){
 
 async function create(tipo_evento){
     const result = await db.query(
-      `INSERT INTO tipos_eventos(id,nombre,descripcion) VALUES (?,?,?)`, 
+      `INSERT INTO tipos_eventos(id_evento,nombre,descripcion) VALUES (?,?,?)`, 
       [
        tipo_evento.id,
        tipo_evento.nombre,
@@ -61,7 +61,7 @@ async function create(tipo_evento){
   
   async function remove(id){
     const result = await db.query(
-      `DELETE FROM tipos_eventos WHERE id=?`, 
+      `DELETE FROM tipos_eventos WHERE id_evento=?`, 
       [id]
     );
   
