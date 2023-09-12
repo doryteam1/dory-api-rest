@@ -97,7 +97,7 @@ async function create(producto,token){
        try {
             let payload=helper.parseJwt(token);
             let rol= payload.rol;         
-                if (rol=='Proveedor') {                                      
+                if (rol=='Proveedor' || rol=='Comerciante') {                                      
                       const result = await db.query(
                         `INSERT INTO productos(nombreProducto,precio,descripcion,usuarios_id) VALUES (?,?,?,?)`, 
                         [
