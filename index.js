@@ -122,6 +122,8 @@ app.use(function(req, res, next){
 
 app.use(cors());
 
+app.use(express.static(__dirname+'/')); /*----Definir donde estan los recursos ---> En la raíz----*/
+
 app.route('/')
   .get(function (req, res) {
     res.sendFile(process.cwd() + '/index.html');
