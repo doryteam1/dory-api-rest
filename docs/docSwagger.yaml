@@ -5,8 +5,6 @@ info:
   description: Esta API se encarga de la administración de la información del  proyecto piscicola Dory
   version: 1.0.0
 servers:
-- url: https://virtserver.swaggerhub.com/luisponton/Dory/1.0.0
-  description: SwaggerHub API Auto Mocking
 - url: https://dory-api-rest-v2.fly.dev/api/
   description: Simulación de Dory
 tags:
