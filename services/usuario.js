@@ -49,7 +49,7 @@ async function getMultiple(page = 1){
             u.id_departamento,u.id_municipio,u.id_corregimiento,u.id_vereda,
             u.latitud,u.longitud,u.nombre_corregimiento,u.nombre_vereda,u.estaVerificado,u.otra_area_experticia,u.otra_area_experticia_descripcion,u.sobre_mi, u.informacion_adicional_direccion
      FROM usuarios as u 
-     WHERE u.id_tipo_usuario != -1;
+     WHERE u.id_tipo_usuario != -1
      LIMIT ?,?`, 
     [offset, config.listPerPage]
   );
