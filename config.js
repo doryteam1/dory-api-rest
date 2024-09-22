@@ -9,6 +9,9 @@ const config = {
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  ssl: {
+    rejectUnauthorized: true // Cambia a false solo para pruebas locales
+  }
 },
   TOKEN_SECRET: env.TOKEN_SECRET || "tokenultrasecreto",
   listPerPage: env.LIST_PER_PAGE || 1000,
